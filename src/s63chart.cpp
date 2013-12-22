@@ -37,16 +37,9 @@
 
 #include "s63_pi.h"
 #include "s63chart.h"
-//#include "pis57chart.h"
 #include "mygeom63.h"
-#include "georef.h"
-#include "cutil.h"
 
-
-
-#ifdef __WXMSW__
-#include <wx/msw/registry.h>
-#endif
+#include "pi_s52s57.h"
 
 
 
@@ -1917,8 +1910,6 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     
     int object_count = 0;
     
-    OGREnvelope Envelope;
-    
     int dun = 0;
     
     char *hdr_buf = (char *) malloc( 1 );
@@ -2259,7 +2250,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
             }
     
     //  Set up the chart context
-    m_this_chart_context = (chart_context *)calloc( sizeof(chart_context), 1);
+    m_this_chart_context = (pi_chart_context *)calloc( sizeof(pi_chart_context), 1);
     m_this_chart_context->m_pvc_hash = (void *)&m_vc_hash;
     m_this_chart_context->m_pve_hash = (void *)&m_ve_hash;
     
@@ -3555,12 +3546,6 @@ PI_S57Obj::~PI_S57Obj()
         }
         free( att_array );
 
-//        if( pPolyTessGeo ) delete pPolyTessGeo;
-
-//        if( pPolyTrapGeo ) delete pPolyTrapGeo;
-
-//        if( FText ) delete FText;
-
         if( geoPt ) free( geoPt );
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
@@ -3632,12 +3617,6 @@ PI_S57ObjX::~PI_S57ObjX()
             delete attVal;
         }
         free( att_array );
-
-//        if( pPolyTessGeo ) delete pPolyTessGeo;
-
-//        if( pPolyTrapGeo ) delete pPolyTrapGeo;
-
-//        if( FText ) delete FText;
 
         if( geoPt ) free( geoPt );
         if( geoPtz ) free( geoPtz );
@@ -4408,63 +4387,4 @@ wxString PI_S57ObjX::GetAttrValueAsString( const char *AttrName )
     }
     return str;
 }
-
-
-//----------------------------------------------------------------------------------
-//      render_canvas_parms Implementation
-//----------------------------------------------------------------------------------
-
-render_canvas_parms::render_canvas_parms()
-{
-    pix_buff = NULL;
-}
-
-render_canvas_parms::render_canvas_parms( int xr, int yr, int widthr, int heightr, wxColour color )
-{
-    depth = BPP;
-    pb_pitch = ( widthr * depth / 8 );
-    lclip = x;
-    rclip = x + widthr - 1;
-    pix_buff = (unsigned char *) malloc( heightr * pb_pitch );
-    width = widthr;
-    height = heightr;
-    x = xr;
-    y = yr;
-
-    unsigned char r, g, b;
-    if( color.IsOk() ) {
-        r = color.Red();
-        g = color.Green();
-        b = color.Blue();
-    } else
-        r = g = b = 0;
-
-    if( depth == 24 ) {
-        for( int i = 0; i < height; i++ ) {
-            unsigned char *p = pix_buff + ( i * pb_pitch );
-            for( int j = 0; j < width; j++ ) {
-                *p++ = r;
-                *p++ = g;
-                *p++ = b;
-            }
-        }
-    } else {
-        for( int i = 0; i < height; i++ ) {
-            unsigned char *p = pix_buff + ( i * pb_pitch );
-            for( int j = 0; j < width; j++ ) {
-                *p++ = r;
-                *p++ = g;
-                *p++ = b;
-                *p++ = 0;
-            }
-        }
-    }
-
-}
-
-render_canvas_parms::~render_canvas_parms( void )
-{
-}
-
-    
 

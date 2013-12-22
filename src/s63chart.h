@@ -173,7 +173,7 @@ class  ChartS63 : public PlugInChartBase
 
       wxString          m_extended_error;
       
-      struct _chart_context     *m_this_chart_context;
+      struct _pi_chart_context     *m_this_chart_context;
       
 protected:
 //    Methods

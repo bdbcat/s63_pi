@@ -35,11 +35,8 @@
 #include "wx/tokenzr.h"
 #include <wx/mstream.h>
 
-//#include "dychart.h"
-//#include "bbox.h"
 
 #include "mygeom63.h"
-#include "georef.h"
 
 #include <math.h>
 #include "triangulate.h"
@@ -281,6 +278,7 @@ PolyTessGeo::PolyTessGeo()
 {
 }
 
+#if 0
 //      Build PolyTessGeo Object from Extended_Geometry
 PolyTessGeo::PolyTessGeo(Extended_Geometry *pxGeom)
 {
@@ -290,6 +288,7 @@ PolyTessGeo::PolyTessGeo(Extended_Geometry *pxGeom)
       m_pxgeom = pxGeom;
 
 }
+#endif
 
 #if 0
 //      Build PolyTessGeo Object from OGR Polygon
@@ -2151,7 +2150,7 @@ void __CALL_CONVENTION combineCallback(GLdouble coords[3],
 #endif
 wxStopWatch *s_stwt;
 
-
+#if 0
 //      Build Trapezoidal PolyTessGeoTrap Object from Extended_Geometry
 PolyTessGeoTrap::PolyTessGeoTrap(Extended_Geometry *pxGeom)
 {
@@ -2297,7 +2296,7 @@ void PolyTessGeoTrap::BuildTess()
 }
 
 
-
+#endif
 
 //------------------------------------------------------------------------------
 //          PolyTriGroup Implementation

@@ -37,19 +37,17 @@ SET(PREFIX_BIN bin)
 SET(PREFIX_INCLUDE include)
 SET(PREFIX_DATA lib)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/mygdal)
-#INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/nmea0183)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
+#INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/mygdal)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
-INCLUDE_DIRECTORIES("/home/dsr/Projects/opencpn_sf/opencpn/include")
 
 IF(WIN32)
-      INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src "U:/Projects/opencpn_sf/opencpn/include")
+#      INCLUDE_DIRECTORIES("U:/Projects/opencpn_sf/opencpn/include")
 ENDIF(WIN32)
 
 IF(UNIX)
-#     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src             "/home/dsr/Projects/opencpn_sf/opencpn/include")
+#     INCLUDE_DIRECTORIES("/home/dsr/Projects/opencpn_sf/opencpn/include")
 ENDIF(UNIX)
 
 # require proper c++
@@ -168,7 +166,8 @@ SET(SRC_GDAL
                 src/mygdal/gdal_misc.cpp
         )
 
-ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_GDAL})
+#ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_GDAL})
+ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} )
 
 IF(WIN32)
   SET(OPENCPN_IMPORT_LIB "opencpn.lib")

@@ -35,8 +35,8 @@
 #include <wx/wfstream.h>
 
 
-#include <ogr_geometry.h>
-#include "s52s57.h"
+//#include <ogr_geometry.h>
+//#include "s52s57.h"
 
 #define TESS_VERT   0                           // constants describing preferred tess orientation
 #define TESS_HORZ   1
@@ -63,13 +63,14 @@
 //
 //--------------------------------------------------------------------------------------------------
 
+
 class Extended_Geometry
 {
 public:
       Extended_Geometry();
       ~Extended_Geometry();
 
-      OGRGeometry       *pogrGeom;
+      void             *pogrGeom;
       int               n_vector_indices;
       int               *pvector_index;
       int               n_contours;                          // parameters passed to trapezoid tesselator
@@ -160,7 +161,6 @@ class PolyTrapGroup
 
 
 
-
 //--------------------------------------------------------------------------------------------------
 //
 //      Triangle Tesselator Class
@@ -174,10 +174,10 @@ class PolyTessGeo
 
         PolyTessGeo(unsigned char *polybuf, int nrecl, int index);      // Build this from SENC file record
 
-        PolyTessGeo(OGRPolygon *poly, bool bSENC_SM,
-            double ref_lat, double ref_lon,  bool bUseInternalTess);  // Build this from OGRPolygon
+//        PolyTessGeo(OGRPolygon *poly, bool bSENC_SM,
+//            double ref_lat, double ref_lon,  bool bUseInternalTess);  // Build this from OGRPolygon
 
-        PolyTessGeo(Extended_Geometry *pxGeom);
+//        PolyTessGeo(Extended_Geometry *pxGeom);
 
         bool IsOk(){ return m_bOK;}
 
@@ -197,8 +197,8 @@ class PolyTessGeo
 
     private:
         int BuildTessGL(void);
-        int PolyTessGeoGL(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon);
-        int PolyTessGeoTri(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon);
+//        int PolyTessGeoGL(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon);
+//        int PolyTessGeoTri(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon);
         int my_bufgets( char *buf, int buf_len_max );
 
 
@@ -227,6 +227,7 @@ class PolyTessGeo
 };
 
 
+#if 0
 //--------------------------------------------------------------------------------------------------
 //
 //      Trapezoid Tesselator Class
@@ -270,7 +271,7 @@ class PolyTessGeoTrap
 
 };
 
-
+#endif
 
 
 #endif
