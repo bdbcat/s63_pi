@@ -1,0 +1,35 @@
+1. Build instructions
+
+    A.  Windows
+
+    i.       Create a build directory, e.g.  "C:\s63_pi_build"
+    ii.      Copy the entire git source tree into this directory.
+    iii.     Open a Visual Studio 10 command prompt, and navigate to this directory.
+    iv.      Find a compatible copy of opencpn.lib (typically from the most recent OpenCPN Release build),
+             and copy it into this directory.
+    v.       Assuming your cmake 2.8 executable is installed normally, execute the following:
+                "C:\Program Files\CMake 2.8\bin\cmake" -G "NMake Makefiles"
+    vi.      Build the PlugIn install package by executing the following:
+                NMake package
+
+    The Windows install package will be built, and called s63_pi_x.x.x_setup.exe
+
+    You may build a PlugIn Package with a specific s63 UserPermit as follows.
+    Edit the file "userpermit.h" in the build root.
+    Then execute the following:
+                NMake clean
+                NMake package
+
+    B. Linux
+
+    i.       git clone the project.
+    ii.      $cmake
+    iii.     $make package
+
+    The debian install package will be built, and called s63_pi_0.1.0-_i386.deb
+
+    You may build a PlugIn Package with a specific s63 UserPermit as follows.
+    Edit the file "userpermit.h" in the build root.
+    Then execute the following:
+                make clean
+                make package
