@@ -38,16 +38,24 @@
 #include "s63_pi.h"
 #include "s63chart.h"
 #include "mygeom63.h"
+#include "cpl_csv.h"
 
 #include "pi_s52s57.h"
 
+
+#ifdef __WXOSX__
+#include "GL/gl.h"
+#include "GL/glu.h"
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
 
 extern wxString         g_sencutil_bin;
 wxString                s_last_sync_error;
 extern unsigned int     g_backchannel_port;
 extern unsigned int     g_frontchannel_port;
-extern wxString         g_user_permit;
 extern wxString         g_s57data_dir;
 
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
@@ -62,6 +70,10 @@ WX_DEFINE_ARRAY( float*, MyFloatPtrArray );
 //    Arrays to temporarily hold SENC geometry
 WX_DEFINE_OBJARRAY(PI_ArrayOfVE_Elements);
 WX_DEFINE_OBJARRAY(PI_ArrayOfVC_Elements);
+
+#include <wx/listimpl.cpp>
+WX_DEFINE_LIST(ListOfPI_S57Obj);                // Implement a list of PI_S57 Objects
+
 
 // ----------------------------------------------------------------------------
 // Random Prototypes
@@ -85,7 +97,7 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     long rv = wxExecute(cmd, ret_array, ret_array );
     
     if(-1 == rv) {
-        ret_array.Add(_T("ERROR: Could not execute OCPNsenc utility\n"));
+        ret_array.Add(_T("ERROR: s63_pi could not execute OCPNsenc utility\n"));
         ret_array.Add(cmd.Mid(0, 60) + _T("...") + _T("\n"));
     }
         
@@ -197,6 +209,8 @@ ChartS63::ChartS63()
     pDIB = NULL;
     m_pCloneBM = NULL;
     
+    m_bLinePrioritySet = false;
+    
     
 //      ChartBaseBSBCTOR();
 #if 0
@@ -271,6 +285,11 @@ int ChartS63::Init( const wxString& name, int init_flags )
     }
     s_PI_bInS57++;
     
+    if(!GetUserpermit().Len()) {
+        s_PI_bInS57--;
+        return PI_INIT_FAIL_REMOVE;
+    }
+    
     PI_InitReturn ret_val = PI_INIT_FAIL_NOERROR;
     
     m_FullPath = name;
@@ -340,7 +359,7 @@ int ChartS63::Init( const wxString& name, int init_flags )
             cmd += m_cell_permit;
             
             cmd += _T(" -u ");
-            cmd += g_user_permit;
+            cmd += GetUserpermit();
             
             cmd += _T(" -b ");
             wxString port;
@@ -802,8 +821,23 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 {
     SetVPParms( VPoint );
 
-//        m_s57chart->SetLinePriorities();
-
+    PI_PLIBPrepareForNewRender();
+    
+    if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
+        m_bLinePrioritySet = false;                     // need to reset line priorities
+        UpdateLUPsOnStateChange( );                     // and update the LUPs
+        ResetPointBBoxes( m_last_vp, VPoint );
+        m_plib_state_hash = PI_GetPLIBStateHash();
+        
+    }
+    
+    
+    if( VPoint.view_scale_ppm != m_last_vp.view_scale_ppm ) {
+        ResetPointBBoxes( m_last_vp, VPoint );
+    }
+    
+    SetLinePriorities();
+    
     bool force_new_view = false;
 
     if( Region != m_last_Region )
@@ -822,7 +856,411 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 
 }
 
+int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
+                          const wxRegion &Region, bool b_use_stencil )
+{
 
+#ifdef ocpnUSE_GL
+    
+
+    SetVPParms( VPoint );
+
+//    bool force_new_view = false;
+
+//    if( Region != m_last_Region ) force_new_view = true;
+
+    PI_PLIBPrepareForNewRender();
+    
+    if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
+        m_bLinePrioritySet = false;                     // need to reset line priorities
+        UpdateLUPsOnStateChange( );                     // and update the LUPs
+        ResetPointBBoxes( m_last_vp, VPoint );
+        m_plib_state_hash = PI_GetPLIBStateHash();
+
+    }
+
+
+    if( VPoint.view_scale_ppm != m_last_vp.view_scale_ppm ) {
+        ResetPointBBoxes( m_last_vp, VPoint );
+    }
+
+    SetLinePriorities();
+
+    //    How many rectangles in the Region?
+    int n_rect = 0;
+    wxRegionIterator clipit( Region );
+    while( clipit.HaveRects() ) {
+        clipit++;
+        n_rect++;
+    }
+
+    //    Adjust for rotation
+    glPushMatrix();
+
+    if( fabs( VPoint.rotation ) > 0.01 ) {
+
+        double w = VPoint.pix_width;
+        double h = VPoint.pix_height;
+
+        //    Rotations occur around 0,0, so calculate a post-rotate translation factor
+        double angle = VPoint.rotation;
+        angle -= VPoint.skew;
+
+        double ddx = ( w * cos( -angle ) - h * sin( -angle ) - w ) / 2;
+        double ddy = ( h * cos( -angle ) + w * sin( -angle ) - h ) / 2;
+
+        glRotatef( angle * 180. / PI, 0, 0, 1 );
+
+        glTranslatef( ddx, ddy, 0 );                 // post rotate translation
+    }
+
+    //    Arbitrary optimization....
+    //    It is cheaper to draw the entire screen if the rectangle count is large,
+    //    as is the case for CM93 charts with non-rectilinear borders
+    //    However, most (all?) pan operations on "normal" charts will be small rect count
+    if( n_rect < 4 ) {
+        wxRegionIterator upd( Region ); // get the Region rect list
+        while( upd.HaveRects() ) {
+            wxRect rect = upd.GetRect();
+
+            //  Build synthetic ViewPort on this rectangle
+            //  Especially, we want the BBox to be accurate in order to
+            //  render only those objects actually visible in this region
+
+            PlugIn_ViewPort temp_vp = VPoint;
+            double temp_lon_left, temp_lat_bot, temp_lon_right, temp_lat_top;
+
+            wxPoint p;
+            p.x = rect.x;
+            p.y = rect.y;
+            GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_top, &temp_lon_left);
+            
+            p.x += rect.width;
+            p.y += rect.height;
+            GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_bot, &temp_lon_right);
+            
+            if( temp_lon_right < temp_lon_left )        // presumably crossing Greenwich
+                temp_lon_right += 360.;
+
+//            double   lat_min, lat_max, lon_min, lon_max;
+            
+            temp_vp.lat_min = temp_lat_bot;
+            temp_vp.lat_max = temp_lat_top;
+            temp_vp.lon_min = temp_lon_left;
+            temp_vp.lon_max = temp_lon_right;
+
+            //      Allow some slop in the viewport
+            //            double margin = wxMin(temp_vp.GetBBox().GetWidth(), temp_vp.GetBBox().GetHeight()) * 0.05;
+            //            temp_vp.GetBBox().EnLarge(margin);
+
+
+            SetClipRegionGL( glc, temp_vp, rect, true /*!b_overlay*/, b_use_stencil );
+            DoRenderRectOnGL( glc, temp_vp, rect, b_use_stencil);
+
+            upd++;
+        }
+    } else {
+        wxRect rect = Region.GetBox();
+
+        //  Build synthetic ViewPort on this rectangle
+        //  Especially, we want the BBox to be accurate in order to
+        //  render only those objects actually visible in this region
+
+        PlugIn_ViewPort temp_vp = VPoint;
+        double temp_lon_left, temp_lat_bot, temp_lon_right, temp_lat_top;
+
+        wxPoint p;
+        p.x = rect.x;
+        p.y = rect.y;
+        GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_top, &temp_lon_left);
+        
+        p.x += rect.width;
+        p.y += rect.height;
+        GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_bot, &temp_lon_right);
+        
+        if( temp_lon_right < temp_lon_left )        // presumably crossing Greenwich
+                temp_lon_right += 360.;
+        
+ //       double   lat_min, lat_max, lon_min, lon_max;
+        
+        temp_vp.lat_min = temp_lat_bot;
+        temp_vp.lat_max = temp_lat_top;
+        temp_vp.lon_min = temp_lon_left;
+        temp_vp.lon_max = temp_lon_right;
+        
+        //      Allow some slop in the viewport
+        //            double margin = wxMin(temp_vp.GetBBox().GetWidth(), temp_vp.GetBBox().GetHeight()) * 0.05;
+        //            temp_vp.GetBBox().EnLarge(margin);
+
+        SetClipRegionGL( glc, VPoint, Region, true /*!b_overlay*/, b_use_stencil );
+        DoRenderRectOnGL( glc, temp_vp, rect, b_use_stencil );
+
+    }
+//      Update last_vp to reflect current state
+    m_last_vp = VPoint;
+    m_last_Region = Region;
+
+    glPopMatrix();
+
+#endif
+    return true;
+}
+
+void ChartS63::SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
+        const wxRegion &Region, bool b_render_nodta, bool b_useStencil )
+{
+#ifdef ocpnUSE_GL
+    
+    if( b_useStencil ) {
+        //    Create a stencil buffer for clipping to the region
+        glEnable( GL_STENCIL_TEST );
+        glStencilMask( 0x1 );                 // write only into bit 0 of the stencil buffer
+        glClear( GL_STENCIL_BUFFER_BIT );
+
+        //    We are going to write "1" into the stencil buffer wherever the region is valid
+        glStencilFunc( GL_ALWAYS, 1, 1 );
+        glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+    } else              //  Use depth buffer for clipping
+    {
+        glEnable( GL_DEPTH_TEST ); // to enable writing to the depth buffer
+        glDepthFunc( GL_ALWAYS );  // to ensure everything you draw passes
+        glDepthMask( GL_TRUE );    // to allow writes to the depth buffer
+
+        glClear( GL_DEPTH_BUFFER_BIT ); // for a fresh start
+    }
+
+    //    As a convenience, while we are creating the stencil or depth mask,
+    //    also render the default "NODTA" background if selected
+    if( b_render_nodta ) {
+        wxColour color = GetBaseGlobalColor( _T ( "NODTA" ) );
+        float r, g, b;
+        if( color.IsOk() ) {
+            r = color.Red() / 255.;
+            g = color.Green() / 255.;
+            b = color.Blue() / 255.;
+        } else
+            r = g = b = 0;
+
+        glColor3f( r, g, b );
+        glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );  // enable color buffer
+
+    } else {
+        glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );   // disable color buffer
+    }
+
+    wxRegionIterator upd( Region ); // get the Region rect list
+    while( upd.HaveRects() ) {
+        wxRect rect = upd.GetRect();
+
+        if( b_useStencil ) {
+            glBegin( GL_QUADS );
+
+            glVertex2f( rect.x, rect.y );
+            glVertex2f( rect.x + rect.width, rect.y );
+            glVertex2f( rect.x + rect.width, rect.y + rect.height );
+            glVertex2f( rect.x, rect.y + rect.height );
+            glEnd();
+
+        } else              //  Use depth buffer for clipping
+        {
+//            if( g_bDebugS57 ) printf( "   Depth buffer Region rect:  %d %d %d %d\n", rect.x, rect.y,
+//                    rect.width, rect.height );
+
+            glBegin( GL_QUADS );
+
+            //    Depth buffer runs from 0 at z = 1 to 1 at z = -1
+            //    Draw the clip geometry at z = 0.5, giving a depth buffer value of 0.25
+            //    Subsequent drawing at z=0 (depth = 0.5) will pass if using glDepthFunc(GL_GREATER);
+            glVertex3f( rect.x, rect.y, 0.5 );
+            glVertex3f( rect.x + rect.width, rect.y, 0.5 );
+            glVertex3f( rect.x + rect.width, rect.y + rect.height, 0.5 );
+            glVertex3f( rect.x, rect.y + rect.height, 0.5 );
+            glEnd();
+
+        }
+
+        upd++;
+
+    }
+
+    if( b_useStencil ) {
+        //    Now set the stencil ops to subsequently render only where the stencil bit is "1"
+        glStencilFunc( GL_EQUAL, 1, 1 );
+        glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+
+    } else {
+        glDepthFunc( GL_GREATER );                          // Set the test value
+        glDepthMask( GL_FALSE );                            // disable depth buffer
+    }
+
+    glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );  // re-enable color buffer
+#endif
+}
+
+void ChartS63::SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint, const wxRect &Rect,
+                                bool b_render_nodta, bool b_useStencil )
+{
+#ifdef ocpnUSE_GL
+    
+    if( b_useStencil ) {
+        //    Create a stencil buffer for clipping to the region
+        glEnable( GL_STENCIL_TEST );
+        glStencilMask( 0x1 );                 // write only into bit 0 of the stencil buffer
+        glClear( GL_STENCIL_BUFFER_BIT );
+
+        //    We are going to write "1" into the stencil buffer wherever the region is valid
+        glStencilFunc( GL_ALWAYS, 1, 1 );
+        glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+
+    } else              //  Use depth buffer for clipping
+    {
+        glEnable( GL_DEPTH_TEST ); // to enable writing to the depth buffer
+        glDepthFunc( GL_ALWAYS );  // to ensure everything you draw passes
+        glDepthMask( GL_TRUE );    // to allow writes to the depth buffer
+        glClear( GL_DEPTH_BUFFER_BIT ); // for a fresh start
+    }
+
+    //    As a convenience, while we are creating the stencil or depth mask,
+    //    also render the default "NODTA" background if selected
+    if( b_render_nodta ) {
+        wxColour color = GetBaseGlobalColor( _T ( "NODTA" ) );
+        float r, g, b;
+        if( color.IsOk() ) {
+            r = color.Red() / 255.;
+            g = color.Green() / 255.;
+            b = color.Blue() / 255.;
+        } else
+            r = g = b = 0;
+        glColor3f( r, g, b );
+        glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );  // enable color buffer
+
+    } else {
+        glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );   // disable color buffer
+    }
+
+    if( b_useStencil ) {
+        glBegin( GL_QUADS );
+
+        glVertex2f( Rect.x, Rect.y );
+        glVertex2f( Rect.x + Rect.width, Rect.y );
+        glVertex2f( Rect.x + Rect.width, Rect.y + Rect.height );
+        glVertex2f( Rect.x, Rect.y + Rect.height );
+        glEnd();
+
+    } else              //  Use depth buffer for clipping
+    {
+//        if( g_bDebugS57 ) printf( "   Depth buffer rect:  %d %d %d %d\n", Rect.x, Rect.y,
+//                Rect.width, Rect.height );
+
+        glBegin( GL_QUADS );
+
+        //    Depth buffer runs from 0 at z = 1 to 1 at z = -1
+        //    Draw the clip geometry at z = 0.5, giving a depth buffer value of 0.25
+        //    Subsequent drawing at z=0 (depth = 0.5) will pass if using glDepthFunc(GL_GREATER);
+        glVertex3f( Rect.x, Rect.y, 0.5 );
+        glVertex3f( Rect.x + Rect.width, Rect.y, 0.5 );
+        glVertex3f( Rect.x + Rect.width, Rect.y + Rect.height, 0.5 );
+        glVertex3f( Rect.x, Rect.y + Rect.height, 0.5 );
+        glEnd();
+
+    }
+
+    if( b_useStencil ) {
+        //    Now set the stencil ops to subsequently render only where the stencil bit is "1"
+        glStencilFunc( GL_EQUAL, 1, 1 );
+        glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+
+    } else {
+        glDepthFunc( GL_GREATER );                          // Set the test value
+        glDepthMask( GL_FALSE );                            // disable depth buffer
+    }
+
+    glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );  // re-enable color buffer
+#endif
+}
+
+bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint, wxRect &rect, bool b_useStencil )
+{
+#ifdef ocpnUSE_GL
+    
+    int i;
+    PI_S57Obj *top;
+    PI_S57Obj *crnt;
+
+    PlugIn_ViewPort tvp = VPoint;                    // undo const  TODO fix this in PLIB
+
+    //    If the ViewPort is unrotated, we can use a simple (fast) scissor test instead
+    //    of a stencil or depth buffer clipping algorithm.....
+    /*
+     if(fabs(VPoint.rotation) < 0.01)
+     {
+
+     glScissor(rect.x, VPoint.pix_height-rect.height-rect.y, rect.width, rect.height);
+     glEnable(GL_SCISSOR_TEST);
+     glDisable (GL_STENCIL_TEST);
+     glDisable (GL_DEPTH_TEST);
+
+     }
+     */
+    if( b_useStencil )
+        glEnable( GL_STENCIL_TEST );
+    else
+        glEnable( GL_DEPTH_TEST );
+
+    //      Render the areas quickly
+    for( i = 0; i < PRIO_NUM; ++i ) {
+        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES ) 
+            top = razRules[i][4]; // Area Symbolized Boundaries
+        else
+            top = razRules[i][3];           // Area Plain Boundaries
+
+        while( top != NULL ) {
+            crnt = top;
+            top = top->next;               // next object
+            PI_PLIBRenderAreaToGL( glc, crnt, &tvp, rect );
+            
+        }
+    }
+
+    //    Render the lines and points
+    for( i = 0; i < PRIO_NUM; ++i ) {
+        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
+            top = razRules[i][4]; // Area Symbolized Boundaries
+        else
+            top = razRules[i][3];           // Area Plain Boundaries
+        while( top != NULL ) {
+            crnt = top;
+            top = top->next;               // next object
+            PI_PLIBRenderObjectToGL( glc, crnt, &tvp, rect );
+        }
+
+        top = razRules[i][2];           //LINES
+        while( top != NULL ) {
+            PI_S57Obj *crnt = top;
+            top = top->next;
+            PI_PLIBRenderObjectToGL( glc, crnt, &tvp, rect );
+        }
+
+        if( PI_GetPLIBSymbolStyle() == SIMPLIFIED )
+            top = razRules[i][0];       //SIMPLIFIED Points
+        else
+            top = razRules[i][1];           //Paper Chart Points Points
+
+        while( top != NULL ) {
+            crnt = top;
+            top = top->next;
+            PI_PLIBRenderObjectToGL( glc, crnt, &tvp, rect );
+        }
+
+    }
+
+    glDisable( GL_STENCIL_TEST );
+    glDisable( GL_DEPTH_TEST );
+    glDisable( GL_SCISSOR_TEST );
+#endif          //#ifdef ocpnUSE_GL
+    
+    return true;
+}
 
 
 
@@ -1727,7 +2165,7 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += m_cell_permit;
     
     cmd += _T(" -u ");
-    cmd += g_user_permit;
+    cmd += GetUserpermit();
     
     cmd += _T(" -b ");
     wxString port;
@@ -1769,6 +2207,7 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
 {
     int disPrioIdx = 0;
     int LUPtypeIdx = 0;
+    int LUPtypeIdxAlt = 0;
     
     PI_DisPrio DPRI = PI_GetObjectDisplayPriority( obj );
     // find display priority index       --talky version
@@ -1812,20 +2251,27 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
     switch( TNAM ){
         case PI_SIMPLIFIED:
             LUPtypeIdx = 0;
+            LUPtypeIdxAlt = 1;
             break; // points
         case PI_PAPER_CHART:
             LUPtypeIdx = 1;
+            LUPtypeIdxAlt = 0;
             break; // points
         case PI_LINES:
             LUPtypeIdx = 2;
+            LUPtypeIdxAlt = 2;
             break; // lines
         case PI_PLAIN_BOUNDARIES:
             LUPtypeIdx = 3;
+            LUPtypeIdxAlt = 4;
             break; // areas
         case PI_SYMBOLIZED_BOUNDARIES:
             LUPtypeIdx = 4;
+            LUPtypeIdxAlt = 3;
             break; // areas
         default:
+            LUPtypeIdx = 0;
+            LUPtypeIdxAlt = 0;
             break;
     }
     
@@ -1834,14 +2280,28 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
     obj->next = razRules[disPrioIdx][LUPtypeIdx];
     obj->child = NULL;
     razRules[disPrioIdx][LUPtypeIdx] = obj;
+    razRules[disPrioIdx][LUPtypeIdxAlt] = obj;
     
     return 1;
 }
 
 
-
-
-
+void ChartS63::UpdateLUPsOnStateChange( void )
+{
+ 
+    PI_S57Obj *top;
+    //  Loop trrough all the objects, resetting the context for each
+    for( int i = 0; i < PI_PRIO_NUM; ++i ) {
+        for( int j = 0; j < PI_LUPNAME_NUM; j++ ) {
+            top = razRules[i][j];
+            while( top != NULL ) {
+                PI_S57Obj *obj = top;
+                PI_PLIBSetContext( obj );
+                top = top->next;
+            }
+        }
+    }
+}
 
 
 
@@ -2272,6 +2732,9 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
         }
     }
     
+    //  We may say that the locally stored PLIB State Hash is valid now, to avaoid re-evaluateing on first render
+    
+    m_plib_state_hash = PI_GetPLIBStateHash();
     
     return ret_val;
 }
@@ -2397,7 +2860,7 @@ bool ChartS63::AdjustVP( PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_proposed 
 }
 
 /*
- * bool s57chart::IsRenderDelta(ViewPort &vp_last, ViewPort &vp_proposed)
+ * bool ChartS63::IsRenderDelta(ViewPort &vp_last, ViewPort &vp_proposed)
  * {
  * double last_center_easting, last_center_northing, this_center_easting, this_center_northing;
  * toSM ( vp_proposed.clat, vp_proposed.clon, ref_lat, ref_lon, &this_center_easting, &this_center_northing );
@@ -2436,52 +2899,45 @@ void ChartS63::GetValidCanvasRegion( const PlugIn_ViewPort& VPoint, wxRegion *pV
 
 void ChartS63::SetLinePriorities( void )
 {
-    #if 0
-    if( !ps52plib ) return;
-    
+
     //      If necessary.....
     //      Establish line feature rendering priorities
     
     if( !m_bLinePrioritySet ) {
-        ObjRazRules *top;
-        ObjRazRules *crnt;
+        PI_S57Obj *obj;
         
         for( int i = 0; i < PRIO_NUM; ++i ) {
             
-            top = razRules[i][2];           //LINES
-            while( top != NULL ) {
-                ObjRazRules *crnt = top;
-                top = top->next;
-                ps52plib->SetLineFeaturePriority( crnt, i );
-}
+            obj = razRules[i][2];           //LINES
+            while( obj != NULL ) {
+                PI_PLIBSetLineFeaturePriority( obj, i );
+                obj = obj->next;
+            }
 
-//    In the interest of speed, choose only the one necessary area boundary style index
-int j;
-if( ps52plib->m_nBoundaryStyle == SYMBOLIZED_BOUNDARIES ) j = 4;
-else
-    j = 3;
+    //    In the interest of speed, choose only the one necessary area boundary style index
+            int j;
+            if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
+                j = 4;
+            else
+            j = 3;
+    
+            obj = razRules[i][j];           
+            while( obj != NULL ) {
+                PI_PLIBSetLineFeaturePriority( obj, i );
+                obj = obj->next;
+            }
+        }
+    }
 
-top = razRules[i][j];
-while( top != NULL ) {
-    crnt = top;
-    top = top->next;               // next object
-    ps52plib->SetLineFeaturePriority( crnt, i );
-}
-
-}
-}
-
-//      Mark the priority as set.
-//      Generally only reset by Options Dialog post processing
-m_bLinePrioritySet = true;
-#endif
+    //      Mark the priority as set.
+    //      Generally only reset by Options Dialog post processing
+    m_bLinePrioritySet = true;
 }
 
 void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_ViewPort &vp_this )
 {
-    #if 0
-    ObjRazRules *top;
-    ObjRazRules *nxx;
+    PI_S57Obj *top;
+    PI_S57Obj *nxx;
     
     double box_margin = 0.25;
     
@@ -2490,38 +2946,35 @@ void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_Vi
     
     for( int i = 0; i < PRIO_NUM; ++i ) {
         top = razRules[i][0];
-        
         while( top != NULL ) {
-            if( !top->obj->geoPtMulti )                      // do not reset multipoints
+            if( !top->geoPtMulti )                      // do not reset multipoints
             {
-                top->obj->bBBObj_valid = false;
-                top->obj->BBObj.SetMin( top->obj->m_lon - box_margin,
-                top->obj->m_lat - box_margin );
-                top->obj->BBObj.SetMax( top->obj->m_lon + box_margin,
-                top->obj->m_lat + box_margin );
-}
+                top->lon_min = top->m_lon - box_margin;
+                top->lon_max = top->m_lon + box_margin;
+                top->lat_min = top->m_lat - box_margin;
+                top->lat_max = top->m_lat + box_margin;
+                top->bBBObj_valid = true;
+            }
 
-nxx = top->next;
-top = nxx;
-}
+        nxx = top->next;
+        top = nxx;
+        }
 
-top = razRules[i][1];
-
-while( top != NULL ) {
-    if( !top->obj->geoPtMulti )                      // do not reset multipoints
+        top = razRules[i][1];
+        while( top != NULL ) {
+            if( !top->geoPtMulti )                      // do not reset multipoints
             {
-                top->obj->bBBObj_valid = false;
-                top->obj->BBObj.SetMin( top->obj->m_lon - box_margin,
-                top->obj->m_lat - box_margin );
-                top->obj->BBObj.SetMax( top->obj->m_lon + box_margin,
-                top->obj->m_lat + box_margin );
-}
-
-nxx = top->next;
-top = nxx;
-}
-}
-#endif
+                top->lon_min = top->m_lon - box_margin;
+                top->lon_max = top->m_lon + box_margin;
+                top->lat_min = top->m_lat - box_margin;
+                top->lat_max = top->m_lat + box_margin;
+                top->bBBObj_valid = true;
+            }
+            
+            nxx = top->next;
+            top = nxx;
+        }
+    }    
 }
 
 
@@ -2539,17 +2992,16 @@ bool ChartS63::DoRenderRegionViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VP
     
     if( Region != m_last_Region ) force_new_view = true;
     
-    //    ps52plib->PrepareForRender();
+    PI_PLIBPrepareForNewRender();
     
-    #if 0
-    if( m_plib_state_hash != ps52plib->GetStateHash() ) {
+    if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
         m_bLinePrioritySet = false;                     // need to reset line priorities
-        UpdateLUPs( this );                               // and update the LUPs
-        ClearRenderedTextCache();                       // and reset the text renderer,
-        //for the case where depth(height) units change
+        UpdateLUPsOnStateChange( );                     // and update the LUPs
         ResetPointBBoxes( m_last_vp, VPoint );
-}
-#endif
+        m_plib_state_hash = PI_GetPLIBStateHash();
+        
+    }
+    
 
     if( VPoint.view_scale_ppm != m_last_vp.view_scale_ppm ) {
         ResetPointBBoxes( m_last_vp, VPoint );
@@ -2675,17 +3127,18 @@ return m_pCloneBM;
 
 bool ChartS63::RenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint )
 {
-    //    CALLGRIND_START_INSTRUMENTATION
     
     SetVPParms( VPoint );
+
+    PI_PLIBPrepareForNewRender();
     
-    //    ps52plib->PrepareForRender();
-    
-    //    if( m_plib_state_hash != ps52plib->GetStateHash() ) {
-            //        m_bLinePrioritySet = false;                     // need to reset line priorities
-    //        UpdateLUPs( this );                               // and update the LUPs
-    //        ClearRenderedTextCache();                       // and reset the text renderer
-    //    }
+    if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
+        m_bLinePrioritySet = false;                     // need to reset line priorities
+        UpdateLUPsOnStateChange( );                     // and update the LUPs
+        ResetPointBBoxes( m_last_vp, VPoint );
+        m_plib_state_hash = PI_GetPLIBStateHash();
+        
+    }
     
     SetLinePriorities();
     
@@ -2695,8 +3148,6 @@ bool ChartS63::RenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint )
     dc.SelectObject( *pDIB );  
     
     return bnew_view;
-    
-    //    CALLGRIND_STOP_INSTRUMENTATION
     
 }
 
@@ -2725,14 +3176,11 @@ bool ChartS63::DoRenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint, 
             bReallyNew = true;
         
         wxRect dest( 0, 0, VPoint.pix_width, VPoint.pix_height );
-        if( m_last_vprect != dest ) bReallyNew = true;
-                                            m_last_vprect = dest;
+        if( m_last_vprect != dest )
+            bReallyNew = true;
+         m_last_vprect = dest;
         
-        //    if( m_plib_state_hash != ps52plib->GetStateHash() ) {
-            //        bReallyNew = true;
-                                            //        m_plib_state_hash = ps52plib->GetStateHash();
-                                            //    }
-                                            
+                                           
                                             if( bReallyNew ) {
                                                 bNewVP = true;
                                                 delete pDIB;
@@ -2813,12 +3261,9 @@ bool ChartS63::DoRenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint, 
                                                 }
                                                 
                                                 wxMemoryDC dc_last;
-//                                                pDIB->SelectIntoDC( dc_last );
-                                                 dc_last.SelectObject( *pDIB );
+                                                dc_last.SelectObject( *pDIB );
                                                 wxMemoryDC dc_new;
-//                                                PixelCache *pDIBNew = new PixelCache( VPoint.pix_width, VPoint.pix_height, BPP );
                                                 wxBitmap *pDIBNew = new wxBitmap( VPoint.pix_width, VPoint.pix_height, BPP );
-//                                                pDIBNew->SelectIntoDC( dc_new );
                                                 dc_new.SelectObject( *pDIBNew );
                                                 
                                                 //        printf("reuse blit %d %d %d %d %d %d\n",desx, desy, wu, hu,  srcx, srcy);
@@ -3068,15 +3513,975 @@ bool ChartS63::DCRenderLPB( wxMemoryDC& dcinput, const PlugIn_ViewPort& vp, wxRe
                         if( pdcc ) delete pdcc;
     }
     
-    /*
-     *     printf("Render Lines                  %ldms\n", stlines.Time());
-     *     printf("Render Simple Points          %ldms\n", stsim_pt.Time());
-     *     printf("Render Paper Points           %ldms\n", stpap_pt.Time());
-     *     printf("Render Symbolized Boundaries  %ldms\n", stasb.Time());
-     *     printf("Render Plain Boundaries       %ldms\n\n", stapb.Time());
-     */
     return true;
 }
+
+ListOfPI_S57Obj *ChartS63::GetObjRuleListAtLatLon(float lat, float lon, float select_radius,
+                                        PlugIn_ViewPort *VPoint)
+{
+    
+    ListOfPI_S57Obj *ret_ptr = new ListOfPI_S57Obj;
+    
+    //    Iterate thru the razRules array, by object/rule type
+    
+    PI_S57Obj *top;
+    
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        // Points by type, array indices [0..1]
+        
+        int point_type = ( PI_GetPLIBSymbolStyle() == SIMPLIFIED ) ? 0 : 1;
+        top = razRules[i][point_type];
+        
+        while( top != NULL ) {
+            if( top->npt == 1 )       // Do not select Multipoint objects (SOUNDG) yet.
+                    {
+                        if( PI_PLIBObjectRenderCheck( top, VPoint ) ) {
+                            if( DoesLatLonSelectObject( lat, lon, select_radius, top ) )
+                                ret_ptr->Append( top );
+                        }
+                    }
+                    
+                    //    Check the child branch, if any.
+                    //    This is where Multipoint soundings are captured individually
+                    if( top->child ) {
+                        PI_S57Obj *child_item = top->child;
+                        while( child_item != NULL ) {
+                            if( PI_PLIBObjectRenderCheck( child_item, VPoint ) ) {
+                                if( DoesLatLonSelectObject( lat, lon, select_radius, child_item ) )
+                                    ret_ptr->Append( child_item );
+                            }
+                            
+                            child_item = child_item->next;
+                        }
+                    }
+                    
+                    top = top->next;
+        }
+        
+        // Areas by boundary type, array indices [3..4]
+        
+        int area_boundary_type = ( PI_GetPLIBBoundaryStyle() == PLAIN_BOUNDARIES ) ? 3 : 4;
+        top = razRules[i][area_boundary_type];           // Area nnn Boundaries
+        while( top != NULL ) {
+            if( PI_PLIBObjectRenderCheck( top, VPoint ) ) {
+                if( DoesLatLonSelectObject( lat, lon, select_radius, top ) )
+                    ret_ptr->Append( top );
+            }
+            
+            top = top->next;
+        }         // while
+        
+        // Finally, lines
+        top = razRules[i][2];           // Lines
+        
+        while( top != NULL ) {
+            if( PI_PLIBObjectRenderCheck( top, VPoint ) ) {
+                if( DoesLatLonSelectObject( lat, lon, select_radius, top ) )
+                    ret_ptr->Append( top );
+            }
+            
+            top = top->next;
+        }
+    }
+    
+    return ret_ptr;
+}
+
+bool ChartS63::DoesLatLonSelectObject( float lat, float lon, float select_radius, PI_S57Obj *obj )
+{
+    switch( obj->Primitive_type ){
+        //  For single Point objects, the integral object bounding box contains the lat/lon of the object,
+        //  possibly expanded by text or symbol rendering
+        case GEO_POINT: {
+            if( 1 == obj->npt ) {
+                
+                //  Special case for LIGHTS
+                //  Sector lights have had their BBObj expanded to include the entire drawn sector
+                //  This is too big for pick area, can be confusing....
+                //  So make a temporary box at the light's lat/lon, with select_radius size
+                if( !strncmp( obj->FeatureName, "LIGHTS", 6 ) ) {
+#if 0                    
+                    double olon, olat;
+                    fromSM( ( obj->x * obj->x_rate ) + obj->x_origin,
+                            ( obj->y * obj->y_rate ) + obj->y_origin, ref_lat, ref_lon, &olat,
+                            &olon );
+                    
+                    // Double the select radius to adjust for the fact that LIGHTS has
+                    // a 0x0 BBox to start with, which makes it smaller than all other
+                    // rendered objects.
+                    wxBoundingBox sbox( olon - 2*select_radius, olat - 2*select_radius,
+                                        olon + 2*select_radius, olat + 2*select_radius );
+                    
+                    if( sbox.PointInBox( lon, lat, 0 ) )
+                        return true;
+#endif                    
+                }
+                
+                else{
+                    if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
+                        lat >= (obj->lat_min - select_radius) && lat <= (obj->lat_max + select_radius) )
+                        return TRUE;
+                 }
+            }
+            
+            //  For MultiPoint objects, make a bounding box from each point's lat/lon
+            //  and check it
+            else {
+                if( !obj->bBBObj_valid ) return false;
+                
+                //  Coarse test first
+                if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
+                    lat >= (obj->lat_min - select_radius) && lat <= (obj->lat_max + select_radius) )
+                {
+                
+                //  Now decomposed soundings, one by one
+                    double *pdl = obj->geoPtMulti;
+                    for( int ip = 0; ip < obj->npt; ip++ ) {
+                        double lon_point = *pdl++;
+                        double lat_point = *pdl++;
+                        if (  lon >= (lon_point - select_radius) && lon <= (lon_point + select_radius) &&
+                            lat >= (lat_point - select_radius) && lat <= (lat_point + select_radius) )
+                            return true;
+                        }
+                    }
+                }
+            
+            break;
+        }
+        
+        case GEO_AREA: {
+            //  Coarse test first
+            if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
+                lat >= (obj->lat_min - select_radius) && lat <= (obj->lat_max + select_radius) )
+            {
+                return IsPointInObjArea( lat, lon, select_radius, obj );
+            }
+            
+        }
+#if 0        
+        case GEO_LINE: {
+            if( obj->geoPt ) {
+                //  Coarse test first
+                if( !obj->BBObj.PointInBox( lon, lat, select_radius ) ) return false;
+                
+                //  Line geometry is carried in SM or CM93 coordinates, so...
+                //  make the hit test using SM coordinates, converting from object points to SM using per-object conversion factors.
+                
+                double easting, northing;
+                toSM( lat, lon, ref_lat, ref_lon, &easting, &northing );
+                
+                pt *ppt = obj->geoPt;
+                int npt = obj->npt;
+                
+                double xr = obj->x_rate;
+                double xo = obj->x_origin;
+                double yr = obj->y_rate;
+                double yo = obj->y_origin;
+                
+                double north0 = ( ppt->y * yr ) + yo;
+                double east0 = ( ppt->x * xr ) + xo;
+                ppt++;
+                
+                for( int ip = 1; ip < npt; ip++ ) {
+                    double north = ( ppt->y * yr ) + yo;
+                    double east = ( ppt->x * xr ) + xo;
+                    
+                    //    A slightly less coarse segment bounding box check
+                    if( northing >= ( fmin(north, north0) - select_radius ) ) if( northing
+                        <= ( fmax(north, north0) + select_radius ) ) if( easting
+                        >= ( fmin(east, east0) - select_radius ) ) if( easting
+                        <= ( fmax(east, east0) + select_radius ) ) {
+                            //                                                    index = ip;
+                            return true;
+                        }
+                        
+                        north0 = north;
+                    east0 = east;
+                    ppt++;
+                }
+            }
+            
+            break;
+        }
+#endif        
+        case GEO_META:
+        case GEO_PRIM:
+        default:      
+            break;
+    }
+    
+    return false;
+}
+
+bool ChartS63::IsPointInObjArea( float lat, float lon, float select_radius, PI_S57Obj *obj )
+{
+    bool ret = false;
+    
+    if( obj->pPolyTessGeo ) {
+        
+        PolyTriGroup *ppg = ((PolyTessGeo *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
+        
+        TriPrim *pTP = ppg->tri_prim_head;
+        
+        MyPoint pvert_list[3];
+        
+        //  Polygon geometry is carried in SM coordinates, so...
+        //  make the hit test thus.
+        double easting, northing;
+        toSM_Plugin( lat, lon, m_ref_lat, m_ref_lon, &easting, &northing );
+        
+       
+        while( pTP ) {
+            //  Coarse test
+            if (  lon >= (pTP->minx) && lon <= (pTP->maxx) &&
+                lat >= (pTP->miny) && lat <= (pTP->maxy) )
+            {
+                double *p_vertex = pTP->p_vertex;
+                
+                switch( pTP->type ){
+                    case PTG_TRIANGLE_FAN: {
+                        for( int it = 0; it < pTP->nVert - 2; it++ ) {
+                            pvert_list[0].x = p_vertex[0];
+                            pvert_list[0].y = p_vertex[1];
+                            
+                            pvert_list[1].x = p_vertex[( it * 2 ) + 2];
+                            pvert_list[1].y = p_vertex[( it * 2 ) + 3];
+                            
+                            pvert_list[2].x = p_vertex[( it * 2 ) + 4];
+                            pvert_list[2].y = p_vertex[( it * 2 ) + 5];
+                            
+                            if( G_PtInPolygon( (MyPoint *) pvert_list, 3, easting, northing ) ) {
+                                ret = true;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case PTG_TRIANGLE_STRIP: {
+                        for( int it = 0; it < pTP->nVert - 2; it++ ) {
+                            pvert_list[0].x = p_vertex[( it * 2 )];
+                            pvert_list[0].y = p_vertex[( it * 2 ) + 1];
+                            
+                            pvert_list[1].x = p_vertex[( it * 2 ) + 2];
+                            pvert_list[1].y = p_vertex[( it * 2 ) + 3];
+                            
+                            pvert_list[2].x = p_vertex[( it * 2 ) + 4];
+                            pvert_list[2].y = p_vertex[( it * 2 ) + 5];
+                            
+                            if( G_PtInPolygon( (MyPoint *) pvert_list, 3, easting, northing ) ) {
+                                ret = true;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case PTG_TRIANGLES: {
+                        for( int it = 0; it < pTP->nVert; it += 3 ) {
+                            pvert_list[0].x = p_vertex[( it * 2 )];
+                            pvert_list[0].y = p_vertex[( it * 2 ) + 1];
+                            
+                            pvert_list[1].x = p_vertex[( it * 2 ) + 2];
+                            pvert_list[1].y = p_vertex[( it * 2 ) + 3];
+                            
+                            pvert_list[2].x = p_vertex[( it * 2 ) + 4];
+                            pvert_list[2].y = p_vertex[( it * 2 ) + 5];
+                            
+                            if( G_PtInPolygon( (MyPoint *) pvert_list, 3, easting, northing ) ) {
+                                ret = true;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                
+            }
+            pTP = pTP->p_next;
+        }
+        
+    }           // if pPolyTessGeo
+ 
+#if 0
+    else if( obj->pPolyTrapGeo ) {
+        if( !obj->pPolyTrapGeo->IsOk() ) obj->pPolyTrapGeo->BuildTess();
+        
+        PolyTrapGroup *ptg = obj->pPolyTrapGeo->Get_PolyTrapGroup_head();
+        
+        //  Polygon geometry is carried in SM coordinates, so...
+        //  make the hit test thus.
+        //  However, since PolyTrapGeo geometry is (always??) in cm-93 coordinates, convert to sm as necessary
+        double easting, northing;
+        toSM( lat, lon, ref_lat, ref_lon, &easting, &northing );
+        
+        int ntraps = ptg->ntrap_count;
+        trapz_t *ptraps = ptg->trap_array;
+        MyPoint *segs = (MyPoint *) ptg->ptrapgroup_geom; //TODO convert MyPoint to wxPoint2DDouble globally
+        
+        MyPoint pvert_list[4];
+        
+        double y_rate = obj->y_rate;
+        double y_origin = obj->y_origin;
+        
+        for( int i = 0; i < ntraps; i++, ptraps++ ) {
+            //      Y test
+            
+            double hiy = ( ptraps->hiy * y_rate ) + y_origin;
+            if( northing > hiy ) continue;
+            
+            double loy = ( ptraps->loy * y_rate ) + y_origin;
+            if( northing < loy ) continue;
+            
+            //      Use the segment endpoints to calculate the corners of a trapezoid
+            int lseg = ptraps->ilseg;
+            int rseg = ptraps->irseg;
+            
+            //    Left edge
+            double xmax = segs[lseg].x;
+            double xmin = segs[lseg + 1].x;
+            
+            double ymax = segs[lseg].y;
+            double ymin = segs[lseg + 1].y;
+            
+            double xt, yt, xca, xcb;
+            
+            if( ymax < ymin ) {
+                xt = xmin;
+                xmin = xmax;
+                xmax = xt;                // interchange min/max
+                yt = ymin;
+                ymin = ymax;
+                ymax = yt;
+            }
+            
+            if( xmin == xmax ) {
+                xca = xmin;
+                xcb = xmin;
+            } else {
+                double slope = ( ymax - ymin ) / ( xmax - xmin );
+                xca = xmin + ( ptraps->loy - ymin ) / slope;
+                xcb = xmin + ( ptraps->hiy - ymin ) / slope;
+            }
+            
+            pvert_list[0].x = ( xca * obj->x_rate ) + obj->x_origin;
+            pvert_list[0].y = loy;
+            
+            pvert_list[1].x = ( xcb * obj->x_rate ) + obj->x_origin;
+            pvert_list[1].y = hiy;
+            
+            //    Right edge
+            xmax = segs[rseg].x;
+            xmin = segs[rseg + 1].x;
+            ymax = segs[rseg].y;
+            ymin = segs[rseg + 1].y;
+            
+            if( ymax < ymin ) {
+                xt = xmin;
+                xmin = xmax;
+                xmax = xt;
+                yt = ymin;
+                ymin = ymax;
+                ymax = yt;
+            }
+            
+            if( xmin == xmax ) {
+                xca = xmin;
+                xcb = xmin;
+            } else {
+                double slope = ( ymax - ymin ) / ( xmax - xmin );
+                xca = xmin + ( ptraps->hiy - ymin ) / slope;
+                xcb = xmin + ( ptraps->loy - ymin ) / slope;
+            }
+            
+            pvert_list[2].x = ( xca * obj->x_rate ) + obj->x_origin;
+            pvert_list[2].y = hiy;
+            
+            pvert_list[3].x = ( xcb * obj->x_rate ) + obj->x_origin;
+            pvert_list[3].y = loy;
+            
+            if( G_PtInPolygon( (MyPoint *) pvert_list, 4, easting, northing ) ) {
+                ret = true;
+                break;
+            }
+        }
+    }           // if pPolyTrapGeo
+#endif    
+    return ret;
+}
+
+
+
+
+//      In GDAL-1.2.0, CSVGetField is not exported.......
+//      So, make my own simplified copy
+/************************************************************************/
+/*                           MyCSVGetField()                            */
+/*                                                                      */
+/************************************************************************/
+
+const char *MyCSVGetField( const char * pszFilename, const char * pszKeyFieldName,
+                           const char * pszKeyFieldValue, CSVCompareCriteria eCriteria, const char * pszTargetField )
+
+{
+    char **papszRecord;
+    int iTargetField;
+    
+    /* -------------------------------------------------------------------- */
+    /*      Find the correct record.                                        */
+    /* -------------------------------------------------------------------- */
+    papszRecord = CSVScanFileByName( pszFilename, pszKeyFieldName, pszKeyFieldValue, eCriteria );
+    
+    if( papszRecord == NULL ) return "";
+    
+    /* -------------------------------------------------------------------- */
+    /*      Figure out which field we want out of this.                     */
+    /* -------------------------------------------------------------------- */
+    iTargetField = CSVGetFileFieldId( pszFilename, pszTargetField );
+    if( iTargetField < 0 ) return "";
+    
+    if( iTargetField >= CSLCount( papszRecord ) ) return "";
+    
+    return ( papszRecord[iTargetField] );
+}
+
+wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
+{
+    wxString ret_val;
+    int attrCounter;
+    wxString curAttrName, value;
+    bool isLight = false;
+    wxString className;
+    wxString classDesc;
+    wxString classAttributes;
+    wxString objText;
+    wxString lightsHtml;
+    wxString positionString;
+    wxArrayPtrVoid lights;
+ //   S57Light* curLight = NULL;
+    
+    for( ListOfPI_S57Obj::Node *node = obj_list->GetLast(); node; node = node->GetPrevious() ) {
+        PI_S57Obj *current = node->GetData();
+        positionString.Clear();
+        objText.Clear();
+        
+        // Soundings have no information, so don't show them
+ //       if( 0 == strncmp( current->LUP->OBCL, "SOUND", 5 ) ) continue;
+        
+        if( current->Primitive_type == GEO_META ) continue;
+        if( current->Primitive_type == GEO_PRIM ) continue;
+        
+        className = wxString( current->FeatureName, wxConvUTF8 );
+        
+        // Lights get grouped together to make display look nicer.
+        isLight = !strcmp( current->FeatureName, "LIGHTS" );
+        
+        //    Get the object's nice description from s57objectclasses.csv
+        //    using cpl_csv from the gdal library
+        
+        const char *name_desc;
+        if( g_s57data_dir.Len() ) {
+            wxString oc_file = g_s57data_dir;
+            oc_file.Append( _T("/s57objectclasses.csv") );
+            name_desc = MyCSVGetField( oc_file.mb_str(), "Acronym",                  // match field
+                                       current->FeatureName,            // match value
+                                       CC_ExactString, "ObjectClass" );             // return field
+        } else
+            name_desc = "";
+        
+        // In case there is no nice description for this object class, use the 6 char class name
+            if( 0 == strlen( name_desc ) ) {
+                name_desc = current->FeatureName;
+                classDesc = wxString( name_desc, wxConvUTF8, 1 );
+                classDesc << wxString( name_desc + 1, wxConvUTF8 ).MakeLower();
+            } else {
+                classDesc = wxString( name_desc, wxConvUTF8 );
+            }
+            
+#if 0            
+            //    Show LUP
+            if( g_bDebugS57 ) {
+                wxString index;
+                index.Printf( _T("Feature Index: %d\n"), current->obj->Index );
+            classAttributes << index;
+            
+            wxString LUPstring;
+            LUPstring.Printf( _T("LUP RCID:  %d\n"), current->LUP->RCID );
+            classAttributes << LUPstring;
+            
+            LUPstring = _T("    LUP ATTC: ");
+            if( current->LUP->ATTCArray ) LUPstring += current->LUP->ATTCArray->Item( 0 );
+            LUPstring += _T("\n");
+            classAttributes << LUPstring;
+            
+            LUPstring = _T("    LUP INST: ");
+            if( current->LUP->INST ) LUPstring += *( current->LUP->INST );
+            LUPstring += _T("\n\n");
+            classAttributes << LUPstring;
+            
+            }
+#endif            
+            if( GEO_POINT == current->Primitive_type ) {
+                double lon, lat;
+                fromSM_Plugin( ( current->x * current->x_rate ) + current->x_origin,
+                        ( current->y * current->y_rate ) + current->y_origin, m_ref_lat,
+                        m_ref_lon, &lat, &lon );
+                
+                if( lon > 180.0 ) lon -= 360.;
+                
+                positionString.Clear();
+                positionString += toSDMM_PlugIn( 1, lat );
+                positionString << _T(" ");
+                positionString += toSDMM_PlugIn( 2, lon );
+                
+#if 0                
+                if( isLight ) {
+                    curLight = new S57Light;
+                    curLight->position = positionString;
+                    curLight->hasSectors = false;
+                    lights.Add( curLight );
+                }
+#endif                
+            }
+            
+            //    Get the Attributes and values, making sure they can be converted from UTF8
+            if(current->att_array) {
+                char *curr_att = current->att_array;
+                
+                attrCounter = 0;
+                
+                wxString attribStr;
+                int noAttr = 0;
+                attribStr << _T("<table border=0 cellspacing=0 cellpadding=0>");
+                
+                bool inDepthRange = false;
+                
+                while( attrCounter < current->n_attr ) {
+                    //    Attribute name
+                    curAttrName = wxString(curr_att, wxConvUTF8, 6);
+                    noAttr++;
+                    
+                    // Sort out how some kinds of attibutes are displayed to get a more readable look.
+                    // DEPARE gets just its range. Lights are grouped.
+                    
+                    if( isLight ) {
+//                        curLight->attributeNames.Add( curAttrName );
+//                        if( curAttrName.StartsWith( _T("SECTR") ) )
+//                            curLight->hasSectors = true;
+                    } else {
+                        if( curAttrName == _T("DRVAL1") ) {
+                            attribStr << _T("<tr><td><font size=-1>");
+                            inDepthRange = true;
+                        } else if( curAttrName == _T("DRVAL2") ) {
+                            attribStr << _T(" - ");
+                            inDepthRange = false;
+                        } else {
+                            if( inDepthRange ) {
+                                attribStr << _T("</font></td></tr>\n");
+                                inDepthRange = false;
+                            }
+                            attribStr << _T("<tr><td valign=top><font size=-2>") << curAttrName;
+                            attribStr << _T("</font></td><td>&nbsp;&nbsp;</td><td valign=top><font size=-1>");
+                        }
+                    }
+                    
+                    // What we need to do...
+                    // Change senc format, instead of (S), (I), etc, use the attribute types fetched from the S57attri...csv file
+                    // This will be like (E), (L), (I), (F)
+                    //  will affect lots of other stuff.  look for S57attVal.valType
+                    // need to do this in creatsencrecord above, and update the senc format.
+                    
+                    value = GetObjectAttributeValueAsString( current, attrCounter, curAttrName );
+                    
+                    if( isLight ) {
+//                        curLight->attributeValues.Add( value );
+                    } else {
+                        if( curAttrName == _T("INFORM") || curAttrName == _T("NINFOM") ) value.Replace(
+                            _T("|"), _T("<br>") );
+                        attribStr << value;
+                        
+                        if( !( curAttrName == _T("DRVAL1") ) ) {
+                            attribStr << _T("</font></td></tr>\n");
+                        }
+                    }
+                    
+                    attrCounter++;
+                    curr_att += 6;
+                    
+                }             //while attrCounter < current->obj->n_attr
+                
+                if( !isLight ) {
+                    attribStr << _T("</table>\n");
+                    
+                    objText += _T("<b>") + classDesc + _T("</b> <font size=-2>(") + className
+                    + _T(")</font>") + _T("<br>");
+                    
+                    if( positionString.Length() ) objText << _T("<font size=-2>") << positionString
+                        << _T("</font><br>\n");
+                    
+                    if( noAttr > 0 ) objText << attribStr;
+                    
+                    if( node != obj_list->GetFirst() ) objText += _T("<hr noshade>");
+                    objText += _T("<br>");
+                    ret_val << objText;
+                }
+                
+            }
+    } // Object for loop
+
+#if 0    
+    if( lights.Count() > 0 ) {
+        
+        // For lights we now have all the info gathered but no HTML output yet, now
+        // run through the data and build a merged table for all lights.
+        
+        lights.Sort( ( CMPFUNC_wxArraywxArrayPtrVoid )( &s57chart::CompareLights ) );
+        
+        wxString lastPos;
+        
+        for( unsigned int curLightNo = 0; curLightNo < lights.Count(); curLightNo++ ) {
+            S57Light* thisLight = (S57Light*) lights.Item( curLightNo );
+            int attrIndex;
+            
+            if( thisLight->position != lastPos ) {
+                
+                lastPos = thisLight->position;
+                
+                if( curLightNo > 0 ) lightsHtml << _T("</table>\n<hr noshade>\n");
+                
+                lightsHtml << _T("<b>Light</b> <font size=-2>(LIGHTS)</font><br>");
+                lightsHtml << _T("<font size=-2>") << thisLight->position << _T("</font><br>\n");
+                
+                if( curLight->hasSectors ) lightsHtml
+                    <<_("<font size=-2>(Sector angles are True Bearings from Seaward)</font><br>");
+                
+                lightsHtml << _T("<table>");
+            }
+            
+            lightsHtml << _T("<tr>");
+            lightsHtml << _T("<td><font size=-1>");
+            
+            attrIndex = thisLight->attributeNames.Index( _T("COLOUR") );
+            if( attrIndex != wxNOT_FOUND ) {
+                wxString color = thisLight->attributeValues.Item( attrIndex );
+                if( color == _T("red(3)") ) lightsHtml
+                    << _T("<table border=0><tr><td bgcolor=red>&nbsp;&nbsp;&nbsp;</td></tr></table> ");
+                if( color == _T("green(4)") ) lightsHtml
+                    << _T("<table border=0><tr><td bgcolor=green>&nbsp;&nbsp;&nbsp;</td></tr></table> ");
+                if( color == _T("white(1)") ) lightsHtml
+                    << _T("<table border=0><tr><td bgcolor=yellow>&nbsp;&nbsp;&nbsp;</td></tr></table> ");
+            }
+            
+            lightsHtml << _T("</font></td><td><font size=-1><nobr><b>");
+            
+            attrIndex = thisLight->attributeNames.Index( _T("LITCHR") );
+            if( attrIndex != wxNOT_FOUND ) {
+                wxString character = thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << character.BeforeFirst( wxChar( '(' ) ) << _T(" ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("SIGGRP") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T(" ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("SIGPER") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T(" ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("HEIGHT") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T(" ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("VALNMR") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T(" ");
+            }
+            
+            lightsHtml << _T("</b>");
+            
+            attrIndex = thisLight->attributeNames.Index( _T("SECTR1") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << _T("(") <<thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T(" - ");
+                attrIndex = thisLight->attributeNames.Index( _T("SECTR2") );
+                lightsHtml << thisLight->attributeValues.Item( attrIndex ) << _T(") ");
+            }
+            
+            lightsHtml << _T("</nobr>");
+            
+            attrIndex = thisLight->attributeNames.Index( _T("CATLIT") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << _T("<nobr>");
+                lightsHtml
+                << thisLight->attributeValues.Item( attrIndex ).BeforeFirst(
+                    wxChar( '(' ) );
+                    lightsHtml << _T("</nobr> ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("EXCLIT") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << _T("<nobr>");
+                lightsHtml
+                << thisLight->attributeValues.Item( attrIndex ).BeforeFirst(
+                    wxChar( '(' ) );
+                    lightsHtml << _T("</nobr> ");
+            }
+            
+            attrIndex = thisLight->attributeNames.Index( _T("OBJNAM") );
+            if( attrIndex != wxNOT_FOUND ) {
+                lightsHtml << _T("<br><nobr>");
+                lightsHtml << thisLight->attributeValues.Item( attrIndex ).Left( 1 ).Upper();
+                lightsHtml << thisLight->attributeValues.Item( attrIndex ).Mid( 1 );
+                lightsHtml << _T("</nobr> ");
+            }
+            
+            lightsHtml << _T("</font></td>");
+            lightsHtml << _T("</tr>");
+            
+            thisLight->attributeNames.Clear();
+            thisLight->attributeValues.Clear();
+            delete thisLight;
+        }
+        lightsHtml << _T("</table><hr noshade>\n");
+        ret_val = lightsHtml << ret_val;
+        
+        lights.Clear();
+    }
+#endif    
+    return ret_val;
+}
+
+
+
+
+wxString ChartS63::GetObjectAttributeValueAsString( PI_S57Obj *obj, int iatt, wxString curAttrName )
+{
+    wxString value;
+    S57attVal *pval;
+    
+    pval = obj->attVal->Item( iatt );
+    switch( pval->valType ){
+        case OGR_STR: {
+            if( pval->value ) {
+                wxString val_str( (char *) ( pval->value ), wxConvUTF8 );
+                long ival;
+                if( val_str.ToLong( &ival ) ) {
+                    if( 0 == ival ) value = _T("Unknown");
+                    else {
+                        wxString decode_val = GetAttributeDecode( curAttrName, ival );
+                        if( !decode_val.IsEmpty() ) {
+                            value = decode_val;
+                            wxString iv;
+                            iv.Printf( _T("(%d)"), (int) ival );
+                            value.Append( iv );
+                        } else
+                            value.Printf( _T("%d"), (int) ival );
+                    }
+                }
+                
+                else if( val_str.IsEmpty() ) value = _T("Unknown");
+                
+                else {
+                    value.Clear();
+                    wxString value_increment;
+                    wxStringTokenizer tk( val_str, wxT(",") );
+                    int iv = 0;
+                    while( tk.HasMoreTokens() ) {
+                        wxString token = tk.GetNextToken();
+                        long ival;
+                        if( token.ToLong( &ival ) ) {
+                            wxString decode_val = GetAttributeDecode( curAttrName, ival );
+                            if( !decode_val.IsEmpty() ) value_increment = decode_val;
+                            else
+                                value_increment.Printf( _T(" %d"), (int) ival );
+                            
+                            if( iv ) value_increment.Prepend( wxT(", ") );
+                        }
+                        value.Append( value_increment );
+                        
+                        iv++;
+                    }
+                    value.Append( val_str );
+                }
+            } else
+                value = _T("[NULL VALUE]");
+            
+            break;
+        }
+        
+        case OGR_INT: {
+            int ival = *( (int *) pval->value );
+            wxString decode_val = GetAttributeDecode( curAttrName, ival );
+            
+            if( !decode_val.IsEmpty() ) {
+                value = decode_val;
+                wxString iv;
+                iv.Printf( _T("(%d)"), ival );
+                value.Append( iv );
+            } else
+                value.Printf( _T("(%d)"), ival );
+            
+            break;
+        }
+        case OGR_INT_LST:
+            break;
+            
+        case OGR_REAL: {
+            double dval = *( (double *) pval->value );
+            wxString val_suffix = _T(" m");
+            
+            //    As a special case, convert some attribute values to feet.....
+            if( ( curAttrName == _T("VERCLR") ) || ( curAttrName == _T("VERCLL") )
+                || ( curAttrName == _T("HEIGHT") ) || ( curAttrName == _T("HORCLR") ) ) {
+                switch( PI_GetPLIBDepthUnitInt() ){
+                        case 0:                       // feet
+                        case 2:                       // fathoms
+                        dval = dval * 3 * 39.37 / 36;              // feet
+                        val_suffix = _T(" ft");
+                        break;
+                        default:
+                            break;
+                    }
+                }
+                
+                else if( ( curAttrName == _T("VALSOU") ) || ( curAttrName == _T("DRVAL1") )
+                || ( curAttrName == _T("DRVAL2") ) ) {
+                    switch( PI_GetPLIBDepthUnitInt() ){
+                        case 0:                       // feet
+                        dval = dval * 3 * 39.37 / 36;              // feet
+                        val_suffix = _T(" ft");
+                        break;
+                        case 2:                       // fathoms
+                        dval = dval * 3 * 39.37 / 36;              // fathoms
+                        dval /= 6.0;
+                        val_suffix = _T(" fathoms");
+                        break;
+                        default:
+                            break;
+                    }
+                }
+                
+                else if( curAttrName == _T("SECTR1") ) val_suffix = _T("&deg;");
+                    else if( curAttrName == _T("SECTR2") ) val_suffix = _T("&deg;");
+               else if( curAttrName == _T("ORIENT") ) val_suffix = _T("&deg;");
+               else if( curAttrName == _T("VALNMR") ) val_suffix = _T(" Nm");
+               else if( curAttrName == _T("SIGPER") ) val_suffix = _T("s");
+               
+               if( dval - floor( dval ) < 0.01 ) value.Printf( _T("%2.0f"), dval );
+               else
+                   value.Printf( _T("%4.1f"), dval );
+               
+               value << val_suffix;
+               
+               break;
+        }
+        
+                        case OGR_REAL_LST: {
+                            break;
+                        }
+    }
+    return value;
+}
+
+
+wxString ChartS63::GetAttributeDecode( wxString& att, int ival )
+{
+    wxString ret_val = _T("");
+ 
+#if 0    
+    //    Special case for "NATSUR", cacheing the strings for faster chart rendering
+    if( att.IsSameAs( _T("NATSUR") ) ) {
+        if( !m_natsur_hash[ival].IsEmpty() )            // entry available?
+        {
+            return m_natsur_hash[ival];
+        }
+    }
+#endif    
+    if( !g_s57data_dir.Len() )
+        return ret_val;
+    
+    //  Get the attribute code from the acronym
+    const char *att_code;
+    
+    wxString file = g_s57data_dir;
+    file.Append( _T("/s57attributes.csv") );
+    
+    if( !wxFileName::FileExists( file ) ) {
+        wxString msg( _T("   Could not open ") );
+        msg.Append( file );
+        wxLogMessage( msg );
+        
+        return ret_val;
+    }
+    
+    att_code = MyCSVGetField( file.mb_str(), "Acronym",                  // match field
+                              att.mb_str(),               // match value
+                              CC_ExactString, "Code" );             // return field
+    
+    // Now, get a nice description from s57expectedinput.csv
+    //  This will have to be a 2-d search, using ID field and Code field
+    
+    // Ingest, and get a pointer to the ingested table for "Expected Input" file
+    wxString ei_file = g_s57data_dir;
+    ei_file.Append( _T("/s57expectedinput.csv") );
+    
+    if( !wxFileName::FileExists( ei_file ) ) {
+        wxString msg( _T("   Could not open ") );
+        msg.Append( ei_file );
+        wxLogMessage( msg );
+        
+        return ret_val;
+    }
+    
+    CSVTable *psTable = CSVAccess( ei_file.mb_str() );
+    CSVIngest( ei_file.mb_str() );
+    
+    char **papszFields = NULL;
+    int bSelected = FALSE;
+    
+    /* -------------------------------------------------------------------- */
+    /*      Scan from in-core lines.                                        */
+    /* -------------------------------------------------------------------- */
+    int iline = 0;
+    while( !bSelected && iline + 1 < psTable->nLineCount ) {
+        iline++;
+        papszFields = CSVSplitLine( psTable->papszLines[iline] );
+        
+        if( !strcmp( papszFields[0], att_code ) ) {
+            if( atoi( papszFields[1] ) == ival ) {
+                ret_val = wxString( papszFields[2], wxConvUTF8 );
+                bSelected = TRUE;
+            }
+        }
+        
+        CSLDestroy( papszFields );
+    }
+    
+//    if( att.IsSameAs( _T("NATSUR") ) ) m_natsur_hash[ival] = ret_val;            // cache the entry
+
+    return ret_val;
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //----------------------------------------------------------------------------------
@@ -3571,11 +4976,7 @@ PI_S57ObjX::PI_S57ObjX()
     attVal = NULL;
     n_attr = 0;
 
- //   bCS_Added = 0;
-//    CSrules = NULL;
-//    FText = NULL;
- //   bFText_Added = 0;
-    geoPtMulti = NULL;
+     geoPtMulti = NULL;
     geoPtz = NULL;
     geoPt = NULL;
     bIsClone = false;
@@ -3597,6 +4998,8 @@ PI_S57ObjX::PI_S57ObjX()
     y_origin = 0.0;
 
     S52_Context = NULL;
+    child = NULL;
+    next = NULL;
 }
 
 //----------------------------------------------------------------------------------
@@ -3653,7 +5056,9 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, wxInputStream *fpx )
     m_n_lsindex = 0;
     m_lsindex_array = NULL;
     S52_Context = NULL;
-
+    child = NULL;
+    next = NULL;
+    
     //        Set default (unity) auxiliary transform coefficients
     x_rate = 1.0;
     y_rate = 1.0;
@@ -4387,4 +5792,118 @@ wxString PI_S57ObjX::GetAttrValueAsString( const char *AttrName )
     }
     return str;
 }
+
+
+
+int Intersect(MyPoint, MyPoint, MyPoint, MyPoint) ;
+int CCW(MyPoint, MyPoint, MyPoint) ;
+
+
+/*************************************************************************
+ * 
+ * 
+ * FUNCTION:   G_PtInPolygon
+ *
+ * PURPOSE
+ * This routine determines if the point passed is in the polygon. It uses
+ * the classical polygon hit-testing algorithm: a horizontal ray starting
+ * at the point is extended infinitely rightwards and the number of
+ * polygon edges that intersect the ray are counted. If the number is odd,
+ * the point is inside the polygon.
+ *
+ * Polygon is assumed OPEN, not CLOSED.
+ * RETURN VALUE
+ * (bool) TRUE if the point is inside the polygon, FALSE if not.
+ *************************************************************************/
+
+
+int  G_PtInPolygon(MyPoint *rgpts, int wnumpts, float x, float y)
+{
+    
+    MyPoint  *ppt, *ppt1 ;
+    int   i ;
+    MyPoint  pt1, pt2, pt0 ;
+    int   wnumintsct = 0 ;
+    
+    
+    pt0.x = x;
+    pt0.y = y;
+    
+    pt1 = pt2 = pt0 ;
+    pt2.x = 1.e8;
+    
+    // Now go through each of the lines in the polygon and see if it
+    // intersects
+    for (i = 0, ppt = rgpts ; i < wnumpts-1 ; i++, ppt++)
+    {
+        ppt1 = ppt;
+        ppt1++;
+        if (Intersect(pt0, pt2, *ppt, *(ppt1)))
+            wnumintsct++ ;
+    }
+    
+    // And the last line
+    if (Intersect(pt0, pt2, *ppt, *rgpts))
+        wnumintsct++ ;
+    
+    return (wnumintsct&1) ;
+    
+}
+
+
+/*************************************************************************
+ * 
+ *              0
+ * FUNCTION:   Intersect
+ *
+ * PURPOSE
+ * Given two line segments, determine if they intersect.
+ *
+ * RETURN VALUE
+ * TRUE if they intersect, FALSE if not.
+ *************************************************************************/
+
+
+int Intersect(MyPoint p1, MyPoint p2, MyPoint p3, MyPoint p4) {
+//    int i;
+//    i = CCW(p1, p2, p3);
+//    i = CCW(p1, p2, p4);
+//    i = CCW(p3, p4, p1);
+//    i = CCW(p3, p4, p2);
+    return ((( CCW(p1, p2, p3) * CCW(p1, p2, p4)) <= 0)
+    && (( CCW(p3, p4, p1) * CCW(p3, p4, p2)  <= 0) )) ;
+    
+}
+/*************************************************************************
+ * 
+ * 
+ * FUNCTION:   CCW (CounterClockWise)
+ *
+ * PURPOSE
+ * Determines, given three points, if when travelling from the first to
+ * the second to the third, we travel in a counterclockwise direction.
+ *
+ * RETURN VALUE
+ * (int) 1 if the movement is in a counterclockwise direction, -1 if
+ * not.
+ *************************************************************************/
+
+
+int CCW(MyPoint p0, MyPoint p1, MyPoint p2) {
+    double dx1, dx2 ;
+    double dy1, dy2 ;
+    
+    dx1 = p1.x - p0.x ; dx2 = p2.x - p0.x ;
+    dy1 = p1.y - p0.y ; dy2 = p2.y - p0.y ;
+    
+    /* This is a slope comparison: we don't do divisions because
+     * of divide by zero possibilities with pure horizontal and pure
+     * vertical lines.
+     */
+    return ((dx1 * dy2 > dy1 * dx2) ? 1 : -1) ;
+    
+}
+
+
+
 

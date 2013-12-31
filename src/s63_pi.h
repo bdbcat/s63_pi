@@ -45,7 +45,6 @@
 
 #include "ocpn_plugin.h"
 
-#include "userpermit.h"
 
 enum {
     ID_BUTTONCELLIMPORT
@@ -55,6 +54,9 @@ enum {
 void ScreenLogMessage(wxString s);
 void HideScreenLog(void);
 void ClearScreenLog(void);
+
+extern "C++" wxString GetUserpermit(void);
+extern "C++" wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog );
 
 
 class   s63_pi;
@@ -108,12 +110,13 @@ public:
     int ImportCellPermits( void );
     int RemoveCellPermit( void );
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
+
+    bool SaveConfig( void );
     
 private:
     int ProcessCellPermit( wxString &permit, wxString &enc_root_dir );
 
     bool LoadConfig( void );
-    bool SaveConfig( void );
     
     int pi_error( wxString msg );
     
@@ -130,7 +133,8 @@ private:
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;
-    
+
+    wxString            m_userpermit;
 };
 
 
@@ -184,6 +188,71 @@ public:
     
     void BuildList( const wxString &permit_dir );
     wxArrayString       m_permit_file_array;
+};
+
+
+/*!
+ * Control identifiers
+ */
+
+////@begin control identifiers
+#define ID_GETUP 8100
+#define SYMBOL_GETUP_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
+#define SYMBOL_GETUP_TITLE _("S63_pi Userpermit Required")
+#define SYMBOL_GETUP_IDNAME ID_GETUP
+#define SYMBOL_GETUP_SIZE wxSize(500, 200)
+#define SYMBOL_GETUP_POSITION wxDefaultPosition
+#define ID_GETUP_CANCEL 8101
+#define ID_GETUP_OK 8102
+#define ID_GETUP_UP 8103
+#define ID_GETUP_TEST 8104
+
+
+////@end control identifiers
+
+/*!
+ * GetUserpermitDialog class declaration
+ */
+class GetUserpermitDialog: public wxDialog
+{
+    DECLARE_DYNAMIC_CLASS( GetUserpermitDialog )
+    DECLARE_EVENT_TABLE()
+    
+public:
+    /// Constructors
+    GetUserpermitDialog( );
+    GetUserpermitDialog( wxWindow* parent, wxWindowID id = SYMBOL_GETUP_IDNAME,
+                        const wxString& caption = SYMBOL_GETUP_TITLE,
+                        const wxPoint& pos = SYMBOL_GETUP_POSITION,
+                        const wxSize& size = SYMBOL_GETUP_SIZE,
+                        long style = SYMBOL_GETUP_STYLE );
+    
+    ~GetUserpermitDialog();
+    
+    /// Creation
+    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_GETUP_IDNAME,
+                 const wxString& caption = SYMBOL_GETUP_TITLE,
+                 const wxPoint& pos = SYMBOL_GETUP_POSITION,
+                 const wxSize& size = SYMBOL_GETUP_SIZE, long style = SYMBOL_GETUP_STYLE );
+    
+   
+    void CreateControls();
+    
+    void OnCancelClick( wxCommandEvent& event );
+    void OnOkClick( wxCommandEvent& event );
+    void OnUpdated( wxCommandEvent& event );
+    void OnTestClick( wxCommandEvent& event );
+    
+    /// Should we show tooltips?
+    static bool ShowToolTips();
+    
+    wxTextCtrl*   m_PermitCtl;
+    wxButton*     m_CancelButton;
+    wxButton*     m_OKButton;
+    wxButton*     m_testBtn;
+    wxStaticText* m_TestResult;
+    
+    
 };
 
 

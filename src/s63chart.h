@@ -26,6 +26,9 @@ class PI_VC_Element;
 WX_DECLARE_HASH_MAP( int, PI_VE_Element *, wxIntegerHash, wxIntegerEqual, PI_VE_Hash );
 WX_DECLARE_HASH_MAP( int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_Hash );
 
+#ifndef PI
+#define PI        3.1415926535897931160E0      /* pi */
+#endif
 
 
 enum
@@ -34,6 +37,14 @@ enum
     BUILD_SENC_NOK_RETRY,
     BUILD_SENC_NOK_PERMANENT
 };
+
+typedef struct  {
+    double x;
+    double y;
+} MyPoint;
+
+
+extern "C" int G_PtInPolygon(MyPoint *, int, float, float) ;
 
 #ifndef BPP
 #define BPP 24
@@ -102,7 +113,7 @@ public:
 // ChartS63 Definition
 // ----------------------------------------------------------------------------
 
-class  ChartS63 : public PlugInChartBase
+class  ChartS63 : public PlugInChartBaseGL
 {
       DECLARE_DYNAMIC_CLASS(ChartS63)
 
@@ -132,6 +143,9 @@ class  ChartS63 : public PlugInChartBase
 
       wxBitmap &RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegion &Region);
       bool RenderViewOnDC(wxMemoryDC& dc, const PlugIn_ViewPort& VPoint);
+ 
+      int RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
+                                const wxRegion &Region, bool b_use_stencil );
       
 
       virtual bool AdjustVP(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_proposed);
@@ -170,10 +184,18 @@ class  ChartS63 : public PlugInChartBase
       float *GetNoCOVRTableHead(int iTable){ return m_pNoCOVRTable[iTable]; }
 
       int GetNativeScale(){ return m_Chart_Scale;}
+      
+      ListOfPI_S57Obj *GetObjRuleListAtLatLon(float lat, float lon, float select_radius,
+                                                                 PlugIn_ViewPort *VPoint);
+      wxString CreateObjDescriptions( ListOfPI_S57Obj* obj_list );
+      wxString GetObjectAttributeValueAsString( PI_S57Obj *obj, int iatt, wxString curAttrName );
+      wxString GetAttributeDecode( wxString& att, int ival );
+      
 
       wxString          m_extended_error;
       
       struct _pi_chart_context     *m_this_chart_context;
+
       
 protected:
 //    Methods
@@ -195,6 +217,19 @@ protected:
       wxBitmap *GetCloneBitmap();
       bool IsCacheValid(){ return (pDIB != NULL); }
       void InvalidateCache();
+
+      void SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
+                            const wxRegion &Region, bool b_render_nodta, bool b_useStencil );
+      void SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint, const wxRect &Rect,
+                            bool b_render_nodta, bool b_useStencil );
+      bool DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint, wxRect &rect, bool b_useStencil );
+      
+      void UpdateLUPsOnStateChange( void );
+      void ClearRenderedTextCache();
+      
+      //  Query
+      bool DoesLatLonSelectObject( float lat, float lon, float select_radius, PI_S57Obj *obj );
+      bool IsPointInObjArea( float lat, float lon, float select_radius, PI_S57Obj *obj );
       
       int               my_fgets( char *buf, int buf_len_max, wxInputStream &ifs );
 
@@ -218,7 +253,9 @@ protected:
       double    m_easting_vp_center, m_northing_vp_center;
       double    m_pixx_vp_center, m_pixy_vp_center;
       double    m_view_scale_ppm;
-      
+
+      int               m_plib_state_hash;
+      bool              m_bLinePrioritySet;
       
       long              m_sync_cmd_pid;
       ExtentPI          m_FullExtent;

@@ -26,7 +26,7 @@ SET(VERSION_PATCH "0")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
 
-SET(CMAKE_BUILD_TYPE Release)
+SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 IF (PREFIX)
@@ -38,7 +38,7 @@ SET(PREFIX_INCLUDE include)
 SET(PREFIX_DATA lib)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
-#INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/mygdal)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/cpl)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 
@@ -74,8 +74,24 @@ ENDIF(WIN32)
 # Let cmake find additional modules private
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
+SET(wxWidgets_USE_LIBS base core net )
 
-SET(wxWidgets_USE_LIBS base core net xml html adv)
+FIND_PACKAGE(OpenGL)
+IF(OPENGL_GLU_FOUND)
+
+    SET(wxWidgets_USE_LIBS ${wxWidgets_USE_LIBS} gl )
+    INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+
+    MESSAGE (STATUS "Found OpenGL..." )
+    MESSAGE (STATUS "    Lib: " ${OPENGL_LIBRARIES})
+    MESSAGE (STATUS "    Include: " ${OPENGL_INCLUDE_DIR})
+    ADD_DEFINITIONS(-DocpnUSE_GL)
+
+ELSE(OPENGL_GLU_FOUND)
+    MESSAGE (STATUS "OpenGL not found..." )
+ENDIF(OPENGL_GLU_FOUND)
+
+
 SET(BUILD_SHARED_LIBS TRUE)
 FIND_PACKAGE(wxWidgets REQUIRED)
 
@@ -99,79 +115,29 @@ SET(SRC_S63
 
      )
 
-SET(SRC_GDAL
-                src/myiso8211/ddffielddefn.cpp
-                src/myiso8211/ddfmodule.cpp
-                src/myiso8211/ddfrecord.cpp
-                src/myiso8211/ddfsubfielddefn.cpp
-                src/myiso8211/ddffield.cpp
-                src/myiso8211/ddfutils.cpp
-                src/mygdal/cpl_config.h
-                src/mygdal/gdal_priv.h
-                src/mygdal/cpl_conv.h
-                src/mygdal/iso8211.h
-                src/mygdal/cpl_csv.h
-                src/mygdal/ogr_api.h
-                src/mygdal/cpl_error.h
-                src/mygdal/ogr_attrind.h
-                src/mygdal/cpl_list.h
-                src/mygdal/cpl_minixml.h
-                src/mygdal/ogr_feature.h
-                src/mygdal/cpl_multiproc.h
-                src/mygdal/ogr_geometry.h
-                src/mygdal/cpl_odbc.h
-                src/mygdal/ogr_p.h
-                src/mygdal/ogr_core.h
-                src/mygdal/cpl_port.h
-                src/mygdal/ogr_s57.h
-                src/mygdal/cpl_string.h
-                src/mygdal/ogr_spatialref.h
-                src/mygdal/cpl_vsi.h
-                src/mygdal/ogrsf_frmts.h
-                src/mygdal/gdal.h
-                src/mygdal/s57.h
-                src/mygdal/gdal_frmts.h
-                src/mygdal/ddfrecordindex.cpp
-                src/mygdal/cpl_conv.cpp
-                src/mygdal/cpl_csv.cpp
-                src/mygdal/cpl_error.cpp
-                src/mygdal/cpl_findfile.cpp
-                src/mygdal/cpl_minixml.cpp
-                src/mygdal/cpl_path.cpp
-                src/mygdal/cpl_string.cpp
-                src/mygdal/cpl_vsisimple.cpp
-                src/mygdal/cplgetsymbol.cpp
-                src/mygdal/ograssemblepolygon.cpp
-                src/mygdal/ogrcurve.cpp
-                src/mygdal/ogrfeature.cpp
-                src/mygdal/ogrfeaturedefn.cpp
-                src/mygdal/ogrfielddefn.cpp
-                src/mygdal/ogrgeometry.cpp
-                src/mygdal/ogrgeometrycollection.cpp
-                src/mygdal/ogrgeometryfactory.cpp
-                src/mygdal/ogrlinearring.cpp
-                src/mygdal/ogrlinestring.cpp
-                src/mygdal/ogrmultilinestring.cpp
-                src/mygdal/ogrmultipoint.cpp
-                src/mygdal/ogrmultipolygon.cpp
-                src/mygdal/ogrpoint.cpp
-                src/mygdal/ogrpolygon.cpp
-                src/mygdal/ogrs57datasource.cpp
-                src/mygdal/ogrlayer.cpp
-                src/mygdal/ogrs57layer.cpp
-                src/mygdal/ogrutils.cpp
-                src/mygdal/s57classregistrar.cpp
-                src/mygdal/s57featuredefns.cpp
-                src/mygdal/s57reader.cpp
-                src/mygdal/gdal_misc.cpp
+SET(SRC_CPL
+                src/cpl/cpl_config.h
+                src/cpl/cpl_conv.h
+                src/cpl/cpl_csv.h
+                src/cpl/cpl_error.h
+                src/cpl/cpl_port.h
+                src/cpl/cpl_string.h
+                src/cpl/cpl_vsi.h
+                src/cpl/cpl_conv.cpp
+                src/cpl/cpl_csv.cpp
+                src/cpl/cpl_error.cpp
+                src/cpl/cpl_findfile.cpp
+                src/cpl/cpl_path.cpp
+                src/cpl/cpl_string.cpp
+                src/cpl/cpl_vsisimple.cpp
         )
 
-#ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_GDAL})
-ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} )
+ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_CPL})
+#ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} )
 
 IF(WIN32)
-  SET(OPENCPN_IMPORT_LIB "opencpn.lib")
-#  SET(OPENCPN_IMPORT_LIB "E:/opencpn_cmake2010/${CMAKE_CFG_INTDIR}/opencpn.lib")
+#  SET(OPENCPN_IMPORT_LIB "opencpn.lib")
+  SET(OPENCPN_IMPORT_LIB "E:/opencpn_cmake2010/${CMAKE_CFG_INTDIR}/opencpn.lib")
   TARGET_LINK_LIBRARIES( ${PACKAGE_NAME} ${OPENCPN_IMPORT_LIB} )
 #  ADD_DEPENDENCIES(${PACKAGE_NAME} ${PARENT})
 ENDIF(WIN32)

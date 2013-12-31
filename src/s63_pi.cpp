@@ -46,13 +46,16 @@
 
 
 //      Some PlugIn global variables
-wxString                        g_user_permit;
 wxString                        g_sencutil_bin;
 S63ScreenLogContainer           *g_pScreenLog;
 S63ScreenLog                    *g_pPanelScreenLog;
 unsigned int                    g_backchannel_port;
 unsigned int                    g_frontchannel_port;
 wxString                        g_s57data_dir;
+
+wxString                        g_userpermit;
+s63_pi                          *g_pi;
+
 
 // the class factories, used to create and destroy instances of the PlugIn
 
@@ -89,13 +92,12 @@ s63_pi::s63_pi(void *ppimgr)
       :opencpn_plugin_111(ppimgr)
 {
       // Create the PlugIn icons
-
       m_pplugin_icon = new wxBitmap(default_pi);
 
+      g_pi = this;              // Store a global handle to the PlugIn itself
+      
       m_event_handler = new s63_pi_event_handler(this);
 
-      g_user_permit = wxString( USER_PERMIT, wxConvUTF8 );
-      
       wxFileName fn_exe(GetOCPN_ExePath());
 
       //        Specify the location of the OCPNsenc helper.
@@ -109,7 +111,6 @@ s63_pi::s63_pi(void *ppimgr)
       g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + 
            _T("plugins\\s63_pi\\OCPNsenc.exe\"");
            
-//      g_sencutil_bin = _T("\"C:/Program Files/OpenCPN/plugins\s63_pi\OCPNsenc.exe\"");
          
 #endif      
       
@@ -151,13 +152,14 @@ int s63_pi::Init(void)
       //    Build an arraystring of dynamically loadable chart class names
       m_class_name_array.Add(_T("ChartS63"));
 
-      return (INSTALLS_PLUGIN_CHART | INSTALLS_TOOLBOX_PAGE);
+      return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE);
 
 }
 
 bool s63_pi::DeInit(void)
 {
-      return true;
+    SaveConfig();
+    return true;
 }
 
 int s63_pi::GetAPIVersionMajor()
@@ -238,6 +240,22 @@ void s63_pi::OnSetupOptions(){
     bSizer17 = new wxBoxSizer( wxHORIZONTAL );
 
     m_permit_list = new OCPNPermitList( m_s63chartPanelWin );
+    
+    wxListItem col0;
+    col0.SetId(0);
+    col0.SetText( _("Cell Name") );
+    m_permit_list->InsertColumn(0, col0);
+    
+    wxListItem col1;
+    col1.SetId(1);
+    col1.SetText( _("Data Server ID") );
+    m_permit_list->InsertColumn(1, col1);
+    
+    wxListItem col2;
+    col2.SetId(2);
+    col2.SetText( _("Expiration Date") );
+    m_permit_list->InsertColumn(2, col2);
+    
     wxString permit_dir = *GetpPrivateApplicationDataLocation();
     permit_dir += wxFileName::GetPathSeparator();
     permit_dir += _T("s63charts");
@@ -264,7 +282,9 @@ void s63_pi::OnSetupOptions(){
     //  User Permit
     wxStaticBoxSizer* sbSizerUP= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelWin, wxID_ANY, _("UserPermit") ), wxVERTICAL );
     wxStaticText *up_text = new wxStaticText(m_s63chartPanelWin, wxID_ANY, _T("test"));
-    up_text->SetLabel( g_user_permit );
+    
+    if(g_userpermit.Len())
+        up_text->SetLabel( GetUserpermit() );
     sbSizerUP->Add(up_text);
     
     chartPanelSizer->AddSpacer( 5 );
@@ -319,8 +339,6 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
     g_pScreenLog->Centre();
     
 }
-
-
 
 int s63_pi::ImportCellPermits(void)
 {
@@ -608,6 +626,7 @@ bool s63_pi::LoadConfig( void )
         pConf->SetPath( _T("/PlugIns/S63") );
         
         pConf->Read( _T("PermitDir"), &m_SelectPermit_dir );
+        pConf->Read( _T("Userpermit"), &g_userpermit );
         
     }        
      
@@ -622,7 +641,8 @@ bool s63_pi::SaveConfig( void )
         pConf->SetPath( _T("/PlugIns/S63") );
         
         pConf->Write( _T("PermitDir"), m_SelectPermit_dir );
-
+        pConf->Write( _T("Userpermit"), g_userpermit );
+        
     }
 
     return true;
@@ -939,21 +959,6 @@ OCPNPermitList::~OCPNPermitList()
 
 void OCPNPermitList::BuildList( const wxString &permit_dir )
 {
-    wxListItem col0;
-    col0.SetId(0);
-    col0.SetText( _("Cell Name") );
-    InsertColumn(0, col0);
-    
-    wxListItem col1;
-    col1.SetId(1);
-    col1.SetText( _("Data Server ID") );
-    InsertColumn(1, col1);
- 
-    wxListItem col2;
-    col2.SetId(2);
-    col2.SetText( _("Expiration Date") );
-    InsertColumn(2, col2);
-    
     
     DeleteAllItems();
     
@@ -996,7 +1001,7 @@ void OCPNPermitList::BuildList( const wxString &permit_dir )
                         wxListItem lid;
                         lid.SetId( itemIndex );
                         lid.SetColumn(2);
-                        lid.SetTextColour(*wxRED );
+//                        lid.SetTextColour(*wxRED );
                         lid.SetText(fdate);
                         SetItem(lid);
                         
@@ -1028,4 +1033,216 @@ void OCPNPermitList::BuildList( const wxString &permit_dir )
     
 }
 
+/*!
+ * GetUserpermitDialog type definition
+ */
+
+IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
+/*!
+ * GetUserpermitDialog event table definition
+ */BEGIN_EVENT_TABLE( GetUserpermitDialog, wxDialog )
+ 
+ ////@begin GetUserpermitDialog event table entries
+ 
+ EVT_BUTTON( ID_GETUP_CANCEL, GetUserpermitDialog::OnCancelClick )
+ EVT_BUTTON( ID_GETUP_OK, GetUserpermitDialog::OnOkClick )
+ EVT_BUTTON( ID_GETUP_TEST, GetUserpermitDialog::OnTestClick )
+ EVT_TEXT(ID_GETUP_UP, GetUserpermitDialog::OnUpdated)
+ 
+ ////@end GetUserpermitDialog event table entries
+ 
+ END_EVENT_TABLE()
+ 
+ /*!
+  * GetUserpermitDialog constructors
+  */
+ 
+ GetUserpermitDialog::GetUserpermitDialog()
+ {
+ }
+ 
+ GetUserpermitDialog::GetUserpermitDialog( wxWindow* parent, wxWindowID id, const wxString& caption,
+                                         const wxPoint& pos, const wxSize& size, long style )
+ {
+     
+     long wstyle = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER;
+     wxDialog::Create( parent, id, caption, pos, size, wstyle );
+     
+     CreateControls();
+     GetSizer()->SetSizeHints( this );
+     Centre();
+     
+ }
+ 
+ GetUserpermitDialog::~GetUserpermitDialog()
+ {
+     delete m_PermitCtl;
+ }
+ 
+ /*!
+  * GetUserpermitDialog creator
+  */
+ 
+ bool GetUserpermitDialog::Create( wxWindow* parent, wxWindowID id, const wxString& caption,
+                                  const wxPoint& pos, const wxSize& size, long style )
+ {
+     SetExtraStyle( GetExtraStyle() | wxWS_EX_BLOCK_EVENTS );
+     wxDialog::Create( parent, id, caption, pos, size, style );
+     
+     CreateControls();
+     GetSizer()->SetSizeHints( this );
+     Centre();
+     
+     return TRUE;
+ }
+ 
+ /*!
+  * Control creation for GetUserpermitDialog
+  */
+ 
+ void GetUserpermitDialog::CreateControls()
+ {
+     GetUserpermitDialog* itemDialog1 = this;
+     
+     wxBoxSizer* itemBoxSizer2 = new wxBoxSizer( wxVERTICAL );
+     itemDialog1->SetSizer( itemBoxSizer2 );
+     
+     wxStaticBox* itemStaticBoxSizer4Static = new wxStaticBox( itemDialog1, wxID_ANY,
+                                                               _("Enter Userpermit") );
+     
+     wxStaticBoxSizer* itemStaticBoxSizer4 = new wxStaticBoxSizer( itemStaticBoxSizer4Static,
+                                                                   wxVERTICAL );
+     itemBoxSizer2->Add( itemStaticBoxSizer4, 0, wxEXPAND | wxALL, 5 );
+     
+     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _(""),
+     wxDefaultPosition, wxDefaultSize, 0 );
+     itemStaticBoxSizer4->Add( itemStaticText5, 0,
+                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 5 );
+     
+     m_PermitCtl = new wxTextCtrl( itemDialog1, ID_GETUP_UP, _T(""), wxDefaultPosition,
+     wxSize( 180, -1 ), 0 );
+     itemStaticBoxSizer4->Add( m_PermitCtl, 0,
+                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 5 );
+ 
+     wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxHORIZONTAL );
+     itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL, 5 );
+     
+     m_testBtn = new wxButton(itemDialog1, ID_GETUP_TEST, _("Test Userpermit"));
+     m_testBtn->Disable();
+     itemBoxSizerTest->Add( m_testBtn, 0, wxALIGN_LEFT | wxALL, 5 );
+
+     wxStaticBox* itemStaticBoxTestResults = new wxStaticBox( itemDialog1, wxID_ANY,
+                                                                  _("Test Results"), wxDefaultPosition, wxSize(500, 40) );
+     
+     wxStaticBoxSizer* itemStaticBoxSizerTest = new wxStaticBoxSizer( itemStaticBoxTestResults,  wxVERTICAL );
+     itemBoxSizerTest->Add( itemStaticBoxSizerTest, 0,  wxALIGN_RIGHT |wxALL, 5 );
+     
+     
+     m_TestResult = new wxStaticText( itemDialog1, -1, _T(""), wxDefaultPosition, wxSize( 180, -1 ), 0 );
+     
+     itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL, 5 );
+     
+     
+     
+     wxBoxSizer* itemBoxSizer16 = new wxBoxSizer( wxHORIZONTAL );
+     itemBoxSizer2->Add( itemBoxSizer16, 0, wxALIGN_RIGHT | wxALL, 5 );
+     
+     m_CancelButton = new wxButton( itemDialog1, ID_GETUP_CANCEL, _("Cancel"), wxDefaultPosition,
+     wxDefaultSize, 0 );
+     itemBoxSizer16->Add( m_CancelButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5 );
+     m_CancelButton->SetDefault();
+     
+     m_OKButton = new wxButton( itemDialog1, ID_GETUP_OK, _("OK"), wxDefaultPosition,
+     wxDefaultSize, 0 );
+     itemBoxSizer16->Add( m_OKButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5 );
+     
+     m_OKButton->Disable();
+     
+     m_PermitCtl->AppendText(g_userpermit);
+     
+ }
+ 
+ 
+ bool GetUserpermitDialog::ShowToolTips()
+ {
+     return TRUE;
+ }
+ 
+ void GetUserpermitDialog::OnTestClick( wxCommandEvent& event )
+ {
+     wxString cmd = g_sencutil_bin;
+     cmd += _T(" -y ");                  // validate Userpermit
+     
+     cmd += _T(" -u ");
+     cmd += m_PermitCtl->GetValue();
+     
+     wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
+
+     bool berr = false;
+     for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
+         wxString line = valup_result[i];
+         if(line.Upper().Find(_T("ERROR")) != wxNOT_FOUND){
+             if( line.Upper().Find(_T("S63_PI")) != wxNOT_FOUND)  {
+                 m_TestResult->SetLabel(line.Trim());
+             }
+             else {
+                m_TestResult->SetLabel(_("Userpermit invalid"));
+             }
+             berr = true;
+             m_OKButton->Disable();
+             break;
+         }
+     }
+     if(!berr){
+         m_TestResult->SetLabel(_("Userpermit OK"));
+         m_OKButton->Enable();
+     }
+ }
+ 
+ void GetUserpermitDialog::OnCancelClick( wxCommandEvent& event )
+ {
+    EndModal(2);
+ }
+ 
+ void GetUserpermitDialog::OnOkClick( wxCommandEvent& event )
+ {
+     if( m_PermitCtl->GetValue().Length() == 0 ) 
+         EndModal(1);
+     else {
+        g_userpermit = m_PermitCtl->GetValue();
+        g_pi->SaveConfig();
+     
+        EndModal(0);
+     }
+ }
+ 
+ void GetUserpermitDialog::OnUpdated( wxCommandEvent& event )
+ {
+     if( m_PermitCtl->GetValue().Length() )
+         m_testBtn->Enable();
+     else
+         m_testBtn->Disable();
+ }
+ 
+ 
+
+
+
+
+
+wxString GetUserpermit(void)
+{
+    if(g_userpermit.Len())
+        return g_userpermit;
+    else {
+        GetUserpermitDialog dlg(NULL);
+        dlg.SetSize(500,-1);
+        dlg.Centre();
+        int ret = dlg.ShowModal();
+        if(ret == 0)
+            return g_userpermit;
+        else
+            return _T("");
+    }
+}
 
