@@ -39,7 +39,6 @@
 #include "wx/stream.h"
 #include "wx/wfstream.h"
 #include <wx/statline.h>
-
 #include "s63_pi.h"
 #include "s63chart.h"
 
@@ -55,7 +54,7 @@ wxString                        g_s57data_dir;
 
 wxString                        g_userpermit;
 s63_pi                          *g_pi;
-
+wxString                        g_pi_filename;
 
 // the class factories, used to create and destroy instances of the PlugIn
 
@@ -103,26 +102,23 @@ s63_pi::s63_pi(void *ppimgr)
       //        Specify the location of the OCPNsenc helper.
       g_sencutil_bin = fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + _T("OCPNsenc");
       
-      g_sencutil_bin = _T("/home/dsr/Projects/OCPNsenc/build/OCPNsenc");
-
-      
       
 #ifdef __WXMSW__
       g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + 
            _T("plugins\\s63_pi\\OCPNsenc.exe\"");
+#endif 
            
-         
-#endif      
+#ifdef __WXOSX__
+      fn_exe.RemoveLastDir();     
+      g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + 
+           _T("PlugIns/s63_pi/OCPNsenc\"");
+#endif 
+           
       
       
+      g_backchannel_port = 49500; //49152;       //ports 49152–65535 are unallocated
       
-      
-      g_backchannel_port = 49152;       //ports 49152–65535 are unallocated
-      g_pScreenLog = new S63ScreenLogContainer( GetOCPNCanvasWindow() );
-      g_pScreenLog->SetSize(wxSize(400, 400));
-      g_pScreenLog->Centre();
-//      g_pScreenLog->Show();
-      
+      g_pScreenLog = NULL; 
       g_pPanelScreenLog = NULL;
       
       g_frontchannel_port = 50000;
@@ -132,7 +128,8 @@ s63_pi::s63_pi(void *ppimgr)
       
       //    Get a pointer to the opencpn configuration object
       m_pconfig = GetOCPNConfigObject();
-      
+    
+      m_up_text = NULL;
       LoadConfig();
       
       
@@ -146,13 +143,17 @@ s63_pi::~s63_pi()
 
 int s63_pi::Init(void)
 {
-
-      AddLocaleCatalog( _T("opencpn-s63_pi") );
+//    ScreenLogMessage( _T("s63_pi Init()\n") );
+    
+    //  Get the path of the PlugIn itself
+    g_pi_filename = GetPlugInPath(this);
+    
+    AddLocaleCatalog( _T("opencpn-s63_pi") );
 
       //    Build an arraystring of dynamically loadable chart class names
-      m_class_name_array.Add(_T("ChartS63"));
+    m_class_name_array.Add(_T("ChartS63"));
 
-      return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE);
+    return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE);
 
 }
 
@@ -203,8 +204,6 @@ wxString s63_pi::GetLongDescription()
 {
       return _("S63 PlugIn for OpenCPN\n\
 Provides support of S63 charts.\n\n\
-Supported charts must have been installed with \n\
-appropriate encryption certificates in place.\n\
 ");
 
 }
@@ -269,7 +268,7 @@ void s63_pi::OnSetupOptions(){
     m_buttonImportPermit = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Import Cell Permits..."), wxDefaultPosition, wxDefaultSize, 0 );
     bSizer18->Add( m_buttonImportPermit, 0, wxALL, 5 );
     
-    m_buttonRemovePermit = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Remove Permit"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_buttonRemovePermit = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Remove Permits"), wxDefaultPosition, wxDefaultSize, 0 );
     m_buttonRemovePermit->Enable( false );
     bSizer18->Add( m_buttonRemovePermit, 0, wxALL, 5 );
     
@@ -280,12 +279,15 @@ void s63_pi::OnSetupOptions(){
     
 
     //  User Permit
-    wxStaticBoxSizer* sbSizerUP= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelWin, wxID_ANY, _("UserPermit") ), wxVERTICAL );
-    wxStaticText *up_text = new wxStaticText(m_s63chartPanelWin, wxID_ANY, _T("test"));
+    wxStaticBoxSizer* sbSizerUP= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelWin, wxID_ANY, _("UserPermit") ), wxHORIZONTAL );
+    m_up_text = new wxStaticText(m_s63chartPanelWin, wxID_ANY, _T(""));
     
     if(g_userpermit.Len())
-        up_text->SetLabel( GetUserpermit() );
-    sbSizerUP->Add(up_text);
+        m_up_text->SetLabel( GetUserpermit() );
+    sbSizerUP->Add(m_up_text, wxEXPAND);
+ 
+    m_buttonNewUP = new wxButton( m_s63chartPanelWin, wxID_ANY, _("New Userpermit..."), wxDefaultPosition, wxDefaultSize, 0 );
+    sbSizerUP->Add( m_buttonNewUP, 0, wxALL | wxALIGN_RIGHT, 5 );
     
     chartPanelSizer->AddSpacer( 5 );
     chartPanelSizer->Add( sbSizerUP, 0, wxEXPAND, 5 );
@@ -320,6 +322,9 @@ void s63_pi::OnSetupOptions(){
     m_buttonRemovePermit->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
             wxCommandEventHandler(s63_pi_event_handler::OnRemovePermitClick), NULL, m_event_handler );
     
+    m_buttonNewUP->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
+            wxCommandEventHandler(s63_pi_event_handler::OnNewUserpermitClick), NULL, m_event_handler );
+    
     m_permit_list->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED,
                   wxListEventHandler( s63_pi_event_handler::OnSelectPermit ), NULL, m_event_handler );
     
@@ -328,6 +333,8 @@ void s63_pi::OnSetupOptions(){
 
 void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
 {
+    m_up_text = NULL;
+    
     if(g_pPanelScreenLog){
         g_pPanelScreenLog->Close();
         delete g_pPanelScreenLog;
@@ -335,7 +342,6 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
     
     g_backchannel_port++;
     g_pScreenLog = new S63ScreenLogContainer( GetOCPNCanvasWindow() );
-    g_pScreenLog->SetSize(wxSize(400, 600));
     g_pScreenLog->Centre();
     
 }
@@ -480,10 +486,11 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
 
     //  Walk the enc_root_dir, and prove that an enc base or update cell of the correct name
     //  actually exists
-
+    //  Build an array of base (000) cells and updates
+    
+    wxArrayString cell_array;
     bool b_found_cell = false;
     wxArrayString file_array;
-    wxString base_file_name;
     wxDir::GetAllFiles(enc_root_dir, &file_array );
     for(size_t i=0 ; i < file_array.GetCount() ; i++){
         wxString fn = file_array[i];
@@ -499,9 +506,8 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
             wxCharBuffer buffer=tent_cell_file.ToUTF8();             // Check file namme for convertability
 
             if( buffer.data() && !file.GetName().IsSameAs( _T("CATALOG.031"), false ) ) {    // don't process catalogs
-                base_file_name = tent_cell_file;
                 b_found_cell = true;
-                break;
+                cell_array.Add(fn);
             }
         }
     }
@@ -512,12 +518,23 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
         return -1;
     }
 
-    //  Adjust base file name to .000 extension
-    wxFileName bfn( base_file_name );
-    bfn.SetExt( _T("000") );
-    base_file_name = bfn.GetFullPath();
+    //  Find the base file name
+    wxString base_file_name;
+    for(unsigned int i=0 ; i < cell_array.GetCount() ; i++){
+        wxString file = cell_array[i];
+        wxFileName fn(file);
+        if( fn.GetExt() == _T("000") ) {
+            base_file_name = file;
+            break;
+        }
+    }
 
-
+    if( !base_file_name.Len() ) {
+        ScreenLogMessage( _T("   Error: Cannot find ENC cell base in specified exchange set...")
+        + cell_name + _T("\n"));
+        return -1;
+    }
+    
     //  Create the text file {*GetpPrivateApplicationDataLocation()}/"s63charts"/{data_server_name}/{cell_name.os63}
 
     wxString os63_filename = *GetpPrivateApplicationDataLocation();
@@ -586,25 +603,38 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
 
 int s63_pi::RemoveCellPermit( void )
 {
-    //  Which permit?  Only one can be selected
+    //  Which permits?
     if(m_permit_list){
-        long itemIndex = m_permit_list->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
         
-        int index = m_permit_list->GetItemData( itemIndex );
-        wxString permit_file = m_permit_list->m_permit_file_array[index];
+        wxArrayString permits;
         
-        RemoveChartFromDBInPlace( permit_file );
+        long itemIndex = -1;
+        for ( ;; )
+        {
+            itemIndex = m_permit_list->GetNextItem( itemIndex, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+            if ( itemIndex == -1 )
+                break;
+        
+            int index = m_permit_list->GetItemData( itemIndex );
+            wxString permit_file = m_permit_list->m_permit_file_array[index];
+            
+            permits.Add(permit_file);
+        }
+        
+        for(unsigned int i=0 ; i < permits.GetCount() ; i++){
+        
+            RemoveChartFromDBInPlace( permits[i] );
         
         //      Kill the permit file
-        ::wxRemoveFile( permit_file );
+            ::wxRemoveFile( permits[i] );
 
         //      Rebuild the permit list
-        wxString permit_dir = *GetpPrivateApplicationDataLocation();
-        permit_dir += wxFileName::GetPathSeparator();
-        permit_dir += _T("s63charts");
+            wxString permit_dir = *GetpPrivateApplicationDataLocation();
+            permit_dir += wxFileName::GetPathSeparator();
+            permit_dir += _T("s63charts");
             
-        m_permit_list->BuildList( permit_dir );
-        
+            m_permit_list->BuildList( permit_dir );
+        }
     }
     
     return 0;
@@ -648,6 +678,20 @@ bool s63_pi::SaveConfig( void )
     return true;
 }
 
+void s63_pi::GetNewUserpermit(void)
+{
+    g_userpermit = _T("");
+    g_pi->SaveConfig();
+    
+    g_userpermit = GetUserpermit();
+    g_pi->SaveConfig();
+    
+    if(m_up_text) {
+        m_up_text->SetLabel( GetUserpermit() );
+    }
+        
+}
+
 
 
 // An Event handler class to catch events from S63 UI dialog
@@ -678,11 +722,21 @@ void s63_pi_event_handler::OnSelectPermit( wxListEvent& event )
     m_parent->EnablePermitRemoveButton(true);
 }
 
+void s63_pi_event_handler::OnNewUserpermitClick( wxCommandEvent& event )
+{
+    m_parent->GetNewUserpermit();
+}
 
 
 //      Private logging functions
 void ScreenLogMessage(wxString s)
 {
+    if(!g_pScreenLog && !g_pPanelScreenLog){
+        g_pScreenLog = new S63ScreenLogContainer( GetOCPNCanvasWindow() );
+        g_pScreenLog->Centre();
+        
+    }
+    
     if( g_pScreenLog ) {
         g_pScreenLog->LogMessage(s);
     }
@@ -720,14 +774,21 @@ void ClearScreenLog(void)
 
 S63ScreenLogContainer::S63ScreenLogContainer( wxWindow *parent )
 {
-    Create( parent, -1, _T("S63_pi Log"), wxDefaultPosition, wxDefaultSize);
+    Create( parent, -1, _T("S63_pi Log"), wxDefaultPosition, wxSize(500,400) );
     m_slog = new S63ScreenLog( this );
+    
+    wxBoxSizer* itemBoxSizer2 = new wxBoxSizer( wxVERTICAL );
+    SetSizer( itemBoxSizer2 );
+ 
+    itemBoxSizer2->Add( m_slog, 1, wxEXPAND, 5 );
+    
     Hide();
 }
 
 S63ScreenLogContainer::~S63ScreenLogContainer()
 {
-    m_slog->Destroy();
+    if( m_slog  ) 
+        m_slog->Destroy();
 }
 
 void S63ScreenLogContainer::LogMessage(wxString &s)
@@ -768,8 +829,7 @@ S63ScreenLog::S63ScreenLog(wxWindow *parent):
     SetSizer( LogSizer );
 
     m_plogtc = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-    m_plogtc->SetMinSize( wxSize(-1, 200));
-    LogSizer->Add(m_plogtc, 0, wxEXPAND, 0);
+    LogSizer->Add(m_plogtc, 1, wxEXPAND, 0);
     
     
     m_nseq = 0;
@@ -780,6 +840,7 @@ S63ScreenLog::S63ScreenLog(wxWindow *parent):
     // Create the address - defaults to localhost:0 initially
     wxIPV4address addr;
     addr.Service(g_backchannel_port);
+    addr.AnyAddress();
     
     // Create the socket
     m_server = new wxSocketServer(addr);
@@ -818,8 +879,24 @@ void S63ScreenLog::LogMessage(wxString &s)
         wxString seq;
         seq.Printf(_T("%6d: "), m_nseq++);
         
-        m_plogtc->AppendText(seq);
-        m_plogtc->AppendText(s);
+        wxString sp = s;
+
+        if(sp[0] == '\r'){
+            int lp = m_plogtc->GetInsertionPoint();
+            int nol = m_plogtc->GetNumberOfLines();
+            int ll = m_plogtc->GetLineLength(nol-1);
+            
+            if(ll)
+                m_plogtc->Remove(lp-ll, lp);
+            m_plogtc->SetInsertionPoint(lp - ll );
+            m_plogtc->WriteText(s.Mid(1));
+        }
+        else {
+            m_plogtc->AppendText(seq);
+            m_plogtc->AppendText(sp);
+        }
+        
+        m_plogtc->SetInsertionPointEnd();
         Show();
     }
 }
@@ -912,8 +989,10 @@ void S63ScreenLog::OnSocketEvent(wxSocketEvent& event)
             else
                 buf[0] = '\0';
             
-            wxString msg(buf, wxConvUTF8);
-            LogMessage(msg);
+            if(rlen) {
+                wxString msg(buf, wxConvUTF8);
+                LogMessage(msg);
+            }
             
             // Enable input events again.
             sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
@@ -949,7 +1028,7 @@ void S63ScreenLog::OnSocketEvent(wxSocketEvent& event)
 
 OCPNPermitList::OCPNPermitList(wxWindow *parent)
 {
-    Create( parent, -1, wxDefaultPosition, wxSize(-1, 150), wxLC_REPORT|wxLC_SINGLE_SEL );
+    Create( parent, -1, wxDefaultPosition, wxSize(-1, 150), wxLC_REPORT );
     
 }
 
@@ -996,6 +1075,16 @@ void OCPNPermitList::BuildList( const wxString &permit_dir )
                         exdate.ParseFormat(sdate, _T("%Y%m%d"));
                         
                         wxString fdate = exdate.FormatDate();
+                        
+                        wxStringTokenizer tkz(line.AfterFirst(':'), _T(",") );
+                        wxString token = tkz.GetNextToken();
+                        token = tkz.GetNextToken();
+                        token = tkz.GetNextToken();
+                        token = tkz.GetNextToken();             // Data server ID
+                        
+                        //      Set Data Server ID string
+                        SetItem(itemIndex, 1, token);
+                        
 
                         //TODO why, on GTK, can I not set an item/column colour?
                         wxListItem lid;
@@ -1029,7 +1118,6 @@ void OCPNPermitList::BuildList( const wxString &permit_dir )
     SetColumnWidth( 2, wxLIST_AUTOSIZE_USEHEADER );
 #endif
     
-//    SortItems( SortConnectionOnPriority, (long) m_lcSources );
     
 }
 
@@ -1176,6 +1264,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
      cmd += _T(" -u ");
      cmd += m_PermitCtl->GetValue();
      
+     wxLogMessage( cmd );
      wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
 
      bool berr = false;

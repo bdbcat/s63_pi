@@ -50,63 +50,33 @@ extern "C" int G_PtInPolygon(MyPoint *, int, float, float) ;
 #define BPP 24
 #endif
 
-#if 0
-//----------------------------------------------------------------------------------
-//      SENC Server Process container
-//----------------------------------------------------------------------------------
-
-class ServerProcess: public wxProcess
+//------------------------------------------------------------------------------
+//    Simple stream cipher input stream
+//------------------------------------------------------------------------------
+class CryptInputStream  
 {
 public:
-    ServerProcess();
-    ~ServerProcess();
+    CryptInputStream ( wxInputStream *stream );
+    CryptInputStream ( wxInputStream &stream );
+    virtual ~CryptInputStream();
     
-    void OnTerminate(int pid, int status);
-    wxString    m_outstring;
-    bool        term_happened;
+    wxInputStream &Read(void *buffer, size_t bufsize);
+    char GetC();
+    bool Eof();
+    size_t Ungetch(const char* buffer, size_t size);
+    void Rewind();
     
-};
-#endif
-
-#if 0
-//----------------------------------------------------------------------------------
-//      SENC Client
-//----------------------------------------------------------------------------------
-#define SOCKET_ID             5001
-#define DS_SERVERSOCKET_ID       5002
-#define DS_ACTIVESERVERSOCKET_ID 5003
-
-class SENCclient: public wxInputStream
-{
-public:
-    SENCclient(const wxString &senc_file_name);
-    ~SENCclient();
+    void SetCryptBuffer( unsigned char *buffer, size_t cbsize );
     
-    int Open(void);
-    void Close();
-    wxString GetServerOutput();
+    wxInputStream *m_parent_stream;
+    bool m_owns;
     
-    int reset(void);
-    int NetRead( void *destination, size_t length, size_t *read_actual);
-    //    int UnRead( char *destination, int length);
-    //    int fgets( char *destination, int max_length);
-    
-    // Over ride methods from the base class
-    size_t OnSysRead(void *buffer, size_t size);
-    bool Eof() const;
-    
-    wxString m_senc_file;
-    
-    wxSocketClient      *m_sock;
-    bool m_eof;
-    
-    ServerProcess       *m_sproc;
-    long                m_server_pid;
-    bool                m_OK;
+    unsigned char  *m_cbuf;
+    size_t      m_cbuf_size;
+    size_t      m_cb_offset;
+    unsigned char *m_outbuf;
     
 };
-
-#endif
 
 
 // ----------------------------------------------------------------------------
@@ -166,13 +136,6 @@ class  ChartS63 : public PlugInChartBaseGL
 
       double GetRasterScaleFactor();
 
-#if 0
-      int GetCOVREntries();
-      int GetCOVRTablePoints(int iTable);
-      int  GetCOVRTablenPoints(int iTable);
-      float *GetCOVRTableHead(int iTable);
-#endif
-
       int GetCOVREntries(){ return  m_nCOVREntries; }
       int GetCOVRTablePoints(int iTable) { return m_pCOVRTablePoints[iTable]; }
       int  GetCOVRTablenPoints(int iTable){ return m_pCOVRTablePoints[iTable]; }
@@ -208,6 +171,8 @@ protected:
       void              SetVPParms(const PlugIn_ViewPort &vpt);
       void              ResetPointBBoxes(const PlugIn_ViewPort &vp_last, const PlugIn_ViewPort &vp_this);
       void              SetLinePriorities(void);
+
+      void              FreeObjectsAndRules();
       
         // Rendering
       bool DoRenderViewOnDC(wxMemoryDC& dc, const PlugIn_ViewPort& VPoint, bool force_new_view);
@@ -231,7 +196,12 @@ protected:
       bool DoesLatLonSelectObject( float lat, float lon, float select_radius, PI_S57Obj *obj );
       bool IsPointInObjArea( float lat, float lon, float select_radius, PI_S57Obj *obj );
       
-      int               my_fgets( char *buf, int buf_len_max, wxInputStream &ifs );
+      
+      wxString Get_eHDR_Name( const wxString& name000 );
+      wxString Build_eHDR( const wxString& name000 );
+      
+      
+      int               my_fgets( char *buf, int buf_len_max, CryptInputStream &ifs );
 
       int               m_global_color_scheme;
       wxBitmap          *m_pBMPThumb;
@@ -308,7 +278,7 @@ public:
     //  Public Methods
     PI_S57ObjX();
     ~PI_S57ObjX();
-    PI_S57ObjX(char *first_line, wxInputStream *scl);
+    PI_S57ObjX(char *first_line, CryptInputStream *scl);
     
     //      wxString GetAttrValueAsString ( char *attr );
     //      int GetAttributeIndex( const char *AttrSeek );

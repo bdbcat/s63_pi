@@ -73,6 +73,7 @@ public:
     void OnImportPermitClick( wxCommandEvent &event );
     void OnRemovePermitClick( wxCommandEvent &event );
     void OnSelectPermit( wxListEvent& event );    
+    void OnNewUserpermitClick( wxCommandEvent& event );    
     s63_pi  *m_parent;
 };
 
@@ -110,8 +111,11 @@ public:
     int ImportCellPermits( void );
     int RemoveCellPermit( void );
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
-
+    void GetNewUserpermit(void);
+    
     bool SaveConfig( void );
+  
+    wxStaticText        *m_up_text;
     
 private:
     int ProcessCellPermit( wxString &permit, wxString &enc_root_dir );
@@ -130,6 +134,7 @@ private:
     OCPNPermitList      *m_permit_list;
     wxButton            *m_buttonImportPermit;
     wxButton            *m_buttonRemovePermit;
+    wxButton            *m_buttonNewUP;
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;

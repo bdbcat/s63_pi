@@ -99,6 +99,7 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     if(-1 == rv) {
         ret_array.Add(_T("ERROR: s63_pi could not execute OCPNsenc utility\n"));
         ret_array.Add(cmd.Mid(0, 60) + _T("...") + _T("\n"));
+        s_last_sync_error = _T("NOEXEC");
     }
         
     return ret_array;
@@ -159,6 +160,162 @@ void UtilProcess::OnTerminate(int pid, int status)
 }
 
 
+unsigned char *GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize )
+{
+    
+    unsigned char *cb = (unsigned char *)malloc(1024);
+
+    if(bufsize)
+        *bufsize = 1024;
+
+    
+    wxString tmp_file = wxFileName::CreateTempFileName( _T("") );
+    
+    //  Get the one-time pad key
+    wxString cmd = g_sencutil_bin;
+    cmd += _T(" -n ");          
+    
+    cmd += _T(" -i ");
+    cmd += _T("\"");
+    cmd += FullPath;
+    cmd += _T("\"");
+    
+    cmd += _T(" -o ");
+    cmd += _T("\"");
+    cmd += tmp_file;
+    cmd += _T("\"");
+    
+    cmd += _T(" -u ");
+    cmd += GetUserpermit();
+    
+    cmd += _T(" -b ");
+    wxString port;
+    port.Printf( _T("%d"), g_backchannel_port );
+    cmd += port;
+    
+    wxLogMessage( cmd );
+    wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
+    
+    //  Read the key
+    wxFileInputStream *ifs = new wxFileInputStream(tmp_file);
+    if ( !ifs->IsOk() ){
+        ScreenLogMessage( _T("   Error: eSENC Key not built.\n "));
+        return cb;
+    }
+
+    if( ifs->Read(cb, 1024).LastRead() != 1024) {
+        ScreenLogMessage( _T("   Error: eSENC Key not read.\n "));
+        delete ifs;
+        wxRemoveFile(tmp_file);
+        return cb;
+    }
+    
+    delete ifs;
+    wxRemoveFile(tmp_file);
+    return cb;
+    
+}
+
+
+
+
+
+//------------------------------------------------------------------------------
+//    Simple stream cipher input stream
+//------------------------------------------------------------------------------
+
+CryptInputStream::CryptInputStream ( wxInputStream *stream )
+:  m_parent_stream(stream),
+m_owns(true),
+m_cbuf(0), m_outbuf(0)
+{
+}
+
+CryptInputStream::CryptInputStream ( wxInputStream &stream )
+:  m_parent_stream(&stream),
+m_owns(false),
+m_cbuf(0), m_outbuf(0)
+{
+}
+
+
+CryptInputStream::~CryptInputStream ( )
+{
+    if (m_owns)
+        delete m_parent_stream;
+    
+    delete m_outbuf;
+}
+
+void CryptInputStream::SetCryptBuffer( unsigned char *buffer, size_t cbsize )
+{
+    m_cbuf = buffer;
+    m_cbuf_size = cbsize;
+    m_cb_offset = 0;
+    if(!m_outbuf)
+        m_outbuf = (unsigned char *)malloc(1024);
+}
+
+
+
+wxInputStream &CryptInputStream::Read(void *buffer, size_t bufsize)
+{
+    if(m_cbuf){
+        
+        m_parent_stream->Read(buffer, bufsize);
+        
+        size_t ibuf_count = 0;
+        char *buf_crypt = (char *)buffer;
+        size_t buf_left = bufsize;
+        while(buf_left > 0){
+
+            ibuf_count = bufsize;
+            //  Do the crypto
+            size_t c_idx = m_cb_offset;
+            for(size_t index = 0 ; index < ibuf_count ; index++) {
+                buf_crypt[index] ^= m_cbuf[c_idx];
+                if(++c_idx >= m_cbuf_size)
+                    c_idx = 0;
+            }
+            
+            m_cb_offset = c_idx;
+            
+            buf_left -= ibuf_count;
+        }
+        
+    }
+    else
+        m_parent_stream->Read(buffer, bufsize);
+    
+    return *m_parent_stream;
+    
+}
+
+char CryptInputStream::GetC()
+{
+    unsigned char c;
+    Read(&c, sizeof(c));
+    return m_parent_stream->LastRead() ? c : wxEOF;
+    
+}
+   
+bool CryptInputStream::Eof()
+{
+    return m_parent_stream->Eof();
+}
+
+size_t CryptInputStream::Ungetch(const char* buffer, size_t size)
+{
+    return 0;
+}
+
+void CryptInputStream::Rewind()
+{
+    m_parent_stream->SeekI(0);
+    m_cb_offset = 0;
+}
+
+
 
 
 
@@ -210,6 +367,16 @@ ChartS63::ChartS63()
     m_pCloneBM = NULL;
     
     m_bLinePrioritySet = false;
+    m_this_chart_context = NULL;
+    
+    m_nCOVREntries = 0;
+    m_pCOVRTable = NULL;
+    m_pCOVRTablePoints = NULL;
+
+    m_nNoCOVREntries = 0;
+    m_pNoCOVRTable = NULL;
+    m_pNoCOVRTablePoints = NULL;
+    
     
     
 //      ChartBaseBSBCTOR();
@@ -248,26 +415,99 @@ ChartS63::ChartS63()
 
 ChartS63::~ChartS63()
 {
-#if 0
+
       //    Free the COVR tables
 
       for(unsigned int j=0 ; j<(unsigned int)m_nCOVREntries ; j++)
             free( m_pCOVRTable[j] );
-
       free( m_pCOVRTable );
       free( m_pCOVRTablePoints );
 
-      free(m_ppartial_bytes);
+      for(unsigned int j=0 ; j<(unsigned int)m_nNoCOVREntries ; j++)
+          free( m_pNoCOVRTable[j] );
+      free( m_pNoCOVRTable );
+      free( m_pNoCOVRTablePoints );
+      
+      //      free(m_ppartial_bytes);
 
-      delete m_pBMPThumb;
-#endif
-//      ChartBaseBSBDTOR();
+//      delete m_pBMPThumb;
+
+
+      FreeObjectsAndRules();
+
+      delete pDIB;
       
       delete pFloatingATONArray;
       delete pRigidATONArray;
       
+      free( m_this_chart_context );
+      
+      PI_VE_Hash::iterator it;
+      for( it = m_ve_hash.begin(); it != m_ve_hash.end(); ++it ) {
+          PI_VE_Element *value = it->second;
+          if( value ) {
+              free( value->pPoints );
+              delete value;
+          }
+      }
+      m_ve_hash.clear();
+      
+      PI_VC_Hash::iterator itc;
+      for( itc = m_vc_hash.begin(); itc != m_vc_hash.end(); ++itc ) {
+          PI_VC_Element *value = itc->second;
+          if( value ) {
+              free( value->pPoint );
+              delete value;
+          }
+      }
+      m_vc_hash.clear();
+      
+      
 }
 
+
+void ChartS63::FreeObjectsAndRules()
+{
+    //      Delete the created PI_S57Obj array
+    //      and any child lists
+    //      The LUPs of base elements are deleted elsewhere ( void s52plib::DestroyLUPArray ( wxArrayOfLUPrec *pLUPArray ))
+    //      But we need to manually destroy any LUPS related to children
+    
+    PI_S57Obj *top;
+    PI_S57Obj *nxx;
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        for( int j = 0; j < LUPNAME_NUM; j++ ) {
+            
+            top = razRules[i][j];
+            while( top != NULL ) {
+                 
+                if( top->child ) {
+                    PI_S57Obj *ctop = top->child;
+                    while( ctop ) {
+                        delete ctop;
+                        
+                        //TODO  Need to add method to API1.11 to access DestroyLup for LUPs associated with children
+//                        if( ps52plib ) ps52plib->DestroyLUP( ctop->LUP );
+//                        delete ctop->LUP;
+                        
+                        PI_S57Obj *cnxx = ctop->next;
+                        delete ctop;
+                        ctop = cnxx;
+                    }
+                }
+ 
+ 
+                nxx = top->next;
+                
+                top->nRef--;
+                if( 0 == top->nRef )
+                    delete top;
+                
+                top = nxx;
+            }
+        }
+    }
+}
 
 
 
@@ -276,8 +516,83 @@ ChartS63::~ChartS63()
 
 #define BUF_LEN_MAX 4000
 
+wxString ChartS63::Get_eHDR_Name( const wxString& name000 )
+{
+    wxFileName tfn(name000);
+    wxString base_name = tfn.GetName();
+    
+    wxString efn = m_senc_dir;
+    efn += wxFileName::GetPathSeparator();
+    efn += base_name;
+    efn += _T(".ehdr");
+    
+    return efn;
+}
 
-int ChartS63::Init( const wxString& name, int init_flags )
+
+wxString ChartS63::Build_eHDR( const wxString& name000 )
+{
+    wxString ehdr_file_name = Get_eHDR_Name( name000 );
+    
+    // build the SENC utility command line
+    
+    wxString cmd = g_sencutil_bin;
+    cmd += _T(" -l ");                  // create secure header
+    
+    cmd += _T(" -i ");
+    cmd += _T("\"");
+    cmd += m_full_base_path;
+    cmd += _T("\"");
+    
+    cmd += _T(" -o ");
+    cmd += _T("\"");
+    cmd += ehdr_file_name;
+    cmd += _T("\"");
+    
+    cmd += _T(" -p ");
+    cmd += m_cell_permit;
+    
+    cmd += _T(" -u ");
+    cmd += GetUserpermit();
+    
+    cmd += _T(" -b ");
+    wxString port;
+    port.Printf( _T("%d"), g_backchannel_port );
+    cmd += port;
+    
+    cmd += _T(" -r ");
+    cmd += _T("\"");
+    cmd += g_s57data_dir;
+    cmd += _T("\"");
+    
+    wxLogMessage( cmd );
+    wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
+    
+    //  Check results
+    if( !exec_results_check( ehdr_result ) ) {
+        m_extended_error = _T("Error executing cmd: ");
+        m_extended_error += cmd;
+        m_extended_error += _T("\n");
+        m_extended_error += s_last_sync_error;
+        
+        ScreenLogMessage( _T("\n") );
+        ScreenLogMessage( m_extended_error + _T("\n"));
+/*        
+        for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
+            ScreenLogMessage( ehdr_result[i] );
+            if(!ehdr_result[i].EndsWith(_T("\n")))
+                ScreenLogMessage( _T("\n") );
+        }
+ */       
+        return _T("");
+    }
+    else
+        return ehdr_file_name;
+    
+}
+
+
+int ChartS63::Init( const wxString& name_os63, int init_flags )
 {
     //    Use a static semaphore flag to prevent recursion
     if( s_PI_bInS57 ) {
@@ -292,20 +607,17 @@ int ChartS63::Init( const wxString& name, int init_flags )
     
     PI_InitReturn ret_val = PI_INIT_FAIL_NOERROR;
     
-    m_FullPath = name;
+    m_FullPath = name_os63;
     m_Description = m_FullPath;
 
     m_ChartType = PI_CHART_TYPE_PLUGIN;
     m_ChartFamily = PI_CHART_FAMILY_VECTOR;
     m_projection = PI_PROJECTION_MERCATOR;
 
-    //  Get the base file name
-    wxFileName tfn(name);
-    wxString base_name = tfn.GetName();
- 
+
     //  Parse the metadata
   
-    wxTextFile meta_file( name );
+    wxTextFile meta_file( name_os63 );
     if( meta_file.Open() ){
         wxString line = meta_file.GetFirstLine();
         
@@ -328,66 +640,14 @@ int ChartS63::Init( const wxString& name, int init_flags )
     if( PI_HEADER_ONLY == init_flags ){
         
        //      else if the ehdr file exists, we init from there (normal path for adding cell to dB)
-        wxString efn = m_senc_dir;
-        efn += wxFileName::GetPathSeparator();
-        efn += base_name;
-        efn += _T(".ehdr");
- 
-        wxRemoveFile( efn);
+       wxString efn = Get_eHDR_Name(name_os63);
         
         if( wxFileName::FileExists(efn) ) {
         }
         else {                          //  we need to create the ehdr file.
 
-            // build the SENC utility command line
-            wxString temp_outfile = efn; //wxFileName::CreateTempFileName( _T("") );
-            
-            wxString cmd = g_sencutil_bin;
-            cmd += _T(" -l ");                  // create secure header
-            
-            cmd += _T(" -i ");
-            cmd += _T("\"");
-            cmd += m_full_base_path;
-            cmd += _T("\"");
-
-            cmd += _T(" -o ");
-            cmd += _T("\"");
-            cmd += temp_outfile;
-            cmd += _T("\"");
-            
-            cmd += _T(" -p ");
-            cmd += m_cell_permit;
-            
-            cmd += _T(" -u ");
-            cmd += GetUserpermit();
-            
-            cmd += _T(" -b ");
-            wxString port;
-            port.Printf( _T("%d"), g_backchannel_port );
-            cmd += port;
-
-            cmd += _T(" -r ");
-            cmd += _T("\"");
-            cmd += g_s57data_dir;
-            cmd += _T("\"");
-            
-            wxLogMessage( cmd );
-            wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
-            
-            //  Check results
-            if( !exec_results_check( ehdr_result ) ) {
-                m_extended_error = _T("Error executing cmd: ");
-                m_extended_error += cmd;
-                m_extended_error += _T("\n");
-                m_extended_error += s_last_sync_error;
-                
-                ScreenLogMessage( _T("\n") );
-                for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
-                    ScreenLogMessage( ehdr_result[i] );
-                    if(!ehdr_result[i].EndsWith(_T("\n")))
-                        ScreenLogMessage( _T("\n") );
-                }
-                
+            wxString ebuild = Build_eHDR(name_os63);
+            if( !ebuild.Len() ) {
                 s_PI_bInS57--;
                 return PI_INIT_FAIL_REMOVE;
             }
@@ -401,8 +661,29 @@ int ChartS63::Init( const wxString& name, int init_flags )
                 
                 m_bReadyToRender = true;
             }
-            else
-                ret_val = PI_INIT_FAIL_RETRY;
+            else {
+                
+                //      Init may have failed due to decrypt error...  
+                //      Allow one controlled retry
+                wxRemoveFile( efn);
+                wxString ebuild = Build_eHDR(name_os63);
+                if( !ebuild.Len() ) {
+                    ScreenLogMessage( _T("   Error: Second chance eHDR not built, PI_INIT_FAIL_REMOVE.\n "));
+                    ret_val = PI_INIT_FAIL_REMOVE;
+                }
+                else {
+                    bool init_result = InitFrom_ehdr( efn );
+                    if( init_result ) {
+                        ret_val = PI_INIT_OK;
+                        
+                        m_bReadyToRender = true;
+                    }
+                    else {
+                        ScreenLogMessage( _T("   Error: Second chance eHDR decrypt fail, PI_INIT_FAIL_REMOVE.\n "));
+                        ret_val = PI_INIT_FAIL_REMOVE;
+                    }
+                }
+            }
             
         }
         else
@@ -413,17 +694,60 @@ int ChartS63::Init( const wxString& name, int init_flags )
     
         // see if there is a SENC available
         int sret = FindOrCreateSenc( m_full_base_path );
+        
+//        wxString e;
+//        e.Printf(_T("  FindOrCreateSenc returns %d\n"), sret);
+//        ScreenLogMessage( e );
+        
         if( sret != BUILD_SENC_OK ) {
             if( sret == BUILD_SENC_NOK_RETRY )
                 ret_val = PI_INIT_FAIL_RETRY;
             else
                 ret_val = PI_INIT_FAIL_REMOVE;
-        } else
+        } else {
             
             //  Finish the init process
             ret_val = PostInit( init_flags, m_global_color_scheme );
+            
+            //  SENC may not decrypt properly
+            //  So try one more time
+            if(PI_INIT_FAIL_RETRY == ret_val) {
+                ScreenLogMessage( _T("   Warning: Retry eSENC.\n "));
                 
+                //      Establish location for SENC files
+                wxFileName SENCFileName = m_full_base_path;
+                SENCFileName.SetExt( _T("es57") );
+                
+                //      Set the proper directory for the SENC files
+                wxString SENCdir = m_senc_dir;
+                
+                if( SENCdir.Last() != wxFileName::GetPathSeparator() )
+                    SENCdir.Append( wxFileName::GetPathSeparator() );
+                
+                wxFileName tsfn( SENCdir );
+                tsfn.SetFullName( SENCFileName.GetFullName() );
+                SENCFileName = tsfn;
+                
+                wxRemoveFile( tsfn.GetFullPath() );
+ 
+                int sret = FindOrCreateSenc( m_full_base_path );
+                if( sret != BUILD_SENC_OK ) {
+                    if( sret == BUILD_SENC_NOK_RETRY )
+                        ret_val = PI_INIT_FAIL_RETRY;
+                    else
+                        ret_val = PI_INIT_FAIL_REMOVE;
+                }
+                else {
+                    //  Finish the init process
+                    ret_val = PostInit( init_flags, m_global_color_scheme );
+                    if(0 != ret_val) {
+                        ScreenLogMessage( _T("   Error: eSENC decrypt failed again.\n "));
+                    }
+                        
+                }
+            }
         }
+    }
         
         
         
@@ -450,33 +774,6 @@ bool ChartS63::GetChartExtent(ExtentPI *pext)
     return true;
 }
 
-#if 0
-int ChartS63::GetCOVREntries()
-{
-    return GetCOVREntries();
-}
-
-int ChartS63::GetCOVRTablePoints(int iTable)
-{
-    return GetCOVRTablePoints(iTable);
-}
-
-int  ChartS63::GetCOVRTablenPoints(int iTable)
-{
-    return GetCOVRTablenPoints(iTable);
-}
-
-float *ChartS63::GetCOVRTableHead(int iTable)
-{
-    return GetCOVRTableHead(iTable);
-}
-
-int ChartS63::GetNativeScale()
-{
-    return GetNativeScale();
-}
-
-#endif
 
 
 double ChartS63::GetRasterScaleFactor()
@@ -489,138 +786,6 @@ bool ChartS63::IsRenderDelta(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_propo
     return true;
 }
 
-#if 0
-void ChartS63::ChartBaseBSBCTOR()
-{
-      //    Init some private data
-
-      pBitmapFilePath = NULL;
-
-      pline_table = NULL;
-      ifs_buf = NULL;
-
-      cached_image_ok = 0;
-
-      pRefTable = (Refpoint *)malloc(sizeof(Refpoint));
-      nRefpoint = 0;
-      cPoints.status = 0;
-      bHaveEmbeddedGeoref = false;
-      n_wpx = 0;
-      n_wpy = 0;
-      n_pwx = 0;
-      n_pwy = 0;
-
-
-      bUseLineCache = true;
-      m_Chart_Skew = 0.0;
-
-      pPixCache = NULL;
-
-      pLineCache = NULL;
-
-      m_bilinear_limit = 8;         // bilinear scaling only up to n
-
-      ifs_bitmap = NULL;
-      ifss_bitmap = NULL;
-      ifs_hdr = NULL;
-
-      for(int i = 0 ; i < N_BSB_COLORS ; i++)
-            pPalettes[i] = NULL;
-
-      bGeoErrorSent = false;
-      m_Chart_DU = 0;
-      m_cph = 0.;
-
-      m_mapped_color_index = COLOR_RGB_DEFAULT;
-
-      m_datum_str = _T("WGS84");                // assume until proven otherwise
-
-      m_dtm_lat = 0.;
-      m_dtm_lon = 0.;
-
-      m_bIDLcross = false;
-
-      m_dx = 0.;
-      m_dy = 0.;
-      m_proj_lat = 0.;
-      m_proj_lon = 0.;
-      m_proj_parameter = 0.;
-
-      m_b_cdebug = 0;
-
-#ifdef OCPN_USE_CONFIG
-      wxFileConfig *pfc = pConfig;
-      pfc->SetPath ( _T ( "/Settings" ) );
-      pfc->Read ( _T ( "DebugBSBImg" ),  &m_b_cdebug, 0 );
-#endif
-
-}
-
-void ChartBSB4::ChartBaseBSBDTOR()
-{
-      if(m_FullPath.Len())
-      {
-            wxString msg(_T("BSB4_PI:  Closing chart "));
-            msg += m_FullPath;
-            wxLogMessage(msg);
-      }
-
-      if(pBitmapFilePath)
-            delete pBitmapFilePath;
-
-      if(pline_table)
-            free(pline_table);
-
-      if(ifs_buf)
-            free(ifs_buf);
-
-      free(pRefTable);
-//      free(pPlyTable);
-
-      delete ifs_bitmap;
-      delete ifs_hdr;
-      delete ifss_bitmap;
-
-      if(cPoints.status)
-      {
-          free(cPoints.tx );
-          free(cPoints.ty );
-          free(cPoints.lon );
-          free(cPoints.lat );
-
-          free(cPoints.pwx );
-          free(cPoints.wpx );
-          free(cPoints.pwy );
-          free(cPoints.wpy );
-      }
-
-//    Free the line cache
-
-      if(pLineCache)
-      {
-            CachedLine *pt;
-            for(int ylc = 0 ; ylc < Size_Y ; ylc++)
-            {
-                  pt = &pLineCache[ylc];
-                  if(pt->pPix)
-                        free (pt->pPix);
-            }
-            free (pLineCache);
-      }
-
-
-
-      delete pPixCache;
-
-//      delete pPixCacheBackground;
-//      free(background_work_buffer);
-
-
-      for(int i = 0 ; i < N_BSB_COLORS ; i++)
-            delete pPalettes[i];
-
-}
-#endif
 
 //    Report recommended minimum and maximum scale values for which use of this chart is valid
 
@@ -650,60 +815,6 @@ double ChartS63::GetNearestPreferredScalePPM(double target_scale_ppm)
     return target_scale_ppm;
 }
 
-
-#if 0
-double ChartS63::GetClosestValidNaturalScalePPM(double target_scale, double scale_factor_min, double scale_factor_max)
-{
-      double chart_1x_scale = GetPPM();
-
-      double binary_scale_factor = 1.;
-
-
-
-      //    Overzoom....
-      if(chart_1x_scale > target_scale)
-      {
-            double binary_scale_factor_max = 1 / scale_factor_min;
-
-            while(binary_scale_factor < binary_scale_factor_max)
-            {
-                  if(fabs((chart_1x_scale / binary_scale_factor ) - target_scale) < (target_scale * 0.05))
-                        break;
-                  if((chart_1x_scale / binary_scale_factor ) < target_scale)
-                        break;
-                  else
-                        binary_scale_factor *= 2.;
-            }
-      }
-
-
-      //    Underzoom.....
-      else
-      {
-            int ibsf = 1;
-            int isf_max = (int)scale_factor_max;
-            while(ibsf < isf_max)
-            {
-                  if(fabs((chart_1x_scale * ibsf ) - target_scale) < (target_scale * 0.05))
-                        break;
-
-                  else if((chart_1x_scale * ibsf ) > target_scale)
-                  {
-                        if(ibsf > 1)
-                              ibsf /= 2;
-                        break;
-                  }
-                  else
-                        ibsf *= 2;
-            }
-
-            binary_scale_factor = 1. / ibsf;
-      }
-
-      return  chart_1x_scale / binary_scale_factor;
-}
-
-#endif
 
 
 
@@ -1267,7 +1378,6 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
 //-----------------------------------------------------------------------
 //          Pixel to Lat/Long Conversion helpers
 //-----------------------------------------------------------------------
-double polytrans( double* coeff, double lon, double lat );
 
 int ChartS63::vp_pix_to_latlong(PlugIn_ViewPort& vp, int pixx, int pixy, double *plat, double *plon)
 {
@@ -1630,37 +1740,13 @@ void ChartS63::latlong_to_chartpix(double lat, double lon, double &pixx, double 
 
 void ChartS63::ComputeSourceRectangle(const PlugIn_ViewPort &vp, wxRect *pSourceRect)
 {
-#if 0
-//    int pixxd, pixyd;
-
-    //      This funny contortion is necessary to allow scale factors < 1, i.e. overzoom
-    double binary_scale_factor = (wxRound(100000 * GetPPM() / vp.view_scale_ppm)) / 100000.;
-
-//    if((binary_scale_factor > 1.0) && (fabs(binary_scale_factor - wxRound(binary_scale_factor)) < 1e-2))
-//          binary_scale_factor = wxRound(binary_scale_factor);
-
-    m_raster_scale_factor = binary_scale_factor;
-
-    if(m_b_cdebug)printf(" ComputeSourceRect... PPM: %g  vp.view_scale_ppm: %g   m_raster_scale_factor: %g\n", GetPPM(), vp.view_scale_ppm, m_raster_scale_factor);
-
-      double xd, yd;
-      latlong_to_chartpix(vp.clat, vp.clon, xd, yd);
-
-
-      pSourceRect->x = wxRound(xd - (vp.pix_width  * binary_scale_factor / 2));
-      pSourceRect->y = wxRound(yd - (vp.pix_height * binary_scale_factor / 2));
-
-      pSourceRect->width =  (int)wxRound(vp.pix_width  * binary_scale_factor) ;
-      pSourceRect->height = (int)wxRound(vp.pix_height * binary_scale_factor) ;
-#endif
-
 }
 
 
 //------------------------------------------------------------------------------
 //      Local version of fgets for Binary Mode (SENC) file
 //------------------------------------------------------------------------------
-int ChartS63::my_fgets( char *buf, int buf_len_max, wxInputStream &ifs )
+int ChartS63::my_fgets( char *buf, int buf_len_max, CryptInputStream &ifs )
 {
     char chNext;
     int nLineLen = 0;
@@ -1698,7 +1784,25 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     wxString ifs = efn;
     
     wxFileInputStream fpx_u( ifs );
-    wxBufferedInputStream fpx( fpx_u );
+    wxBufferedInputStream fpxb( fpx_u );
+    CryptInputStream fpx(fpxb);
+
+    size_t crypt_size;
+    unsigned char *cb = GetSENCCryptKeyBuffer( efn, &crypt_size );
+    fpx.SetCryptBuffer( cb, crypt_size );
+    
+    // Verify the first 4 bytes
+    char verf[5];
+    verf[4] = 0;
+    
+    fpx.Read(verf, 4);
+    fpx.Rewind();
+    
+    if(strncmp(verf, "SENC", 4)){
+        free( cb );
+        return false;
+    }
+    
     
     int MAX_LINE = 499999;
     char *buf = (char *) malloc( MAX_LINE + 1 );
@@ -1935,6 +2039,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     
     free( buf );
     
+    free( cb );
     
     //   Decide on pub date to show
     
@@ -1987,8 +2092,6 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
     tsfn.SetFullName( SENCFileName.GetFullName() );
     SENCFileName = tsfn;
     
-    // Really can only Init and use S57 chart if the S52 Presentation Library is OK
-    //    if( !ps52plib->m_bOK ) return INIT_FAIL_REMOVE;
     
     int build_ret_val = 1;
     
@@ -2146,7 +2249,7 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
 {
     
     // build the SENC utility command line
-    wxString outfile = SENCFileName; //wxFileName::CreateTempFileName( _T("") );
+    wxString outfile = SENCFileName; 
     
     wxString cmd = g_sencutil_bin;
     cmd += _T(" -c ");                  // create secure SENC
@@ -2183,20 +2286,30 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true );
     
     //  Check results
-    if( !exec_results_check( ehdr_result ) ) {
+    int rv = exec_results_check( ehdr_result );
+    if( !rv ) {
         ScreenLogMessage(_T("\n"));
         m_extended_error = _T("Error executing cmd: ");
         m_extended_error += cmd;
         m_extended_error += _T("\n");
         m_extended_error += s_last_sync_error;
-        
+
+        ScreenLogMessage( m_extended_error + _T("\n"));
+/*        
         for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
             ScreenLogMessage( ehdr_result[i] );
             if(!ehdr_result[i].EndsWith(_T("\n")))
                 ScreenLogMessage( _T("\n") );
         }
-        
-        return PI_INIT_FAIL_REMOVE;
+ */       
+    if( wxNOT_FOUND == s_last_sync_error.Find(_T("NOEXEC")) ){        // OCPNsenc ran, with errors
+            //ScreenLogMessage( _T(" Removing bad eSENC file"));
+
+            //TODO  this does not work, due to a fault in the Chrtdb remove code
+            //wxRemoveFile( outfile );     //  so kill a bad SENC
+        }
+            
+        return BUILD_SENC_NOK_PERMANENT;
     }
     
 //    HideScreenLog();
@@ -2320,9 +2433,11 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
         return 1;
     }
     
-    wxBufferedInputStream *pfpx;
+    wxBufferedInputStream *pfpxb;
     wxFileInputStream fpx_u( FullPath );
 
+    CryptInputStream *pfpx;
+#if 0    
     SENCclient scli;
     
     if(0){
@@ -2355,12 +2470,33 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
         pfpx = &fpx;
     }
 
-     else {
+     else
+#endif     
+     {
         if( !fpx_u.IsOk())
             return 1;
-        pfpx = new wxBufferedInputStream( fpx_u );
+        pfpxb = new wxBufferedInputStream( fpx_u );
     }
     
+    pfpx = new CryptInputStream( pfpxb );
+
+    size_t crypt_size;
+    unsigned char *cb = GetSENCCryptKeyBuffer( FullPath, &crypt_size );
+    pfpx->SetCryptBuffer( cb, crypt_size );
+    
+    // Verify the first 4 bytes
+    char verf[5];
+    verf[4] = 0;
+    
+    pfpx->Read(verf, 4);
+    pfpx->Rewind();
+    
+    if(strncmp(verf, "SENC", 4)) {
+        ScreenLogMessage( _T("   Error: eSENC decrypt failed.\n "));
+        
+        free( cb );
+        return 1;
+    }
     
     
     int MAX_LINE = 499999;
@@ -2619,6 +2755,8 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     free( buf );
     
     free( hdr_buf );
+    
+    free( cb );
     
     if(ret_val)
         return ret_val;
@@ -4854,7 +4992,7 @@ bool SENCclient::Eof() const
 //------------------------------------------------------------------------------
 //      Local version of fgets for Binary Mode (SENC) file
 //------------------------------------------------------------------------------
-int py_fgets( char *buf, int buf_len_max, wxInputStream *ifs )
+int py_fgets( char *buf, int buf_len_max, CryptInputStream *ifs )
 
 {
     char chNext;
@@ -5033,7 +5171,7 @@ PI_S57ObjX::~PI_S57ObjX()
 //      PI_S57ObjX CTOR from SENC file
 //----------------------------------------------------------------------------------
 
-PI_S57ObjX::PI_S57ObjX( char *first_line, wxInputStream *fpx )
+PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
 {
     att_array = NULL;
     attVal = NULL;
