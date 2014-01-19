@@ -267,6 +267,7 @@ protected:
       wxString    m_edtn000;                    // extracted from DSID:EDTN
       
       
+      wxArrayString     m_up_file_array;
       
 
 };

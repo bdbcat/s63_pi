@@ -134,8 +134,17 @@ SET(SRC_CPL
                 src/cpl/cpl_string.cpp
                 src/cpl/cpl_vsisimple.cpp
         )
+        
+SET(SRC_ISO8211
+                src/myiso8211/ddffielddefn.cpp
+                src/myiso8211/ddfmodule.cpp
+                src/myiso8211/ddfrecord.cpp
+                src/myiso8211/ddfsubfielddefn.cpp
+                src/myiso8211/ddffield.cpp
+                src/myiso8211/ddfutils.cpp
+        )
 
-ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_CPL})
+ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_CPL} ${SRC_ISO8211})
 #ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} )
 
 IF(WIN32)

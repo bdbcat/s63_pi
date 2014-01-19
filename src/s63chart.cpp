@@ -533,7 +533,23 @@ wxString ChartS63::Get_eHDR_Name( const wxString& name000 )
 wxString ChartS63::Build_eHDR( const wxString& name000 )
 {
     wxString ehdr_file_name = Get_eHDR_Name( name000 );
+
+    //  If required, build a temp file of update file array
     
+    wxString tmp_up_file = wxFileName::CreateTempFileName( _T("") );
+    wxTextFile up_file(tmp_up_file);
+    if(m_up_file_array.GetCount()){
+        up_file.Open();
+        
+        for(unsigned int i=0 ; i < m_up_file_array.GetCount() ; i++){
+            up_file.AddLine(m_up_file_array[i]);
+        }
+        
+        up_file.Write();
+        up_file.Close();
+    }
+        
+        
     // build the SENC utility command line
     
     wxString cmd = g_sencutil_bin;
@@ -565,8 +581,19 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += g_s57data_dir;
     cmd += _T("\"");
     
+    if( m_up_file_array.GetCount() ){
+        cmd += _T(" -m ");
+        cmd += _T("\"");
+        cmd += tmp_up_file;
+        cmd += _T("\"");
+    }
+        
+        
+    
     wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
+ 
+    ::wxRemoveFile( tmp_up_file );
     
     //  Check results
     if( !exec_results_check( ehdr_result ) ) {
@@ -617,16 +644,22 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 
     //  Parse the metadata
   
+    m_up_file_array.Clear();
     wxTextFile meta_file( name_os63 );
     if( meta_file.Open() ){
         wxString line = meta_file.GetFirstLine();
         
         while( !meta_file.Eof() ){
             if(line.StartsWith( _T("cellbase:" ) ) ) {
-                m_full_base_path = line.Mid(9);
+                m_full_base_path = line.Mid(9).BeforeFirst(';');
             }
             else if(line.StartsWith( _T("cellpermit:" ) ) ) {
                 m_cell_permit = line.Mid(11);
+            }
+            else if(line.StartsWith( _T("cellupdate:" ) ) ) {
+                wxString upline = line.Mid(11);
+                wxString upfile = upline.BeforeFirst(';');
+                m_up_file_array.Add(upfile);
             }
             
             line = meta_file.GetNextLine();
@@ -2076,7 +2109,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
 PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
 {
     //      Establish location for SENC files
-    wxFileName SENCFileName = name;
+    wxFileName SENCFileName( name );
     SENCFileName.SetExt( _T("es57") );
     
     //      Set the proper directory for the SENC files
@@ -2088,7 +2121,7 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
     if( SENCdir.Last() != wxFileName::GetPathSeparator() )
         SENCdir.Append( wxFileName::GetPathSeparator() );
     
-    wxFileName tsfn( SENCdir );
+    wxFileName tsfn( SENCdir + _T("a") );
     tsfn.SetFullName( SENCFileName.GetFullName() );
     SENCFileName = tsfn;
     
@@ -2102,7 +2135,7 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
     
     //      Look for SENC file in the target directory
     
-    if( SENCFileName.FileExists() ) {
+    if( wxFileName::FileExists(SENCFileName.GetFullPath()) ) {
         
 #if 0    
         wxFile f;
@@ -2393,7 +2426,7 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
     obj->next = razRules[disPrioIdx][LUPtypeIdx];
     obj->child = NULL;
     razRules[disPrioIdx][LUPtypeIdx] = obj;
-    razRules[disPrioIdx][LUPtypeIdxAlt] = obj;
+//    razRules[disPrioIdx][LUPtypeIdxAlt] = obj;
     
     return 1;
 }

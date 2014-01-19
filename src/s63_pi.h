@@ -72,12 +72,24 @@ public:
 
     void OnImportPermitClick( wxCommandEvent &event );
     void OnRemovePermitClick( wxCommandEvent &event );
+    void OnImportCellsClick( wxCommandEvent &event );
     void OnSelectPermit( wxListEvent& event );    
     void OnNewUserpermitClick( wxCommandEvent& event );    
     s63_pi  *m_parent;
 };
 
 
+class Catalog_Entry31
+{
+public:
+    Catalog_Entry31(){};
+    ~Catalog_Entry31(){};
+    
+    wxString m_filename;
+    wxString m_comt;
+};
+
+WX_DECLARE_OBJARRAY(Catalog_Entry31,      Catalog31);
 
 
 //----------------------------------------------------------------------------------------------------------
@@ -110,6 +122,7 @@ public:
     
     int ImportCellPermits( void );
     int RemoveCellPermit( void );
+    int ImportCells( void );
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
     void GetNewUserpermit(void);
     
@@ -118,7 +131,9 @@ public:
     wxStaticText        *m_up_text;
     
 private:
-    int ProcessCellPermit( wxString &permit, wxString &enc_root_dir );
+    Catalog31 *CreateCatalog31(const wxString &file31);
+    
+    int ProcessCellPermit( wxString &permit );
 
     bool LoadConfig( void );
     
@@ -135,11 +150,15 @@ private:
     wxButton            *m_buttonImportPermit;
     wxButton            *m_buttonRemovePermit;
     wxButton            *m_buttonNewUP;
+    wxButton            *m_buttonImportCells;
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;
 
     wxString            m_userpermit;
+    
+    Catalog31           *m_catalog;
+    wxString            m_last_enc_root_dir;
 };
 
 

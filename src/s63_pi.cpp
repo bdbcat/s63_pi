@@ -41,7 +41,7 @@
 #include <wx/statline.h>
 #include "s63_pi.h"
 #include "s63chart.h"
-
+#include "src/myiso8211/iso8211.h"
 
 
 //      Some PlugIn global variables
@@ -69,6 +69,16 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
 }
 
 
+
+static int ExtensionCompare( const wxString& first, const wxString& second )
+{
+    wxFileName fn1( first );
+    wxFileName fn2( second );
+    wxString ext1( fn1.GetExt() );
+    wxString ext2( fn2.GetExt() );
+    
+    return ext1.Cmp( ext2 );
+}
 
 
 
@@ -271,6 +281,9 @@ void s63_pi::OnSetupOptions(){
     m_buttonRemovePermit = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Remove Permits"), wxDefaultPosition, wxDefaultSize, 0 );
     m_buttonRemovePermit->Enable( false );
     bSizer18->Add( m_buttonRemovePermit, 0, wxALL, 5 );
+
+    m_buttonImportCells = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Import Charts/Updates..."), wxDefaultPosition, wxDefaultSize, 0 );
+    bSizer18->Add( m_buttonImportCells, 0, wxALL, 5 );
     
     bSizer17->Add( bSizer18, 0, wxEXPAND, 5 );
     sbSizerLB->Add( bSizer17, 1, wxEXPAND, 5 );
@@ -322,6 +335,9 @@ void s63_pi::OnSetupOptions(){
     m_buttonRemovePermit->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
             wxCommandEventHandler(s63_pi_event_handler::OnRemovePermitClick), NULL, m_event_handler );
     
+    m_buttonImportCells->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(s63_pi_event_handler::OnImportCellsClick), NULL, m_event_handler );
+    
     m_buttonNewUP->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
             wxCommandEventHandler(s63_pi_event_handler::OnNewUserpermitClick), NULL, m_event_handler );
     
@@ -346,12 +362,557 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
     
 }
 
+
+Catalog31 *s63_pi::CreateCatalog31(const wxString &file31)
+{
+    Catalog31 *rv = new Catalog31();
+    
+    DDFModule poModule;
+    if( poModule.Open( file31.mb_str() ) ) {
+        poModule.Rewind();
+        
+        //    Read and parse the file
+        //    Each record corresponds to a file in the exchange set
+        
+        DDFRecord *pr = poModule.ReadRecord();                              // Record 0
+        
+        while(pr){
+            
+            Catalog_Entry31 *pentry = new Catalog_Entry31;
+            
+            //  Look for records whose bas file name is the same as the .000 file, and is numeric extension
+            //  And decide whether to add them to update array
+            
+            char *u = NULL;
+            u = (char *) ( pr->GetStringSubfield( "CATD", 0, "FILE", 0 ) );
+            if( u ) {
+                wxString file = wxString( u, wxConvUTF8 );
+                
+#ifndef __WXMSW__                
+                file.Replace(_T("\\"), _T("/"));
+#endif                
+                
+                pentry->m_filename = file;
+            }
+           
+           u = (char *) ( pr->GetStringSubfield( "CATD", 0, "COMT", 0 ) );
+           if(u){
+               wxString comt = wxString( u, wxConvUTF8 );
+               pentry->m_comt = comt;
+           }
+           
+           rv->Add(pentry);
+           
+           pr = poModule.ReadRecord();
+        }
+        
+    }
+    
+    
+    return rv;
+}
+
+
+
+
+int s63_pi::ImportCells( void )
+{
+    int rv = 1;
+    
+    //  Get the ENC_ROOT directory
+    
+    wxString enc_root_dir;
+    
+    wxDirDialog *DiropenDialog = new wxDirDialog( NULL, _("Select S63 exchange set root directory (usually ENC_ROOT)"),
+                                                  m_last_enc_root_dir);
+    int dirresponse = DiropenDialog->ShowModal();
+    if( dirresponse == wxID_OK ){
+        enc_root_dir = DiropenDialog->GetPath();
+        m_last_enc_root_dir = enc_root_dir;
+        SaveConfig();
+    }
+    else {
+        enc_root_dir = _T("");
+    }
+    
+    if( !enc_root_dir.Len() ){
+        return 0;
+    }
+
+    // Read and parse the CATALOG.031
+    wxString cat_file = enc_root_dir + wxFileName::GetPathSeparator() + _T("CATALOG.031");
+    m_catalog = CreateCatalog31(cat_file);
+
+    //  Make a list of all the unique cell names appearing in the exchange set
+    wxArrayString unique_cellname_array;
+    for(unsigned int i=0 ; i < m_catalog->Count() ; i++){
+        wxString file = m_catalog->Item(i).m_filename;
+        wxFileName fn( file );
+        wxString ext = fn.GetExt();
+        
+        long tmp;
+        //  Files of interest have numeric extension, except for CATALOG.031
+        if( ext.ToLong( &tmp ) && (fn.GetName() != _T("CATALOG")) ){
+            wxString tent_cell_file = file;
+            wxCharBuffer buffer=tent_cell_file.ToUTF8();             // Check file namme for convertability
+            
+            if( buffer.data() ) {
+                
+                //      Add to array iff not already there
+                bool bfound = false;
+                for(unsigned int j=0 ; j < unique_cellname_array.Count() ; j++) {
+                    if(file == unique_cellname_array[j]){
+                        bfound = true;
+                        break;
+                    }
+                }
+                
+                if(!bfound)
+                    unique_cellname_array.Add(file);
+            }
+        }
+    }
+    
+    //  Walk the unique cell list, and
+    //  search high and low for a .os63 file that matches
+    
+    wxString os63_dirname = *GetpPrivateApplicationDataLocation();
+    os63_dirname += wxFileName::GetPathSeparator();
+    os63_dirname += _T("s63charts");
+    
+    wxArrayString os63_file_array;
+    wxDir::GetAllFiles(os63_dirname, &os63_file_array, _T("*.os63"));
+
+    for(unsigned int i=0 ; i < unique_cellname_array.Count() ; i++){
+        for(unsigned int j=0 ; j < os63_file_array.Count() ; j++){
+            wxFileName fn1(unique_cellname_array[i]);
+            wxFileName fn2(os63_file_array[j]);
+            
+            if(fn1.GetName() == fn2.GetName()){         // found the matching os63 file
+                
+                wxString base_file_name;
+                wxString base_comt;
+                wxString cell_name = fn1.GetName(); 
+                wxString os63_filename = fn2.GetFullPath();
+                //  Examine the Catalog.031 again
+                //  Find the base cell, if present, and build an array of relevent updates
+                
+                wxDateTime date000;
+                long edtn;
+                
+                wxArrayString cell_array;
+                bool b_found_cell = false;
+                for(size_t k=0 ; k < m_catalog->GetCount() ; k++){
+                    
+                    wxString file = m_catalog->Item(k).m_filename;
+                    wxFileName fn( file );
+                    wxString ext = fn.GetExt();
+                    
+                    long tmp;
+                    //  Files of interest have the same base name is the target .000 cell,
+                    //  and have numeric extension
+                    if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
+                         b_found_cell = true;
+                            
+                         wxString comt = m_catalog->Item(k).m_comt;
+                            
+                            //      Check updates for applicability
+                        if(0 == tmp) {    // the base .000 cell
+                            base_file_name = file;
+                            base_comt = comt;
+                            wxStringTokenizer tkz(comt, _T(","));
+                            while ( tkz.HasMoreTokens() ){
+                                wxString token = tkz.GetNextToken();
+                                wxString rest;
+                                if(token.StartsWith(_T("EDTN="), &rest))
+                                    rest.ToLong(&edtn);
+                                else if(token.StartsWith(_T("UADT="), &rest)){       
+                                    date000.ParseFormat( rest, _T("%Y%m%d") );
+                                    if( !date000.IsValid() )
+                                        date000.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                                    date000.ResetTime();
+                                }
+                            }
+                        }
+                        else {
+                            cell_array.Add( file );             // Must be checked for validity later
+                        }
+                    }
+                }
+            
+            //      Sort the candidates
+                cell_array.Sort( ExtensionCompare );
+            
+            //      Walk the sorted array of updates, appending the CATALOG m_comt field to the file name.
+            
+                for(unsigned int i=0 ; i < cell_array.Count() ; i++) {
+                    for(unsigned int j=0 ; j < m_catalog->Count() ; j++){
+                        if(m_catalog->Item(j).m_filename == cell_array[i]){
+                            cell_array[i] += _T(";") + m_catalog->Item(j).m_comt;
+                            break;
+                        }
+                    }
+                }
+        
+            //  Update the os63 file
+                wxTextFile os63file( os63_filename );
+                wxString line;
+                wxString str;
+                
+                os63file.Open();
+            
+                //      Read the file, to see  if there is already a cellbase entry
+                bool base_present = false;
+                for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() > 0; str = os63file.GetPrevLine() ) {
+                    if(str.StartsWith(_T("cellbase:"))){
+                        base_present = true;
+                        break;
+                    }
+                }
+ 
+                long base_installed_edtn = -1;
+                wxDateTime base_installed_UADT;
+                
+                //      Branch on results
+                if(base_present){               // This could be an update or replace
+                    // Check the EDTN of the currently installed base cell
+                    wxString base_comt = str.AfterFirst(';');
+                    wxStringTokenizer tkz(base_comt, _T(","));
+                    while ( tkz.HasMoreTokens() ){
+                        wxString token = tkz.GetNextToken();
+                        wxString rest;
+                        if(token.StartsWith(_T("EDTN="), &rest)){
+                            rest.ToLong(&base_installed_edtn);
+                        }
+                        else if(token.StartsWith(_T("ISDT="), &rest)){       
+                            base_installed_UADT.ParseFormat( rest, _T("%Y%m%d") );
+                            if( !base_installed_UADT.IsValid() )
+                                base_installed_UADT.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                            base_installed_UADT.ResetTime();
+                        }
+                        
+                    }
+                    
+                    //  If the exchange set contains a base cell, then...
+                    if(base_file_name.Len()){
+                    //  If the currently installed base EDTN is the same as the base being imported, then do nothing
+                        if(base_installed_edtn > 0){
+                            if(base_installed_edtn == edtn){
+                                int yyp = 5;                    // do nothing
+                                edtn = base_installed_edtn;
+                                date000 = base_installed_UADT;
+                            }
+                            else {
+                                int yyp = 5;                    // TODO a new base cell edition is coming in
+                            }
+                        }
+                    }
+                    
+                }
+                else {                          // this must be an initial import
+                    line = _T("cellbase:");
+                    line += enc_root_dir + wxFileName::GetPathSeparator();
+                    line += base_file_name;
+                    line += _T(";");
+                    line += base_comt;
+                    os63file.AddLine(line);
+
+                }
+
+                
+                
+                //  Check the updates array for validity against edtn amd date000
+                for(unsigned int i=0 ; i < cell_array.Count() ; i++){
+                    wxString up_comt = cell_array[i].AfterFirst(';');
+                    long update_edtn;
+                    long update_updn;
+                    wxDateTime update_time;
+                    wxStringTokenizer tkz(up_comt, _T(","));
+                    while ( tkz.HasMoreTokens() ){
+                        wxString token = tkz.GetNextToken();
+                        wxString rest;
+                        if(token.StartsWith(_T("EDTN="), &rest))
+                            rest.ToLong(&update_edtn);
+                        else if(token.StartsWith(_T("ISDT="), &rest)){       
+                            update_time.ParseFormat( rest, _T("%Y%m%d") );
+                            if( !update_time.IsValid() )
+                                update_time.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                            update_time.ResetTime();
+                        }
+                        else if(token.StartsWith(_T("UPDN="), &rest)){
+                            rest.ToLong(&update_updn);
+                        }
+                            
+                    }
+                    
+                
+                    if(update_time.IsValid() && date000.IsValid() && 
+                        ( !update_time.IsEarlierThan( date000 ) ) && ( update_edtn == edtn ) )  {
+                        
+                        //      Check the entire file to see if this update is already in place
+                        //      If so, do not add it again.
+                        bool b_exists = false;
+                        for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() > 0; str = os63file.GetPrevLine() ) {
+                            if(str.StartsWith(_T("cellupdate:"))){
+                                wxString ck_comt = str.AfterFirst(';');
+                                wxStringTokenizer tkz(ck_comt, _T(","));
+                                while ( tkz.HasMoreTokens() ){
+                                    wxString token = tkz.GetNextToken();
+                                    wxString rest;
+                                    if(token.StartsWith(_T("UPDN="), &rest)){
+                                        long ck_updn = -1;
+                                        rest.ToLong(&ck_updn);
+                                        if(ck_updn == update_updn){
+                                            b_exists = true;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            if(b_exists)
+                                break;
+                        }
+                        
+                        if(!b_exists){    
+                            line = _T("cellupdate:");
+                            line += enc_root_dir + wxFileName::GetPathSeparator();
+                            line += cell_array[i];
+                            os63file.AddLine(line);
+                        }
+                    }
+                }
+                
+            
+                os63file.Write();
+                os63file.Close();
+        
+               
+                //  Add the chart(cell) to the OCPN database
+                ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
+                int rv_add = AddChartToDBInPlace( os63_filename, false );
+                if(!rv_add) {
+                    ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n"));
+//                    wxRemoveFile( os63_filename );
+//                    rv = rv_add;
+//                    return rv;
+                }
+                
+                break;
+                
+            }
+        }
+    }
+        
+    
+    #if 0   
+    
+    //  Parse the cell permit file entry
+    wxStringTokenizer tkz(permit, _T(","));
+    wxString cellpermitstring = tkz.GetNextToken();
+    wxString service_level_indicator = tkz.GetNextToken();
+    wxString edition_number = tkz.GetNextToken();
+    wxString data_server_ID = tkz.GetNextToken();
+    wxString comment = tkz.GetNextToken();
+    
+    wxString cell_name = cellpermitstring.Mid(0, 8);
+    wxString expiry_date = cellpermitstring.Mid(8, 8);
+    wxString eck1 = cellpermitstring.Mid(16, 16);
+    wxString eck2 = cellpermitstring.Mid(32, 16);
+    wxString permit_checksum = cellpermitstring.Mid(48, 16);
+    
+    wxString base_file_name;
+    wxString base_comt;
+    
+    
+    // 10.5.4          Check Cell Permit Check Sum
+    // 10.5.5          Check Cell Permit Expiry Date
+    // 10.5.6          Check Data Server ID
+    
+    //Examine the Catalog.031 as previously parsed
+    //  Find the base cell, if present, and build an array of relevent updates
+    
+    wxDateTime date000;
+    long edtn;
+    
+    wxArrayString cell_array;
+    bool b_found_cell = false;
+    for(size_t i=0 ; i < m_catalog->GetCount() ; i++){
+        
+        wxString file = m_catalog->Item(i).m_filename;
+        wxFileName fn( file );
+        wxString ext = fn.GetExt();
+        
+        long tmp;
+        //  Files of interest have the same base name is the target .000 cell,
+        //  and have numeric extension
+        if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
+            wxString tent_cell_file = file;
+            wxCharBuffer buffer=tent_cell_file.ToUTF8();             // Check file namme for convertability
+            
+            if( buffer.data() ) {   
+                b_found_cell = true;
+                
+                wxString comt = m_catalog->Item(i).m_comt;
+                
+                //      Check updates for applicability
+                if(0 == tmp) {    // the base .000 cell
+                    base_file_name = file;
+                    base_comt = comt;
+                    wxStringTokenizer tkz(comt, _T(","));
+                    while ( tkz.HasMoreTokens() ){
+                        wxString token = tkz.GetNextToken();
+                        wxString rest;
+                        if(token.StartsWith(_T("EDTN="), &rest))
+                            rest.ToLong(&edtn);
+                        else if(token.StartsWith(_T("UADT="), &rest)){       
+                            date000.ParseFormat( rest, _T("%Y%m%d") );
+                            if( !date000.IsValid() )
+                                date000.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                            date000.ResetTime();
+                        }
+                    }
+                }
+                else {
+                    if(comt.Len()){
+                        long update_edtn;
+                        wxDateTime update_time;
+                        wxStringTokenizer tkz(comt, _T(","));
+                        while ( tkz.HasMoreTokens() ){
+                            wxString token = tkz.GetNextToken();
+                            wxString rest;
+                            if(token.StartsWith(_T("EDTN="), &rest))
+                                rest.ToLong(&update_edtn);
+                            else if(token.StartsWith(_T("ISDT="), &rest)){       
+                                update_time.ParseFormat( rest, _T("%Y%m%d") );
+                                if( !update_time.IsValid() )
+                                    update_time.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                                update_time.ResetTime();
+                            }
+                        }
+                        
+                        if(update_time.IsValid() && date000.IsValid()){
+                            if( ( !update_time.IsEarlierThan( date000 ) ) && ( update_edtn == edtn ) )  
+                                cell_array.Add( file );                    
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    //      Sort the candidates
+    cell_array.Sort( ExtensionCompare );
+    
+    //      Walk the sorted array, appending the CATALOG m_comt field to the file name.
+    
+    for(unsigned int i=0 ; i < cell_array.Count() ; i++) {
+        for(unsigned int j=0 ; j < m_catalog->Count() ; j++){
+            if(m_catalog->Item(j).m_filename == cell_array[i]){
+                cell_array[i] += _T(";") + m_catalog->Item(j).m_comt;
+                break;
+            }
+        }
+    }
+    
+    
+    
+    if( !b_found_cell ) {
+        ScreenLogMessage( _T("   Error: Cannot find ENC cell base or update in specified exchange set...")
+        + cell_name + _T("\n"));
+        return -1;
+    }
+    
+    if( !base_file_name.Len() ) {
+        ScreenLogMessage( _T("   Error: Cannot find ENC cell base in specified exchange set...")
+        + cell_name + _T("\n"));
+        return -1;
+    }
+    
+    //  Create the text file {*GetpPrivateApplicationDataLocation()}/"s63charts"/{data_server_name}/{cell_name.os63}
+    
+    wxString os63_filename = *GetpPrivateApplicationDataLocation();
+    os63_filename += wxFileName::GetPathSeparator();
+    os63_filename += _T("s63charts");
+    os63_filename += wxFileName::GetPathSeparator();
+    os63_filename += data_server_ID;
+    os63_filename += wxFileName::GetPathSeparator();
+    os63_filename += cell_name;
+    os63_filename += _T(".os63");
+    
+    //TODO  Check if file exists...What then?  a dialog asking to replace?
+    
+    if( wxFileName::FileExists( os63_filename ) )
+        wxRemoveFile( os63_filename );
+    
+    //  Create the target dir if necessary
+        wxFileName tfn( os63_filename );
+        if( true != tfn.DirExists( tfn.GetPath() ) ) {
+            if( !wxFileName::Mkdir( tfn.GetPath(), 0777, wxPATH_MKDIR_FULL ) ) {
+                wxString msg = _T("   Error: Cannot create directory ");
+                msg += tfn.GetPath();
+                msg += _T("\n");
+                ScreenLogMessage( msg );
+                return -1;
+            }
+        }
+        
+        wxTextFile os63file( os63_filename );
+        if( !os63file.Create() ){
+            wxString msg;
+            msg = _("   Error: Cannot create ");
+            msg += os63_filename;
+            msg += _T("\n");
+            ScreenLogMessage( msg );
+            return -1;
+        }
+        
+        //      Populate the os63 file....
+        wxString line;
+        
+        line = _T("cellpermit:");
+        line += permit;
+        os63file.AddLine(line);
+        
+        line = _T("cellbase:");
+        line += enc_root_dir + wxFileName::GetPathSeparator();
+        line += base_file_name;
+        line += _T(";");
+        line += base_comt;
+        os63file.AddLine(line);
+        
+        for(unsigned int i=0 ; i < cell_array.Count() ; i++){
+            line = _T("cellupdate:");
+            line += enc_root_dir + wxFileName::GetPathSeparator();
+            line += cell_array[i];
+            os63file.AddLine(line);
+        }
+        
+        os63file.Write();
+        os63file.Close();
+        
+        //  Add the chart(cell) to the OCPN database
+        ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
+        int rv_add = 1;//AddChartToDBInPlace( os63_filename, false );
+        if(!rv_add) {
+            ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n"));
+            wxRemoveFile( os63_filename );
+            rv = rv_add;
+            return rv;
+        }
+        
+        return rv;
+        
+#endif
+        
+    return 0;
+}
+
+
 int s63_pi::ImportCellPermits(void)
 {
 
     //  Get the PERMIT.TXT file from a dialog
     wxString permit_file_name;
-#if 1
     wxFileDialog *openDialog = new wxFileDialog( NULL, _("Select PERMIT.TXT File"),
                                                  m_SelectPermit_dir, wxT(""),
                                     _("TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"), wxFD_OPEN );
@@ -363,47 +924,25 @@ int s63_pi::ImportCellPermits(void)
     m_SelectPermit_dir = fn.GetPath();          // save for later
     SaveConfig();
     
-#endif
  
-
+#if 0
     wxString enc_root_dir;
-#if 0    
-    //  Get the ENC_ROOT dir by traversing down into the directory containing the "PERMIT.TXT" file,
-    //  looking for a ".000" file, and then backing up to a dir "ENC_ROOT"
-    //  This <<MAY>> cover the usual case.
-    
-    //  If not found, resort to a dialog to find it.
 
-    wxFileName fn(permit_file_name);
-    wxString pdir(fn.GetPath());
+    //  Look for teh CATALOG.031 file.  If found, this is the ENC_ROOT directory
+    //  If not found, resort to a user dialog to browse for ENC_ROOT
     
-    wxArrayString file_array;
-    wxDir::GetAllFiles(pdir, &file_array );
-    for(size_t i=0 ; i < file_array.GetCount() ; i++){
-        wxFileName candidate(file_array[i]);
-        
-        if( candidate.GetExt() == _T("000") ){
-            wxString name_test = candidate.GetPath();
-            while((wxFileName(name_test).GetName() != _T("ENC_ROOT")) && ( name_test != pdir)){
-                candidate.RemoveLastDir();
-                name_test = candidate.GetPath();
-            }
-            enc_root_dir = name_test;
-            break;
-        }
-    }
-#endif
-
     wxFileName pfn(permit_file_name);
     enc_root_dir = pfn.GetPath();
     
-    if( !enc_root_dir.Len() ){
+    if(!::wxFileExists(enc_root_dir + _T("/CATALOG.031") )){
         
         wxDirDialog *DiropenDialog = new wxDirDialog( NULL, _("Select S63 exchange set root directory (usually ENC_ROOT)"),
-        *GetpPrivateApplicationDataLocation() );
+                                                      enc_root_dir );
         int dirresponse = DiropenDialog->ShowModal();
         if( dirresponse == wxID_OK )
             enc_root_dir = DiropenDialog->GetPath();
+        else
+            enc_root_dir = _T("");
     }
 
     if( !enc_root_dir.Len() ){
@@ -411,9 +950,14 @@ int s63_pi::ImportCellPermits(void)
 
         return 0;
     }
-        
+
     
-    
+
+    // Read and parse the CATALOG.031
+    wxString cat_file = enc_root_dir + wxFileName::GetPathSeparator() + _T("CATALOG.031");
+    m_catalog = CreateCatalog31(cat_file);
+#endif
+
     //  Open PERMIT.TXT as text file
 
     //  Validate file format
@@ -430,7 +974,7 @@ int s63_pi::ImportCellPermits(void)
                     while(!permit_file.Eof() && !cell_line.StartsWith( _T(":") ) ){
 
                         //      Process a single cell permit
-                        ProcessCellPermit( cell_line, enc_root_dir );
+                        ProcessCellPermit( cell_line );
 
                         cell_line = permit_file.GetNextLine();
                     }
@@ -461,7 +1005,8 @@ int s63_pi::ImportCellPermits(void)
 }
 
 
-int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
+
+int s63_pi::ProcessCellPermit( wxString &permit )
 {
     int rv = 0;
 
@@ -479,54 +1024,107 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
     wxString eck2 = cellpermitstring.Mid(32, 16);
     wxString permit_checksum = cellpermitstring.Mid(48, 16);
 
+    wxString base_file_name;
+    wxString base_comt;
+    
 
     // 10.5.4          Check Cell Permit Check Sum
     // 10.5.5          Check Cell Permit Expiry Date
     // 10.5.6          Check Data Server ID
 
-    //  Walk the enc_root_dir, and prove that an enc base or update cell of the correct name
-    //  actually exists
-    //  Build an array of base (000) cells and updates
+#if 0    
+    //Examine the Catalog.031 as previously parsed
+    //  Find the base cell, if present, and build an array of relevent updates
+    
+    wxDateTime date000;
+    long edtn;
     
     wxArrayString cell_array;
     bool b_found_cell = false;
-    wxArrayString file_array;
-    wxDir::GetAllFiles(enc_root_dir, &file_array );
-    for(size_t i=0 ; i < file_array.GetCount() ; i++){
-        wxString fn = file_array[i];
+    for(size_t i=0 ; i < m_catalog->GetCount() ; i++){
 
-        wxFileName file( file_array[i] );
-        wxString ext = file.GetExt();
+        wxString file = m_catalog->Item(i).m_filename;
+        wxFileName fn( file );
+        wxString ext = fn.GetExt();
 
         long tmp;
         //  Files of interest have the same base name is the target .000 cell,
         //  and have numeric extension
-        if( ext.ToLong( &tmp ) && ( file.GetName() == cell_name ) ) {
-            wxString tent_cell_file = fn;
+        if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
+            wxString tent_cell_file = file;
             wxCharBuffer buffer=tent_cell_file.ToUTF8();             // Check file namme for convertability
 
-            if( buffer.data() && !file.GetName().IsSameAs( _T("CATALOG.031"), false ) ) {    // don't process catalogs
+            if( buffer.data() ) {   
                 b_found_cell = true;
-                cell_array.Add(fn);
+
+                wxString comt = m_catalog->Item(i).m_comt;
+                
+                //      Check updates for applicability
+                if(0 == tmp) {    // the base .000 cell
+                    base_file_name = file;
+                    base_comt = comt;
+                    wxStringTokenizer tkz(comt, _T(","));
+                    while ( tkz.HasMoreTokens() ){
+                        wxString token = tkz.GetNextToken();
+                        wxString rest;
+                        if(token.StartsWith(_T("EDTN="), &rest))
+                            rest.ToLong(&edtn);
+                        else if(token.StartsWith(_T("UADT="), &rest)){       
+                            date000.ParseFormat( rest, _T("%Y%m%d") );
+                            if( !date000.IsValid() )
+                                date000.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                        date000.ResetTime();
+                        }
+                    }
+                }
+                else {
+                    if(comt.Len()){
+                        long update_edtn;
+                        wxDateTime update_time;
+                        wxStringTokenizer tkz(comt, _T(","));
+                        while ( tkz.HasMoreTokens() ){
+                            wxString token = tkz.GetNextToken();
+                            wxString rest;
+                            if(token.StartsWith(_T("EDTN="), &rest))
+                                rest.ToLong(&update_edtn);
+                            else if(token.StartsWith(_T("ISDT="), &rest)){       
+                                update_time.ParseFormat( rest, _T("%Y%m%d") );
+                                if( !update_time.IsValid() )
+                                    update_time.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                                update_time.ResetTime();
+                            }
+                        }
+                        
+                        if(update_time.IsValid() && date000.IsValid()){
+                            if( ( !update_time.IsEarlierThan( date000 ) ) && ( update_edtn == edtn ) )  
+                                cell_array.Add( file );                    
+                        }
+                    }
+                }
             }
         }
     }
 
+    //      Sort the candidates
+    cell_array.Sort( ExtensionCompare );
+    
+    //      Walk the sorted array, appending the CATALOG m_comt field to the file name.
+    
+    for(unsigned int i=0 ; i < cell_array.Count() ; i++) {
+        for(unsigned int j=0 ; j < m_catalog->Count() ; j++){
+            if(m_catalog->Item(j).m_filename == cell_array[i]){
+                cell_array[i] += _T(";") + m_catalog->Item(j).m_comt;
+                break;
+            }
+        }
+    }
+    
+                
+    
     if( !b_found_cell ) {
         ScreenLogMessage( _T("   Error: Cannot find ENC cell base or update in specified exchange set...")
                 + cell_name + _T("\n"));
         return -1;
-    }
-
-    //  Find the base file name
-    wxString base_file_name;
-    for(unsigned int i=0 ; i < cell_array.GetCount() ; i++){
-        wxString file = cell_array[i];
-        wxFileName fn(file);
-        if( fn.GetExt() == _T("000") ) {
-            base_file_name = file;
-            break;
-        }
     }
 
     if( !base_file_name.Len() ) {
@@ -534,7 +1132,7 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
         + cell_name + _T("\n"));
         return -1;
     }
-    
+#endif    
     //  Create the text file {*GetpPrivateApplicationDataLocation()}/"s63charts"/{data_server_name}/{cell_name.os63}
 
     wxString os63_filename = *GetpPrivateApplicationDataLocation();
@@ -573,30 +1171,41 @@ int s63_pi::ProcessCellPermit( wxString &permit, wxString &enc_root_dir )
         return -1;
     }
 
-//      Populate the os63 file....
+//      Populate the base os63 file....
     wxString line;
 
     line = _T("cellpermit:");
     line += permit;
     os63file.AddLine(line);
-
+#if 0
     line = _T("cellbase:");
+    line += enc_root_dir + wxFileName::GetPathSeparator();
     line += base_file_name;
+    line += _T(";");
+    line += base_comt;
     os63file.AddLine(line);
 
+    for(unsigned int i=0 ; i < cell_array.Count() ; i++){
+        line = _T("cellupdate:");
+        line += enc_root_dir + wxFileName::GetPathSeparator();
+        line += cell_array[i];
+        os63file.AddLine(line);
+    }
+#endif        
     os63file.Write();
     os63file.Close();
 
+#if 0    
     //  Add the chart(cell) to the OCPN database
     ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
-    int rv_add = AddChartToDBInPlace( os63_filename, false );
+    int rv_add = 1;//AddChartToDBInPlace( os63_filename, false );
     if(!rv_add) {
         ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n"));
         wxRemoveFile( os63_filename );
         rv = rv_add;
         return rv;
     }
-
+#endif
     return rv;
 }
 
@@ -657,7 +1266,7 @@ bool s63_pi::LoadConfig( void )
         
         pConf->Read( _T("PermitDir"), &m_SelectPermit_dir );
         pConf->Read( _T("Userpermit"), &g_userpermit );
-        
+        pConf->Read( _T("LastENCROOT"), &m_last_enc_root_dir);
     }        
      
     return true;
@@ -672,6 +1281,7 @@ bool s63_pi::SaveConfig( void )
         
         pConf->Write( _T("PermitDir"), m_SelectPermit_dir );
         pConf->Write( _T("Userpermit"), g_userpermit );
+        pConf->Write( _T("LastENCROOT"), m_last_enc_root_dir );
         
     }
 
@@ -716,6 +1326,12 @@ void s63_pi_event_handler::OnRemovePermitClick( wxCommandEvent &event )
 {
     m_parent->RemoveCellPermit();
 }
+
+void s63_pi_event_handler::OnImportCellsClick( wxCommandEvent &event )
+{
+    m_parent->ImportCells();
+}
+
 
 void s63_pi_event_handler::OnSelectPermit( wxListEvent& event )
 {
