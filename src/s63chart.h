@@ -10,7 +10,7 @@
 
 #include "wx/wxprec.h"
 #include <wx/wfstream.h>
-
+#include <wx/dynarray.h>
 
 #ifndef  WX_PRECOMP
   #include "wx/wx.h"
@@ -25,6 +25,8 @@ class PI_VC_Element;
 
 WX_DECLARE_HASH_MAP( int, PI_VE_Element *, wxIntegerHash, wxIntegerEqual, PI_VE_Hash );
 WX_DECLARE_HASH_MAP( int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_Hash );
+
+WX_DEFINE_ARRAY_DOUBLE(double, ArrayOfSortedDoubles);
 
 #ifndef PI
 #define PI        3.1415926535897931160E0      /* pi */
@@ -200,6 +202,9 @@ protected:
       wxString Get_eHDR_Name( const wxString& name000 );
       wxString Build_eHDR( const wxString& name000 );
       
+      void BuildDepthContourArray( void );
+      void SetSafetyContour(void);
+      
       
       int               my_fgets( char *buf, int buf_len_max, CryptInputStream &ifs );
 
@@ -262,13 +267,20 @@ protected:
       //  Object arrays used by S52PLIB TOPMAR rendering logic
       wxArrayPtrVoid *pFloatingATONArray;
       wxArrayPtrVoid *pRigidATONArray;
+      ArrayOfSortedDoubles   *m_pcontour_array;
       
       wxDateTime  m_date000;                    // extracted from DSID:ISDT
       wxString    m_edtn000;                    // extracted from DSID:EDTN
       
       
       wxArrayString     m_up_file_array;
+      int               m_latest_update;
+      int               m_base_edtn;
+      bool              m_bcrypt_buffer_OK;
+      unsigned char     *m_crypt_buffer;
+      size_t            m_crypt_size;
       
+      double            m_next_safe_contour;
 
 };
 

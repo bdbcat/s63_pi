@@ -34,6 +34,7 @@
 #include <wx/process.h>
 
 #include <sys/stat.h>
+#include <algorithm>          // for std::sort
 
 #include "s63_pi.h"
 #include "s63chart.h"
@@ -85,6 +86,10 @@ double      round_msvc (double x)
 }
 #define round(x) round_msvc(x)
 
+int DOUBLECMPFUNC(double *first, double *second)
+{
+    return (*first - *second);
+}
 
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
@@ -377,9 +382,12 @@ ChartS63::ChartS63()
     m_pNoCOVRTable = NULL;
     m_pNoCOVRTablePoints = NULL;
     
+    m_latest_update = 0;
+    m_pcontour_array = new ArrayOfSortedDoubles;
     
+    m_next_safe_contour = 1e6;
+    m_plib_state_hash = 0;
     
-//      ChartBaseBSBCTOR();
 #if 0
       m_depth_unit_id = PI_DEPTH_UNIT_UNKNOWN;
 
@@ -461,7 +469,9 @@ ChartS63::~ChartS63()
           }
       }
       m_vc_hash.clear();
-      
+ 
+      m_pcontour_array->Clear();
+      delete m_pcontour_array;
       
 }
 
@@ -580,14 +590,15 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T("\"");
     cmd += g_s57data_dir;
     cmd += _T("\"");
-    
+
+   
     if( m_up_file_array.GetCount() ){
         cmd += _T(" -m ");
         cmd += _T("\"");
         cmd += tmp_up_file;
         cmd += _T("\"");
     }
-        
+      
         
     
     wxLogMessage( cmd );
@@ -652,6 +663,21 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         while( !meta_file.Eof() ){
             if(line.StartsWith( _T("cellbase:" ) ) ) {
                 m_full_base_path = line.Mid(9).BeforeFirst(';');
+                wxString baseline = line.Mid(9);
+                
+                //      Capture the last update number
+                wxString ck_comt = baseline.AfterFirst(';');
+                wxStringTokenizer tkz(ck_comt, _T(","));
+                while ( tkz.HasMoreTokens() ){
+                    wxString token = tkz.GetNextToken();
+                    wxString rest;
+                    if(token.StartsWith(_T("EDTN="), &rest)){
+                        long ck_edtn = -1;
+                        rest.ToLong(&ck_edtn);
+                        m_base_edtn = ck_edtn;
+                    }
+                }
+                
             }
             else if(line.StartsWith( _T("cellpermit:" ) ) ) {
                 m_cell_permit = line.Mid(11);
@@ -660,6 +686,19 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
                 wxString upline = line.Mid(11);
                 wxString upfile = upline.BeforeFirst(';');
                 m_up_file_array.Add(upfile);
+                
+                //      Capture the last update number
+                wxString ck_comt = upline.AfterFirst(';');
+                wxStringTokenizer tkz(ck_comt, _T(","));
+                while ( tkz.HasMoreTokens() ){
+                    wxString token = tkz.GetNextToken();
+                    wxString rest;
+                    if(token.StartsWith(_T("UPDN="), &rest)){
+                        long ck_updn = -1;
+                        rest.ToLong(&ck_updn);
+                        m_latest_update = wxMax(m_latest_update, ck_updn);
+                    }
+                }
             }
             
             line = meta_file.GetNextLine();
@@ -971,6 +1010,7 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
         m_bLinePrioritySet = false;                     // need to reset line priorities
         UpdateLUPsOnStateChange( );                     // and update the LUPs
         ResetPointBBoxes( m_last_vp, VPoint );
+        SetSafetyContour();
         m_plib_state_hash = PI_GetPLIBStateHash();
         
     }
@@ -1019,6 +1059,7 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
         m_bLinePrioritySet = false;                     // need to reset line priorities
         UpdateLUPsOnStateChange( );                     // and update the LUPs
         ResetPointBBoxes( m_last_vp, VPoint );
+        SetSafetyContour();
         m_plib_state_hash = PI_GetPLIBStateHash();
 
     }
@@ -1929,8 +1970,10 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
                 float *ppolygeo = pptg->pgroup_geom;
             
                 int ctr_offset = 0;
-                for( int ic = 0; ic < pptg->nContours; ic++ ) {
                 
+                // We use only the first contour, which is by definition the external ring of the M_COVR feature
+                int ic = 0;
+                {
                     int npt = pptg->pn_vertex[ic];
                     
                     if( npt >= 3 ) {
@@ -1998,6 +2041,13 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
             m_pCOVRTablePoints[j] = pAuxCntArray->Item( j );
             m_pCOVRTable[j] = (float *) malloc( pAuxCntArray->Item( j ) * 2 * sizeof(float) );
             memcpy( m_pCOVRTable[j], pAuxPtrArray->Item( j ), pAuxCntArray->Item( j ) * 2 * sizeof(float) );
+            
+            float *pf = m_pCOVRTable[j];
+            for(unsigned int k=0 ; k < pAuxCntArray->Item(j); k++){
+                printf( "%g  %g  \n", *pf, *(pf+1));
+                pf += 2;
+            }
+            printf("\n");
         }
     }
  
@@ -2133,9 +2183,108 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
     
     wxFileName FileName000( name );
     
+    m_bcrypt_buffer_OK = false;
+    
     //      Look for SENC file in the target directory
     
     if( wxFileName::FileExists(SENCFileName.GetFullPath()) ) {
+
+        int force_make_senc = 0;
+        
+        //      Open the senc file, and extract some useful information
+        
+        wxBufferedInputStream *pfpxb;
+        wxFileInputStream fpx_u( SENCFileName.GetFullPath() );
+        
+        CryptInputStream *pfpx;
+        if( fpx_u.IsOk()){
+            pfpxb = new wxBufferedInputStream( fpx_u );
+            
+            pfpx = new CryptInputStream( pfpxb );
+        
+            m_crypt_buffer = GetSENCCryptKeyBuffer( SENCFileName.GetFullPath(), &m_crypt_size );
+            pfpx->SetCryptBuffer( m_crypt_buffer, m_crypt_size );
+        
+            // Verify the first 4 bytes
+            char verf[5];
+            verf[4] = 0;
+        
+            pfpx->Read(verf, 4);
+            pfpx->Rewind();
+        
+            int senc_update = 0;
+            int senc_file_version;
+            long senc_base_edtn = 0;
+            
+            if(!strncmp(verf, "SENC", 4)) {
+                bool dun = false;
+                char buf[256];
+                char *pbuf = buf;
+                int force_make_senc = 0;
+                
+                while( !dun ) {
+                    if( my_fgets( pbuf, 256, *pfpx ) == 0 ) {
+                        dun = 1;
+                        force_make_senc = 1;
+                        break;
+                    } else {
+                        if( !strncmp( pbuf, "OGRF", 4 ) ) {
+                            dun = 1;
+                            break;
+                        }
+                        
+                        wxString str_buf( pbuf, wxConvUTF8 );
+                        wxStringTokenizer tkz( str_buf, _T("=") );
+                        wxString token = tkz.GetNextToken();
+                        
+                        if( token.IsSameAs( _T("UPDT"), TRUE ) ) {
+                            int i;
+                            i = tkz.GetPosition();
+                            senc_update = atoi( &pbuf[i] );
+                        }
+                        
+                        else if( token.IsSameAs( _T("SENC Version"), TRUE ) ) {
+                            int i;
+                            i = tkz.GetPosition();
+                            senc_file_version = atoi( &pbuf[i] );
+                        }
+                        
+                        else if( token.IsSameAs( _T("EDTN000"), TRUE ) ) {
+                            int i;
+                            i = tkz.GetPosition();
+                            wxString str( &pbuf[i], wxConvUTF8 );
+                            str.Trim();                               // gets rid of newline, etc...
+                            str.ToLong(&senc_base_edtn);
+                        }
+                    }
+                }
+            }
+            
+            //  SENC file version has to be correct for other tests to make sense
+            if( senc_file_version != CURRENT_SENC_FORMAT_VERSION )
+                bbuild_new_senc = true;
+            
+            //  Senc EDTN must be the same as .000 file EDTN.
+            //  This test catches the usual case where the .000 file is updated from the web,
+            //  and all updates (.001, .002, etc.)  are subsumed.
+            else if( senc_base_edtn != m_base_edtn )
+                bbuild_new_senc = true;
+            
+            else {
+                //    Check the os63 file parse to see if the update number matches
+                if( senc_update != m_latest_update )
+                    bbuild_new_senc = true;
+            }                
+                
+        }
+                
+                
+        if( force_make_senc )
+            bbuild_new_senc = true;
+                
+        if( bbuild_new_senc )
+            build_ret_val = BuildSENCFile( name, SENCFileName.GetFullPath() );
+                
         
 #if 0    
         wxFile f;
@@ -2272,6 +2421,11 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
         if( BUILD_SENC_NOK_RETRY == build_ret_val )
             return PI_INIT_FAIL_RETRY;
     }
+    else {
+        //      Did not build a new SENC, so the crypt buffer used to verification
+        //      is OK to use in PostInit stage.
+        m_bcrypt_buffer_OK = true;
+    }
 
     m_SENCFileName = SENCFileName;
     return PI_INIT_OK;
@@ -2280,6 +2434,22 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
 
 int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENCFileName )
 {
+    
+    //  Build the array of update filenames into a temporary file
+    wxString tmp_up_file = wxFileName::CreateTempFileName( _T("") );
+    wxTextFile up_file(tmp_up_file);
+    if(m_up_file_array.GetCount()){
+        up_file.Open();
+        
+        for(unsigned int i=0 ; i < m_up_file_array.GetCount() ; i++){
+            up_file.AddLine(m_up_file_array[i]);
+        }
+        
+        up_file.Write();
+        up_file.Close();
+    }
+    
+    
     
     // build the SENC utility command line
     wxString outfile = SENCFileName; 
@@ -2312,6 +2482,14 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T("\"");
     cmd += g_s57data_dir;
     cmd += _T("\"");
+    
+    if( m_up_file_array.GetCount() ){
+        cmd += _T(" -m ");
+        cmd += _T("\"");
+        cmd += tmp_up_file;
+        cmd += _T("\"");
+    }
+    
     
     wxLogMessage( cmd );
     
@@ -2513,9 +2691,13 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     
     pfpx = new CryptInputStream( pfpxb );
 
-    size_t crypt_size;
-    unsigned char *cb = GetSENCCryptKeyBuffer( FullPath, &crypt_size );
-    pfpx->SetCryptBuffer( cb, crypt_size );
+    if(!m_bcrypt_buffer_OK) {
+        m_crypt_buffer = GetSENCCryptKeyBuffer( FullPath, &m_crypt_size );
+        pfpx->SetCryptBuffer( m_crypt_buffer, m_crypt_size );
+    }
+    else
+        pfpx->SetCryptBuffer( m_crypt_buffer, m_crypt_size );
+    
     
     // Verify the first 4 bytes
     char verf[5];
@@ -2527,7 +2709,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     if(strncmp(verf, "SENC", 4)) {
         ScreenLogMessage( _T("   Error: eSENC decrypt failed.\n "));
         
-        free( cb );
+        free( m_crypt_buffer );
         return 1;
     }
     
@@ -2789,7 +2971,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     
     free( hdr_buf );
     
-    free( cb );
+    free( m_crypt_buffer );
     
     if(ret_val)
         return ret_val;
@@ -2890,6 +3072,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     m_this_chart_context->pFloatingATONArray = pFloatingATONArray;
     m_this_chart_context->pRigidATONArray = pRigidATONArray;
     m_this_chart_context->chart = NULL;
+    m_this_chart_context->safety_contour = 1e6;    // to be evaluated later
     
     //  Loop and populate all the objects
     for( int i = 0; i < PI_PRIO_NUM; ++i ) {
@@ -2902,10 +3085,6 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
             }
         }
     }
-    
-    //  We may say that the locally stored PLIB State Hash is valid now, to avaoid re-evaluateing on first render
-    
-    m_plib_state_hash = PI_GetPLIBStateHash();
     
     return ret_val;
 }
@@ -2965,14 +3144,94 @@ PI_InitReturn ChartS63::PostInit( int flags, int cs )
     SetColorScheme( cs, false );
 
 //    Build array of contour values for later use by conditional symbology
-
-//    BuildDepthContourArray();
+    BuildDepthContourArray();
     m_bReadyToRender = true;
 
     return PI_INIT_OK;
 }
 
 
+void ChartS63::BuildDepthContourArray( void )
+{
+    //    Build array of contour values for later use by conditional symbology
+    
+    PI_S57Obj *top;
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        for( int j = 0; j < LUPNAME_NUM; j++ ) {
+            
+            top = razRules[i][j];
+            while( top != NULL ) {
+                if( !strncmp( top->FeatureName, "DEPCNT", 6 ) ) {
+                    double valdco = 0.0;
+                    
+                    //  Find the attribute VALDCO
+                    char *curr_att = top->att_array;
+                    int attrCounter = 0;
+                    wxString curAttrName;
+                    
+                    while( attrCounter < top->n_attr ) {
+                        curAttrName = wxString(curr_att, wxConvUTF8, 6);
+                        
+                        if(curAttrName == _T("VALDCO")){
+                            S57attVal *pval = top->attVal->Item( attrCounter );
+                            valdco = *( (double *) pval->value );
+                            
+                            break;
+                        }
+                        
+                        curr_att += 6;
+                        attrCounter++;
+                    }
+                        
+                    
+                    
+                    if( valdco > 0. ) {
+                        bool bfound = false;
+                        for(unsigned int i = 0 ; i < m_pcontour_array->GetCount() ; i++) {
+                            if( fabs(m_pcontour_array->Item(i) - valdco ) < 1e-4 ){
+                                bfound = true;
+                                break;
+                            }
+                        }
+                        if(!bfound)    
+                            m_pcontour_array->Add(valdco);
+                    }
+                }
+                PI_S57Obj *nxx = top->next;
+                top = nxx;
+            }
+        }
+    }
+    
+    m_pcontour_array->Sort( DOUBLECMPFUNC );
+    
+       
+
+}
+     
+void ChartS63::SetSafetyContour(void)
+{
+         // Iterate through the array of contours in this cell, choosing the best one to
+         // render as a bold "safety contour" in the PLIB.
+         
+         //    This method computes the smallest chart DEPCNT:VALDCO value which
+         //    is greater than or equal to the current PLIB mariner parameter S52_MAR_SAFETY_CONTOUR
+         
+     double mar_safety_contour = PI_GetPLIBMarinerSafetyContour();
+     
+     m_next_safe_contour = mar_safety_contour;      // default in the case mar_safety_contour
+                                                    // is deeper than any cell contour present
+     for(unsigned int i = 0 ; i < m_pcontour_array->GetCount() ; i++) {
+         double h = m_pcontour_array->Item(i);
+         if( h >= mar_safety_contour ){
+             m_next_safe_contour = h;
+             break;
+         }
+     }
+     
+     m_this_chart_context->safety_contour = m_next_safe_contour;                // Save in context
+}    
+     
 
 //      Rendering Support Methods
 
@@ -3169,6 +3428,7 @@ bool ChartS63::DoRenderRegionViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VP
         m_bLinePrioritySet = false;                     // need to reset line priorities
         UpdateLUPsOnStateChange( );                     // and update the LUPs
         ResetPointBBoxes( m_last_vp, VPoint );
+        SetSafetyContour();
         m_plib_state_hash = PI_GetPLIBStateHash();
         
     }
@@ -3307,6 +3567,7 @@ bool ChartS63::RenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint )
         m_bLinePrioritySet = false;                     // need to reset line priorities
         UpdateLUPsOnStateChange( );                     // and update the LUPs
         ResetPointBBoxes( m_last_vp, VPoint );
+        SetSafetyContour();
         m_plib_state_hash = PI_GetPLIBStateHash();
         
     }
@@ -4538,10 +4799,12 @@ wxString ChartS63::GetObjectAttributeValueAsString( PI_S57Obj *obj, int iatt, wx
                 }
                 
                 else if( curAttrName == _T("SECTR1") ) val_suffix = _T("&deg;");
-                    else if( curAttrName == _T("SECTR2") ) val_suffix = _T("&deg;");
-               else if( curAttrName == _T("ORIENT") ) val_suffix = _T("&deg;");
-               else if( curAttrName == _T("VALNMR") ) val_suffix = _T(" Nm");
-               else if( curAttrName == _T("SIGPER") ) val_suffix = _T("s");
+                else if( curAttrName == _T("SECTR2") ) val_suffix = _T("&deg;");
+                else if( curAttrName == _T("ORIENT") ) val_suffix = _T("&deg;");
+                else if( curAttrName == _T("VALNMR") ) val_suffix = _T(" Nm");
+                else if( curAttrName == _T("SIGPER") ) val_suffix = _T("s");
+                else if( curAttrName == _T("VALACM") ) val_suffix = _T(" Minutes/year");
+                else if( curAttrName == _T("VALMAG") ) val_suffix = _T("&deg;");
                
                if( dval - floor( dval ) < 0.01 ) value.Printf( _T("%2.0f"), dval );
                else
