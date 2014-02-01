@@ -58,6 +58,8 @@ wxString                s_last_sync_error;
 extern unsigned int     g_backchannel_port;
 extern unsigned int     g_frontchannel_port;
 extern wxString         g_s57data_dir;
+extern bool             g_bsuppress_log;
+extern wxString         g_pi_filename;
 
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
@@ -71,6 +73,7 @@ WX_DEFINE_ARRAY( float*, MyFloatPtrArray );
 //    Arrays to temporarily hold SENC geometry
 WX_DEFINE_OBJARRAY(PI_ArrayOfVE_Elements);
 WX_DEFINE_OBJARRAY(PI_ArrayOfVC_Elements);
+WX_DEFINE_OBJARRAY(ArrayOfLights);
 
 #include <wx/listimpl.cpp>
 WX_DEFINE_LIST(ListOfPI_S57Obj);                // Implement a list of PI_S57 Objects
@@ -99,7 +102,12 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         ScreenLogMessage(_T("\n"));
     }
 
+    bool bsuppress_last = g_bsuppress_log;
+    g_bsuppress_log = !bshowlog;
+    
     long rv = wxExecute(cmd, ret_array, ret_array );
+    
+    g_bsuppress_log = bsuppress_last;
     
     if(-1 == rv) {
         ret_array.Add(_T("ERROR: s63_pi could not execute OCPNsenc utility\n"));
@@ -165,7 +173,7 @@ void UtilProcess::OnTerminate(int pid, int status)
 }
 
 
-unsigned char *GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize )
+unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize )
 {
     
     unsigned char *cb = (unsigned char *)malloc(1024);
@@ -197,7 +205,17 @@ unsigned char *GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize 
     wxString port;
     port.Printf( _T("%d"), g_backchannel_port );
     cmd += port;
+
+    cmd += _T(" -p ");
+    cmd += m_cell_permit;
     
+    cmd += _T(" -z ");
+    cmd += _T("\"");
+    cmd += g_pi_filename;
+    cmd += _T("\"");
+    
+    
+    wxLogMessage( cmd );
     wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
     
@@ -341,6 +359,7 @@ ThumbData::~ThumbData()
     delete pDIBThumb;
 }
 #endif
+
 
 // ----------------------------------------------------------------------------
 // ChartS63 Implementation
@@ -559,6 +578,16 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
         up_file.Close();
     }
         
+    //  Make sure the S63SENC directory exists    
+    wxFileName ehdrfile( ehdr_file_name );
+        //      Make the target directory if needed
+    if( true != wxFileName::DirExists( ehdrfile.GetPath() ) ) {
+        if( !wxFileName::Mkdir( ehdrfile.GetPath() ) ) {
+            ScreenLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
+            return _T("");
+        }
+    }
+        
         
     // build the SENC utility command line
     
@@ -599,12 +628,16 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
         cmd += _T("\"");
     }
       
-        
+    cmd += _T(" -z ");
+    cmd += _T("\"");
+    cmd += g_pi_filename;
+    cmd += _T("\"");
+      
     
     wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
  
-    ::wxRemoveFile( tmp_up_file );
+//    ::wxRemoveFile( tmp_up_file );
     
     //  Check results
     if( !exec_results_check( ehdr_result ) ) {
@@ -705,6 +738,18 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         }                
     }             
     else{
+        
+        //      Could not find the os63 file...
+        //      So remove from database permanently to prevent thrashing
+        wxString fn = name_os63;
+        RemoveChartFromDBInPlace( fn );
+        
+        s_PI_bInS57--;
+        return PI_INIT_FAIL_REMOVE;
+    }
+    
+    //  os63 file is a placeholder, cells have not been imported yet.
+    if( !m_full_base_path.Len() ){
         s_PI_bInS57--;
         return PI_INIT_FAIL_REMOVE;
     }
@@ -1865,14 +1910,15 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     unsigned char *cb = GetSENCCryptKeyBuffer( efn, &crypt_size );
     fpx.SetCryptBuffer( cb, crypt_size );
     
-    // Verify the first 4 bytes
-    char verf[5];
-    verf[4] = 0;
+    // Verify the first 12 bytes
+    char verf[13];
+    verf[4] = 12;
     
-    fpx.Read(verf, 4);
+    fpx.Read(verf, 12);
     fpx.Rewind();
     
-    if(strncmp(verf, "SENC", 4)){
+    if(strncmp(verf, "SENC Version", 12)){
+        ScreenLogMessage( _T("   Error: ehdr decrypt failed.\n "));
         free( cb );
         return false;
     }
@@ -2043,7 +2089,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
             memcpy( m_pCOVRTable[j], pAuxPtrArray->Item( j ), pAuxCntArray->Item( j ) * 2 * sizeof(float) );
             
             float *pf = m_pCOVRTable[j];
-            for(unsigned int k=0 ; k < pAuxCntArray->Item(j); k++){
+            for( int k=0 ; k < pAuxCntArray->Item(j); k++){
                 printf( "%g  %g  \n", *pf, *(pf+1));
                 pf += 2;
             }
@@ -2220,7 +2266,7 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
                 bool dun = false;
                 char buf[256];
                 char *pbuf = buf;
-                int force_make_senc = 0;
+//                int force_make_senc = 0;
                 
                 while( !dun ) {
                     if( my_fgets( pbuf, 256, *pfpx ) == 0 ) {
@@ -2259,21 +2305,33 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
                     }
                 }
             }
+
+            else {
+                ScreenLogMessage( _T("   Info: eSENC file failed decrypt.\n "));
+            }
             
             //  SENC file version has to be correct for other tests to make sense
-            if( senc_file_version != CURRENT_SENC_FORMAT_VERSION )
+            if( senc_file_version != CURRENT_SENC_FORMAT_VERSION ) {
+                ScreenLogMessage( _T("   Info: eSENC SENC format mismatch.\n "));
                 bbuild_new_senc = true;
+            }
             
             //  Senc EDTN must be the same as .000 file EDTN.
             //  This test catches the usual case where the .000 file is updated from the web,
             //  and all updates (.001, .002, etc.)  are subsumed.
-            else if( senc_base_edtn != m_base_edtn )
+            else if( senc_base_edtn != m_base_edtn ) {
+                wxString msg;
+                msg.Printf(_T("   Info: eSENC base edition mismatch %d %d .\n "), senc_base_edtn, m_base_edtn);
+                ScreenLogMessage( msg );
                 bbuild_new_senc = true;
+            }
             
             else {
                 //    Check the os63 file parse to see if the update number matches
-                if( senc_update != m_latest_update )
+                if( senc_update != m_latest_update ) {
+                    ScreenLogMessage( _T("   Info: eSENC update mismatch.\n "));
                     bbuild_new_senc = true;
+                }
             }                
                 
         }
@@ -2407,6 +2465,8 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
     
     else                    // SENC file does not exist
     {
+        ScreenLogMessage( _T("   Info: eSENC file does not exist.\n "));
+        
         build_ret_val = BuildSENCFile( name, SENCFileName.GetFullPath() );
         bbuild_new_senc = true;
     }
@@ -2449,6 +2509,14 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
         up_file.Close();
     }
     
+    wxFileName SENCfile( SENCFileName );
+    //      Make the target directory if needed
+    if( true != wxFileName::DirExists( SENCfile.GetPath() ) ) {
+        if( !wxFileName::Mkdir( SENCfile.GetPath() ) ) {
+            ScreenLogMessage(_T("   Cannot create S63SENC file directory for ") + SENCfile.GetFullPath() );
+                return BUILD_SENC_NOK_RETRY;
+        }
+    }
     
     
     // build the SENC utility command line
@@ -2489,6 +2557,11 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
         cmd += tmp_up_file;
         cmd += _T("\"");
     }
+    
+    cmd += _T(" -z ");
+    cmd += _T("\"");
+    cmd += g_pi_filename;
+    cmd += _T("\"");
     
     
     wxLogMessage( cmd );
@@ -2531,7 +2604,7 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
 {
     int disPrioIdx = 0;
     int LUPtypeIdx = 0;
-    int LUPtypeIdxAlt = 0;
+//    int LUPtypeIdxAlt = 0;
     
     PI_DisPrio DPRI = PI_GetObjectDisplayPriority( obj );
     // find display priority index       --talky version
@@ -2575,27 +2648,27 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
     switch( TNAM ){
         case PI_SIMPLIFIED:
             LUPtypeIdx = 0;
-            LUPtypeIdxAlt = 1;
+//            LUPtypeIdxAlt = 1;
             break; // points
         case PI_PAPER_CHART:
             LUPtypeIdx = 1;
-            LUPtypeIdxAlt = 0;
+//            LUPtypeIdxAlt = 0;
             break; // points
         case PI_LINES:
             LUPtypeIdx = 2;
-            LUPtypeIdxAlt = 2;
+//            LUPtypeIdxAlt = 2;
             break; // lines
         case PI_PLAIN_BOUNDARIES:
             LUPtypeIdx = 3;
-            LUPtypeIdxAlt = 4;
+//            LUPtypeIdxAlt = 4;
             break; // areas
         case PI_SYMBOLIZED_BOUNDARIES:
             LUPtypeIdx = 4;
-            LUPtypeIdxAlt = 3;
+//            LUPtypeIdxAlt = 3;
             break; // areas
         default:
             LUPtypeIdx = 0;
-            LUPtypeIdxAlt = 0;
+//            LUPtypeIdxAlt = 0;
             break;
     }
     
@@ -3371,8 +3444,8 @@ void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_Vi
     
     double box_margin = 0.25;
     
-    //    Assume a 50x50 pixel box
-    box_margin = ( 50. / vp_this.view_scale_ppm ) / ( 1852. * 60. );  //degrees
+    //    Assume a 10x10 pixel box
+    box_margin = ( 10. / vp_this.view_scale_ppm ) / ( 1852. * 60. );  //degrees
     
     for( int i = 0; i < PRIO_NUM; ++i ) {
         top = razRules[i][0];
@@ -3383,7 +3456,7 @@ void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_Vi
                 top->lon_max = top->m_lon + box_margin;
                 top->lat_min = top->m_lat - box_margin;
                 top->lat_max = top->m_lat + box_margin;
-                top->bBBObj_valid = true;
+                PI_UpdateContext(top);
             }
 
         nxx = top->next;
@@ -3398,7 +3471,7 @@ void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_Vi
                 top->lon_max = top->m_lon + box_margin;
                 top->lat_min = top->m_lat - box_margin;
                 top->lat_max = top->m_lat + box_margin;
-                top->bBBObj_valid = true;
+                PI_UpdateContext(top);
             }
             
             nxx = top->next;
@@ -3406,7 +3479,6 @@ void ChartS63::ResetPointBBoxes( const PlugIn_ViewPort &vp_last, const PlugIn_Vi
         }
     }    
 }
-
 
 
 
@@ -4021,6 +4093,7 @@ ListOfPI_S57Obj *ChartS63::GetObjRuleListAtLatLon(float lat, float lon, float se
 
 bool ChartS63::DoesLatLonSelectObject( float lat, float lon, float select_radius, PI_S57Obj *obj )
 {
+    
     switch( obj->Primitive_type ){
         //  For single Point objects, the integral object bounding box contains the lat/lon of the object,
         //  possibly expanded by text or symbol rendering
@@ -4032,6 +4105,12 @@ bool ChartS63::DoesLatLonSelectObject( float lat, float lon, float select_radius
                 //  This is too big for pick area, can be confusing....
                 //  So make a temporary box at the light's lat/lon, with select_radius size
                 if( !strncmp( obj->FeatureName, "LIGHTS", 6 ) ) {
+                    
+                    if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
+                        lat >= (obj->lat_min - select_radius) && lat <= (obj->lat_max + select_radius) )
+                            return true;
+                    
+                    
 #if 0                    
                     double olon, olat;
                     fromSM( ( obj->x * obj->x_rate ) + obj->x_origin,
@@ -4050,8 +4129,14 @@ bool ChartS63::DoesLatLonSelectObject( float lat, float lon, float select_radius
                 }
                 
                 else{
-                    if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
-                        lat >= (obj->lat_min - select_radius) && lat <= (obj->lat_max + select_radius) )
+                    double rlat_min, rlat_max, rlon_min, rlon_max;
+                    bool box_valid = PI_GetObjectRenderBox(obj, &rlat_min, &rlat_max, &rlon_min, &rlon_max);
+                    
+                    if(!box_valid)
+                        return false;
+                    
+                   if (  lon >= (rlon_min - select_radius) && lon <= (rlon_max + select_radius) &&
+                        lat >= (rlat_min - select_radius) && lat <= (rlat_max + select_radius) )
                         return TRUE;
                  }
             }
@@ -4059,7 +4144,6 @@ bool ChartS63::DoesLatLonSelectObject( float lat, float lon, float select_radius
             //  For MultiPoint objects, make a bounding box from each point's lat/lon
             //  and check it
             else {
-                if( !obj->bBBObj_valid ) return false;
                 
                 //  Coarse test first
                 if (  lon >= (obj->lon_min - select_radius) && lon <= (obj->lon_max + select_radius) &&
@@ -4375,6 +4459,33 @@ const char *MyCSVGetField( const char * pszFilename, const char * pszKeyFieldNam
     return ( papszRecord[iTargetField] );
 }
 
+int CompareLights( PI_S57Light** l1ptr, PI_S57Light** l2ptr )
+{
+    PI_S57Light l1 = *(PI_S57Light*) *l1ptr;
+    PI_S57Light l2 = *(PI_S57Light*) *l2ptr;
+    
+    int positionDiff = l1.position.Cmp( l2.position );
+    if( positionDiff != 0 ) return positionDiff;
+    
+    double angle1, angle2;
+    int attrIndex1 = l1.attributeNames.Index( _T("SECTR1") );
+    int attrIndex2 = l2.attributeNames.Index( _T("SECTR1") );
+    
+    // This should put Lights without sectors last in the list.
+    if( attrIndex1 == wxNOT_FOUND && attrIndex2 == wxNOT_FOUND ) return 0;
+    if( attrIndex1 != wxNOT_FOUND && attrIndex2 == wxNOT_FOUND ) return -1;
+    if( attrIndex1 == wxNOT_FOUND && attrIndex2 != wxNOT_FOUND ) return 1;
+    
+    l1.attributeValues.Item( attrIndex1 ).ToDouble( &angle1 );
+    l2.attributeValues.Item( attrIndex2 ).ToDouble( &angle2 );
+    
+    if( angle1 == angle2 ) return 0;
+    if( angle1 > angle2 ) return 1;
+    return -1;
+}
+
+
+
 wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
 {
     wxString ret_val;
@@ -4387,8 +4498,8 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
     wxString objText;
     wxString lightsHtml;
     wxString positionString;
-    wxArrayPtrVoid lights;
- //   S57Light* curLight = NULL;
+    ArrayOfLights lights;
+    PI_S57Light* curLight = NULL;
     
     for( ListOfPI_S57Obj::Node *node = obj_list->GetLast(); node; node = node->GetPrevious() ) {
         PI_S57Obj *current = node->GetData();
@@ -4464,14 +4575,14 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                 positionString << _T(" ");
                 positionString += toSDMM_PlugIn( 2, lon );
                 
-#if 0                
+               
                 if( isLight ) {
-                    curLight = new S57Light;
+                    curLight = new PI_S57Light;
                     curLight->position = positionString;
                     curLight->hasSectors = false;
                     lights.Add( curLight );
                 }
-#endif                
+                
             }
             
             //    Get the Attributes and values, making sure they can be converted from UTF8
@@ -4495,9 +4606,9 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                     // DEPARE gets just its range. Lights are grouped.
                     
                     if( isLight ) {
-//                        curLight->attributeNames.Add( curAttrName );
-//                        if( curAttrName.StartsWith( _T("SECTR") ) )
-//                            curLight->hasSectors = true;
+                        curLight->attributeNames.Add( curAttrName );
+                        if( curAttrName.StartsWith( _T("SECTR") ) )
+                            curLight->hasSectors = true;
                     } else {
                         if( curAttrName == _T("DRVAL1") ) {
                             attribStr << _T("<tr><td><font size=-1>");
@@ -4524,7 +4635,7 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                     value = GetObjectAttributeValueAsString( current, attrCounter, curAttrName );
                     
                     if( isLight ) {
-//                        curLight->attributeValues.Add( value );
+                        curLight->attributeValues.Add( value );
                     } else {
                         if( curAttrName == _T("INFORM") || curAttrName == _T("NINFOM") ) value.Replace(
                             _T("|"), _T("<br>") );
@@ -4541,8 +4652,6 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                 }             //while attrCounter < current->obj->n_attr
                 
                 if( !isLight ) {
-                    attribStr << _T("</table>\n");
-                    
                     objText += _T("<b>") + classDesc + _T("</b> <font size=-2>(") + className
                     + _T(")</font>") + _T("<br>");
                     
@@ -4559,28 +4668,28 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
             }
     } // Object for loop
 
-#if 0    
+#if 1    
     if( lights.Count() > 0 ) {
         
         // For lights we now have all the info gathered but no HTML output yet, now
         // run through the data and build a merged table for all lights.
         
-        lights.Sort( ( CMPFUNC_wxArraywxArrayPtrVoid )( &s57chart::CompareLights ) );
+        lights.Sort( ( CMPFUNC_wxObjArrayArrayOfLights )( &CompareLights ) );
         
         wxString lastPos;
         
         for( unsigned int curLightNo = 0; curLightNo < lights.Count(); curLightNo++ ) {
-            S57Light* thisLight = (S57Light*) lights.Item( curLightNo );
+            PI_S57Light thisLight = /*(S57Light*)*/ lights.Item( curLightNo );
             int attrIndex;
             
-            if( thisLight->position != lastPos ) {
+            if( thisLight.position != lastPos ) {
                 
-                lastPos = thisLight->position;
+                lastPos = thisLight.position;
                 
                 if( curLightNo > 0 ) lightsHtml << _T("</table>\n<hr noshade>\n");
                 
                 lightsHtml << _T("<b>Light</b> <font size=-2>(LIGHTS)</font><br>");
-                lightsHtml << _T("<font size=-2>") << thisLight->position << _T("</font><br>\n");
+                lightsHtml << _T("<font size=-2>") << thisLight.position << _T("</font><br>\n");
                 
                 if( curLight->hasSectors ) lightsHtml
                     <<_("<font size=-2>(Sector angles are True Bearings from Seaward)</font><br>");
@@ -4591,9 +4700,9 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
             lightsHtml << _T("<tr>");
             lightsHtml << _T("<td><font size=-1>");
             
-            attrIndex = thisLight->attributeNames.Index( _T("COLOUR") );
+            attrIndex = thisLight.attributeNames.Index( _T("COLOUR") );
             if( attrIndex != wxNOT_FOUND ) {
-                wxString color = thisLight->attributeValues.Item( attrIndex );
+                wxString color = thisLight.attributeValues.Item( attrIndex );
                 if( color == _T("red(3)") ) lightsHtml
                     << _T("<table border=0><tr><td bgcolor=red>&nbsp;&nbsp;&nbsp;</td></tr></table> ");
                 if( color == _T("green(4)") ) lightsHtml
@@ -4604,80 +4713,80 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
             
             lightsHtml << _T("</font></td><td><font size=-1><nobr><b>");
             
-            attrIndex = thisLight->attributeNames.Index( _T("LITCHR") );
+            attrIndex = thisLight.attributeNames.Index( _T("LITCHR") );
             if( attrIndex != wxNOT_FOUND ) {
-                wxString character = thisLight->attributeValues.Item( attrIndex );
+                wxString character = thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << character.BeforeFirst( wxChar( '(' ) ) << _T(" ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("SIGGRP") );
+            attrIndex = thisLight.attributeNames.Index( _T("SIGGRP") );
             if( attrIndex != wxNOT_FOUND ) {
-                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << _T(" ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("SIGPER") );
+            attrIndex = thisLight.attributeNames.Index( _T("SIGPER") );
             if( attrIndex != wxNOT_FOUND ) {
-                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << _T(" ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("HEIGHT") );
+            attrIndex = thisLight.attributeNames.Index( _T("HEIGHT") );
             if( attrIndex != wxNOT_FOUND ) {
-                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << _T(" ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("VALNMR") );
+            attrIndex = thisLight.attributeNames.Index( _T("VALNMR") );
             if( attrIndex != wxNOT_FOUND ) {
-                lightsHtml << thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << _T(" ");
             }
             
             lightsHtml << _T("</b>");
             
-            attrIndex = thisLight->attributeNames.Index( _T("SECTR1") );
+            attrIndex = thisLight.attributeNames.Index( _T("SECTR1") );
             if( attrIndex != wxNOT_FOUND ) {
-                lightsHtml << _T("(") <<thisLight->attributeValues.Item( attrIndex );
+                lightsHtml << _T("(") <<thisLight.attributeValues.Item( attrIndex );
                 lightsHtml << _T(" - ");
-                attrIndex = thisLight->attributeNames.Index( _T("SECTR2") );
-                lightsHtml << thisLight->attributeValues.Item( attrIndex ) << _T(") ");
+                attrIndex = thisLight.attributeNames.Index( _T("SECTR2") );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex ) << _T(") ");
             }
             
             lightsHtml << _T("</nobr>");
             
-            attrIndex = thisLight->attributeNames.Index( _T("CATLIT") );
+            attrIndex = thisLight.attributeNames.Index( _T("CATLIT") );
             if( attrIndex != wxNOT_FOUND ) {
                 lightsHtml << _T("<nobr>");
                 lightsHtml
-                << thisLight->attributeValues.Item( attrIndex ).BeforeFirst(
+                << thisLight.attributeValues.Item( attrIndex ).BeforeFirst(
                     wxChar( '(' ) );
                     lightsHtml << _T("</nobr> ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("EXCLIT") );
+            attrIndex = thisLight.attributeNames.Index( _T("EXCLIT") );
             if( attrIndex != wxNOT_FOUND ) {
                 lightsHtml << _T("<nobr>");
                 lightsHtml
-                << thisLight->attributeValues.Item( attrIndex ).BeforeFirst(
+                << thisLight.attributeValues.Item( attrIndex ).BeforeFirst(
                     wxChar( '(' ) );
                     lightsHtml << _T("</nobr> ");
             }
             
-            attrIndex = thisLight->attributeNames.Index( _T("OBJNAM") );
+            attrIndex = thisLight.attributeNames.Index( _T("OBJNAM") );
             if( attrIndex != wxNOT_FOUND ) {
                 lightsHtml << _T("<br><nobr>");
-                lightsHtml << thisLight->attributeValues.Item( attrIndex ).Left( 1 ).Upper();
-                lightsHtml << thisLight->attributeValues.Item( attrIndex ).Mid( 1 );
+                lightsHtml << thisLight.attributeValues.Item( attrIndex ).Left( 1 ).Upper();
+                lightsHtml << thisLight.attributeValues.Item( attrIndex ).Mid( 1 );
                 lightsHtml << _T("</nobr> ");
             }
             
             lightsHtml << _T("</font></td>");
             lightsHtml << _T("</tr>");
             
-            thisLight->attributeNames.Clear();
-            thisLight->attributeValues.Clear();
-            delete thisLight;
+            thisLight.attributeNames.Clear();
+            thisLight.attributeValues.Clear();
+//            delete thisLight;
         }
         lightsHtml << _T("</table><hr noshade>\n");
         ret_val = lightsHtml << ret_val;
@@ -5355,7 +5464,6 @@ PI_S57Obj::PI_S57Obj()
     m_lsindex_array = NULL;
     m_n_edge_max_points = 0;
 
-    bBBObj_valid = false;
 
     //        Set default (unity) auxiliary transform coefficients
     x_rate = 1.0;
@@ -5422,8 +5530,6 @@ PI_S57ObjX::PI_S57ObjX()
     m_n_lsindex = 0;
     m_lsindex_array = NULL;
     m_n_edge_max_points = 0;
-
-    bBBObj_valid = false;
 
     //        Set default (unity) auxiliary transform coefficients
     x_rate = 1.0;
@@ -5752,14 +5858,10 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
 
                         m_lon = xll;
                         m_lat = yll;
-                        lon_min = m_lon - .25;
-                        lon_max = m_lon + .25;
-                        lat_min = m_lat - .25;
-                        lat_max = m_lat + .25;
-                        bBBObj_valid = true;
-
-//                        BBObj.SetMin( m_lon - .25, m_lat - .25 );
-//                        BBObj.SetMax( m_lon + .25, m_lat + .25 );
+                        lon_min = m_lon;
+                        lon_max = m_lon;
+                        lat_min = m_lat;
+                        lat_max = m_lat;
 
                     } else {
                         Primitive_type = GEO_POINT;
@@ -5821,10 +5923,6 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
                         lon_max = xmax;
                         lat_min = ymin;
                         lat_max = ymax;
-                        bBBObj_valid = true;
-
-//                        BBObj.SetMin( xmin, ymin );
-//                        BBObj.SetMax( xmax, ymax );
 
                     }
                     break;
@@ -5891,9 +5989,6 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
                         lat_min = ymin;
                         lat_max = ymax;
 
-//                        BBObj.SetMin( xmin, ymin );
-//                        BBObj.SetMax( xmax, ymax );
-                        bBBObj_valid = true;
 
                         //  and declare x/y of the object to be average east/north of all points
                         double e1, e2, n1, n2;
@@ -5969,7 +6064,6 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
                             lat_min = ppg->Get_ymin();
                             lat_max = ppg->Get_ymax();
 
-                            bBBObj_valid = true;
 
                             //  and declare x/y of the object to be average east/north of all points
                             double e1, e2, n1, n2;

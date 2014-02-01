@@ -56,6 +56,8 @@ wxString                        g_userpermit;
 s63_pi                          *g_pi;
 wxString                        g_pi_filename;
 
+bool                            g_bsuppress_log;
+
 // the class factories, used to create and destroy instances of the PlugIn
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
@@ -124,8 +126,6 @@ s63_pi::s63_pi(void *ppimgr)
            _T("PlugIns/s63_pi/OCPNsenc\"");
 #endif 
            
-      
-      
       g_backchannel_port = 49500; //49152;       //ports 49152–65535 are unallocated
       
       g_pScreenLog = NULL; 
@@ -1097,15 +1097,21 @@ bool s63_pi::SaveConfig( void )
 
 void s63_pi::GetNewUserpermit(void)
 {
+    wxString old_permit = g_userpermit;
+    
     g_userpermit = _T("");
-    g_pi->SaveConfig();
+    wxString new_permit = GetUserpermit();
     
-    g_userpermit = GetUserpermit();
-    g_pi->SaveConfig();
-    
-    if(m_up_text) {
-        m_up_text->SetLabel( GetUserpermit() );
+    if( new_permit != _T("Invalid")){
+        g_userpermit = new_permit;
+        g_pi->SaveConfig();
+        
+        if(m_up_text) {
+            m_up_text->SetLabel( g_userpermit );
+        }
     }
+    else
+        g_userpermit = old_permit;
         
 }
 
@@ -1414,7 +1420,8 @@ void S63ScreenLog::OnSocketEvent(wxSocketEvent& event)
             
             if(rlen) {
                 wxString msg(buf, wxConvUTF8);
-                LogMessage(msg);
+                if(!g_bsuppress_log)
+                    LogMessage(msg);
             }
             
             // Enable input events again.
@@ -1753,8 +1760,8 @@ wxString GetUserpermit(void)
         int ret = dlg.ShowModal();
         if(ret == 0)
             return g_userpermit;
-        else
-            return _T("");
+        else 
+            return _T("Invalid");
     }
 }
 

@@ -21,12 +21,12 @@ SET(PLUGIN_SOURCE_DIR .)
 MESSAGE (STATUS "*** Building ${PACKAGE_NAME} ***")
 
 SET(VERSION_MAJOR "0")
-SET(VERSION_MINOR "1")
+SET(VERSION_MINOR "2")
 SET(VERSION_PATCH "0")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
 
-SET(CMAKE_BUILD_TYPE Debug)
+#SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 IF (PREFIX)
@@ -94,7 +94,7 @@ ENDIF(OPENGL_GLU_FOUND)
 
 
 SET(BUILD_SHARED_LIBS TRUE)
-SET( wxWidgets_USE_DEBUG ON)
+#SET( wxWidgets_USE_DEBUG ON)
 
 FIND_PACKAGE(wxWidgets REQUIRED)
 
@@ -134,7 +134,7 @@ SET(SRC_CPL
                 src/cpl/cpl_string.cpp
                 src/cpl/cpl_vsisimple.cpp
         )
-        
+
 SET(SRC_ISO8211
                 src/myiso8211/ddffielddefn.cpp
                 src/myiso8211/ddfmodule.cpp

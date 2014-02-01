@@ -184,7 +184,7 @@ CMake variables
   OutFile "@CPACK_TOPLEVEL_DIRECTORY@/${OUTPUT_FILE_NAME}"
 
   ;# Default installation folder
-  InstallDir "$PROGRAMFILES\OpenCPN"
+  InstallDir "$PROGRAMFILES\s63_pi"
 
   BrandingText /TRIMLEFT "s63_pi $(Installer) v${OCPN_INSTALLER_VERSION}"
 ;--------------------------------
@@ -534,6 +534,65 @@ CMake variables
 
 ;--------------------------------------------------------------------------------------------------
 ;##################################################################################################
+;#                                            FUNCTIONS                                           #
+;##################################################################################################
+
+; StrContains
+; This function does a case sensitive searches for an occurrence of a substring in a string.
+; It returns the substring if it is found.
+; Otherwise it returns null("").
+; Written by kenglish_hi
+; Adapted from StrReplace written by dandaman32
+
+
+Var STR_HAYSTACK
+Var STR_NEEDLE
+Var STR_CONTAINS_VAR_1
+Var STR_CONTAINS_VAR_2
+Var STR_CONTAINS_VAR_3
+Var STR_CONTAINS_VAR_4
+Var STR_RETURN_VAR
+
+Function StrContains
+  Exch $STR_NEEDLE
+  Exch 1
+  Exch $STR_HAYSTACK
+  ; Uncomment to debug
+  ;MessageBox MB_OK 'STR_NEEDLE = $STR_NEEDLE STR_HAYSTACK = $STR_HAYSTACK '
+    StrCpy $STR_RETURN_VAR ""
+    StrCpy $STR_CONTAINS_VAR_1 -1
+    StrLen $STR_CONTAINS_VAR_2 $STR_NEEDLE
+    StrLen $STR_CONTAINS_VAR_4 $STR_HAYSTACK
+    loop:
+      IntOp $STR_CONTAINS_VAR_1 $STR_CONTAINS_VAR_1 + 1
+      StrCpy $STR_CONTAINS_VAR_3 $STR_HAYSTACK $STR_CONTAINS_VAR_2 $STR_CONTAINS_VAR_1
+      StrCmp $STR_CONTAINS_VAR_3 $STR_NEEDLE found
+      StrCmp $STR_CONTAINS_VAR_1 $STR_CONTAINS_VAR_4 done
+      Goto loop
+    found:
+      StrCpy $STR_RETURN_VAR $STR_NEEDLE
+      Goto done
+    done:
+   Pop $STR_NEEDLE ;Prevent "invalid opcode" errors and keep the
+   Exch $STR_RETURN_VAR
+FunctionEnd
+
+!macro _StrContainsConstructor OUT NEEDLE HAYSTACK
+  Push `${HAYSTACK}`
+  Push `${NEEDLE}`
+  Call StrContains
+  Pop `${OUT}`
+!macroend
+
+!define StrContains '!insertmacro "_StrContainsConstructor"'
+
+
+
+
+
+
+;--------------------------------------------------------------------------------------------------
+;##################################################################################################
 ;#                                            PAGES                                               #
 ;##################################################################################################
 ;#                                       Installer Pages                                          #
@@ -558,9 +617,10 @@ CMake variables
 
 	!insertmacro MUI_PAGE_LICENSE $(license)
 
+/*
 	;# Clean up page - only shown if previous installation(s) <= 2.2.823 were found - checked in .onInit function
-	Page custom Page_CleanUp Page_CleanUp_Leave
-
+;	Page custom Page_CleanUp Page_CleanUp_Leave
+*/
 	;# Install type page - only shown if previous installation(s) > 2.2.823 were found - checked in .onInit function
 	Page custom Page_TypeInst Page_TypeInst_Leave
 
@@ -722,99 +782,6 @@ Section "-Topmost Section" SecTopmost ;# this needs to be always the first secti
 	${EndIf}
 SectionEnd
 
-/*
-;# Reset/ Delete Config Section
-SectionGroup "!Reset Config Section Group" SecGrpResetConfig
-	Section /o "Delete Config File Section" SecDeleteConfigFile
-		;# Delete config file (opencpn.ini)
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini"
-			Delete "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-
-	Section /o "Delete ChartDB Section" SecDeleteChartDB
-		;# Delete chart DB (CHRTLIST.DAT)
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\CHRTLIST.DAT"
-			Delete "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\CHRTLIST.DAT"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-
-	Section /o "Delete SENC Section" SecDeleteSENC
-		;# Delete SENC directory
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\SENC\*.*"
-			RMDir /r "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\SENC"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-
-	Section /o "Delete SENC Section" SecDeleteCM93
-		;# Delete SENC directory
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\cm93\*.*"
-			RMDir /r "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\cm93"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-
-	Section /o "Delete Navobject Section" SecDeleteNavobjFile
-		;# Delete navobject file (navobj.xml)
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\navobj.xml"
-			Delete "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\navobj.xml"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-
-	Section /o "Delete Log File Section" SecDeleteLogFile
-		;# Delete log file (opencpn.log)
-		SetShellVarContext all
-		${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.log"
-			Delete "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.log"
-			ClearErrors
-		${EndIf}
-	SectionEnd
-SectionGroupEnd
-
-;# Shortcut Section
-SectionGroup /e "!Shortcuts Section Group" SecGrpShortcuts
-	Section "Startmenu Shortcut Section" SecShortcutStartmenu
-		;# Start Menu
-		SetShellVarContext all
-		SetOutPath $INSTDIR
-		!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-			;# Create shortcuts
-			CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-			CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\OpenCPN @CPACK_PACKAGE_VERSION@.lnk" "$INSTDIR\opencpn.exe"
-			CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\OpenCPN @CPACK_PACKAGE_VERSION@ - No OpenGL.lnk" "$INSTDIR\opencpn.exe" "/no_opengl"
-			CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\$(Uninstall_Folder_Name)"
-			CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\$(Uninstall_Folder_Name)\$(Uninstall_Link).lnk" "$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe"
-		!insertmacro MUI_STARTMENU_WRITE_END
-	SectionEnd
-
-	Section "Desktop Shortcut Section" SecShortcutDesktop
-		SetShellVarContext all
-		CreateShortCut "$DESKTOP\OpenCPN @CPACK_PACKAGE_VERSION@.lnk" "$INSTDIR\opencpn.exe"
-	SectionEnd
-SectionGroupEnd
-
-;# Write Config Section
-Section "!Set Config Section" SecSetConfig
-	;# Write settings for config file (opencpn.ini) to HKLM Software\OpenCPN
-	${If} $CONFIG_SET_LANG == 1
-		;Call Write_Reg_Lang
-		WriteRegStr HKLM "Software\OpenCPN" "InstallerLanguage" $REG_LANG
-	${EndIf}
-
-	${If} $CHART_DIR_TMP_FILE == 1
-		Call Write_Reg_ChartDirs
-	${EndIf}
-SectionEnd
-*/
 
 ;# Install Section /hidden
 Section "-Install Section" SecInstall
@@ -852,11 +819,11 @@ Section "-Install Section" SecInstall
 	${EndIf}
 
 	;# Create the config folder if it does not exist and set full access rights to it
-	${IfNot} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\*.*"
-		CreateDirectory "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
-		Sleep 250
-	${EndIf}
-	AccessControlW::GrantOnFile "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@" "(BU)" "GenericRead + GenericExecute + GenericWrite + Delete + FullAccess"
+;	${IfNot} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\*.*"
+;		CreateDirectory "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
+;		Sleep 250
+;	${EndIf}
+;	AccessControlW::GrantOnFile "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@" "(BU)" "GenericRead + GenericExecute + GenericWrite + Delete + FullAccess"
 
 	;# Save the log file
 	StrCpy $0 "$INSTDIR\install.log"
@@ -875,6 +842,7 @@ SectionEnd
 
 Section /o "-un.Backup Config to RegKey" UnSecBackupConfigToRegKey
 	SetShellVarContext all
+/*
 	${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini"
 		ClearErrors
 		StrCpy $0 ""
@@ -898,23 +866,28 @@ Section /o "-un.Backup Config to RegKey" UnSecBackupConfigToRegKey
 		StrCmp $0 "" +2 0
 		WriteRegStr HKLM "${REG_KEY}" "InstallerLanguage" "$0"
 	${EndIf}
+*/
 SectionEnd
 
 Section "un.Delete Config Folder" UnSecDeleteConfigFolder
 	SetShellVarContext all
+/*
 	${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\*.*"
 		RMDir /r "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
 		ClearErrors
 	${EndIf}
+*/
 SectionEnd
 
 Section "-un.Uninstall" UnSecUninstall
+
+/*
 	;# Delete all Shortcuts
 		Push $INSTDIR
 		Call un.Delete_Desktop_Shortcuts
 		Push $INSTDIR
 		Call un.Delete_Start_Menu_Shortcuts
-
+*/
 	;# Delete subdirs and files in INSTDIR
 		;# Remove the uninstaller itself
 		ReadRegStr $0 HKLM "${REG_KEY_UN}" "UninstallString"
@@ -1005,7 +978,6 @@ Function .onInit
 
 	;# Delete all temporary files created during the installation
 	Delete "$TEMP\opencpn_*.tmp"
-	;DeleteRegKey HKCU "Software\OpenCPN" ;# remove RegKey possibly exists - was used by versions 2.2.808 to 2.2.823
 
 	;# Check for unloaded Registry hive from previous installation attempt e.g. when installer crashed
 	StrCpy $0 0
@@ -1163,6 +1135,7 @@ Function myGuiInit
 	SectionSetText ${SecShortcutDesktop} $(SecShortcutDesktop_Text)
 	SectionSetText ${SecSetConfig} $(SecSetConfig_Text)
 
+/*
 	;# Look for config dir ("%APPDATA%\opencpn) and the several config files
 	Call Check_Config_Exists
 
@@ -1173,10 +1146,11 @@ Function myGuiInit
 		SectionSetFlags ${SecSetConfig} $0
 		StrCpy $SetConfig 1
 	${EndIf}
-
+*/
 	SetShellVarContext all ;# switch SetShellVarContext back to ALL
 FunctionEnd
 
+/*
 ;--------------------------------
 ;# onSelChange
 ;Var ConfigSetLang
@@ -1280,7 +1254,7 @@ Function .onSelChange
 	Pop $0
 FunctionEnd
 
-
+*/
 Function .OnInstFailed
 	Call InstallerEnd
 FunctionEnd
@@ -1323,6 +1297,7 @@ FunctionEnd
 */
 	FunctionEnd
 
+/*
 ;--------------------------------
 ;# Page_CleanUp
 	Var Label_CleanUp
@@ -1480,17 +1455,17 @@ FunctionEnd
 			done2:
 			FileClose $R0
 		${EndIf}
-		/*
 		;# Pre-select all listbox-items
 		${NSD_LB_GetCount} $ListBox_CleanUp $1
 		IntOp $1 $1 - 1
 		SendMessage $ListBox_CleanUp ${LB_SELITEMRANGEEX} 0 $1
-		*/
 		Call ListBox_CleanUp_Change
 
 		nsDialogs::Show
 	FunctionEnd
+*/
 
+/*
 	Function Button_FullScan_CleanUp_Click
 		SendMessage $ListBox_CleanUp ${LB_RESETCONTENT} 0 0
 
@@ -1625,6 +1600,7 @@ FunctionEnd
 
 		Banner::destroy
 	FunctionEnd
+*/
 
 	Function Button_UnselectAll_CleanUp_Click
 		SendMessage $ListBox_CleanUp ${LB_SETSEL} FALSE -1
@@ -1666,6 +1642,7 @@ FunctionEnd
 		${EndIf}
 	FunctionEnd
 
+/*
 	Var Uninstall_Path_Tmp
 	Function Button_Uninstall_Selected_CleanUp_Click
 		EnableWindow $Button_Uninstall_Selected_CleanUp 0
@@ -1785,7 +1762,9 @@ FunctionEnd
 			SendMessage $0 ${BM_CLICK} 0 0
 		${EndIf}
 	FunctionEnd
+*/
 
+/*
 	Function Update_HDD_Scan
 		Push $0
 		Push $1
@@ -1821,7 +1800,9 @@ FunctionEnd
 		Pop $1
 		Pop $0
 	FunctionEnd
+*/
 
+/*
 	Function Update_Old_Installs
 		Push $0
 		Push $1
@@ -1867,7 +1848,9 @@ FunctionEnd
 		Pop $1
 		Pop $0
 	FunctionEnd
+*/
 
+/*
 	Function Update_Old_Uninstalls
 		Push $0
 		Push $1
@@ -1911,7 +1894,9 @@ FunctionEnd
 		Pop $1
 		Pop $0
 	FunctionEnd
+*/
 
+/*
 	Function Update_Appdata
 		Push $0
 		Push $1
@@ -1955,7 +1940,9 @@ FunctionEnd
 		Pop $1
 		Pop $0
 	FunctionEnd
+*/
 
+/*
 ;--------------------------------
 ;# Page_CleanUp_Leave
 	Function Page_CleanUp_Leave
@@ -1967,6 +1954,8 @@ FunctionEnd
 		leaving:
 		SendMessage $ListBox_CleanUp ${LB_RESETCONTENT} 0 0
 	FunctionEnd
+
+*/
 
 ;--------------------------------
 ;# Page_TypeInst
@@ -2031,14 +2020,14 @@ FunctionEnd
 			${AndIf} $TI_PARALLEL == ""
 				${NSD_SetState} $RB_Upgrade ${BST_CHECKED}
 			${EndIf}
-
+/*
 			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
 			${EndIf}
-
-			StrCpy $GroupBox_Size 2
+*/
+			StrCpy $GroupBox_Size 1
 		;Case 3: one newer previous installation => Option 1: Downgrade Option 2: Parallel Installation
 		${ElseIf} $MULTIPLE_INSTALLS == 1
 		${AndIf} $VERSION_OLDER == 1
@@ -2054,14 +2043,15 @@ FunctionEnd
 			${AndIf} $TI_PARALLEL == ""
 				${NSD_SetState} $RB_Downgrade ${BST_CHECKED}
 			${EndIf}
-
+/*
 			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
 			${EndIf}
-
-			StrCpy $GroupBox_Size 2
+*/
+			StrCpy $GroupBox_Size 1
+/*
 		;Case 4: more than one previous installation => Option 1: Parallel Installation
 		${ElseIf} $MULTIPLE_INSTALLS > 1
 			${NSD_CreateLabel} 0 0 100% 32u "$(Label_TypeInst_Parallel_Text)"
@@ -2073,6 +2063,7 @@ FunctionEnd
 			${NSD_SetState} $RB_Parallel ${BST_CHECKED}
 
 			StrCpy $GroupBox_Size 1
+*/
 		${EndIf}
 
 		${If} $GroupBox_Size == 1
@@ -2136,13 +2127,14 @@ FunctionEnd
                     StrLen $R2 $INSTDIR
                     StrLen $R3 $R1
 
+/*
                     ;   If Previous install dir was a parallel, make the upgrade also parallel.
                     ${If} $R2 > $R3
                         StrCpy $INSTDIR "$R1 @CPACK_PACKAGE_VERSION@"
                     ${Else}
                         StrCpy $INSTDIR $R1
                     ${Endif}
-
+*/
                 ${Endif}
 
 		${If} $INSTALL_TYPE == 4
@@ -2264,6 +2256,10 @@ FunctionEnd
 		${EndIf}
 	FunctionEnd
 
+
+
+
+
 /*
 ;--------------------------------
 ;# Page_Startmenu_Pre
@@ -2292,6 +2288,8 @@ FunctionEnd
 	Var Button_Add_SetConfig
 	Var ListBox_SetConfig
 */
+
+/*
 	Function Page_SetConfig
 		${If} $Skip_Page_SetConfig == 1
 			Abort
@@ -2441,6 +2439,7 @@ FunctionEnd
 		${EndIf}
 	FunctionEnd
 
+*/
 /*
 ;--------------------------------
 # Page_SetConfig_Leave
@@ -2507,6 +2506,7 @@ FunctionEnd
 		;# add the installation directory to '$Install_Options'
 		StrCpy $Install_Options "$Install_Options$\r$\n$\r$\n$(Installation_Directory):$\r$\n$\t$INSTDIR"
 
+/*
 		;# add the delete config settings to '$Install_Options'
 		${If} $CONFIG_EXISTS == 1
 		${AndIf} $CONFIG_EMPTY != 1
@@ -2551,6 +2551,7 @@ FunctionEnd
 
 			cont:
 		${EndIf}
+*/
 
 /*
 		;# add the shortcut settings to '$Install_Options'
@@ -4527,7 +4528,7 @@ Var explArrCount
 	LangString Page_TypeInst_Title_1 ${LANG_ENGLISH} "Already Installed"
 
 	;Subtitle
-    LangString Page_TypeInst_Subtitle_1 ${LANG_ENGLISH} "Found installed version of OpenCPN.$\r$\nChoose how you want to install s63_pi."
+    LangString Page_TypeInst_Subtitle_1 ${LANG_ENGLISH} "Found installed version of s63_pi.$\r$\n"
 
   ;Version exists
     ;Title
@@ -4544,7 +4545,7 @@ Var explArrCount
 
   ;Version newer
 	;Label
-    LangString Label_TypeInst_Upgrade_Text ${LANG_ENGLISH} "An older version of s63_pi is installed on your system. Select the installation type you want to perform and click Next to continue."
+    LangString Label_TypeInst_Upgrade_Text ${LANG_ENGLISH} "An older version of s63_pi is installed on your system. Click Next to continue upgrade."
 
 	;Radio button 'Upgrade'
 	LangString RB_Upgrade_TypeInst_Text ${LANG_ENGLISH} "Upgrade s63_pi using previous settings (recommended)"

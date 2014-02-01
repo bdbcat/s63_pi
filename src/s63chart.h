@@ -28,6 +28,11 @@ WX_DECLARE_HASH_MAP( int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_
 
 WX_DEFINE_ARRAY_DOUBLE(double, ArrayOfSortedDoubles);
 
+
+class PI_S57Light;
+
+WX_DECLARE_OBJARRAY(PI_S57Light,      ArrayOfLights);
+
 #ifndef PI
 #define PI        3.1415926535897931160E0      /* pi */
 #endif
@@ -80,6 +85,14 @@ public:
     
 };
 
+class PI_S57Light
+{
+public:
+    wxArrayString attributeNames;
+    wxArrayString attributeValues;
+    wxString position;
+    bool hasSectors;
+};
 
 // ----------------------------------------------------------------------------
 // ChartS63 Definition
@@ -173,7 +186,8 @@ protected:
       void              SetVPParms(const PlugIn_ViewPort &vpt);
       void              ResetPointBBoxes(const PlugIn_ViewPort &vp_last, const PlugIn_ViewPort &vp_this);
       void              SetLinePriorities(void);
-
+      unsigned char     *GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize );
+      
       void              FreeObjectsAndRules();
       
         // Rendering
