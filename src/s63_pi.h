@@ -38,7 +38,7 @@
 #include <wx/listctrl.h>
 
 #define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    1
+#define     PLUGIN_VERSION_MINOR    3
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11
@@ -56,11 +56,13 @@ void HideScreenLog(void);
 void ClearScreenLog(void);
 
 extern "C++" wxString GetUserpermit(void);
+extern "C++" wxString GetInstallpermit(void);
 extern "C++" wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog );
 
 
 class   s63_pi;
 class   OCPNPermitList;
+class   OCPNCertificateList;
 
 // An Event handler class to catch events from S63 UI dialog
 class s63_pi_event_handler : public wxEvtHandler
@@ -75,6 +77,9 @@ public:
     void OnImportCellsClick( wxCommandEvent &event );
     void OnSelectPermit( wxListEvent& event );    
     void OnNewUserpermitClick( wxCommandEvent& event );    
+    void OnNewInstallpermitClick( wxCommandEvent& event );    
+    void OnImportCertClick( wxCommandEvent &event );
+    
     s63_pi  *m_parent;
 };
 
@@ -119,22 +124,34 @@ public:
 
     void OnSetupOptions();
     void OnCloseToolboxPanel(int page_sel, int ok_apply_cancel);
+
+    void SetPluginMessage(wxString &message_id, wxString &message_body);
     
     int ImportCellPermits( void );
     int RemoveCellPermit( void );
     int ImportCells( void );
+    int ImportCert( void );
+    
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
     void GetNewUserpermit(void);
+    void GetNewInstallpermit(void);
     
     bool SaveConfig( void );
   
+    wxString GetCertificateDir();
+   
     wxStaticText        *m_up_text;
+    wxStaticText        *m_ip_text;
+    wxScrolledWindow  *m_s63chartPanelWin;
     
 private:
+    wxString GetPermitDir();
+    
     Catalog31 *CreateCatalog31(const wxString &file31);
     
     int ProcessCellPermit( wxString &permit );
-
+    int AuthenticateCell( const wxString & cell_file );
+    
     bool LoadConfig( void );
     
     int pi_error( wxString msg );
@@ -143,7 +160,6 @@ private:
 
     wxBitmap          *m_pplugin_icon;
 
-    wxScrolledWindow  *m_s63chartPanelWin;
     s63_pi_event_handler *m_event_handler;
     
     OCPNPermitList      *m_permit_list;
@@ -151,6 +167,7 @@ private:
     wxButton            *m_buttonRemovePermit;
     wxButton            *m_buttonNewUP;
     wxButton            *m_buttonImportCells;
+    wxButton            *m_buttonNewIP;
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;
@@ -159,6 +176,13 @@ private:
     
     Catalog31           *m_catalog;
     wxString            m_last_enc_root_dir;
+    
+    OCPNCertificateList *m_cert_list;
+    wxButton            *m_buttonImportCert;
+    
+    bool                m_bSSE26_shown;
+    
+    
 };
 
 
@@ -212,6 +236,16 @@ public:
     
     void BuildList( const wxString &permit_dir );
     wxArrayString       m_permit_file_array;
+};
+
+class OCPNCertificateList : public wxListCtrl
+{
+public:
+    OCPNCertificateList(wxWindow *parent);
+    ~OCPNCertificateList();
+    
+    void BuildList( const wxString &cert_dir );
+//    wxArrayString       m_permit_file_array;
 };
 
 
@@ -279,6 +313,69 @@ public:
     
 };
 
+/*!
+ * Control identifiers
+ */
+
+////@begin control identifiers
+#define ID_GETIP 8200
+#define SYMBOL_GETIP_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
+#define SYMBOL_GETIP_TITLE _("S63_pi Install Permit Required")
+#define SYMBOL_GETIP_IDNAME ID_GETIP
+#define SYMBOL_GETIP_SIZE wxSize(500, 200)
+#define SYMBOL_GETIP_POSITION wxDefaultPosition
+#define ID_GETIP_CANCEL 8201
+#define ID_GETIP_OK 8202
+#define ID_GETIP_IP 8203
+#define ID_GETIP_TEST 8204
+
+
+////@end control identifiers
+
+/*!
+ * GetInstallpermitDialog class declaration
+ */
+class GetInstallpermitDialog: public wxDialog
+{
+    DECLARE_DYNAMIC_CLASS( GetInstallpermitDialog )
+    DECLARE_EVENT_TABLE()
+    
+public:
+    /// Constructors
+    GetInstallpermitDialog( );
+    GetInstallpermitDialog( wxWindow* parent, wxWindowID id = SYMBOL_GETIP_IDNAME,
+                         const wxString& caption = SYMBOL_GETIP_TITLE,
+                         const wxPoint& pos = SYMBOL_GETIP_POSITION,
+                         const wxSize& size = SYMBOL_GETIP_SIZE,
+                         long style = SYMBOL_GETIP_STYLE );
+    
+    ~GetInstallpermitDialog();
+    
+    /// Creation
+    bool Create( wxWindow* parent, wxWindowID id = SYMBOL_GETIP_IDNAME,
+                 const wxString& caption = SYMBOL_GETIP_TITLE,
+                 const wxPoint& pos = SYMBOL_GETIP_POSITION,
+                 const wxSize& size = SYMBOL_GETIP_SIZE, long style = SYMBOL_GETIP_STYLE );
+    
+    
+    void CreateControls();
+    
+    void OnCancelClick( wxCommandEvent& event );
+    void OnOkClick( wxCommandEvent& event );
+    void OnUpdated( wxCommandEvent& event );
+    void OnTestClick( wxCommandEvent& event );
+    
+    /// Should we show tooltips?
+    static bool ShowToolTips();
+    
+    wxTextCtrl*   m_PermitCtl;
+    wxButton*     m_CancelButton;
+    wxButton*     m_OKButton;
+    wxButton*     m_testBtn;
+    wxStaticText* m_TestResult;
+    
+    
+};
 
 #endif
 

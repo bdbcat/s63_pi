@@ -60,6 +60,7 @@ extern unsigned int     g_frontchannel_port;
 extern wxString         g_s57data_dir;
 extern bool             g_bsuppress_log;
 extern wxString         g_pi_filename;
+extern wxString         g_SENCdir;
 
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
@@ -200,6 +201,9 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     
     cmd += _T(" -u ");
     cmd += GetUserpermit();
+    
+    cmd += _T(" -e ");
+    cmd += GetInstallpermit();
     
     cmd += _T(" -b ");
     wxString port;
@@ -370,9 +374,7 @@ IMPLEMENT_DYNAMIC_CLASS(ChartS63, PlugInChartBase)
 ChartS63::ChartS63()
 {
 
-    m_senc_dir =  *GetpPrivateApplicationDataLocation() ;
-    m_senc_dir += wxFileName::GetPathSeparator();
-    m_senc_dir += _T("S63SENC");
+    m_senc_dir =  g_SENCdir;
     
     // Create ATON arrays, needed by S52PLIB
     pFloatingATONArray = new wxArrayPtrVoid;
@@ -609,6 +611,9 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     
     cmd += _T(" -u ");
     cmd += GetUserpermit();
+    
+    cmd += _T(" -e ");
+    cmd += GetInstallpermit();
     
     cmd += _T(" -b ");
     wxString port;
@@ -1439,9 +1444,9 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
 
     //      Render the areas quickly
     for( i = 0; i < PRIO_NUM; ++i ) {
-        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES ) 
-            top = razRules[i][4]; // Area Symbolized Boundaries
-        else
+//        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES ) 
+//            top = razRules[i][4]; // Area Symbolized Boundaries
+//        else
             top = razRules[i][3];           // Area Plain Boundaries
 
         while( top != NULL ) {
@@ -1454,9 +1459,9 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
 
     //    Render the lines and points
     for( i = 0; i < PRIO_NUM; ++i ) {
-        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
-            top = razRules[i][4]; // Area Symbolized Boundaries
-        else
+//        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
+//            top = razRules[i][4]; // Area Symbolized Boundaries
+//        else
             top = razRules[i][3];           // Area Plain Boundaries
         while( top != NULL ) {
             crnt = top;
@@ -1471,10 +1476,10 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
             PI_PLIBRenderObjectToGL( glc, crnt, &tvp, rect );
         }
 
-        if( PI_GetPLIBSymbolStyle() == SIMPLIFIED )
+//        if( PI_GetPLIBSymbolStyle() == SIMPLIFIED )
             top = razRules[i][0];       //SIMPLIFIED Points
-        else
-            top = razRules[i][1];           //Paper Chart Points Points
+//        else
+//            top = razRules[i][1];           //Paper Chart Points Points
 
         while( top != NULL ) {
             crnt = top;
@@ -1918,7 +1923,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     fpx.Rewind();
     
     if(strncmp(verf, "SENC Version", 12)){
-        ScreenLogMessage( _T("   Error: ehdr decrypt failed.\n "));
+        ScreenLogMessage( _T("   Info: ehdr decrypt failed first chance.\n "));
         free( cb );
         return false;
     }
@@ -2541,6 +2546,9 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T(" -u ");
     cmd += GetUserpermit();
     
+    cmd += _T(" -e ");
+    cmd += GetInstallpermit();
+    
     cmd += _T(" -b ");
     wxString port;
     port.Printf( _T("%d"), g_backchannel_port );
@@ -2651,7 +2659,7 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
 //            LUPtypeIdxAlt = 1;
             break; // points
         case PI_PAPER_CHART:
-            LUPtypeIdx = 1;
+            LUPtypeIdx = 0;
 //            LUPtypeIdxAlt = 0;
             break; // points
         case PI_LINES:
@@ -2663,7 +2671,7 @@ int ChartS63::_insertRules( PI_S57Obj *obj )
 //            LUPtypeIdxAlt = 4;
             break; // areas
         case PI_SYMBOLIZED_BOUNDARIES:
-            LUPtypeIdx = 4;
+            LUPtypeIdx = 3;
 //            LUPtypeIdxAlt = 3;
             break; // areas
         default:
@@ -3923,9 +3931,9 @@ int ChartS63::DCRenderRect( wxMemoryDC& dcinput, const PlugIn_ViewPort& vp, wxRe
     
     //      Render the areas quickly
     for( i = 0; i < PI_PRIO_NUM; ++i ) {
-        if( PI_GetPLIBBoundaryStyle() == PI_SYMBOLIZED_BOUNDARIES )
-            top = razRules[i][4]; // Area Symbolized Boundaries
-            else
+//        if( PI_GetPLIBBoundaryStyle() == PI_SYMBOLIZED_BOUNDARIES )
+//            top = razRules[i][4]; // Area Symbolized Boundaries
+//            else
                 top = razRules[i][3];           // Area Plain Boundaries
                 
                 while( top != NULL ) {
@@ -3985,9 +3993,9 @@ bool ChartS63::DCRenderLPB( wxMemoryDC& dcinput, const PlugIn_ViewPort& vp, wxRe
             //         pdcc = new wxDCClipper(dcinput, nr);
         }
         
-        if( PI_GetPLIBBoundaryStyle() == PI_SYMBOLIZED_BOUNDARIES )
-            top = razRules[i][4]; // Area Symbolized Boundaries
-            else
+//        if( PI_GetPLIBBoundaryStyle() == PI_SYMBOLIZED_BOUNDARIES )
+//            top = razRules[i][4]; // Area Symbolized Boundaries
+//            else
                 top = razRules[i][3];           // Area Plain Boundaries
                 while( top != NULL ) {
                     crnt = top;
@@ -4002,10 +4010,10 @@ bool ChartS63::DCRenderLPB( wxMemoryDC& dcinput, const PlugIn_ViewPort& vp, wxRe
                     PI_PLIBRenderObjectToDC( &dcinput, crnt, &tvp );
                 }
                 
-                if( PI_GetPLIBSymbolStyle() == PI_SIMPLIFIED )
+//                if( PI_GetPLIBSymbolStyle() == PI_SIMPLIFIED )
                     top = razRules[i][0];       //SIMPLIFIED Points
-                    else
-                        top = razRules[i][1];           //Paper Chart Points Points
+//                    else
+//                        top = razRules[i][1];           //Paper Chart Points Points
                         
                         while( top != NULL ) {
                             crnt = top;
@@ -4033,7 +4041,7 @@ ListOfPI_S57Obj *ChartS63::GetObjRuleListAtLatLon(float lat, float lon, float se
     for( int i = 0; i < PRIO_NUM; ++i ) {
         // Points by type, array indices [0..1]
         
-        int point_type = ( PI_GetPLIBSymbolStyle() == SIMPLIFIED ) ? 0 : 1;
+        int point_type = 0; //( PI_GetPLIBSymbolStyle() == SIMPLIFIED ) ? 0 : 1;
         top = razRules[i][point_type];
         
         while( top != NULL ) {
@@ -4064,7 +4072,7 @@ ListOfPI_S57Obj *ChartS63::GetObjRuleListAtLatLon(float lat, float lon, float se
         
         // Areas by boundary type, array indices [3..4]
         
-        int area_boundary_type = ( PI_GetPLIBBoundaryStyle() == PLAIN_BOUNDARIES ) ? 3 : 4;
+        int area_boundary_type = 3; //( PI_GetPLIBBoundaryStyle() == PLAIN_BOUNDARIES ) ? 3 : 4;
         top = razRules[i][area_boundary_type];           // Area nnn Boundaries
         while( top != NULL ) {
             if( PI_PLIBObjectRenderCheck( top, VPoint ) ) {
