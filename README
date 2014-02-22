@@ -14,11 +14,6 @@
 
     The Windows install package will be built, and called s63_pi_x.x.x_setup.exe
 
-    You may build a PlugIn Package with a specific s63 UserPermit as follows.
-    Edit the file "userpermit.h" in the build root.
-    Then execute the following:
-                NMake clean
-                NMake package
 
     B. Linux
 
@@ -28,8 +23,3 @@
 
     The debian install package will be built, and called s63_pi_0.1.0-_i386.deb
 
-    You may build a PlugIn Package with a specific s63 UserPermit as follows.
-    Edit the file "userpermit.h" in the build root.
-    Then execute the following:
-                make clean
-                make package
