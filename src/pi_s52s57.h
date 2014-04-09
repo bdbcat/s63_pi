@@ -298,28 +298,6 @@ typedef struct _pi_chart_context{
 
 
 
-/*
-//----------------------------------------------------------------------------------
-//          Classes used to create arrays of geometry elements
-//----------------------------------------------------------------------------------
-
-class VE_Element
-{
-public:
-      int         index;
-      int         nCount;
-      double      *pPoints;
-      int         max_priority;
-};
-
-class VC_Element
-{
-public:
-      int         index;
-      double      *pPoint;
-};
-
-*/
 
 
 #endif

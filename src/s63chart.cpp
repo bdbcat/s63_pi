@@ -380,7 +380,7 @@ ChartS63::ChartS63()
     pFloatingATONArray = new wxArrayPtrVoid;
     pRigidATONArray = new wxArrayPtrVoid;
     
-    m_ChartType = PI_CHART_TYPE_S57;
+    m_ChartType = PI_CHART_TYPE_PLUGIN;
     m_ChartFamily = PI_CHART_FAMILY_VECTOR;
     
     for( int i = 0; i < PI_PRIO_NUM; i++ )
@@ -3106,37 +3106,45 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                         for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
                             int seg_index = iseg * 3;
                             int *index_run = &obj->m_lsindex_array[seg_index];
-                            
+
                             //  Get first connected node
-                            int inode = *index_run++;
-                            if( ( inode >= 0 ) ) {
+                            int inode = *index_run;
+                            if( ( inode ) ) {
                                 if( m_vc_hash.find( inode ) == m_vc_hash.end() ) {
                                     //    Must be a bad index in the SENC file
                                     //    Stuff a recognizable flag to indicate invalidity
-                                    index_run--;
-                                    *index_run = -1;
-                                    index_run++;
+                                    *index_run = 0;
+                                    m_vc_hash[0] = 0;
+                                }
+                            }
+                            index_run++;
+                            
+                            //  Get the edge
+                            int enode = *index_run;
+                            if( ( enode ) ) {
+                                if( m_ve_hash.find( enode ) == m_ve_hash.end() ) {
+                                    //    Must be a bad index in the SENC file
+                                    //    Stuff a recognizable flag to indicate invalidity
+                                    *index_run = 0;
+                                    m_ve_hash[0] = 0;
                                 }
                             }
                             
-                            //  Get the edge
-                            //                              int enode = *index_run++;
                             index_run++;
                             
                             //  Get last connected node
-                            int jnode = *index_run++;
-                            if( ( jnode >= 0 ) ) {
+                            int jnode = *index_run;
+                            if( ( jnode ) ) {
                                 if( m_vc_hash.find( jnode ) == m_vc_hash.end() ) {
                                     //    Must be a bad index in the SENC file
                                     //    Stuff a recognizable flag to indicate invalidity
-                                    index_run--;
-                                    *index_run = -2;
-                                    index_run++;
+                                    *index_run = 0;
+                                    m_vc_hash[0] = 0;
                                 }
-                                
                             }
+                            index_run++;
+                            
                         }
-                        ///
                         nxx = top->next;
                         top = nxx;
                     }
@@ -4653,13 +4661,14 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                             attribStr << _T("</font></td></tr>\n");
                         }
                     }
-                    
                     attrCounter++;
                     curr_att += 6;
                     
                 }             //while attrCounter < current->obj->n_attr
                 
                 if( !isLight ) {
+                    attribStr << _T("</table>\n");
+                    
                     objText += _T("<b>") + classDesc + _T("</b> <font size=-2>(") + className
                     + _T(")</font>") + _T("<br>");
                     

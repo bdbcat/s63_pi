@@ -23,8 +23,8 @@
 class PI_VE_Element;
 class PI_VC_Element;
 
-WX_DECLARE_HASH_MAP( int, PI_VE_Element *, wxIntegerHash, wxIntegerEqual, PI_VE_Hash );
-WX_DECLARE_HASH_MAP( int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_Hash );
+WX_DECLARE_HASH_MAP( unsigned int, PI_VE_Element *, wxIntegerHash, wxIntegerEqual, PI_VE_Hash );
+WX_DECLARE_HASH_MAP( unsigned int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_Hash );
 
 WX_DEFINE_ARRAY_DOUBLE(double, ArrayOfSortedDoubles);
 

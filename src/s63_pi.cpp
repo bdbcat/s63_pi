@@ -62,7 +62,8 @@ wxString                        g_SENCdir;
 
 bool                            g_bsuppress_log;
 wxProgressDialog                *g_pprog;
-
+wxString                        g_old_installpermit;
+wxString                        g_old_userpermit;
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -182,7 +183,7 @@ int s63_pi::Init(void)
     //  Get the path of the PlugIn itself
     g_pi_filename = GetPlugInPath(this);
     
-    AddLocaleCatalog( _T("opencpn-s63_pi") );
+    AddLocaleCatalog( _T("s63_pi") );
 
       //    Build an arraystring of dynamically loadable chart class names
     m_class_name_array.Add(_T("ChartS63"));
@@ -652,7 +653,7 @@ int s63_pi::ImportCells( void )
     wxDir::GetAllFiles(os63_dirname, &os63_file_array, _T("*.os63"));
 
     if( 0 == os63_file_array.GetCount() ){
-        wxString msg = _("Security Scheme Error\n\n SSE 10 – Permits not available for this data provider.\n");
+        wxString msg = _("Security Scheme Error\n\n SSE 10 - Permits not available for this data provider.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
                               _T("s63_pi Message"),  wxOK, -1, -1);
@@ -867,6 +868,8 @@ int s63_pi::ImportCells( void )
                     if(update_time.IsValid() && date000.IsValid() && 
                         ( !update_time.IsEarlierThan( date000 ) ) && ( update_edtn == edtn ) )  {
                         
+                        int installed_updn = 0;
+                    
                         //      Check the entire file to see if this update is already in place
                         //      If so, do not add it again.
                         bool b_exists = false;
@@ -880,17 +883,48 @@ int s63_pi::ImportCells( void )
                                     if(token.StartsWith(_T("UPDN="), &rest)){
                                         long ck_updn = -1;
                                         rest.ToLong(&ck_updn);
-                                        if(ck_updn == update_updn){
+                                        
+                                        if(ck_updn == update_updn)
                                             b_exists = true;
-                                        }
-                                        break;
+                                        
+                                        installed_updn = wxMax(installed_updn, ck_updn);        // capture latest update
+                                        
+                                        break;          // done with this entry
                                     }
                                 }
                             }
                             if(b_exists)
-                                break;
+                                break;                  // already have this update, so do nothing
                         }
                         
+                        //      Check update for valid sequence
+                        //      That is, update_updn == installed_updn + 1
+                        if(!b_exists){
+                            if(update_updn != installed_updn + 1){
+                                wxString msg = _("Security Scheme Error\n\n SSE 23 - Non sequential update, previous update(s) missing.\nTry reloading from the base media. \n If the problem persists contact your data supplier.\n\n");
+                                wxString m1;
+                                m1.Printf(_T("cell:"));
+                                msg += m1;
+                                msg += fn2.GetFullPath();
+                                msg += _T("\n");
+                                m1.Printf(_T("Latest intalled update: %d\n"), installed_updn);
+                                msg += m1;
+                                m1.Printf(_T("Attempted update: %d\n"), update_updn);
+                                msg += m1;
+                                OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                                      msg,
+                                                      _T("s63_pi Message"),  wxOK, -1, -1);
+                                
+                                ScreenLogMessage( msg );
+                                wxLogMessage(_T("s63_pi: ") + msg);
+                                
+                                b_error = true;
+                                break;                  // so stop the for() loop here
+                                                        // and be done with the update array
+                            }
+                            
+                        }
+                            
                         if(!b_exists){
                             
                             //  Authenticate the update cells, one by one.
@@ -901,6 +935,7 @@ int s63_pi::ImportCells( void )
                                 ScreenLogMessage(_("This update and all subsequent updates to this cell are NOT applied.\n\n") );
                                 b_error = true;
                                 break;                  // so stop the for() loop here
+                                                        // and be done with the update array
                             }
                             else {
                                 line = _T("cellupdate:");
@@ -1006,7 +1041,9 @@ int s63_pi::ImportCert(void)
     int response = openDialog->ShowModal();
     if( response == wxID_OK )
         key_file_name = openDialog->GetPath();
-                                                 
+    else
+        return 0;                       // cancelled
+        
     wxFileName fn(key_file_name);
 
     ScreenLogMessage(_T("Checking SA Digital Certificate format\n") );
@@ -1015,7 +1052,7 @@ int s63_pi::ImportCert(void)
         ScreenLogMessage(_T("SA Digital Certificate format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 08 – SA Digital Certificate file incorrect format.\n");
+        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\n");
         msg += _("A valid certificate can be obtained from the IHO website or your data supplier.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
@@ -1107,7 +1144,7 @@ int s63_pi::ImportCellPermits(void)
 
     if( !n_permits){
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
-                              _T("Security Scheme Error\n\nSSE 11 – Cell permit not found"),
+                              _T("Security Scheme Error\n\nSSE 11 - Cell permit not found"),
                               _T("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi:  SSE 11 – Cell permit not found" ));
@@ -1172,10 +1209,10 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
         wxString line = valup_result[i];
         if(line.Upper().Find(_T("ERROR")) != wxNOT_FOUND){
-            wxString msg = _("Security Scheme Error\n\nSSE 13 – Cell Permit is invalid (checksum is incorrect)\n");
+            wxString msg = _("Security Scheme Error\n\nSSE 13 - Cell Permit is invalid (checksum is incorrect)\n");
             msg += _("or the Cell Permit is for a different system.\n\n");
             msg += _("Invalid cell permit starts with ");
-            msg += cellpermitstring.Mid(0, 16);
+            msg += cellpermitstring.Mid(0, 24);
             msg += _T("...");
             OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                   msg,
@@ -1450,7 +1487,7 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
         ScreenLogMessage(_T("Signature file format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 24 – ENC Signature format is incorrect.\n\n");
+        wxString msg = _("Security Scheme Error\n\nSSE 24 - ENC Signature format is incorrect.\n\n");
         msg += _T("Cell name: ");
         msg += cell_file;
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
@@ -1473,7 +1510,7 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
         ScreenLogMessage(_T("SA Digital Certificate format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 08 – SA Digital Certificate file incorrect format.\n");
+        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\n");
         msg += _("A valid certificate can be obtained from the IHO website or your data supplier.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
@@ -1612,7 +1649,7 @@ bool s63_pi::SaveConfig( void )
 
 void s63_pi::GetNewUserpermit(void)
 {
-    wxString old_permit = g_userpermit;
+    g_old_userpermit = g_userpermit;
     
     g_userpermit = _T("");
     wxString new_permit = GetUserpermit();
@@ -1626,14 +1663,14 @@ void s63_pi::GetNewUserpermit(void)
         }
     }
     else
-        g_userpermit = old_permit;
+        g_userpermit = g_old_userpermit;
         
 }
 
 
 void s63_pi::GetNewInstallpermit(void)
 {
-    wxString old_permit = g_installpermit;
+    g_old_installpermit = g_installpermit;
     
     g_installpermit = _T("");
     wxString new_permit = GetInstallpermit();
@@ -1647,7 +1684,7 @@ void s63_pi::GetNewInstallpermit(void)
         }
     }
     else
-        g_installpermit = old_permit;
+        g_installpermit = g_old_installpermit;
     
 }
 
@@ -2289,7 +2326,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
                                                                    wxVERTICAL );
      itemBoxSizer2->Add( itemStaticBoxSizer4, 0, wxEXPAND | wxALL, 5 );
      
-     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _(""),
+     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _T(""),
      wxDefaultPosition, wxDefaultSize, 0 );
      itemStaticBoxSizer4->Add( itemStaticText5, 0,
                                wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 5 );
@@ -2333,7 +2370,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
      
      m_OKButton->Disable();
      
-     m_PermitCtl->AppendText(g_userpermit);
+     m_PermitCtl->AppendText(g_old_userpermit);
      
  }
  
@@ -2504,7 +2541,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
                                                                    wxVERTICAL );
      itemBoxSizer2->Add( itemStaticBoxSizer4, 0, wxEXPAND | wxALL, 5 );
      
-     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _(""),
+     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _T(""),
      wxDefaultPosition, wxDefaultSize, 0 );
      itemStaticBoxSizer4->Add( itemStaticText5, 0,
                                wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 5 );
@@ -2517,7 +2554,6 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxHORIZONTAL );
      itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL, 5 );
      
-#if 0     
      m_testBtn = new wxButton(itemDialog1, ID_GETIP_TEST, _("Test Installpermit"));
      m_testBtn->Disable();
      itemBoxSizerTest->Add( m_testBtn, 0, wxALIGN_LEFT | wxALL, 5 );
@@ -2533,7 +2569,6 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      
      itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL, 5 );
      
-#endif    
      
      wxBoxSizer* itemBoxSizer16 = new wxBoxSizer( wxHORIZONTAL );
      itemBoxSizer2->Add( itemBoxSizer16, 0, wxALIGN_RIGHT | wxALL, 5 );
@@ -2547,9 +2582,8 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      wxDefaultSize, 0 );
      itemBoxSizer16->Add( m_OKButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5 );
      
-//     m_OKButton->Disable();
      
-     m_PermitCtl->AppendText(g_installpermit);
+     m_PermitCtl->AppendText(g_old_installpermit);
      
  }
  
@@ -2562,10 +2596,15 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
  void GetInstallpermitDialog::OnTestClick( wxCommandEvent& event )
  {
      wxString cmd = g_sencutil_bin;
-     cmd += _T(" -y ");                  // validate Userpermit
+     cmd += _T(" -k ");                  // validate Installpermit
+     
+     cmd += _T(" -e ");
+     cmd += m_PermitCtl->GetValue();
      
      cmd += _T(" -u ");
-     cmd += m_PermitCtl->GetValue();
+     cmd += g_userpermit;
+     
+     
      
      wxLogMessage( cmd );
      wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
@@ -2578,7 +2617,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
                  m_TestResult->SetLabel(line.Trim());
              }
              else {
-                m_TestResult->SetLabel(_("Userpermit invalid"));
+                m_TestResult->SetLabel(_("Install permit invalid"));
              }
              berr = true;
              m_OKButton->Disable();
@@ -2586,7 +2625,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
          }
      }
      if(!berr){
-         m_TestResult->SetLabel(_("Userpermit OK"));
+         m_TestResult->SetLabel(_("Install permit OK"));
          m_OKButton->Enable();
      }
  }
@@ -2610,12 +2649,10 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
  
  void GetInstallpermitDialog::OnUpdated( wxCommandEvent& event )
  {
-#if 0     
      if( m_PermitCtl->GetValue().Length() )
          m_testBtn->Enable();
      else
          m_testBtn->Disable();
-#endif     
  }
  
  

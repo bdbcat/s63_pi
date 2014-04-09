@@ -1,0 +1,269 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: s63_pi 0.4.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-02 20:18-0400\n"
+"PO-Revision-Date: 2014-04-03 10:40+0100\n"
+"Last-Translator: CarCode <carcode@me.com>\n"
+"Language-Team: DE <carcode@me.com>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+#
+msgid "   Error: Cannot create "
+msgstr "   Fehler: Kann nicht erzeugen "
+#
+msgid ""
+"A valid certificate can be obtained from the IHO website or your data "
+"supplier.\n"
+msgstr ""
+"Ein gültiges Zertifikat erhält man von der IHO Website oder Ihrem Karten-"
+"Händler.\n"
+#
+msgid "Cancel"
+msgstr "Abbruch"
+#
+msgid "Cell Name"
+msgstr "Zellen Name"
+#
+msgid "Cell update NOT authenticated\n"
+msgstr "Zellen Update NICHT authentifiziert\n"
+#
+msgid "Certificate Key import FAILED\n"
+msgstr "Zertifikat Schlüssel Import FEHLER\n"
+#
+msgid "Certificate Key imported successfully\n"
+msgstr "Zertifikat Schlüssel Import erfolgreich\n"
+#
+msgid "Certificate Name"
+msgstr "Zertifikat Name"
+#
+msgid "Create eSENCs on Import?\n"
+msgstr "Erzeuge eSENCs bei Import?\n"
+#
+msgid "Creating eSenc"
+msgstr "Erzeuge eSenc"
+#
+msgid "Data Server ID"
+msgstr "Daten Server ID"
+#
+msgid "Enter Installpermit"
+msgstr "Eingabe InstallPermit"
+#
+msgid "Enter Userpermit"
+msgstr "Eingabe UserPermit"
+#
+msgid ""
+"Error: couldn't accept a new connection\n"
+"\n"
+msgstr ""
+"Fehler: keine neue Verbindung akzeptiert\n"
+"\n"
+#
+msgid "Expiration Date"
+msgstr "Ablauf-Datum"
+#
+msgid "Import Cell Permits..."
+msgstr "Importiere Zellen Freigaben..."
+#
+msgid "Import Certificate..."
+msgstr "Importiere Zertifikat..."
+#
+msgid "Import Charts/Updates..."
+msgstr "Importiere Karten/Updates..."
+#
+msgid "Install permit OK"
+msgstr "InstallPermit OK"
+#
+msgid "Install permit invalid"
+msgstr "InstallPermit ungültig"
+#
+msgid "InstallPermit"
+msgstr "InstallPermit"
+#
+msgid "Installed S63 Cell Permits"
+msgstr "Installierte S63 Zellen Freigaben"
+#
+msgid "Installed S63 Certificates/Keys"
+msgstr "Installierte S63 Zertifikate/Schlüssel"
+#
+msgid "Invalid cell permit starts with "
+msgstr "Ungültiger Zellen Permit startet mit "
+#
+msgid "New Installpermit..."
+msgstr "Neuer InstallPermit..."
+#
+msgid "New Userpermit..."
+msgstr "Neuer UserPermit..."
+#
+msgid "Note:\n"
+msgstr "Hinweis:\n"
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid ""
+"OpenCPN can create eSENC files as cells are imported.\n"
+"\n"
+msgstr ""
+"OpenCPN kann eSENC Dateien bei Zellen-Import erzeugen.\n"
+"\n"
+#
+msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+msgstr ""
+"PUB Dateien (*.PUB)|*.PUB|txt Dateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*"
+#
+msgid "Remove Permits"
+msgstr "Entferne Freigaben"
+#
+msgid "S63"
+msgstr "S63"
+#
+msgid "S63 Charts"
+msgstr "S63 Karten"
+#
+msgid "S63 PlugIn for OpenCPN"
+msgstr "S63 PlugIn für OpenCPN"
+#
+msgid ""
+"S63 PlugIn for OpenCPN\n"
+"Provides support of S63 charts.\n"
+"\n"
+msgstr ""
+"S63 PlugIn für OpenCPN\n"
+"Unterstützt S63 Karten.\n"
+"\n"
+#
+msgid "S63_pi Log"
+msgstr "S63_pi Log"
+#
+msgid "S63_pi backchannel could not listen at the specified port !\n"
+msgstr "S63_pi Rück-Kanal hört nicht auf angegebenen Port!\n"
+#
+msgid ""
+"S63_pi backchannel server listening.\n"
+"\n"
+msgstr ""
+"S63_pi Rück-Kanal Server hört.\n"
+"\n"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+" SSE 10 - Permits not available for this data provider.\n"
+msgstr ""
+"SIcherheitsschema Fehler\n"
+"\n"
+" SSE 10 - Permits nicht verfügbar für diesen Karten-Händler.\n"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+" SSE 23 - Non sequential update, previous update(s) missing.\n"
+"Try reloading from the base media. \n"
+" If the problem persists contact your data supplier.\n"
+"\n"
+msgstr ""
+"Sicherheitsschema Fehler\n"
+"\n"
+" SSE 23 - Kein fortlaufendes Update, vorherige(s) Update(s) fehlt.\n"
+"Versuche Neuladen von Basis Daten. \n"
+"Bleibt das Problem, bitte Karten-Händler kontaktieren.\n"
+"\n"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 08 - SA Digital Certificate file incorrect format.\n"
+msgstr ""
+"Sicherheitsschema Fehler\n"
+"\n"
+"SSE 08 - SA Digital Zertifikat Datei falsches Format.\n"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+msgstr ""
+"Sicherheitsschema Fehler\n"
+"\n"
+"SSE 13 - Zellen Permit ist ungültig (Prüfsumme ist falsch)\n"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 24 - ENC Signature format is incorrect.\n"
+"\n"
+msgstr ""
+"Sicherheitsschema Fehler\n"
+"\n"
+"SSE 24 - ENC Signatur Format ist falsch.\n"
+"\n"
+#
+msgid "Select PERMIT.TXT File"
+msgstr "Wähle PERMIT.TXT Datei"
+#
+msgid "Select Public Key File"
+msgstr "Wähle Public Key Datei"
+#
+msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
+msgstr "Wähle S63 Austausch-Verzeichnis (normal: ENC_ROOT)"
+#
+msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
+msgstr "TXT Dateien (*.TXT)|*.TXT|Alle Dateien (*.*)|*.*"
+#
+msgid "Test Installpermit"
+msgstr "Teste InstallPermit"
+#
+msgid "Test Results"
+msgstr "Test Ergebnisse"
+#
+msgid "Test Userpermit"
+msgstr "Teste UserPermit"
+#
+msgid "The process may be Cancelled by the user at any time.\n"
+msgstr "Der Prozeß kann jederzeit vom Anwender abgebrochen werden.\n"
+#
+msgid "This process may take some time.\n"
+msgstr "Dieser Prozeß kann etwas dauern.\n"
+#
+msgid ""
+"This update and all subsequent updates to this cell are NOT applied.\n"
+"\n"
+msgstr ""
+"Dieses Update und alle folgenden Updates für diese Zelle werden NICHT "
+"gemacht.\n"
+"\n"
+#
+msgid "Unexpected event !\n"
+msgstr "Unerwarteter Event !\n"
+#
+msgid "UserPermit"
+msgstr "UserPermit"
+#
+msgid "Userpermit OK"
+msgstr "UserPermit OK"
+#
+msgid "Userpermit invalid"
+msgstr "UserPermit ungültig"
+#
+msgid ""
+"eSENCS not yet processed will be created as needed by OpenCPN.\n"
+"\n"
+msgstr ""
+"Noch nicht gemachte eSENCS werden bei Bedarf von OpenCPN erzeugt.\n"
+"\n"
+#
+msgid ""
+"or the Cell Permit is for a different system.\n"
+"\n"
+msgstr ""
+"oder das Zellen Permit ist für ein anderes System.\n"
+"\n"

@@ -58,6 +58,7 @@ CMake variables
 
 ;--------------------------------
 ;# Variables
+        Var INSTROOT
 	Var INST_USER_SID
 	Var CONFIG_EXISTS
 	Var CONFIG_EMPTY
@@ -788,6 +789,13 @@ Section "-Install Section" SecInstall
 	@CPACK_NSIS_FULL_INSTALL@
 
 	@CPACK_NSIS_EXTRA_INSTALL_COMMANDS@
+
+;       Manually move language (.mo) files to the opencpn share location
+	CopyFiles "$INSTDIR\lib\locale\de\LC_MESSAGES\s63_pi.mo" "$INSTROOT\OpenCPN\share\locale\de\LC_MESSAGES"
+        CopyFiles "$INSTDIR\lib\locale\fr\LC_MESSAGES\s63_pi.mo" "$INSTROOT\OpenCPN\share\locale\fr\LC_MESSAGES"
+        CopyFiles "$INSTDIR\lib\locale\es\LC_MESSAGES\s63_pi.mo" "$INSTROOT\OpenCPN\share\locale\es\LC_MESSAGES"
+        CopyFiles "$INSTDIR\lib\locale\et\LC_MESSAGES\s63_pi.mo" "$INSTROOT\OpenCPN\share\locale\et\LC_MESSAGES"
+        CopyFiles "$INSTDIR\lib\locale\pl\LC_MESSAGES\s63_pi.mo" "$INSTROOT\OpenCPN\share\locale\pl\LC_MESSAGES"
 
 	;# Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe"
@@ -2140,6 +2148,18 @@ FunctionEnd
 		${If} $INSTALL_TYPE == 4
 			StrCpy $INSTDIR "$PROGRAMFILES\OpenCPN\plugins\s63_pi @CPACK_PACKAGE_VERSION@"
 		${EndIf}
+
+
+                StrCpy $R1 0
+                Push $INSTDIR
+                Push "\OpenCPN\plugins\s63_pi"
+                Push ">"
+                Call StrLoc
+                Pop $0
+
+                StrCpy $R1 $INSTDIR $0
+                StrCpy $INSTROOT $R1
+
 	FunctionEnd
 
 /*
