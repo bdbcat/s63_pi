@@ -98,6 +98,7 @@ int DOUBLECMPFUNC(double *first, double *second)
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
     wxArrayString ret_array;
+    ret_array.Alloc(1000);
     
     if( bshowlog ){
         ScreenLogMessage(_T("\n"));
