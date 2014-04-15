@@ -22,7 +22,7 @@ MESSAGE (STATUS "*** Building ${PACKAGE_NAME} ***")
 
 SET(VERSION_MAJOR "0")
 SET(VERSION_MINOR "4")
-SET(VERSION_PATCH "0")
+SET(VERSION_PATCH "1")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
 
@@ -311,7 +311,7 @@ GETTEXT_BUILD_MO(${CMAKE_SOURCE_DIR}/po/${PACKAGE_NAME}_pl_PL.po pl)
 #    GETTEXT_BUILD_MO(po/${PACKAGE_NAME}_hu_HU.po hu_HU)
 #    GETTEXT_BUILD_MO(po/${PACKAGE_NAME}_gl_ES.po gl_ES)
 #    GETTEXT_BUILD_MO(po/${PACKAGE_NAME}_ca_ES.po ca_ES)
-  
+
    ADD_CUSTOM_TARGET(s63-i18n COMMENT "s63-i18n: Done." DEPENDS ${_gmoFiles})
    ADD_DEPENDENCIES(${PACKAGE_NAME} s63-i18n)
 ENDIF(GETTEXT_MSGFMT_EXECUTABLE)
@@ -421,7 +421,7 @@ IF(UNIX AND NOT APPLE)
 
 ENDIF(UNIX AND NOT APPLE)
 
-IF(TWIN32 AND NOT UNIX)
+IF(WIN32 AND NOT UNIX)
 # configure_file(${CMAKE_SOURCE_DIR}/src/opencpn.rc.in ${CMAKE_SOURCE_DIR}/src/opencpn.rc)
  configure_file("${CMAKE_SOURCE_DIR}/buildwin/NSIS_Unicode/Language files/Langstrings_GERMAN.nsh.in" "${CMAKE_SOURCE_DIR}//buildwin/NSIS_Unicode/Include/Langstrings_GERMAN.nsh" @ONLY)
  configure_file("${CMAKE_SOURCE_DIR}/buildwin/NSIS_Unicode/Language files/Langstrings_FRENCH.nsh.in" "${CMAKE_SOURCE_DIR}//buildwin/NSIS_Unicode/Include/Langstrings_FRENCH.nsh" @ONLY)
@@ -439,7 +439,7 @@ IF(TWIN32 AND NOT UNIX)
  configure_file("${CMAKE_SOURCE_DIR}/buildwin/NSIS_Unicode/Language files/Langstrings_NORWEGIAN.nsh.in" "${CMAKE_SOURCE_DIR}//buildwin/NSIS_Unicode/Include/Langstrings_NORWEGIAN.nsh" @ONLY)
  configure_file("${CMAKE_SOURCE_DIR}/buildwin/NSIS_Unicode/Language files/Langstrings_CHINESETW.nsh.in" "${CMAKE_SOURCE_DIR}//buildwin/NSIS_Unicode/Include/Langstrings_CHINESETW.nsh" @ONLY)
  configure_file("${CMAKE_SOURCE_DIR}/buildwin/NSIS_Unicode/Language files/Langstrings_TURKISH.nsh.in" "${CMAKE_SOURCE_DIR}//buildwin/NSIS_Unicode/Include/Langstrings_TURKISH.nsh" @ONLY)
-ENDIF(TWIN32 AND NOT UNIX)
+ENDIF(WIN32 AND NOT UNIX)
 
 
 # this dummy target is necessary to make sure the ADDITIONAL_MAKE_CLEAN_FILES directive is executed.
