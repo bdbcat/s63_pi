@@ -2299,7 +2299,12 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
                                   const wxPoint& pos, const wxSize& size, long style )
  {
      SetExtraStyle( GetExtraStyle() | wxWS_EX_BLOCK_EVENTS );
-     wxDialog::Create( parent, id, caption, pos, size, style );
+     long wstyle = style;
+#ifdef __WXMAC__
+     wstyle |= wxSTAY_ON_TOP;
+#endif
+     
+     wxDialog::Create( parent, id, caption, pos, size, wstyle );
      
      CreateControls();
      GetSizer()->SetSizeHints( this );
@@ -2514,7 +2519,13 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
                                   const wxPoint& pos, const wxSize& size, long style )
  {
      SetExtraStyle( GetExtraStyle() | wxWS_EX_BLOCK_EVENTS );
-     wxDialog::Create( parent, id, caption, pos, size, style );
+     
+     long wstyle = style;
+#ifdef __WXMAC__
+     wstyle |= wxSTAY_ON_TOP;
+#endif
+     
+     wxDialog::Create( parent, id, caption, pos, size, wstyle );
      
      CreateControls();
      GetSizer()->SetSizeHints( this );
