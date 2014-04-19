@@ -814,7 +814,19 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
     }
         
     else if( PI_FULL_INIT == init_flags ){
-    
+
+        //  Verify that the eHdr exists, if not, then rebuild it.
+        wxString efn = Get_eHDR_Name(name_os63);
+        
+        if( !wxFileName::FileExists(efn) ){             //  we need to create the ehdr file.
+
+            wxString ebuild = Build_eHDR(name_os63);
+            if( !ebuild.Len() ) {
+                s_PI_bInS57--;
+                return PI_INIT_FAIL_REMOVE;
+            }
+        }
+        
         // see if there is a SENC available
         int sret = FindOrCreateSenc( m_full_base_path );
         
