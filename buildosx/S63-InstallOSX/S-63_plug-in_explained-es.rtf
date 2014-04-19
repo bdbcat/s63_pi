@@ -1,0 +1,183 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh7800\viewkind0
+\deftab720
+\pard\pardeftab720\sa240
+
+\f0\b\fs42 \cf0 Cartograf\'eda vectorial S-63 para OpenCPN
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 S-63 
+\f1\b0 es el formato encriptado para la distribuci\'f3n de las 
+\f0\b cartas vectoriales S-57
+\f1\b0 . Actualmente, los Servicios Hidrogr\'e1ficos de todo el mundo producen sus cartas vectoriales oficiales en el formato S-57. Realiz\'e1ndose la distribuci\'f3n bajo el formato S-63. La NOAA proporciona cartas vectoriales de los Estados Unidos, de forma gratuita, en el formato S-57. Puede usar \'e9stas directamente.
+\f0\fs24 \
+
+\f1\fs32 El formato S-63 establece que las cartas \'96 llamadas 
+\f0\i celdas 
+\f1\i0 seg\'fan el est\'e1ndar \'96 no se venden, sino que 
+\f0\b se autoriza 
+\f1\b0 su uso en 
+\f0\b un \'fanico sistema
+\f1\b0 . La licencia es temporal y solo es v\'e1lida por un tiempo limitado.
+\f0\fs24 \
+
+\f1\fs32 Las implementaciones de cartograf\'eda S-63 deben garantizar que esto se cumpla, utilizando dispositivos de protecci\'f3n, de tipo hardware o de tipo software. OpenCPN ha decidido utilizar llaves electr\'f3nicas de tipo software.
+\f0\fs24 \
+
+\f1\fs32 Un 
+\f0\b Permiso de Usuario 
+\f1\b0 (UserPermit) es la llave que permite al usuario comprar, o mejor usar bajo licencia, cartas individuales, o grupos de cartas de un distribuidor.\uc0\u8232 o-chart.org tiene acuerdos con distribuidores de cartograf\'eda, que emitir\'e1n las celdas con sus permisos encriptados. Con tu 
+\f0\b Permiso de Usuario 
+\f1\b0 puedes comprarles las cartas a ellos, o a los Servicios Hidrogr\'e1ficos que ofrezcan canales de distribuci\'f3n directos.
+\f0\fs24 \
+
+\f1\fs32 El plugin 
+\f0\b S-63 
+\f1\b0 para OpenCPN instalar\'e1 y desencriptar\'e1 estas cartas, adapt\'e1ndolas para su uso con OpenCPN.
+\f0\fs24 \
+
+\f1\fs32 Ni OpenCPN ni 
+\f0\b o-charts.org
+\f1\b0 , entidad que maneja el plugin de S-63, venden cartas n\'e1uticas directamente. No somos distribuidor oficial de cartograf\'eda o VAR. Como socios contractuales del IHO, generamos y llevamos registro de los plugins de OpenCPN y sus correspondientes 
+\f0\b Permisos de Usuario
+\f1\b0 .
+\f0\fs24 \
+
+\f1\fs32 Se toma una 
+\f0\i huella digital 
+\f1\i0 del sistema donde se est\'e9 ejecutando OpenCPN, para que se pueda generar un 
+\f0\b Permiso de Instalaci\'f3n 
+\f1\b0 (InstallPermit) para ese equipo en concreto. El 
+\f0\b Permiso de Instalaci\'f3n 
+\f1\b0 permite el uso de un 
+\f0\b Permiso de Usuario 
+\f1\b0 en un PC espec\'edfico.
+\f0\fs24 \
+
+\f1\fs32 Funciona bajo los sistemas Linux, Windows y OS-X.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs42 \cf0 Preguntas m\'e1s frecuentes:
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfPor qu\'e9 cartas n\'e1uticas S-63?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: Porque son las cartas oficiales y, generalmente, disponen de la informaci\'f3n cartogr\'e1fica m\'e1s actualizada. Las cartas vectoriales empleadas en los dispositivos de visualizaci\'f3n de cartograf\'eda, habituales del mercado n\'e1utico recreativo, son derivados de aquellas (algunas con funciones a\'f1adidas).
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfComo consigo mi plugin (1), el Permiso de Usuario (2) y el Permiso de Instalaci\'f3n (3)
+\fs30 ?\uc0\u8232 
+\f1\fs32 R: (1) Descargue el instalador del 
+\f0\b Plugin 
+\f1\b0 para su S.O. de la web 
+\f0\b o-charts.org
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 (2) Luego adquiera su 
+\f0\b Permiso de Usuario 
+\f1\b0 de nuestra web-shop\uc0\u8232 (3) Despu\'e9s, para tener su 
+\f0\b Permiso de Instalaci\'f3n
+\f1\b0 : descargue el programa \'93fingerprint\'94 y ejec\'fatelo. Se crear\'e1 un archivo con un nombre simular a 
+\f0\i f_pr_ArchNAMETTTTTTTTT
+\f1\i0 .\uc0\u8232 Lo encontrar\'e1 en la misma carpeta que el archivo \'93fingerprinter\'94. Ahora vuelva a nuestra web, o- charts.org, con el fichero resultante para que se genere su 
+\f0\b Permiso de Instalaci\'f3n 
+\f1\b0 individual, sin coste adicional.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfPor qu\'e9 debe pagar por el UserPermit?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: Debemos realizar esta operaci\'f3n y responder ante el IHO permanentemente. La estructura y los costes se mantienen al m\'ednimo. En caso de tener \'e9xito econ\'f3mico, los fondos regresar\'e1n a OpenCPN.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: Yo utilizo OS-X/Linux (UBUNTU, Debian, etc.). No se toma la 
+\i huella digital 
+\i0 del sistema. \'bfQu\'e9 debo hacer?\uc0\u8232 
+\f1 R: Si copiaste el instalador en una memoria USB y lo quieres iniciar desde all\'ed, o copiaste el instalador en tu sistema de destino desde una memoria externa, puede suceder que falte el marcador (flag) de ejecuci\'f3n que se necesita. (La causa de esto es el archivo FAT32 de dicha memoria). En este caso, copia el instalador a tu sistema de destino y habilita el marcador "x" (ejecutable).
+\f0\fs24 \
+
+\fs32 P: \'bfEn cu\'e1ntos PCs puedo usar mi cartograf\'eda S-63 al mismo tiempo?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: El est\'e1ndar establece que debemos restringirlo a una \'fanica m\'e1quina, pero en la pr\'e1ctica se admiten hasta 5 instalaciones.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfCu\'e1ntos sistemas cuentan en un equipo con un sistema de doble arranque (dual boot system)?\uc0\u8232 
+\f1 R: Cada combinaci\'f3n de hardware/software es individual, y requiere de su propio 
+\f0\b Permiso de Usuario
+\f1\b0 .
+\f0\fs24 \
+
+\fs32 P: \'bfY si instalo el software en una m\'e1quina virtual?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: No va a funcionar all\'ed. Debemos prevenir que el sistema sea clonado.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: Tengo que reinstalar mi S.O. Ahora el Permiso de Usuario ya no es v\'e1lido.
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: Por favor, genere un nuevo 
+\f0\b Permiso de Instalaci\'f3n\uc0\u8232 
+\f1\b0 .\uc0\u8232 
+\f0 P: Mi PC se muri\'f3. \'bfPuedo recuperar las cartas?\uc0\u8232 
+\f1 R: Si, en este caso te costar\'e1 un 
+\f0\b Permiso de Instalaci\'f3n 
+\f1\b0 para tu nueva m\'e1quina tambi\'e9n
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfPuedo tener mi Permiso de Usuario y mis cartas en una memoria USB y llevarlas de un sistema a otro?\uc0\u8232 
+\f1 R: Esto ser\'eda una soluci\'f3n de llave electr\'f3nica del tipo hardware. No es viable para nosotros enviar memorias USB o DVDs a todo el mundo. Por eso hemos optado por emplear la llave electr\'f3nica de tipo software. Por ello, la respuesta por ahora es que no.
+\f0\fs24 \
+
+\fs32 P: \'bfCu\'e1nto cuestan las cartas S-63? (\'bfY por qu\'e9 a veces son tan caras?)
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: El precio de venta al por menor es fijado por los Servicios Hidrogr\'e1ficos. Sus clientes son de la industria naval o entidades oficiales como gobiernos, y no individuos del mercado recreativo. Por eso hay pocos usuarios de cartograf\'eda S-63 de este grupo, al menos por el momento. Vamos a necesitar hacer mucho lobby para conseguir mejores soluciones y precios. Agradeceremos cualquier ayuda prestada por aquellos que tengan los contactos adecuados.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: \'bfPuedo usar el Permiso de Usuario para comprar cartas para otro software que no sea OpenCPN?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: No, el 
+\f0\b Permiso de Usuario 
+\f1\b0 es v\'e1lido \'fanicamente en un tipo de sistema, en nuestro caso, OpenCPN.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: Mi licencia temporal est\'e1 pr\'f3xima a finalizar. \'bfQu\'e9 va a pasar?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: La carta no desaparecer\'e1, pero aparecer\'e1 un aviso en la pantalla.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\fs32 \cf0 P: OpenCPN es un software libre. \'bfD\'f3nde est\'e1 el c\'f3digo para el plug-in?
+\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 R: Para operar con S-63, debemos asegurarnos de que no habr\'e1 copias de las celdas desencriptadas queden accesibles durante la ejecuci\'f3n del software. Por eso, el plugin es una caja negra, parecido a los plugins comerciales BSB4 o nv-chart.
+\f0\fs24 \
+}

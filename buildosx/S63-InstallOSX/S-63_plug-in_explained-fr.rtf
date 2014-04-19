@@ -1,0 +1,180 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;\red15\green112\blue1;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh7800\viewkind0
+\deftab720
+\pard\pardeftab720\sa240
+
+\f0\b\fs42 \cf0 Cartes vectorielles S-63 pour OpenCPN
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 S-63 
+\f1\b0 est le format de distribution des cartes vectorielles S-57 en version crypt\'e9e. Aujourd'hui, les services hydrographiques du monde entier produisent leurs cartes officielles vectorielles dans le format S-57. La distribution se fait en vertu de la norme S-63.\uc0\u8232 Seul le NOAA fournit des cartes vectorielles pour les \'c9tats-Unis au format S-57 (non crypt\'e9es). Ces cartes du NOAA sont utilisables directement avec OpenCpn.
+\f0\fs24 \
+
+\f1\fs32 La norme S-63 impose que les cartes - appel\'e9es cellules - ne soient pas vendues mais mises \'e0 disposition sous forme d'une licence d'utilisation pour un seul syst\'e8me (c'est-\'e0-dire un seul PC). La licence est temporaire et n'est valable que pour une dur\'e9e limit\'e9e.
+\f0\fs24 \
+
+\f1\fs32 La mise en \'9cuvre des cartes S-63 doit garantir cela, soit au moyen d'une solution mat\'e9rielle (un dongle physique (une sorte de cl\'e9 USB)) soit au moyen d'un dongle logiciel. OpenCPN a choisi l'approche par dongle logiciel.
+\f0\fs24 \
+
+\f1\fs32 La cl\'e9 qui permet \'e0 l'utilisateur d'acheter, ou plus pr\'e9cis\'e9ment d'obtenir, la licence pour une carte ou un groupe de cartes est le 
+\f0\b UserPermit
+\f1\b0 . C'est avec ce 
+\f0\b UserPermit 
+\f1\b0 que vous pourrez vous adresser \'e0 un distributeur de cartes. 
+\fs26 (NdT : C'est une cl\'e9, de 28 caract\'e8res, en principe sp\'e9cifique de votre logiciel)
+\f0\fs24 \
+
+\f1\fs32 o-charts.org a conclu des accords avec des distributeurs de cartes, qui vont \'e9mettre des cellules (cartes) crypt\'e9ees avec le permis d'utilisation. Avec votre UserPermit vous pouvez acheter des cartes aupr\'e8s de ces distributeurs, ou aupr\'e8s des Services hydrographiques (SH) qui disposent de canaux de distribution directs.
+\f0\fs24 \
+
+\f1\fs32 Le 
+\f0\b compl\'e9ment 
+\f1\b0 (plugin) 
+\f0\b S-63 
+\f1\b0 d'OpenCPN, doit \'eatre install\'e9 pour d\'e9crypter ces cartes et les rendre utilisables avec OpenCPN.
+\f0\fs24 \
+
+\f1\fs32 Ni OpenCPN, ni o-charts.org comme entit\'e9 produisant le compl\'e9ment (plugin) S-63, ne sont des vendeurs de cartes. Nous ne sommes pas un distributeur de cartes officielles ou VAR. En tant que partenaire contractuel de l'OHI (Organisation Hydrographique Internationale) nous \'e9mettons et gardons une trace des UserPermits pour OpenCPN
+\f0\fs24 \
+
+\f1\fs32 Une 'empreinte' (
+\f0\i fingerprint
+\f1\i0 ) est r\'e9alis\'e9e \'e0 partir du syst\'e8me (PC) sur lequel est install\'e9 OpenCPN, afin de g\'e9n\'e9rer un 
+\f0\b InstallPermit 
+\f1\b0 particulier pour la machine en question.\uc0\u8232 L'
+\f0\b InstallPermit 
+\f1\b0 permet d'utiliser un 
+\f0\b UserPermit 
+\f1\b0 sur un PC sp\'e9cifique.
+\f0\fs24 \
+
+\f1\fs32 Les syst\'e8mes d'exploitation de ces machines peuvent \'eatre Linux, Windows ou OS-X.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf2 NdT :
+\b0\fs24 \cf0 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 \'93
+\f0\b UserPermit
+\f1\b0 \'94 peut \'eatre compris comme \'93Permis d'utilisation\'94. Il permet d'acheter une ou des cellule(s) (carte(s) aupr\'e8s des distributeurs de cellules (cartes). Ce permis est payant et les cellules (cartes) sont aussi payantes.\uc0\u8232 \'93
+\f0\b InstallPermit
+\f1\b0 \'94 peut \'eatre compris comme \'93Permis d'installation\'94. Il permet d'installer la ou les cellule(s) (carte(s)) sur le syst\'e8me informatique (PC). Ce permis est gratuit.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs42 \cf0 FAQ:
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 Q: 
+\f1\b0 Pourquoi des cartes S-63 ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Ce sont des cartes officielles et g\'e9n\'e9ralement les plus \'e0 jour existantes. Les cartes vectorielles pour traceurs de cartes utilis\'e9es pour le march\'e9 de la plaisance sont au mieux des produits d\'e9riv\'e9s (Certaines de ces cartes auront quelques fonctionnalit\'e9s suppl\'e9mentaires).
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Comment puis-je obtenir mon C
+\f0\b ompl\'e9ment 
+\f1\b0 (plugin) (1), le 
+\f0\b UserPermit 
+\f1\b0 (2) et un 
+\f0\b InstallPermit 
+\f1\b0 (3)\uc0\u8232 
+\f0\b A: 
+\f1\b0 (1) T\'e9l\'e9charger 
+\f0\b l'installateur 
+\f1\b0 du compl\'e9ment (Plugin) pour votre syst\'e8me d'exploitation \'e0 partir de notre site web 
+\f0\b o-charts.org
+\b0\fs24 \
+
+\f1\fs32 (2) Ensuite, acheter votre 
+\f0\b UserPermit 
+\f1\b0 \'e0 notre boutique en ligne.
+\f0\fs24 \
+
+\f1\fs32 (3) Apr\'e8s quoi, pour obtenir votre 
+\f0\b InstallPermit
+\f1\b0 , t\'e9l\'e9charger le programme \'93
+\f0\i FingerPrint
+\f1\i0 \'94 et ex\'e9cutez le. Il cr\'e9era un fichier avec un nom ayant un format du type 
+\f0\i f_pr_ArchNAMETTTTTTTTT
+\f1\i0 . Vous trouverez ce fichier dans le m\'eame dossier que le fichier \'93fingerprinter\'94.\uc0\u8232 A ce stade, retournez sur notre site web, o-charts.org, avec le fichier r\'e9sultant, pour cr\'e9er votre InstallPermit individuel, sans co\'fbt suppl\'e9mentaire.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Pourquoi le compl\'e9ment (plugin) est il payant ?\uc0\u8232 
+\f0\b A: Cette organisation a un co\'fbt 
+\f1\b0 et nous devons satisfaire aux exigences de l'OHI de fa\'e7on permanente. La structure et les co\'fbts sont r\'e9duits au minimum. Si nous rencontrons un grand succ\'e8s \'e9conomique, les fonds retourneront \'e0 OpenCPN.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Je suis sur OS-X/Linux (Ubuntu, Debian, etc.) Le "fingerprinter" ne d\'e9marre pas. Que faire? 
+\f0\b A: 
+\f1\b0 Si le programme d'installation a \'e9t\'e9 plac\'e9 sur une cl\'e9 USB et l\'92ex\'e9cution est lanc\'e9e \'e0 partir de l\'e0 ou si vous avez copi\'e9 le programme d'installation sur votre syst\'e8me \'e0 partir d'une cl\'e9, il pourrait manquer le drapeau d'ex\'e9cution requis. (La raison est le syst\'e8me de fichiers FAT32 de la cl\'e9). Dans ce cas, copiez le programme d'installation sur votre syst\'e8me et d\'e9finissez l'indicateur "x"
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Sur combien de PC puis-je utiliser mes cartes S-63 en m\'eame temps ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 La r\'e9ponse th\'e9orique est une machine \'96 Mais, en pratique, jusqu'\'e0 5 installations sont tol\'e9r\'e9es.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 A combien de syst\'e8mes correspond une machine dual-boot ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Chaque combinaison hardware/software est individuelle et requiert son propre InstallPermit.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Et si j'installe le logiciel sur une machine virtuelle ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Il ne pourra pas fonctionner. Nous avons l'obligation d'emp\'eacher le clonage du systeme.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Je dois de r\'e9installer mon syst\'e8me d'exploitation. Maintenant l'InstallPermit n'est plus valide. 
+\f0\b A: 
+\f1\b0 S'il vous plait, g\'e9n\'e9rez un nouveau InstallPermit.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Mon PC est hors d'usage. Puis-je r\'e9cup\'e9rer les cartes ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Oui, Mais dans ce cas vous devrez g\'e9n\'e9rer un nouvel InstallPermit pour votre nouvelle machine
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Puis-je avoir mon InstallPermit et mes cartes sur une cl\'e9 USB pour transporter l'ensemble entre diff\'e9rents syst\'e8mes ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Ce serait la solution du dongle mat\'e9riel. Nous consid\'e9rons que ce ne serait pas viable pour nous d'envoyer des cl\'e9s USB ou des DVD \'e0 travers le monde. C'est pourquoi nous avons opt\'e9 pour la solution \'93logicielle\'94. De ce fait, la r\'e9ponse actuelle est \'93NON\'94.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Combien co\'fbtent les cartes S-63 (Et pourquoi sont elles parfois si ch\'e8res ?)\uc0\u8232 
+\f0\b A: 
+\f1\b0 Le prix de vente est fix\'e9 par chaque service hydrographique (SH). Leurs clients sont l'industrie maritime ou des organismes officiels tels que les gouvernements, et non pas le march\'e9 des loisirs. C'est un probl\'e8me connu et c'est la raison pour laquelle il y a tr\'e8s peu de plaisanciers utilisateurs de cartes S-63 pour le moment.\uc0\u8232 Nous aurons besoin de beaucoup de lobbying pour obtenir de meilleures solutions et de meilleurs prix. L'aide et le soutien de ceux qui ont les bons contacts seraient appr\'e9ci\'e9s.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Puis-je utiliser le Userpermit pour acheter des cartes afin de les utiliser avec d'autres logiciels qu'OpenCPN ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Non, le UserPermit est valide seulement pour un logiciel \'96 OpenCPN dans notre cas.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 Ma licence temporaire va arriver \'e0 terme? Que va-t-il se produire ? 
+\f0\b A: 
+\f1\b0 Les cartes ne dispara\'eetront pas mais un message d'alerte sera affich\'e9.
+\f0\fs24 \
+
+\b\fs32 Q: 
+\f1\b0 OpenCPN est open source. O\'f9 est le code source du compl\'e9ment (plugin) ?\uc0\u8232 
+\f0\b A: 
+\f1\b0 Pour utiliser les cartes S-63, nous devons \'eatre certain qu'aucune copie des cellules (cartes) d\'e9crypt\'e9es ne soit possible durant l'ex\'e9cution du logiciel. Par cons\'e9quent, le compl\'e9ment est dans une bo\'eete noire. Ceci est similaire aux compl\'e9ments (plugin) commerciaux BSB4 ou NV-Verlag
+\f0\fs24 \
+}

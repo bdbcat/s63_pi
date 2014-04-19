@@ -47,7 +47,11 @@ IF (NOT WIN32)
       SET (ARCH "i386")
     ENDIF (CMAKE_SIZEOF_VOID_P MATCHES "8")
 
-  SET(CMAKE_INSTALL_PREFIX "/usr/")
+    IF (PREFIX)
+        SET(CMAKE_INSTALL_PREFIX ${PREFIX})
+    ELSE (PREFIX )
+        SET(CMAKE_INSTALL_PREFIX "/usr/")
+    ENDIF (PREFIX)
   ENDIF (EXISTS /etc/debian_version)
 endif(NOT WIN32)
 
@@ -279,12 +283,16 @@ MACRO(GETTEXT_BUILD_MO  _poFile _lang)
       )
 
 IF(APPLE)
-   INSTALL(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/s63_pi/s63_pi/Resources/${_lang}.lproj RENAME ${PACKAGE_NAME}.mo )
-ELSE(APPLE)
-   INSTALL(FILES ${_gmoFile} DESTINATION ${PREFIX_DATA}/locale/${_lang}/LC_MESSAGES RENAME ${PACKAGE_NAME}.mo PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+#  Copy/rename the .mo file into a spot where Packages installer can find it
+      configure_file(${_gmoFile} "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo" COPYONLY)
 ENDIF(APPLE)
 
-#      INSTALL(FILES ${_gmoFile} DESTINATION ${PREFIX_DATA}/locale/${_poBasename}/LC_MESSAGES RENAME opencpn-${PACKAGE_NAME}.mo )
+IF(APPLE)
+      INSTALL(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/s63_pi/s63_pi/Resources/${_lang}.lproj RENAME ${PACKAGE_NAME}.mo )
+ELSE(APPLE)
+      INSTALL(FILES ${_gmoFile} DESTINATION ${PREFIX_DATA}/locale/${_lang}/LC_MESSAGES RENAME ${PACKAGE_NAME}.mo PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+ENDIF(APPLE)
+
       SET(_gmoFiles ${_gmoFiles} ${_gmoFile})
 ENDMACRO(GETTEXT_BUILD_MO)
 
@@ -457,12 +465,22 @@ IF(APPLE)
    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.dmg
    COMMAND ${CMAKE_SOURCE_DIR}/buildosx/create-dmg ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.dmg ${CMAKE_INSTALL_PREFIX}/s63_pi/
    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-   COMMENT "create-dmg [${PACKAGE_NAME}]: Generated dmg file."
+   COMMENT "create-dmg [${PACKAGE_NAME}]: Generating dmg file."
 )
 
  ADD_CUSTOM_TARGET(create-dmg COMMENT "create-dmg: Done."
  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.dmg)
 
+ ADD_CUSTOM_COMMAND(
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/S63-Plugin.pkg
+   COMMAND /usr/local/bin/packagesbuild ${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S63.pkgproj
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+   DEPENDS s63_pi
+   COMMENT "create-pkg [${PACKAGE_NAME}]: Generating pkg file."
+)
+
+ ADD_CUSTOM_TARGET(create-pkg COMMENT "create-pkg: Done."
+ DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/S63-Plugin.pkg )
 
 
 ENDIF(APPLE)

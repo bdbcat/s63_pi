@@ -1,0 +1,140 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh15860\viewkind0
+\deftab720
+\pard\pardeftab720\sa240
+
+\f0\b\fs42 \cf0 S-63 Vektorkarten f\'fcr OpenCPN
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 S-63 
+\f1\b0 ist das 
+\f0\i verschl\'fcsselte Transportformat 
+\f1\i0 f\'fcr 
+\f0\b S-57 Vektorkarten
+\f1\b0 . Weltweit produzieren Hydrografische Institute ihre offiziellen elektronischen Vektorkarten im S-57 Format. Ihr Vertrieb geschieht im durch die S-63 Norm definierten Format und Ablauf.\uc0\u8232 NOAA stellt Karten f\'fcr die USA kostenlos im S-57 Format zur Verf\'fcgung. Diese Karten k\'f6nnen Sie direkt nutzen.
+\f0\fs24 \
+
+\f1\fs32 S-63 schreibt vor, dass Karten \'96 
+\f0\i Zellen 
+\f1\i0 im Standard genannt \'96 nicht verkauft, sondern zur Nutzung auf 
+\f0\b einem individuellen System lizensiert 
+\f1\b0 werden. Diese Lizenz ist zeitlich beschr\'e4nkt.
+\f0\fs24 \
+
+\f1\fs32 Implementierungen f\'fcr S-63 Karten haben dem Rechnung zu tragen, indem sie Hard- oder Softwaredongle einsetzen. OpenCPN hat sich f\'fcr den Softwareansatz entschieden.
+\f0\fs24 \
+
+\f1\fs32 Ein 
+\f0\b UserPermit 
+\f1\b0 ist der Schl\'fcssel, mit dem ein Benutzer einzelne Karten oder Kartenpakete bei einem Distributor kaufen, oder besser, lizensieren kann.\uc0\u8232 o-charts.org hat \'dcbereink\'fcnfte mit Kartendistributoren getroffen, die S-67 Karten erstellen und vertreiben. Mit Ihrem individuellen UserPermit k\'f6nnen Sie Karten von diesen H\'e4ndlern oder Hydrografischen Instituten \'96 sofern diese einen eigenen Vertriebskanal haben - kaufen.
+\f0\fs24 \
+
+\f1\fs32 Das 
+\f0\b S-63 Plug-in 
+\f1\b0 f\'fcr OpenCPN entschl\'fcsselt die Karten und macht sie unter OpenCPN nutzbar.
+\f0\fs24 \
+
+\b\fs32 OpenCPN 
+\f1\b0 und 
+\f0\b o-charts.org 
+\f1\b0 als der Tr\'e4ger, der das S-63 Plug-in betreut, verkaufen selbst keine Karten. Wir sind kein autorisierter Kartenvertrieb oder VAR. Als Vertragspartner des IHO erstellen und betreuen wir das OpenCPN Plug-in und die dazu geh\'f6rigen UserPermits.
+\f0\fs24 \
+
+\f1\fs32 Dem System, auf dem OpenCPN l\'e4uft, wird ein Fingerabdruck entnommen. Mit diesem wird dann ein individueller 
+\f0\b InstallPermit 
+\f1\b0 f\'fcr den jeweiligen Rechner generiert.\uc0\u8232 Der 
+\f0\b InstallPermit 
+\f1\b0 erlaubt, einen UserPermit auf einer individuellen Maschine zu nutzen.
+\f0\fs24 \
+
+\f1\fs32 Unsere L\'f6sung deckt Linux, Windows und OS-X Systeme ab.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs42 \cf0 FAQ:
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 F: 
+\f0\fs30 Warum S-63 Karten?\uc0\u8232 
+\f1\fs32 A: Es handelt sich um das offizielle und normalerweise auch aktuellste Kartenmaterial, das zur Verf\'fcgung steht. Karten, wie wir sie im Freizeitsbereich in Chartplottern finden, sind bestenfalls davon abgeleitet (und haben dann vielleicht noch einige zus\'e4tzlichen Features oder Gimmicks).
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Wie komme ich zu meinem Plug-in(1), dem UserPermit(2) und dem InstallPermit(3)?\uc0\u8232 
+\f1\fs32 A: (1) Sie finden den Installer des 
+\f0\b Plug-ins 
+\f1\b0 f\'fcr Ihr Betriebssystem auf unserem Web 
+\f0\b o-charts.org 
+\f1\b0 (2)Im Webshop kaufen Sie als n\'e4chstes Ihren 
+\f0\b UserPermit
+\f1\b0 .\uc0\u8232 (3) Nun k\'f6nnen Sie den 
+\f0\b InstallPermit 
+\f1\b0 erzeugen: Laden Sie das \'93Fingerprint\'94-Programm herunter und f\'fchren es aus. Es wird eine Datei im Format 
+\f0\i f_pr_ArchNAMETTTTTTTTT 
+\f1\i0 erzeugen.\uc0\u8232 Diese befindet im Ordner, aus dem Sie den \'93Fingerprinter\'94 ausgef\'fchrt haben.\u8232 Als N\'e4chstes gehen Sie wieder auf unseren Webshop auf o-charts.org, um mit dieser Datei Ihren individuellen InstallPermit zu generieren. Dieser ist kostenlos.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Warum ist das Plug-in nicht kostenlos?\uc0\u8232 
+\f1\fs32 A: Weil wir diesen Service dauerhaft sicherstellen und f\'fcr das IHO jederzeit ansprechbar sein m\'fcssen. Struktur und Kosten sind minimiert. Falls das Ganze ein \'f6konomischer Erfolg werden sollte, werden Mittel zur Entwicklung an OpenCPN zur\'fcckfliessen
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Mein Betriebssystem ist OS-X/Linux (UBUNTU, Debian, etc.). Der Installer l\'e4uft nicht. Was tun? 
+\f1\fs32 A: Falls Sie den \'93Fingerprinter\'94 auf einen USB-Stick kopiert haben und ihn von dort oder nach Verschieben aufs Zielsystem starten, kann es sein, dass das Ausf\'fchrungsprivileg fehlt. (Grund ist das FAT32 file System auf dem Stick). Bitte auf das Zielsystem kopieren und das \'93x\'94flag setzen.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Auf wievielen PCs kann ich meine S-63 Karten nutzen?\uc0\u8232 
+\f1\fs32 A: Die Norm spricht von einer Maschine \'96 in der Praxis werden bis zu 5 Installationen toleriert.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Als wieviele Einheiten z\'e4hlt eine Dual-boot Installation?\uc0\u8232 
+\f1\fs32 A: Jede HW/SW Kombination ist ein individuelles System und ben\'f6tigt ein eigenen InstallPermit.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Und wenn ich das Programm in einer Virtuellen Maschine installiere?\uc0\u8232 
+\f1\fs32 A: Dort wird es nicht laufen. Wir m\'fcssen ein Klonen des Systems unterbinden.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Ich musste mein Betriebssystem neu installieren. Der InstallPermit ist nun ung\'fcltig. 
+\f1\fs32 A: Bitte erzeugen Sie einen neuen InstallPermit.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Mein PC ist kaputt. Wie komme ich an die installierten Karten?\uc0\u8232 
+\f1\fs32 A: Auch in diesem Falle \'93kostet\'94 das einen InstallPermit f\'fcr die neue Maschine.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 kann ich den InstallPermit und die Karten auf einem USB-Stick installieren und dann so auf unterschiedlichen Systemen nutzen?\uc0\u8232 
+\f1\fs32 A: Das w\'e4re die Hardwaredongle L\'f6sung. Wir sind der \'dcberzeugung, dass es f\'fcr uns nicht gangbar ist, USB-Sticks oder DVDs weltweit zu versenden. Die heutige Anwort ist also: Nein.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Was kosten S-63 Karten (und warum sind sie h\'e4ufig so teuer)?\uc0\u8232 
+\f1\fs32 A: Die Nationalen Hydrografischen Institute legen den Verkaufspreis fest. Ihre Kunden sind die kommerzielle Schiffahrt oder \'f6ffentliche K\'f6rperschaften, und nicht der Freizeitskipper.\uc0\u8232 Dieses Problem ist bekannt und anerkannt. Und der Grund, warum S-63 Karten in diesem Bereich wenig genutzt werden.\u8232 Wir werden reichlich Lobbyarbeit leisten m\'fcssen, um bessere Konditionen zu erhalten. Hilfe und Unterst\'fczung durch Personen oder Organisationen mit den richtigen Kontakten w\'fcrden wir sehr gerne sehen.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Kann ich mit meinem UserPermit Karten f\'fcr andere Plottersoftware als OpenCPN kaufen? 
+\f1\fs32 UserPermits sind nur f\'fcr eine Systemfamilie g\'fcltig \'96 OpenCPN in unserem Fall.
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 Meine Zeitlizenz l\'e4uft ab. Was wird dann passieren?\uc0\u8232 
+\f1\fs32 A: Die Karten werden nicht verschwinden, aber einen Warnung wird eingeblendet werden. Das erinnert uns auch daran, dass die Karten l\'e4nger nicht upgedated wurden...
+\f0\fs24 \
+
+\f1\fs32 F: 
+\f0\fs30 OpenCPN ist open source. Wo finde ich den Code f\'fcr das Plug-in?\uc0\u8232 
+\f1\fs32 A: Um mit S-63 arbeiten zu k\'f6nnen, m\'fcssen wir uns verpflichten, dass zu keinem Zeitpunkt entschl\'fcsselte Zellen abgreifbar sind. Deshalb ist das Plug-in eine black-box. Analog zu den kommerziellen BSB4 oder NV Plug-ins f\'fcr OpenCPN.
+\f0\fs24 \
+}

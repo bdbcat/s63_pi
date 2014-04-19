@@ -1,0 +1,142 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh7800\viewkind0
+\deftab720
+\pard\pardeftab720\sa240
+
+\f0\b\fs42 \cf0 Carte Vettoriali S-63 per OpenCPN
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 S-63 
+\f1\b0 \'e8 il 
+\f0\i formato 
+\f1\i0 per la 
+\f0\i distribuzione cifrata 
+\f1\i0 delle 
+\f0\b carte vettoriali 
+\f1\b0 realizzate in formato 
+\f0\b S-57
+\f1\b0 . I servizi idrografici di tutto il mondo (
+\f0\b IHO 
+\f1\b0 - International Hydrographic Organization) producono oggi le loro carte vettoriali ufficiali in formato S-57 e le distribuiscono o in formato non cifrato S- 57 (il NOAA, per esempio) utilizzabile direttamente in OpenCPN oppure, molto pi\'f9 spesso, le distribuiscono nel formato cifrato S-63.
+\f0\fs24 \
+
+\f1\fs32 L'S-63 specifica che le carte \'96 chiamate celle 
+\f0\i (cells) 
+\f1\i0 nello standard \'96 non sono vendute ma 
+\f0\b \'93licenziate\'94 
+\f1\b0 per l'uso su 
+\f0\b un singolo sistema
+\f1\b0 . La licenza \'e8 poi temporanea, valida solo per un tempo limitato.
+\f0\fs24 \
+
+\f1\fs32 I sistemi abilitati all'utilizzo di carte S-63 devono garantire il rispetto della licenza utilizzando chiavi di decifrazione hardware o software. OpenCPN ha scelto di usare una chiave software. In particolare viene generato un 
+\f0\i fingerprint 
+\f1\i0 dell'hardware del sistema dove \'e8 installato OpenCPN che viene poi accoppiato con un 
+\f0\b Plug-In Individuale
+\f1\b0 , che quindi sar\'e0 diverso da sistema a sistema. Questo Plug-In contiene il permesso utente (
+\f0\b UserPermit
+\f1\b0 ) che pu\'f2 sbloccare, solo su quel sistema, le celle S-63. Sono supportati sistemi basati su Linux, Windows e OS-X.
+\f0\fs24 \
+
+\f1\fs32 N\'e9 OpenCPN n\'e9 
+\f0\b o-charts.org
+\f1\b0 , che gestiscono i plug-in S-63 per OpenCPN, vendono le carte direttamente. Noi non siamo distributori ufficiali o VAR. Come partner contrattuali delle varie IHO noi generiamo e teniamo traccia solo dei plug-in e dei relativi UserPermits.
+\f0\fs24 \
+
+\f1\fs32 Uno UserPermit \'e8 quindi la chiave che d\'e0 titolo all'utente per acquistare dai distributori, o meglio per ottenerne la licenza d'uso, carte o gruppi di carte S-63. o-charts.org ha stretto accordi con i distributori di carte che generano le celle con i permessi cifrati. Con il vostro UserPermit potrete quindi acquistare carte o dai distributori/rivenditori (ChartWorld, Jeppesen, Amiraut\'e9, ecc.) o direttamente dalle IHO (se offrono un canale distributivo agli utenti finali).
+\f0\fs24 \
+
+\f1\fs32 Una volta installato in OpenCPN il vostro Plug-In S-63, personalizzato con il vostro UserPermit, questo potr\'e0 decifrare tali carte rendendole disponibili ed usufruibili all'interno di OpenCPN.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs42 \cf0 FAQ:
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 Q: 
+\f0\fs30 Perch\'e9 usare carte S-63?\uc0\u8232 
+\f1\fs32 A: Queste sono le carte ufficiali realizzate dalle IHO e sono generalmente le pi\'f9 aggiornate disponibili. Altri tipo di carte vettoriali per chart plotter ad uso diportistico sono al pi\'f9 buoni derivati delle carte ufficiali (bench\'e9 a volte includano alcune utili funzioni aggiuntive).
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Come ottengo il mio Plug-In?\uc0\u8232 
+\f1\fs32 A: Scarica il \'93fingerprint executable\'94 per il tuo Sistema Operativo dal sito o-charts.org. Lancialo e l'eseguibile generer\'e0 un file con un nome simile a 
+\f0\i f_pr_ArchNAMETTTTTTTTT
+\f1\i0 . Questo file sar\'e0 generato nella stessa cartella dell'eseguibile.\uc0\u8232 Tornate quindi sul nostro sito web, o-charts.org, e con il file risultate potrete generare il vostro plug- in individuale che conterr\'e0 il vostro UserPermit. Dovrete per\'f2 prima registrarvi a pagamento per generare il vostro plug-in.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Perch\'e8 il plug-in non \'e8 gratuito?\uc0\u8232 
+\f1\fs32 A: Per poter gestire le UserPermits dobbiamo rispondere alle IHO su base permanente. La struttura
+\f0\fs24  
+\f1\fs32 necessaria ed i costi saranno comunque tenuti al minimo. Nel caso avessimo un grande successo (dal punto di vista economico), i fondi eccedenti i costi saranno girati a OpenCPN.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Uso OS-X/Linux (Ubuntu, Debian, ecc.). L'executable non parte. Che devo fare?\uc0\u8232 
+\f1\fs32 A: Se hai copiato l'eseguibile su una chiavetta USB e lo fai partire da l\'ec o se lo hai copiato sul tuo PC da una chiavetta USB, potrebbe essere necessario settare l'execution flag (che \'e8 probabilmente andato perso sulla chiavetta USB). In questo caso copia l'eseguibile sul PC e setta il flag execute '
+\f0\i x
+\f1\i0 ' 
+\f0\i (chmod +x NOME FILE)
+\f1\i0 .
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Su quanti PC posso usare le mie carte S-63?\uc0\u8232 
+\f1\fs32 A: Come richiesto dallo standard, potrai usare le carte su un solo PC.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 E se ho un PC con un due sistemi operativi (in dual-boot)?\uc0\u8232 
+\f1\fs32 A: Ogni combinazione HW/SW \'e8 un sistema individuale e richiede il suo UserPermit. Le carte potranno essere usate su uno solo dei due sistemi in dual-boot (quello dove \'e8 stato generato il 
+\f0\i fingerprint
+\f1\i0 ).
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 E se installo il software in una Macchina Virtuale?\uc0\u8232 
+\f1\fs32 A: Non funzioner\'e0, in questo caso. Dobbiamo prevenire la possibilit\'e0 di clonazione del sistema.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Ho dovuto re-installare il mio OS e ora lo UserPermit non \'e8 pi\'f9 valido.\uc0\u8232 
+\f1\fs32 A: Contattaci dopo aver rigenerato il nuovo 
+\f0\i fingerprint
+\f1\i0 . Vi potremo aiutare 
+\f0\b una sola volta.
+\b0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Il mio PC \'e8 morto... Posso recuperare le carte?\uc0\u8232 
+\f1\fs32 A: Sfortunatamente no. I permessi delle celle sono differenti per ogni sistema e non si possono scambiare i dati tra sistemi diversi, anche se si hanno validi plug-in per entrambi. Quindi pensate bene, prima di comprare le carte, su quale sistema andranno installate una volta per tutte.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Posso avere lo UserPermit e le carte su una chiavetta USB, per usarle su sistemi diversi?\uc0\u8232 
+\f1\fs32 A: Questa sarebbe stata la soluzione con chiave Hardware. Crediamo non sia fattibile per noi inviare chiavette USB o DVDs in giro per il mondo e per questo abbiamo optato per la chiave software. E quindi la risposta \'e8... 'no'.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Quanto costano le carte S-63 (e perch\'e9 a volte sono cos\'ec care)?\uc0\u8232 
+\f1\fs32 A: Il prezzo di vendita \'e8 fissato dalle IHOs. I loro clienti principali sono le compagnie di navigazione o gli organismi governativi e non gli utenti diportistici. Questo \'e8 un problema noto ed \'e8 il motivo per cui esistono al momento pochi utenti diportistici che usano carte S-63. Avremo bisogno di molte pressioni \'93lobbistiche\'94 per ottenere una soluzione ed un prezzo migliore. L'aiuto di chi ha i contatti giusti potrebbe essere molto importante...
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Posso usare questo UserPermit per comprare carte per altri software diversi da OpenCPN? 
+\f1\fs32 A: No, lo UserPermit \'e8 valido solo per un tipo di sistema \'96 OpenCPN nel nostro caso.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Cosa succeder\'e0 quando la mia licenza temporanea scadr\'e0?\uc0\u8232 
+\f1\fs32 A: La carta non scomparir\'e0, ma verr\'e0 mostrato un avviso permanente sullo schermo.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 OpenCPN \'e8 Open Source. Dove posso reperire il codice del plug-in?\uc0\u8232 
+\f1\fs32 A: Il codice sorgente non \'e8 disponibile. Per poter usare le carte S-63 dobbiamo assicurare che nessuna copia decifrata delle carte sar\'e0 mai accessibile all'esterno del plug-in durante l'esecuzione del Software. E quindi il plug-in deve essere un \'93black-box\'94, simile ai plug-in commerciali per le carte BSB4 o NV-Chart.
+\f0\fs24 \
+}

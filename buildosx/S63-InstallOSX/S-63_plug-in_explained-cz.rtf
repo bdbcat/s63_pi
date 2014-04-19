@@ -1,0 +1,120 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww12600\viewh7800\viewkind0
+\deftab720
+\pard\pardeftab720\sa240
+
+\f0\b\fs42 \cf0 Vektorov\'e9 mapy S-63 pro OpenCPN
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs32 \cf0 S-63 
+\f1\b0 je 
+\f0\i kryptovan\'fd distribu\uc0\u99 \u780 n\'ed form\'e1t 
+\f1\i0 pro 
+\f0\b vektorov\'e9 mapy S-57
+\f1\b0 . Hydrografick\'e9 autority po cel\'e9m sv\uc0\u101 \u780 t\u101 \u780  v dne\'9an\'ed dob\u101 \u780  produkuj\'ed sv\'e9 ofici\'e1ln\'ed vektorov\'e9 mapy ve form\'e1tu S-57. Distribuce je prov\'e1d\u101 \u780 na podle standardu S-63.\u8232 NOAA poskytuje vektorov\'e9 mapy pro vody Spojen\'fdch st\'e1t\u117 \u778  p\u114 \u780 \'edmo ve form\'e1tu S-57 zdarma, m\u117 \u778 \'9eete je pou\'9e\'edvat p\u114 \u780 \'edmo.
+\f0\fs24 \
+
+\f1\fs32 S-63 definuje, \'9ee mapy \'96 naz\'fdvan\'e9 ve standardu 
+\f0\i bu\uc0\u110 \u780 ky (cells) 
+\f1\i0 \'96 nejsou prod\'e1v\'e1ny, ale 
+\f0\b licencov\'e1ny 
+\f1\b0 pro pou\'9eit\'ed na 
+\f0\b jednom jedin\'e9m syst\'e9mu
+\f1\b0 . Licence je do\uc0\u99 \u780 asn\'e1 a platn\'e1 pouze pro omezen\'fd \u99 \u780 as.
+\f0\fs24 \
+
+\f1\fs32 Implementace map S-63 to mus\'ed garantovat za pou\'9eit\'ed bu\uc0\u100 \u780  hardwarov\'e9ho nebo softwarov\'e9ho kl\'ed\u99 \u780 e. OpenCPN zvolilo softwarov\'fd kl\'ed\u99 \u780 .\u8232 Nejprve je vytvo\u114 \u780 en 
+\f0\i otisk (fingerprint) syst\'e9mu, 
+\f1\i0 na kter\'e9m OpenCPN b\uc0\u101 \u780 \'9e\'ed a ten je pak sp\'e1rov\'e1n s individu\'e1ln\'edm pluginem.
+\f0\fs24 \
+
+\f1\fs32 Tento plugin obsahuje opr\'e1vn\uc0\u101 \u780 n\'ed k pou\'9eit\'ed S-63 
+\f0\b - UserPermit. 
+\f1\b0 Pokr\'fdv\'e1me syst\'e9my Linux, Windows a Mac OS X.
+\f0\fs24 \
+
+\f1\fs32 Ani OpenCPN ani 
+\f0\b o-charts.org, 
+\f1\b0 jako entita spravuj\'edc\'ed S-63 plug-in, neprod\'e1vaj\'ed mapy p\uc0\u114 \u780 \'edmo. Nejsme ofici\'e1ln\'ed distributor nebo VAR. Jako smluvn\'ed partner IHO vyd\'e1v\'e1me a spravujeme pluginy OpenCPN a p\u114 \u780 \'edslu\'9an\'e9 opr\'e1vn\u101 \u780 n\'ed UserPermit.
+\f0\fs24 \
+
+\f1\fs32 UserPermit je kl\'ed\uc0\u99 \u780 , kter\'fd oprav\u110 \u780 uje u\'9eivatel zakoupit, nebo l\'e9pe licencovat, jednotliv\'e9 mapy nebo jejich skupiny.
+\f0\fs24 \
+
+\f1\fs32 o-charts.org se dohodl s distributory map, kte\uc0\u114 \u780 \'ed budou vyd\'e1vat bu\u110 \u780 ky se zakryptovan\'fdmi opr\'e1vn\u101 \u780 n\'edmi. Se sv\'fdm opr\'e1vn\u101 \u780 n\'edm UserPermit si m\u117 \u778 \'9eete mapy koupit od nich, p\u114 \u780 \'edpadn\u101 \u780  od HO (Hydrogrpahic office) kter\'e9 provozuj\'ed p\u114 \u780 \'edm\'e9 distribu\u99 \u780 n\'ed kan\'e1ly.\u8232 Plug-in nainstaluje a rozk\'f3duje tyto mapy tak, aby byly k dispozici pro pou\'9eit\'ed s OpenCPN.
+\f0\fs24 \
+\pard\pardeftab720\sa240
+
+\b\fs42 \cf0 FAQ:
+\b0\fs24 \
+\pard\pardeftab720\sa240
+
+\f1\fs32 \cf0 Q: Pro\uc0\u99 \u780  
+\f0\fs30 S-63 mapy?\uc0\u8232 
+\f1\fs32 A: Jsou ofici\'e1ln\'edm a obecn\uc0\u101 \u780  nejaktu\'e1ln\u101 \u780 j\'9a\'edm mapov\'fdm materi\'e1lem, kter\'fd je k dispozici. Vektorov\'e9 mapy pro GPS mapov\'e9 plotery pou\'9e\'edvan\'e9 v rekrea\u99 \u780 n\'ed plavb\u101 \u780  jsou p\u114 \u780 inejlep\'9a\'edm deriv\'e1ty t\u101 \u780 chto dat (n\u101 \u780 kt\'e9r\'e9 ale obsahuj\'ed dal\'9a\'ed p\u114 \u780 idan\'e9 informace).
+\f0\fs24 \
+
+\f1\fs32 Q: Jak z\'edsk\'e1m sv\uc0\u117 \u778 j plugin
+\f0\fs30 ?\uc0\u8232 
+\f1\fs32 A: St\'e1hni si instal\'e1tor pro tv\uc0\u117 \u778 j opera\u99 \u780 n\'ed syst\'e9m z na\'9a\'ed str\'e1nky o-charts.org\u8232 Spus\u116 \u780  instal\'e1tor. Ten vytvo\u114 \u780 \'ed soubor s n\'e1zvem podobn\'fdm 
+\f0\i f_pr_ArchNAMETTTTTTTTT
+\f1\i0 .\uc0\u8232 Najde\'9a ho ve stejn\'e9 slo\'9ece jako instal\'e1tor.\u8232 Pak se vra\u116 \u780  na na\'9ai str\'e1nku, o-charts.org a tam nahraj tento soubor, abychom mohli vygenerovat tv\u117 \u778 j individu\'e1ln\'ed plugin, kter\'fd obsahje tv\u117 \u778 j UserPermit.\u8232 P\u114 \u780 ed vygenerov\'e1nim permitu se bude\'9a se muset zaregistrovat a zaplatit.
+\f0\fs24 \
+
+\f1\fs32 Q: Pro\uc0\u99 \u780  nen\'ed plugin zdarma
+\f0\fs30 ?\uc0\u8232 
+\f1\fs32 A: Mus\'edme provozovat tuto operaci a komunikovat s IHO na permanentn\'ed b\'e1zi. Struktura a n\'e1klady jsou dr\'9eeny na minimu. V p\uc0\u114 \u780 \'edpad\u101 \u780 , \'9ee dojde k zisku, bude v\u101 \u780 nov\'e1n zp\u101 \u780 t na dal\'9a\'ed v\'fdvoj OpenCPN.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 Pou\'9e\'edv\'e1m OS X / Linux (UBUNTU, Debian, td.). Instal\'e1tor nejde spustit. Co m\'e1m d\uc0\u101 \u780 lat?\u8232 
+\f1\fs32 A: Pokuds zkop\'edroval instal\'e1tor na USB m\'e9dium a spustil ho odtamtud nebo ho zkop\'edroval na c\'edlov\'fd syst\'e9m, mohl by postr\'e1dat p\uc0\u114 \u780 \'edznak povoluj\'edc\'ed jeho spu\'9at\u101 \u780 n\'ed (Kv\u117 \u778 li syst\'e9mu soubor\u117 \u778  FAT32 na USB m\'e9diu). V tom p\u114 \u780 \'edpad\u101 \u780  zkpi\'edruj instal\'e1tor na c\'edlov\'fd syst\'e9m a nastav p\u114 \u780 \'edznak \'93x\'94.
+\f0\fs24 \
+
+\f1\fs32 Q: Na kolika po\uc0\u99 \u780 \'edta\u99 \u780 \'edch z\'e1rove\u110 \u780  m\u117 \u778 \'9eu pou\'9e\'edvat m\'e9 S-63 mapy? A: Standard diktuje, \'9ee to mus\'edme omezit na jedin\'fd stroj.
+\f0\fs24 \
+
+\f1\fs32 Q: Za kolik syst\'e9m\uc0\u117 \u778  se po\u99 \u780 \'edt\'e1 dual boot?\u8232 A: Ka\'9ed\'e1 kombinace HW a SW je individu\'e1ln\'ed a pot\u114 \u780 ebuje vlastn\'ed UserPermit.
+\f0\fs24 \
+
+\f1\fs32 Q: A kdy\'9e to nainstaluji na virtu\'e1ln\'ed stroj?\uc0\u8232 A: Nebude to fungovat. Mus\'edme zabr\'e1nit klonov\'e1n\'ed syst\'e9mu.
+\f0\fs24 \
+
+\f1\fs32 Q: Musel jsem p\uc0\u114 \u780 einstalovat OS a m\u117 \u778 j UserPermit najednou neplat\'ed
+\f0\fs30 . 
+\f1\fs32 A: Vygeneruj nov\'fd otisk a kontaktuj n\'e1s. Jednou Ti m\uc0\u117 \u778 \'9eeme pomoci.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 M\uc0\u117 \u778 j po\u99 \u780 \'edta\u99 \u780  zem\u114 \u780 el. M\u117 \u778 \'9eu obnovit m\'e9 mapy?\u8232 
+\f1\fs32 A: Bohu\'9eel ne. Povolen\'ed k bu\uc0\u110 \u780 k\'e1m jsou jin\'e1 na ka\'9ed\'e9m syst\'e9mu a nem\u117 \u778 \'9ee\'9a mezi nimi p\u114 \u780 en\'e1\'9aet data, ani v p\u114 \u780 \'edpad\u101 \u780  \'9ee \'9ee m\'e1\'9a validn\'ed plugin na obou. P\u114 \u780 ed n\'e1kupem si dob\u114 \u780 e rozmysli, kam bude\'9a mapy instalovat.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 M\uc0\u117 \u778 \'9eu m\'edt sv\u117 \u778 j UserPermit a mapy na USB disku a p\u114 \u780 en\'e1\'9aet je mezi r\u117 \u778 zn\'fdmi syst\'e9my?\u8232 
+\f1\fs32 A: To by bylo \uc0\u114 \u780 e\'9aen\'ed za pou\'9eit\'ed HW kl\'ed\u99 \u780 e. M\'edme dojem, \'9ee nem\u117 \u778 \'9eeme rozumn\u101 \u780  pos\'edlat USB kl\'ed\u99 \u780 e nebo DVD po cel\'e9m sv\u101 \u780 t\u101 \u780 . Proto jsme se rozhodli pro \u99 \u780 ist\u101 \u780  SW \u114 \u780 e\'9aen\'ed. Tak\'9ee odpov\u101 \u780 \u100 \u780  zn\'ed en.
+\f0\fs24 \
+
+\f1\fs32 Q: Kolik 
+\f0\fs30 S-63 mapy stoj\'ed (a pro\uc0\u99 \u780  jsou n\u101 \u780 kdy tak neskute\u99 \u780 n\u101 \u780  drah\'e9)?\u8232 
+\f1\fs32 A: Prodejn\'ed cena je fixn\uc0\u101 \u780  stanovena jednotliv\'fdmi HO. Jejich z\'e1kazn\'edci jsou z lodn\'edho pr\u117 \u778 myslu nebo ofici\'e1ln\'ed organizace, jako vl\'e1dy, nikoli rekrea\u99 \u780 n\'ed segment. To je obecn\u101 \u780  zn\'e1m\'fd probl\'e9m, a tak\'e9 d\u117 \u778 vod pro\u99 \u780  je v t\'e9to skupin\u101 \u780  zat\'edm tak m\'e1lo u\'9eivatel\u117 \u778  S-63.\u8232 Budeme pot\u114 \u780 ebovat hodn\u101 \u780  lobbyngu, abychom z\'edskali lep\'9a\'ed technick\'e1 \u114 \u780 e\'9aen\'ed a ceny. Pomoc a podpora t\u101 \u780 ch, kte\u114 \u780 \'ed maj\'ed spr\'e1vn\'e9 kontakty je v\'edc ne\'9e v\'edt\'e1na.
+\f0\fs24 \
+
+\f1\fs32 Q: Mohu pou\'9e\'edt 
+\f0\fs30 UserPermit ke koupen\'ed map pro jin\'fd mapov\'fd SW ne\'9e OpenCPN?\uc0\u8232 
+\f1\fs32 A: Ne, UserPermit plat\'ed pouze pro jeden konkr\'e9tn\'ed druh syst\'e9mu, v na\'9aem p\uc0\u114 \u780 \'edpad\u101 \u780  OpenCPN.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 M\'e1 do\uc0\u99 \u780 asn\'e1 licence skon\u99 \u780 \'ed. Co se stane?\u8232 
+\f1\fs32 A: Mapa nezmiz\'ed, ale bude zobrazeno varov\'e1n\'ed.
+\f0\fs24 \
+
+\f1\fs32 Q: 
+\f0\fs30 OpenCPN je open source. Kde je k\'f3d S-63 pluginu?\uc0\u8232 
+\f1\fs32 A: Abychom mohli pou\'9e\'edvat S-63 mus\'edme zajistit, \'9ee rozk\'f3dovan\'e9 bu\uc0\u110 \u780 ky nejsou p\u114 \u780 \'edstupn\'e9 nikdy b\u101 \u780 he pou\'9eit\'ed syst\'e9mu. Proto je plugin \'93\u99 \u780 ern\'e1 sk\u114 \u780 \'ed\u110 \u780 ka\'94 podobn\u101 \u780  jako ty implementuj\'edc\'ed BSB4 a form\'e1t NV Charts.
+\f0\fs24 \
+}
