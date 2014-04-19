@@ -212,6 +212,11 @@ int s63_pi::Init(void)
         file.Write();
         file.Close();
     }
+
+    wxLogMessage(_T("Path to OCPNsenc is: ") + g_sencutil_bin);
+    
+    if(!wxFileExists(g_sencutil_bin))
+        wxLogMessage(_T("S63_PI Error:  OCPNsenc not found."));
     
     return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE | WANTS_PLUGIN_MESSAGING);
 
@@ -576,12 +581,13 @@ int s63_pi::ImportCells( void )
     msg += _("Create eSENCs on Import?\n");
     
     
-    int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+    int dret = OCPNMessageBox_PlugIn(NULL,
                           msg,
                           _T("s63_pi Message"),  wxYES_NO, -1, -1);
               
     bool bSENC = (dret == wxID_YES);
 
+  
     //  Read the SERIAL.ENC file to absolutlely identify the Data Server ID
     wxString data_server_string;
     wxFileName serial_enc(enc_root_dir);
@@ -662,10 +668,18 @@ int s63_pi::ImportCells( void )
         
         return 0;
     }
+
+    long wstyle = wxPD_CAN_ABORT | wxPD_AUTO_HIDE;
+    wxWindow *pprogress_parent = g_pScreenLog;
+    
+#ifdef __WXMAC__
+    wstyle |= wxSTAY_ON_TOP;
+    pprogress_parent = m_s63chartPanelWin;
+#endif
     
     if(bSENC){
         g_pprog = new wxProgressDialog(_T("s63_pi"), _("Creating eSenc"), unique_cellname_array.Count(),
-                                       g_pScreenLog,  wxPD_CAN_ABORT | wxPD_AUTO_HIDE );
+                                       pprogress_parent,  wstyle );
     }
     
     unsigned int nproc = 0;
@@ -2042,7 +2056,7 @@ void S63ScreenLog::OnSocketEvent(wxSocketEvent& event)
 
 OCPNPermitList::OCPNPermitList(wxWindow *parent)
 {
-    Create( parent, -1, wxDefaultPosition, wxSize(-1, 150), wxLC_REPORT | wxLC_HRULES );
+    Create( parent, -1, wxDefaultPosition, wxSize(-1, 100), wxLC_REPORT | wxLC_HRULES );
     
 }
 
@@ -2144,7 +2158,7 @@ void OCPNPermitList::BuildList( const wxString &permit_dir )
 
 OCPNCertificateList::OCPNCertificateList(wxWindow *parent)
 {
-    Create( parent, -1, wxDefaultPosition, wxSize(-1, 150), wxLC_REPORT | wxLC_HRULES);
+    Create( parent, -1, wxDefaultPosition, wxSize(-1, 100), wxLC_REPORT | wxLC_HRULES);
     
 }
 
