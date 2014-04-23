@@ -58,6 +58,7 @@ CMake variables
 
 ;--------------------------------
 ;# Variables
+        Var THIS_UN
         Var INSTROOT
 	Var INST_USER_SID
 	Var CONFIG_EXISTS
@@ -221,6 +222,7 @@ CMake variables
 ;--------------------------------
 ;# Calls for making respective functions available
 	${StrLoc}
+	${StrRep}
 
 ;--------------------------------
 ;##################################################################################################
@@ -533,6 +535,7 @@ CMake variables
 	!define RecFindClose `!insertmacro _RecFindClose`
 !endif
 
+
 ;--------------------------------------------------------------------------------------------------
 ;##################################################################################################
 ;#                                            FUNCTIONS                                           #
@@ -818,35 +821,36 @@ Section "-Install Section" SecInstall
 	;# Registry Entries
 	SetShellVarContext all ;# make sure that we write to HKLM
 	;# HKLM Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenCPN <DisplayVersion>
-	WriteRegStr SHCTX "${REG_KEY_UN}" "DisplayName" "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "DisplayVersion" "@CPACK_PACKAGE_VERSION@"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "CompareVersion" "$VERSION_DATE"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "StartMenuPath" "$SMPROGRAMS\$STARTMENU_FOLDER"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "InstallLocation" "$INSTDIR"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "UninstallString" "$\"$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe$\""
-	WriteRegStr SHCTX "${REG_KEY_UN}" "QuietUninstallString" "$\"$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe /S$\""
-	WriteRegStr SHCTX "${REG_KEY_UN}" "ConfigLocation" "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "DisplayIcon" "$INSTDIR\@CPACK_NSIS_INSTALLED_ICON_NAME@"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "Publisher" "@CPACK_PACKAGE_VENDOR@"
-	WriteRegDWORD SHCTX "${REG_KEY_UN}" "VersionMajor" $MAJOR_D
-	WriteRegDWORD SHCTX "${REG_KEY_UN}" "VersionMinor" $MINOR_D
-	WriteRegDWORD SHCTX "${REG_KEY_UN}" "VersionPatch" $PATCH_D
-	WriteRegDWORD SHCTX "${REG_KEY_UN}" "NoModify" 1
-	WriteRegDWORD SHCTX "${REG_KEY_UN}" "NoRepair" 1
-	WriteRegStr SHCTX "${REG_KEY_UN}" "HelpLink" "http://opencpn.org/"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "URLInfoAbout" "http://opencpn.org/"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "Contact" "http://opencpn.org/"
-	WriteRegStr SHCTX "${REG_KEY_UN}" "InstallUser" "$USERS_NAME"
-	${If} ${UAC_IsInnerInstance}
-		WriteRegStr SHCTX "${REG_KEY_UN}" "InstallAdminUser" "$USERNAME"
-	${EndIf}
 
-	;# Create the config folder if it does not exist and set full access rights to it
-;	${IfNot} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\*.*"
-;		CreateDirectory "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
-;		Sleep 250
-;	${EndIf}
-;	AccessControlW::GrantOnFile "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@" "(BU)" "GenericRead + GenericExecute + GenericWrite + Delete + FullAccess"
+        ;# Replace "\" by "" in new registry key
+	${StrRep} $R1 $INSTDIR "\"  ""
+
+
+        StrCpy $R0 "Software\Microsoft\Windows\CurrentVersion\Uninstall\s63_pi @CPACK_PACKAGE_VERSION@at"
+        StrCpy $THIS_UN "$R0 $R1"
+
+;        MessageBox MB_OK|MB_ICONSTOP "THIS_UN $THIS_UN"
+
+	WriteRegStr SHCTX $THIS_UN "DisplayName" "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ Installed for $INSTROOT"
+	WriteRegStr SHCTX $THIS_UN "DisplayVersion" "@CPACK_PACKAGE_VERSION@"
+	WriteRegStr SHCTX $THIS_UN "CompareVersion" "$VERSION_DATE"
+	WriteRegStr SHCTX $THIS_UN "InstallLocation" "$INSTDIR"
+	WriteRegStr SHCTX $THIS_UN "UninstallString" "$\"$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe$\""
+	WriteRegStr SHCTX $THIS_UN "QuietUninstallString" "$\"$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe /S$\""
+	WriteRegStr SHCTX $THIS_UN "DisplayIcon" "$INSTDIR\@CPACK_NSIS_INSTALLED_ICON_NAME@"
+	WriteRegStr SHCTX $THIS_UN "Publisher" "@CPACK_PACKAGE_VENDOR@"
+	WriteRegDWORD SHCTX $THIS_UN "VersionMajor" $MAJOR_D
+	WriteRegDWORD SHCTX $THIS_UN "VersionMinor" $MINOR_D
+	WriteRegDWORD SHCTX $THIS_UN "VersionPatch" $PATCH_D
+	WriteRegDWORD SHCTX $THIS_UN "NoModify" 1
+	WriteRegDWORD SHCTX $THIS_UN "NoRepair" 1
+	WriteRegStr SHCTX $THIS_UN "HelpLink" "http://opencpn.org/"
+	WriteRegStr SHCTX $THIS_UN "URLInfoAbout" "http://opencpn.org/"
+	WriteRegStr SHCTX $THIS_UN "Contact" "http://opencpn.org/"
+	WriteRegStr SHCTX $THIS_UN "InstallUser" "$USERS_NAME"
+	${If} ${UAC_IsInnerInstance}
+		WriteRegStr SHCTX $THIS_UN "InstallAdminUser" "$USERNAME"
+	${EndIf}
 
 	;# Save the log file
 	StrCpy $0 "$INSTDIR\install.log"
@@ -865,57 +869,29 @@ SectionEnd
 
 Section /o "-un.Backup Config to RegKey" UnSecBackupConfigToRegKey
 	SetShellVarContext all
-/*
-	${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini"
-		ClearErrors
-		StrCpy $0 ""
-		StrCpy $2 0
-		loop:
-			IntOp $2 $2 + 1
-			ReadINIStr $1 "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini" "ChartDirectories" "ChartDir$2"
-			StrCmp $1 "" cont
-			${WordReplace} "$1" "\\" "\" "+" $3
-			${unExplode} $4 "^" "$3"
-			Pop $5
-			StrCmp $5 "" cont
-			StrCmp $0 "" 0 +2
-			StrCpy $0 $5
-			StrCpy $0 "$0;$5"
-			Goto loop
-		cont:
-		WriteRegStr HKLM "${REG_KEY}" "ChartDirs" "$0"
-
-		ReadINIStr $0 "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini" "Settings" "Locale"
-		StrCmp $0 "" +2 0
-		WriteRegStr HKLM "${REG_KEY}" "InstallerLanguage" "$0"
-	${EndIf}
-*/
 SectionEnd
 
 Section "un.Delete Config Folder" UnSecDeleteConfigFolder
 	SetShellVarContext all
-/*
-	${If} ${FileExists} "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\*.*"
-		RMDir /r "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@"
-		ClearErrors
-	${EndIf}
-*/
 SectionEnd
 
 Section "-un.Uninstall" UnSecUninstall
 
-/*
-	;# Delete all Shortcuts
-		Push $INSTDIR
-		Call un.Delete_Desktop_Shortcuts
-		Push $INSTDIR
-		Call un.Delete_Start_Menu_Shortcuts
-*/
+        ;# Replace "\" by "*" in new registry key
+        ${WordReplace} "$INSTDIR" "\" "" "+" $R1
+
+        StrCpy $R0 "Software\Microsoft\Windows\CurrentVersion\Uninstall\s63_pi @CPACK_PACKAGE_VERSION@at"
+        StrCpy $THIS_UN "$R0 $R1"
+
+;        MessageBox MB_OK|MB_ICONSTOP "THIS_UN unin: $THIS_UN"
+
+
 	;# Delete subdirs and files in INSTDIR
 		;# Remove the uninstaller itself
-		ReadRegStr $0 HKLM "${REG_KEY_UN}" "UninstallString"
-		${StrFilter} "$0" "" "" "$\"" $0
-		Delete $0
+		ReadRegStr $0 HKLM "$THIS_UN" "UninstallString"
+		${StrFilter} "$0" "" "" "$\"" $1
+;               MessageBox MB_OK|MB_ICONSTOP "uninstaller to delete: unin: $1"
+		Delete $1
 		;# Remove the installation log file
 		Delete "$INSTDIR\install.log"
 		@CPACK_NSIS_DELETE_FILES@
@@ -930,7 +906,7 @@ Section "-un.Uninstall" UnSecUninstall
 
 		cont:
 	;# Remove RegKey
-		DeleteRegKey HKLM "${REG_KEY_UN}"
+		DeleteRegKey HKLM "$THIS_UN"
 SectionEnd
 
 ;--------------------------------------------------------------------------------------------------
@@ -1158,126 +1134,9 @@ Function myGuiInit
 	SectionSetText ${SecShortcutDesktop} $(SecShortcutDesktop_Text)
 	SectionSetText ${SecSetConfig} $(SecSetConfig_Text)
 
-/*
-	;# Look for config dir ("%APPDATA%\opencpn) and the several config files
-	Call Check_Config_Exists
-
-	${If} $CONFIG_EXISTS != 1
-	${OrIf} $CONFIG_EMPTY == 1
-		Call Hide_SecGrpResetConfig
-		IntOp $0 ${SF_SELECTED} | ${SF_BOLD}
-		SectionSetFlags ${SecSetConfig} $0
-		StrCpy $SetConfig 1
-	${EndIf}
-*/
 	SetShellVarContext all ;# switch SetShellVarContext back to ALL
 FunctionEnd
 
-/*
-;--------------------------------
-;# onSelChange
-;Var ConfigSetLang
-;Var ConfigSetChartDir
-;Var SetConfig
-Function .onSelChange
-	;# Check if all available Sections in SecGrpResetConfig are selected => set SecGrpResetConfig to selected instead of partially selected
-	Push $0
-	Push $1
-	Push $2
-	Push $3
-	Push $R0
-	Push $R1
-	StrCpy $0 ${SecGrpResetConfig}
-	StrCpy $1 0
-	StrCpy $2 0
-	${Do}
-		IntOp $0 $0 + 1
-		${If} ${SectionIsSectionGroupEnd} $0
-			Goto end
-		${EndIf}
-		SectionGetText $0 $R0
-		${If} $R0 != ""
-		${AndIf} ${SectionIsSelected} $0
-			Goto found_selected
-		${ElseIf} $R0 != ""
-		${AndIfNot} ${SectionIsSelected} $0
-			Goto found_unselected
-		${EndIf}
-	${Loop}
-
-	found_selected:
-		StrCpy $0 ${SecGrpResetConfig}
-		${Do}
-			IntOp $0 $0 + 1
-			${If} ${SectionIsSectionGroupEnd} $0
-				Goto end
-			${EndIf}
-			SectionGetText $0 $R0
-			${If} $R0 == ""
-			${AndIfNot} ${SectionIsSelected} $0
-				SectionSetFlags $0 ${SF_SELECTED}
-			${EndIf}
-		${Loop}
-
-	found_unselected:
-		StrCpy $0 ${SecGrpResetConfig}
-		${Do}
-			IntOp $0 $0 + 1
-			${If} ${SectionIsSectionGroupEnd} $0
-				Goto end
-			${EndIf}
-			SectionGetText $0 $R0
-			${If} $R0 == ""
-			${AndIf} ${SectionIsSelected} $0
-				!insertmacro ClearSectionFlag $0 ${SF_SELECTED}
-			${EndIf}
-		${Loop}
-
-	end:
-	SectionGetText ${SecDeleteConfigFile} $R1
-	${If} $R1 != ""
-		${IfNot} ${SectionIsReadOnly} ${SecSetConfig}
-		${AndIfNot} ${SectionIsSelected} ${SecSetConfig}
-		${AndIf} $SetConfig == 1
-			StrCpy $SetConfig 0
-		${EndIf}
-
-		${IfNot} ${SectionIsSelected} ${SecDeleteConfigFile}
-		${AndIf} ${SectionIsSelected} ${SecSetConfig}
-			!insertmacro ClearSectionFlag ${SecSetConfig} ${SF_SELECTED}
-			IntOp $0 ${SF_RO} | ${SF_BOLD}
-			SectionSetFlags ${SecSetConfig} $0
-			;SectionSetFlags ${SecSetConfig} ${SF_RO}
-			StrCpy $SetConfig 1
-		${ElseIfNot} ${SectionIsSelected} ${SecDeleteConfigFile}
-		${AndIfNot} ${SectionIsSelected} ${SecSetConfig}
-			IntOp $0 ${SF_RO} | ${SF_BOLD}
-			SectionSetFlags ${SecSetConfig} $0
-			;SectionSetFlags ${SecSetConfig} ${SF_RO}
-			StrCpy $SetConfig 0
-		${ElseIf} ${SectionIsSelected} ${SecDeleteConfigFile}
-		${AndIfNot} ${SectionIsSelected} ${SecSetConfig}
-		${AndIf} $SetConfig == 1
-			!insertmacro ClearSectionFlag ${SecSetConfig} ${SF_RO}
-			IntOp $0 ${SF_SELECTED} | ${SF_BOLD}
-			SectionSetFlags ${SecSetConfig} $0
-			;SectionSetFlags ${SecSetConfig} ${SF_SELECTED}
-		${ElseIf} ${SectionIsSelected} ${SecDeleteConfigFile}
-		${AndIf} $SetConfig == 0
-			!insertmacro ClearSectionFlag ${SecSetConfig} ${SF_RO}
-			StrCpy $SetConfig 0
-		${EndIf}
-	${EndIf}
-
-	Pop $R1
-	Pop $R0
-	Pop $3
-	Pop $2
-	Pop $1
-	Pop $0
-FunctionEnd
-
-*/
 Function .OnInstFailed
 	Call InstallerEnd
 FunctionEnd
@@ -1309,321 +1168,9 @@ FunctionEnd
 ;##################################################################################################
 ;# Page_License_Leave
 	Function Page_License_Leave
-/*
-		FindWindow $mui.ComponentsPage "#32770" "" $HWNDPARENT
-		System::Call "*(i 0, i 0, i 4, i 8) i .r1"
-		System::Call "User32::MapDialogRect(i $mui.ComponentsPage, i r1) i .r2"
-		System::Call "*$1(i .r2, i.r3, i.r4, i.r5)"
-		System::Free $1
-		StrCpy $BU_X $4
-		StrCpy $BU_Y $5
-*/
 	FunctionEnd
 
-/*
-;--------------------------------
-;# Page_CleanUp
-	Var Label_CleanUp
-	Var Label_FullScan_CleanUp
-	Var GroupBox_CleanUp
-	Var ListBox_CleanUp
-	Var Button_FullScan_CleanUp
-	Var Button_UnselectAll_CleanUp
-	Var Button_SelectAll_CleanUp
-	Var Button_Uninstall_Selected_CleanUp
-	Var Banner_Handle
-	Var MSG_Box_Uninstall_Shown
-	Function Page_CleanUp
-		${If} $Skip_Page_CleanUp == 1
-			Abort
-		${EndIf}
 
-		!ifndef PBS_MARQUEE
-			!define PBS_MARQUEE 0x08
-		!endif
-		!ifndef PBM_SETMARQUEE
-			!define PBM_SETMARQUEE 0x040A
-		!endif
-		!ifndef GWL_STYLE
-			!define GWL_STYLE -16
-		!endif
-
-		${IfNot} $MSG_Box_Uninstall_Shown == 1
-			MessageBox MB_YESNO|MB_ICONQUESTION "$(Msg_Uninstall_Old_Versions)" IDYES cont IDNO skip
-		${Else}
-			Goto cont
-		${EndIf}
-
-		skip:
-		Abort
-
-		cont:
-		StrCpy $MSG_Box_Uninstall_Shown 1
-		!insertmacro MUI_HEADER_TEXT "$(Page_CleanUp_Title)" "$(Page_CleanUp_Subtitle)"
-
-		nsDialogs::Create /NOUNLOAD 1018
-		Pop $0
-		${If} $0 == error
-			Abort
-		${EndIf}
-
-		${NSD_CreateLabel} 0 0 200u 16u "$(LAB_FullScan_CleanUp)"
-		Pop $Label_FullScan_CleanUp
-
-		${NSD_CreateButton} 220u 0 70u 15u "$(BT_FullScan_CleanUp)"
-		Pop $Button_FullScan_CleanUp
-		GetFunctionAddress $0 Button_FullScan_CleanUp_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_FullScan_CleanUp $0
-
-		${NSD_CreateLabel} 0 22u 100% 24u "$(Label_CleanUp_Text)"
-		Pop $Label_CleanUp
-
-		${NSD_CreateGroupBox} 0 55u 100% 85u "$(Install_Location_Default)"
-		Pop $GroupBox_CleanUp
-
-		!define __NSD_ListBoxMultiselect_CLASS LISTBOX
-		!define __NSD_ListBoxMultiselect_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}|${LBS_MULTIPLESEL}
-		!define __NSD_ListBoxMultiselect_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
-		!insertmacro __NSD_DefineControl ListBoxMultiselect
-		${NSD_CreateListboxMultiselect} 10u 70u 200u 65u "$(LB_CleanUp)"
-		Pop $ListBox_CleanUp
-		GetFunctionAddress $0 ListBox_CleanUp_Change
-		nsDialogs::OnChange /NOUNLOAD $ListBox_CleanUp $0
-
-		${NSD_CreateButton} 220u 70u 70u 15u "$(BT_UnselectAll_CleanUp)"
-		Pop $Button_UnselectAll_CleanUp
-		GetFunctionAddress $0 Button_UnselectAll_CleanUp_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_UnselectAll_CleanUp $0
-
-		${NSD_CreateButton} 220u 100u 70u 15u "$(BT_SelectAll_CleanUp)"
-		Pop $Button_SelectAll_CleanUp
-		GetFunctionAddress $0 Button_SelectAll_CleanUp_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_SelectAll_CleanUp $0
-
-		${NSD_CreateButton} 220u 120u 70u 15u "$(BT_Uninstall_Selected_CleanUp)"
-		Pop $Button_Uninstall_Selected_CleanUp
-		GetFunctionAddress $0 Button_Uninstall_Selected_CleanUp_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_Uninstall_Selected_CleanUp $0
-
-
-		;# First check if HDD scan was already done
-		${If} ${FileExists} "$TEMP\opencpn_hdd_full_scan.tmp"
-			EnableWindow $Button_FullScan_CleanUp 0
-			EnableWindow $Label_FullScan_CleanUp 0
-			SendMessage $GroupBox_CleanUp ${WM_SETTEXT} 0 "STR:$(Install_Location_HDD_Scan)"
-			ClearErrors
-			FileOpen $R0 "$TEMP\opencpn_hdd_full_scan.tmp" r
-			IfErrors done1
-			${Do}
-				FileReadUTF16LE $R0 $R1
-				${If} $R1 == ""
-					Goto done1
-				${Else}
-					${TrimNewLines} $R1 $R1
-					SendMessage $ListBox_CleanUp ${LB_ADDSTRING} 0 "STR:$R1"
-				${EndIf}
-			${Loop}
-			done1:
-			FileClose $R0
-		;# if not get values from LM_VERSION and opencpn_old_installs.tmp file
-		${Else}
-			${IfNot} ${FileExists} "$TEMP\opencpn_hdd_quick_scan.tmp"
-				;# Scan the default locations for program installations on a per-user and all-users basis
-				Banner::show /NOUNLOAD /set 76 "$(Search_old_installations)"
-				Banner::getWindow /NOUNLOAD
-				Pop $Banner_Handle
-				ShowWindow $Banner_Handle ${SW_HIDE}
-				${NSD_AddExStyle} $Banner_Handle ${WS_EX_APPWINDOW}
-				ShowWindow $Banner_Handle ${SW_SHOW}
-				GetDlgItem $2 $Banner_Handle 1030
-				SendMessage $2 ${WM_SETTEXT} 0 "STR:$(text_please_wait_1)"
-
-				; Get progress bar handle.
-				GetDlgItem $Marquee_Handle $Banner_Handle 1004
-
-				; Set PBS_MARQUEE style for the progress bar control.
-				System::Call "user32::GetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}) i .r1"
-				System::Call "user32::SetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}, i $1|${PBS_MARQUEE})"
-
-				; Send PBM_SETMARQUEE message to start the marquee.
-				; lParam is time in milliseconds between marquee animation updates.
-				SendMessage $Marquee_Handle ${PBM_SETMARQUEE} 1 50
-
-				System::Call "User32::SetWindowPos(i $Banner_Handle, i -1, i 0, i 0, i 0, i 0, i 83)"
-
-				HideWindow
-
-				Call Quick_Scan_Old_Versions
-
-				ShowWindow $HWNDPARENT ${SW_SHOW}
-				BringToFront
-				SendMessage $Marquee_Handle ${PBM_SETMARQUEE} 0 0
-				System::Call "user32::SetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}, i $1)"
-				Banner::destroy
-			${EndIf}
-
-			ClearErrors
-			FileOpen $R0 "$TEMP\opencpn_hdd_quick_scan.tmp" r
-			IfErrors done2
-			${Do}
-				FileReadUTF16LE $R0 $R1
-				${If} $R1 == ""
-					Goto done2
-				${Else}
-					${TrimNewLines} $R1 $R1
-					SendMessage $ListBox_CleanUp ${LB_ADDSTRING} 0 "STR:$R1"
-				${EndIf}
-			${Loop}
-
-			done2:
-			FileClose $R0
-		${EndIf}
-		;# Pre-select all listbox-items
-		${NSD_LB_GetCount} $ListBox_CleanUp $1
-		IntOp $1 $1 - 1
-		SendMessage $ListBox_CleanUp ${LB_SELITEMRANGEEX} 0 $1
-		Call ListBox_CleanUp_Change
-
-		nsDialogs::Show
-	FunctionEnd
-*/
-
-/*
-	Function Button_FullScan_CleanUp_Click
-		SendMessage $ListBox_CleanUp ${LB_RESETCONTENT} 0 0
-
-		Banner::show /NOUNLOAD /set 76 "$(Scanning_HDD)"
-		Banner::getWindow /NOUNLOAD
-		Pop $Banner_Handle
-		ShowWindow $Banner_Handle ${SW_HIDE}
-		SendMessage $Banner_Handle ${WM_SETTEXT} 0 "STR:$(OCPN_Scanning_HDD)"
-		${NSD_AddExStyle} $Banner_Handle ${WS_EX_APPWINDOW}
-		ShowWindow $Banner_Handle ${SW_SHOW}
-		GetDlgItem $2 $Banner_Handle 1030
-		SendMessage $2 ${WM_SETTEXT} 0 "STR:$(text_please_wait_1)"
-
-		; Get progress bar handle.
-		GetDlgItem $Marquee_Handle $Banner_Handle 1004
-
-		; Set PBS_MARQUEE style for the progress bar control.
-		System::Call "user32::GetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}) i .r1"
-		System::Call "user32::SetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}, i $1|${PBS_MARQUEE})"
-
-		; Send PBM_SETMARQUEE message to start the marquee.
-		; lParam is time in milliseconds between marquee animation updates.
-		SendMessage $Marquee_Handle ${PBM_SETMARQUEE} 1 50
-
-		System::Call "User32::SetWindowPos(i $Banner_Handle, i -1, i 0, i 0, i 0, i 0, i 83)"
-
-		HideWindow
-
-		Call Full_Scan_Old_Versions
-
-		${If} ${FileExists} "$TEMP\opencpn_hdd_full_scan.tmp"
-			Delete "$TEMP\opencpn_hdd_quick_scan.tmp"
-		${EndIf}
-
-		;# If install locations were found compare with Registry keys
-		${If} $counter_tmp > 0
-			${If} $LM_VERSION_INST != ""
-				ClearErrors
-				FileOpen $R0 "$TEMP\opencpn_hdd_full_scan.tmp" r
-				IfErrors done1
-				${Do}
-					FileReadUTF16LE $R0 $R1
-					${If} $R1 == ""
-						Goto done1
-					${Else}
-						${TrimNewLines} $R1 $R1
-						StrCmp $R1 $R2 done1
-					${EndIf}
-				${Loop}
-				;# Path from Registry key wasn't found => delete RegKey
-				DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenCPN_is1"
-				StrCpy $LM_VERSION_INST ""
-
-				done1:
-				FileClose $R0
-			${EndIf}
-
-			${If} ${FileExists} "$TEMP\opencpn_old_installs.tmp"
-				;# Clear the stack
-				ClearErrors
-				${Do}
-					Pop $0
-					IfErrors empty
-				${Loop}
-				empty:
-
-				ClearErrors
-				FileOpen $R0 "$TEMP\opencpn_old_installs.tmp" r
-
-				IfErrors done3
-				${Do}
-					FileReadUTF16LE $R0 $R3
-					FileReadUTF16LE $R0 $R2
-					${If} $R3 == ""
-						Goto done3
-					${Else}
-						${TrimNewLines} $R3 $R3
-						${TrimNewLines} $R2 $R2
-						FileReadUTF16LE $R0 $R1
-						${TrimNewLines} $R1 $R1
-						ClearErrors
-						FileOpen $0 "$TEMP\opencpn_hdd_full_scan.tmp" r
-						IfErrors next
-						${Do}
-							FileReadUTF16LE $0 $1
-							${If} $1 == ""
-								Goto next
-							${Else}
-								${TrimNewLines} $1 $1
-								StrCmp $1 $R1 done2
-							${EndIf}
-						${Loop}
-						;# Path from Registry key wasn't found => delete RegKey
-						DeleteRegKey HKU $R3
-						Goto next
-
-						done2:
-						Push $R1
-						Push $R2
-						Push $R3
-						next:
-						FileClose $0
-					${EndIf}
-				${Loop}
-				done3:
-				FileClose $R0
-
-				ClearErrors
-				FileOpen $R0 "$TEMP\opencpn_old_installs.tmp" w
-				IfErrors done4
-				${Do}
-					Pop $R1
-					IfErrors done4
-					FileWriteUTF16LE $R0 $R1
-					FileWriteUTF16LE $R0 "$\r$\n"
-				${Loop}
-				done4:
-				FileClose $R0
-			${EndIf}
-		${EndIf}
-
-		EnableWindow $Button_FullScan_CleanUp 0 ;# Disable the Scan HDD button after scan was done
-		EnableWindow $Label_FullScan_CleanUp 0 ;# Disable the Scan HDD label after scan was done
-		SendMessage $GroupBox_CleanUp ${WM_SETTEXT} 0 "STR:$(Install_Location_HDD_Scan)"
-
-		ShowWindow $HWNDPARENT ${SW_SHOW}
-		BringToFront
-
-		; Stop the marquee and set the old styles back for the progress bar control.
-		SendMessage $Marquee_Handle ${PBM_SETMARQUEE} 0 0
-		System::Call "user32::SetWindowLong(i $Marquee_Handle, i ${GWL_STYLE}, i $1)"
-
-		Banner::destroy
-	FunctionEnd
-*/
 
 	Function Button_UnselectAll_CleanUp_Click
 		SendMessage $ListBox_CleanUp ${LB_SETSEL} FALSE -1
@@ -1665,320 +1212,7 @@ FunctionEnd
 		${EndIf}
 	FunctionEnd
 
-/*
-	Var Uninstall_Path_Tmp
-	Function Button_Uninstall_Selected_CleanUp_Click
-		EnableWindow $Button_Uninstall_Selected_CleanUp 0
-		SendMessage $ListBox_CleanUp ${LB_GETSELCOUNT} 0 0 $1
-		${NSD_LB_GetCount} $ListBox_CleanUp $2
-		ClearErrors
-		FileOpen $R0 "$TEMP\opencpn_uninstall.tmp" w
-		IfErrors done
-		IntOp $2 $2 - 1
-		${ForEach} $3 $2 0 - 1
-			SendMessage $ListBox_CleanUp ${LB_GETSEL} $3 0 $4
-			${If} $4 > 0
-				System::Call "User32::SendMessage(i $ListBox_CleanUp, i ${LB_GETTEXT}, i $3, t .r5)"
-				FileWriteUTF16LE $R0 "$5"
-				FileWriteUTF16LE $R0 "$\r$\n"
-				SendMessage $ListBox_CleanUp ${LB_DELETESTRING} $3 0
-			${EndIf}
-		${Next}
-		done:
-		FileClose $R0
 
-		Call ListBox_CleanUp_Change
-
-		StrCpy $R8 ""
-		StrCpy $R7 ""
-		StrCpy $R6 ""
-		StrCpy $R5 ""
-		${If} ${FileExists} "$TEMP\opencpn_uninstall.tmp"
-			${If} ${FileExists} "$TEMP\opencpn_hdd_full_scan.tmp"
-				StrCpy $R8 "opencpn_hdd_full_scan.tmp"
-			${ElseIf} ${FileExists} "$TEMP\opencpn_hdd_quick_scan.tmp"
-				StrCpy $R8 "opencpn_hdd_quick_scan.tmp"
-			${EndIf}
-
-			${If} ${FileExists} "$TEMP\opencpn_old_installs.tmp"
-				StrCpy $R7 1
-			${EndIf}
-
-			${If} ${FileExists} "$TEMP\opencpn_old_uninstall_regkeys.tmp"
-				StrCpy $R6 1
-			${EndIf}
-
-			${If} ${FileExists} "$TEMP\opencpn_appdata.tmp"
-				StrCpy $R5 1
-			${EndIf}
-
-			ClearErrors
-			FileOpen $R4 "$TEMP\opencpn_uninstall.tmp" r
-			IfErrors end
-			loop:
-				ClearErrors
-				FileReadUTF16LE $R4 $0
-				IfErrors end
-				StrCmp $0 "" loop
-				StrCmp $0 "$\r$\n" loop
-
-				${TrimNewLines} $0 $0
-				StrCpy $Uninstall_Path_Tmp $0
-
-				;# Delete installation directory
-				ClearErrors
-				Call Delete_Installation_Dir
-				IfErrors 0 +2
-				MessageBox MB_OK|MB_ICONEXCLAMATION "Error RMDir: $0" ;#ON ERROR
-
-				;# If deleted installation was the one in the HKLM ...\OpenCPN_is1 subkey => delete RegKey
-				${If} $LM_VERSION_INST != ""
-					StrCmp $0 $LM_VERSION_INST 0 cont
-					ClearErrors
-					DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenCPN_is1"
-					IfErrors 0 +2
-					MessageBox MB_OK|MB_ICONEXCLAMATION "Error DeleteRegKey HKLM Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenCPN_is1" ;#ON ERROR
-					StrCpy $LM_VERSION ""
-					StrCpy $LM_VERSION_INST ""
-					StrCpy $LM_VERSION_UNINST ""
-				${EndIf}
-
-				cont:
-				;# Delete Start Menu shortcuts
-				Push $Uninstall_Path_Tmp
-				Call Delete_Start_Menu_Shortcuts
-
-				;# Delete Desktop shortcuts
-				Push $Uninstall_Path_Tmp
-				Call Delete_Desktop_Shortcuts
-
-				;# Delete RegKeys in HKU Software\opencpn.org\...
-				${If} $R7 == 1
-					Call Update_Old_Installs
-				${EndIf}
-
-				;# Delete RegKeys in HKU Software\...\Uninstall\OpenCPN
-				${If} $R6 == 1
-					Call Update_Old_Uninstalls
-				${EndIf}
-
-				;# Delete %APPDATA\opencpn folder
-				${If} $R5 == 1
-					Call Update_Appdata
-				${EndIf}
-
-				${IfNot} $R8 == ""
-					Call Update_HDD_Scan
-				${EndIf}
-
-				Goto loop
-			end:
-			FileClose $R4
-			Delete "$TEMP\opencpn_uninstall.tmp"
-			StrCpy $Uninstall_Path_Tmp ""
-		${EndIf}
-
-		${NSD_LB_GetCount} $ListBox_CleanUp $2
-		${If} $2 == 0 ;# listbox is empty - all were uninstalled
-			StrCpy $Skip_Page_CleanUp 1
-			GetDlgItem $0 $HWNDPARENT 1
-			SendMessage $0 ${BM_CLICK} 0 0
-		${EndIf}
-	FunctionEnd
-*/
-
-/*
-	Function Update_HDD_Scan
-		Push $0
-		Push $1
-		Push $2
-		Push $3
-		Push $4
-		Push $R0
-		Push $R8
-		ClearErrors
-		FileOpen $0 "$TEMP\$R8" r          			;# open target file for reading
-		GetTempFileName $R0                        	;# get new temp file name
-		FileOpen $1 $R0 w                           ;# open temp file for writing
-		IfErrors end
-		loop:
-			FileReadUTF16LE $0 $2                   ;# read line from target file
-			IfErrors done                           ;# check if end of file reached
-			${TrimNewLines} $2 $2
-			StrCmp $2 "$Uninstall_Path_Tmp" +2      ;# compare line with search string with CR/LF
-			FileWriteUTF16LE $1 "$2$\r$\n"          ;# write line to temp file
-			Goto loop
-		done:
-			FileClose $0                            ;# close target file
-			FileClose $1                            ;# close temp file
-			Delete "$TEMP\$R8"             			;# delete target file
-			CopyFiles /SILENT $R0 "$TEMP\$R8"		;# copy temp file to target file
-			Delete $R0                              ;# delete temp file
-		end:
-		Pop $R8
-		Pop $R0
-		Pop $4
-		Pop $3
-		Pop $2
-		Pop $1
-		Pop $0
-	FunctionEnd
-*/
-
-/*
-	Function Update_Old_Installs
-		Push $0
-		Push $1
-		Push $2
-		Push $3
-		Push $4
-		Push $R0
-		Push $R1
-		ClearErrors
-		FileOpen $0 "$TEMP\opencpn_old_installs.tmp" r          	;# open target file for reading
-		GetTempFileName $R0                        					;# get new temp file name
-		FileOpen $1 $R0 w                              				;# open temp file for writing
-		IfErrors end
-		loop:
-			FileReadUTF16LE $0 $4                              		;# read line from target file
-			FileReadUTF16LE $0 $3                              		;# read line from target file
-			FileReadUTF16LE $0 $2                              		;# read line from target file
-			IfErrors done                               			;# check if end of file reached
-			${TrimNewLines} $2 $2
-			StrCmp $2 "$Uninstall_Path_Tmp" +5         				;# compare line with search string with CR/LF
-			FileWriteUTF16LE $1 $4                             		;# write line to temp file
-			FileWriteUTF16LE $1 $3                             		;# write line to temp file
-			FileWriteUTF16LE $1 "$2$\r$\n"                          ;# write line to temp file
-			Goto loop
-			${TrimNewLines} $4 $4
-			DeleteRegKey HKU "$4"
-			${WordFind} "$4" "\" "-2{*" $4
-			DeleteRegKey /ifempty HKU "$4"
-			ClearErrors
-			Goto loop
-		done:
-			FileClose $0                                			;# close target file
-			FileClose $1                                			;# close temp file
-			Delete "$TEMP\opencpn_old_installs.tmp"             	;# delete target file
-			CopyFiles /SILENT $R0 "$TEMP\opencpn_old_installs.tmp"	;# copy temp file to target file
-			Delete $R0                                				;# delete temp file
-		end:
-		Pop $R1
-		Pop $R0
-		Pop $4
-		Pop $3
-		Pop $2
-		Pop $1
-		Pop $0
-	FunctionEnd
-*/
-
-/*
-	Function Update_Old_Uninstalls
-		Push $0
-		Push $1
-		Push $2
-		Push $3
-		Push $4
-		Push $R0
-		Push $R1
-		ClearErrors
-		FileOpen $0 "$TEMP\opencpn_old_uninstall_regkeys.tmp" r     ;# open target file for reading
-		GetTempFileName $R0                        					;# get new temp file name
-		FileOpen $1 $R0 w                              				;# open temp file for writing
-		IfErrors end
-		loop:
-			FileReadUTF16LE $0 $4                              		;# read line from target file
-			FileReadUTF16LE $0 $3                              		;# read line from target file
-			FileReadUTF16LE $0 $2                              		;# read line from target file
-			IfErrors done                               			;# check if end of file reached
-			${TrimNewLines} $2 $2
-			StrCmp $2 "$Uninstall_Path_Tmp" +5         				;# compare line with search string with CR/LF
-			FileWriteUTF16LE $1 $4                             		;# write line to temp file
-			FileWriteUTF16LE $1 $3                             		;# write line to temp file
-			FileWriteUTF16LE $1 "$2$\r$\n"                          ;# write line to temp file
-			Goto loop
-			${TrimNewLines} $3 $3
-			DeleteRegKey HKU "$3"
-			ClearErrors
-			Goto loop
-		done:
-			FileClose $0                                					;# close target file
-			FileClose $1                                					;# close temp file
-			Delete "$TEMP\opencpn_old_uninstall_regkeys.tmp"             	;# delete target file
-			CopyFiles /SILENT $R0 "$TEMP\opencpn_old_uninstall_regkeys.tmp"	;# copy temp file to target file
-			Delete $R0                                						;# delete temp file
-		end:
-		Pop $R1
-		Pop $R0
-		Pop $4
-		Pop $3
-		Pop $2
-		Pop $1
-		Pop $0
-	FunctionEnd
-*/
-
-/*
-	Function Update_Appdata
-		Push $0
-		Push $1
-		Push $2
-		Push $3
-		Push $4
-		Push $R0
-		Push $R1
-		ClearErrors
-		FileOpen $0 "$TEMP\opencpn_appdata.tmp" r          			;# open target file for reading
-		GetTempFileName $R0                        					;# get new temp file name
-		FileOpen $1 $R0 w                              				;# open temp file for writing
-		IfErrors end
-		loop:
-			FileReadUTF16LE $0 $4                              		;# read line from target file
-			FileReadUTF16LE $0 $3                              		;# read line from target file
-			FileReadUTF16LE $0 $2                              		;# read line from target file
-			IfErrors done                               			;# check if end of file reached
-			${TrimNewLines} $2 $2
-			StrCmp $2 "$Uninstall_Path_Tmp" +5         				;# compare line with search string with CR/LF
-			FileWriteUTF16LE $1 $4                             		;# write line to temp file
-			FileWriteUTF16LE $1 $3                             		;# write line to temp file
-			FileWriteUTF16LE $1 "$2$\r$\n"                          ;# write line to temp file
-			Goto loop
-			${TrimNewLines} $3 $3
-			RMDir /r "$3\opencpn"
-			ClearErrors
-			Goto loop
-		done:
-			FileClose $0                                			;# close target file
-			FileClose $1                                			;# close temp file
-			Delete "$TEMP\opencpn_appdata.tmp"             			;# delete target file
-			CopyFiles /SILENT $R0 "$TEMP\opencpn_appdata.tmp"		;# copy temp file to target file
-			Delete $R0                                				;# delete temp file
-		end:
-		Pop $R1
-		Pop $R0
-		Pop $4
-		Pop $3
-		Pop $2
-		Pop $1
-		Pop $0
-	FunctionEnd
-*/
-
-/*
-;--------------------------------
-;# Page_CleanUp_Leave
-	Function Page_CleanUp_Leave
-		${NSD_LB_GetCount} $ListBox_CleanUp $2
-		${If} $2 > 0 ;# listbox is not empty - not all old versions were uninstalled
-			MessageBox MB_YESNO|MB_ICONQUESTION "$(Msg_Not_All_Old_Uninstalled)" IDYES leaving
-			Abort
-		${EndIf}
-		leaving:
-		SendMessage $ListBox_CleanUp ${LB_RESETCONTENT} 0 0
-	FunctionEnd
-
-*/
 
 ;--------------------------------
 ;# Page_TypeInst
@@ -2017,8 +1251,11 @@ FunctionEnd
 			Abort
 		${EndIf}
 
+;                MessageBox MB_OK|MB_ICONSTOP "MULTIPLE_INSTALLS $MULTIPLE_INSTALLS"
+
 		;Case 1: same version already installed => Option 1: Reinstall
 		${If} $VERSION_EXISTS == 1
+                ${AndIf} $MULTIPLE_INSTALLS == 1
 			${NSD_CreateLabel} 0 0 100% 40u "$(Label_TypeInst_Reinstall_Text)"
 			Pop $Label_TypeInst_Reinstall
 
@@ -2027,7 +1264,14 @@ FunctionEnd
 			${NSD_AddStyle} $RB_Reinstall ${WS_GROUP}
 			${NSD_SetState} $RB_Reinstall ${BST_CHECKED}
 
-			StrCpy $GroupBox_Size 1
+                        ${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
+                        Pop $RB_Parallel
+                        ${If} $TI_PARALLEL != ""
+                                ${NSD_SetState} $RB_Parallel $TI_PARALLEL
+                        ${EndIf}
+
+			StrCpy $GroupBox_Size 2
+
 		;Case 2: one older previous installation => Option 1: Upgrade Option 2: Parallel Installation
 		${ElseIf} $MULTIPLE_INSTALLS == 1
 		${AndIf} $VERSION_NEWER == 1
@@ -2043,14 +1287,14 @@ FunctionEnd
 			${AndIf} $TI_PARALLEL == ""
 				${NSD_SetState} $RB_Upgrade ${BST_CHECKED}
 			${EndIf}
-/*
+
 			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
 			${EndIf}
-*/
-			StrCpy $GroupBox_Size 1
+
+			StrCpy $GroupBox_Size 2
 		;Case 3: one newer previous installation => Option 1: Downgrade Option 2: Parallel Installation
 		${ElseIf} $MULTIPLE_INSTALLS == 1
 		${AndIf} $VERSION_OLDER == 1
@@ -2066,15 +1310,15 @@ FunctionEnd
 			${AndIf} $TI_PARALLEL == ""
 				${NSD_SetState} $RB_Downgrade ${BST_CHECKED}
 			${EndIf}
-/*
+
 			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
 			${EndIf}
-*/
-			StrCpy $GroupBox_Size 1
-/*
+
+			StrCpy $GroupBox_Size 2
+
 		;Case 4: more than one previous installation => Option 1: Parallel Installation
 		${ElseIf} $MULTIPLE_INSTALLS > 1
 			${NSD_CreateLabel} 0 0 100% 32u "$(Label_TypeInst_Parallel_Text)"
@@ -2086,7 +1330,7 @@ FunctionEnd
 			${NSD_SetState} $RB_Parallel ${BST_CHECKED}
 
 			StrCpy $GroupBox_Size 1
-*/
+
 		${EndIf}
 
 		${If} $GroupBox_Size == 1
@@ -2116,6 +1360,7 @@ FunctionEnd
 			${NSD_GetState} $RB_Parallel $TI_PARALLEL
 		${EndIf}
 
+
 		StrCpy $Skip_Page_Directory ""
 		${If} $TI_REINSTALL == 1
 			StrCpy $INSTALL_TYPE 1
@@ -2127,6 +1372,9 @@ FunctionEnd
 			StrCpy $INSTALL_TYPE 4
 		${EndIf}
 
+;                MessageBox MB_OK|MB_ICONSTOP "TI_PARALLEL $TI_PARALLEL"
+;                MessageBox MB_OK|MB_ICONSTOP "INSTALL_TYPE $INSTALL_TYPE"
+
 		${If} $INSTALL_TYPE == 1
 		${OrIf} $INSTALL_TYPE == 2
 		${OrIf} $INSTALL_TYPE == 3
@@ -2135,9 +1383,12 @@ FunctionEnd
 			StrCpy $INSTDIR $0
 		${EndIf}
 
-		; On Upgrade or Downgrade, tentatively trim any Package Version trailer from install location
+;                MessageBox MB_OK|MB_ICONSTOP "Install dirA $INSTDIR"
+
+		; On Upgrade or Downgrade or parallel, tentatively trim any Package Version trailer from install location
                 ${If} $INSTALL_TYPE == 2
                 ${OrIf} $INSTALL_TYPE == 3
+                ${OrIf} $TI_PARALLEL == 1
                     StrCpy $R1 0
                      Push $INSTDIR
                      Push "OpenCPN\plugins\s63_pi"
@@ -2150,6 +1401,8 @@ FunctionEnd
                     StrLen $R2 $INSTDIR
                     StrLen $R3 $R1
 
+;                    MessageBox MB_OK|MB_ICONSTOP "Install dirB $INSTDIR"
+
 /*
                     ;   If Previous install dir was a parallel, make the upgrade also parallel.
                     ${If} $R2 > $R3
@@ -2160,104 +1413,10 @@ FunctionEnd
 */
                 ${Endif}
 
-		${If} $INSTALL_TYPE == 4
-			StrCpy $INSTDIR "$PROGRAMFILES\OpenCPN\plugins\s63_pi @CPACK_PACKAGE_VERSION@"
-		${EndIf}
-
 
 
 	FunctionEnd
 
-/*
-;--------------------------------
-;# Page_Components_Pre
-	Function Page_Components_Pre
-
-	FunctionEnd
-
-;--------------------------------
-;# Page_Components_Show
-	Function Page_Components_Show
-	  ;# change controls size and position on the Components Page
-		Push $0
-		Push $1
-		Push $2
-		Push $3
-		Push $4
-		Push $5
-		Push $6
-		Push $7
-
-		FindWindow $mui.ComponentsPage "#32770" "" $HWNDPARENT
-
-		;GetDlgItem $mui.ComponentsPage.Text             $mui.ComponentsPage 1006
-		GetDlgItem $mui.ComponentsPage.InstTypesText    $mui.ComponentsPage 1021
-		ShowWindow $mui.ComponentsPage.InstTypesText ${SW_HIDE}
-
-		GetDlgItem $mui.ComponentsPage.ComponentsText   $mui.ComponentsPage 1022
-		GetDlgItem $mui.ComponentsPage.InstTypes        $mui.ComponentsPage 1017
-		ShowWindow $mui.ComponentsPage.InstTypes ${SW_HIDE}
-
-		GetDlgItem $mui.ComponentsPage.Components       $mui.ComponentsPage 1032
-		GetDlgItem $mui.ComponentsPage.DescriptionTitle $mui.ComponentsPage 1042
-		GetDlgItem $mui.ComponentsPage.DescriptionText  $mui.ComponentsPage 1043
-		GetDlgItem $mui.ComponentsPage.SpaceRequired    $mui.ComponentsPage 1023
-		ShowWindow $mui.ComponentsPage.SpaceRequired ${SW_HIDE}
-
-		Push "198"
-		Push "40"
-		Push "100"
-		Push "100"
-		Call DU2Pix
-		System::Call "User32::SetWindowPos(i $mui.ComponentsPage.DescriptionTitle, i 0, i $1, i $2, i $3, i $4, i 64)" ;# 1042
-
-		Push "203"
-		Push "50"
-		Push "90"
-		Push "85"
-		Call DU2Pix
-		System::Call "User32::SetWindowPos(i $mui.ComponentsPage.DescriptionText, i 0, i $1, i $2, i $3, i $4, i 64)" ;# 1043
-
-		Push "0"
-		Push "25"
-		Push "300"
-		Push "15"
-		Call DU2Pix
-		System::Call "User32::SetWindowPos(i $mui.ComponentsPage.ComponentsText, i 0, i $1, i $2, i $3, i $4, i 64)" ;# 1022
-
-		Push "0"
-		Push "40"
-		Push "195"
-		Push "100"
-		Call DU2Pix
-		System::Call "User32::SetWindowPos(i $mui.ComponentsPage.Components, i 0, i $1, i $2, i $3, i $4, i 64)" ;# 1032
-
-		Pop $7
-		Pop $6
-		Pop $5
-		Pop $4
-		Pop $3
-		Pop $2
-		Pop $1
-		Pop $0
-	FunctionEnd
-
-;--------------------------------
-;# Page_Components_Leave
-	Function Page_Components_Leave
-		${IfNot} ${SectionIsSelected} ${SecSetConfig}
-			StrCpy $Skip_Page_SetConfig 1
-		${Else}
-			StrCpy $Skip_Page_SetConfig 0
-		${EndIf}
-
-		${IfNot} ${SectionIsSelected} ${SecShortcutStartmenu}
-			StrCpy $Skip_Page_Startmenu 1
-		${Else}
-			StrCpy $Skip_Page_Startmenu 0
-		${EndIf}
-	FunctionEnd
-*/
 ;--------------------------------
 ;# Page_Directory_Pre
 	Function Page_Directory_Pre
@@ -2275,233 +1434,12 @@ FunctionEnd
 			Abort
 		${EndIf}
 
-/*
-                ${If} $INSTALL_TYPE == 4
-		${AndIf} ${FileExists} "$INSTDIR\opencpn.exe"
-			MessageBox MB_OK|MB_ICONSTOP "$(Msg_Path_Installation_Exists)"
-			Abort
-		${EndIf}
-*/
-
 	FunctionEnd
 
 
 
 
 
-/*
-;--------------------------------
-;# Page_Startmenu_Pre
-	Function Page_Startmenu_Pre
-		${If} $Skip_Page_Startmenu == 1
-			Abort
-		${EndIf}
-
-		${If} $INSTALL_TYPE == 1
-		${OrIf} $INSTALL_TYPE == 2
-		${OrIf} $INSTALL_TYPE == 3
-			ReadRegStr $0 HKLM "$Prev_Install_RegKey" "StartMenuFolder"
-			StrCpy $STARTMENU_FOLDER $0
-		${EndIf}
-	FunctionEnd
-*/
-;--------------------------------
-/*# Page_SetConfig
-	Var Label_SetConfig
-	Var GroupBox_Language_SetConfig
-	Var CheckBox_Language_SetConfig
-	Var GroupBox_ChartDir_SetConfig
-	Var DirRequest_SetConfig
-	Var Button_Delete_SetConfig
-	Var Button_DeleteAll_SetConfig
-	Var Button_Add_SetConfig
-	Var ListBox_SetConfig
-*/
-
-/*
-	Function Page_SetConfig
-		${If} $Skip_Page_SetConfig == 1
-			Abort
-		${EndIf}
-		!insertmacro MUI_HEADER_TEXT $(Page_SetConfig_Title) $(Page_SetConfig_Subtitle)
-		nsDialogs::Create /NOUNLOAD 1018
-		Pop $0
-		${If} $0 == error
-			Abort
-		${EndIf}
-
-		${NSD_CreateLabel} 0 0 100% 16u "$(Label_SetConfig_Text)"
-		Pop $Label_SetConfig
-
-		${NSD_CreateGroupBox} 0 20u 100% 30u "$(GB_Language_SetConfig_Text)"
-		Pop $GroupBox_Language_SetConfig
-
-		${NSD_CreateCheckBox} 10u 35u 100% 10u "$(CB_Language_SetConfig_Text)"
-		Pop $CheckBox_Language_SetConfig
-		;StrCmp $CONFIG_SET_LANG "" cont
-		${If} $CONFIG_SET_LANG == ""
-			${NSD_SetState} $CheckBox_Language_SetConfig ${BST_CHECKED}
-			Goto cont
-		${EndIf}
-
-		StrCmp $CONFIG_SET_LANG 0 0 +2
-		${NSD_SetState} $CheckBox_Language_SetConfig ${BST_UNCHECKED}
-		StrCmp $CONFIG_SET_LANG 1 0 +2
-		${NSD_SetState} $CheckBox_Language_SetConfig ${BST_CHECKED}
-
-		cont:
-		${NSD_CreateGroupBox} 0 55u 100% 85u "$(GB_ChartDir_SetConfig_Text)"
-		Pop $GroupBox_ChartDir_SetConfig
-
-		${NSD_CreateButton} 220u 70u 60u 15u "$(BT_Delete_SetConfig_Text)"
-		Pop $Button_Delete_SetConfig
-		GetFunctionAddress $0 Button_Delete_SetConfig_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_Delete_SetConfig $0
-
-		${NSD_CreateButton} 220u 88u 60u 15u "$(BT_DeleteAll_SetConfig_Text)"
-		Pop $Button_DeleteAll_SetConfig
-		GetFunctionAddress $0 Button_DeleteAll_SetConfig_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_DeleteAll_SetConfig $0
-
-		${NSD_CreateButton} 220u 115u 60u 15u "$(BT_Browse_SetConfig_Text)"
-		Pop $Button_Add_SetConfig
-		GetFunctionAddress $0 Button_Add_SetConfig_Click
-		nsDialogs::OnClick /NOUNLOAD $Button_Add_SetConfig $0
-
-		${NSD_CreateListBox} 10u 70u 200u 60u $(LB_SetConfig)
-		Pop $ListBox_SetConfig
-		GetFunctionAddress $0 ListBox_SetConfig_Change
-		nsDialogs::OnChange /NOUNLOAD $ListBox_SetConfig $0
-		${IfNot} $CHART_DIR_EMPTY == 1
-			SetShellVarContext all
-			${If} ${FileExists} "$TEMP\opencpn_chart_dirs.tmp"
-				ClearErrors
-				FileOpen $R0 "$TEMP\opencpn_chart_dirs.tmp" r
-				IfErrors end
-				loop:
-					ClearErrors
-					FileReadUTF16LE $R0 $1
-					IfErrors end
-					${TrimNewLines} $1 $1
-					SendMessage $ListBox_SetConfig ${LB_ADDSTRING} 0 "STR:$1"
-					Goto loop
-				end:
-					FileClose $R0
-			${ElseIf} $INI_EXISTS == 1
-				StrCpy $R2 0
-				loop2:
-					IntOp $R2 $R2 + 1
-					ReadINIStr $R1 "$APPDATA\@CPACK_NSIS_PACKAGE_NAME_LC@\opencpn.ini" "ChartDirectories" "ChartDir$R2"
-					StrCmp $R1 "" cont2
-					${WordReplace} "$R1" "\\" "\" "+" $R3
-					${Explode} $R4 "^" "$R3"
-					Pop $R5
-					StrCmp $R5 "" cont2
-					SendMessage $ListBox_SetConfig ${LB_ADDSTRING} 0 "STR:$R5"
-					Goto loop2
-			${Else}
-				ReadRegStr $0 HKLM "Software\OpenCPN" "ChartDirs"
-				StrCmp $0 "" cont2
-				${Explode} $3 ";" "$0"
-				${For} $1 1 $3
-					Pop $2
-					${TrimNewLines} $2 $2
-					SendMessage $ListBox_SetConfig ${LB_ADDSTRING} 0 "STR:$2"
-				${Next}
-			${EndIf}
-		${EndIf}
-
-		cont2:
-			Call ListBox_SetConfig_Change
-			nsDialogs::Show
-	FunctionEnd
-
-	Function Button_Delete_SetConfig_Click
-		SendMessage $ListBox_SetConfig ${LB_GETCURSEL} 0 0 $0
-		SendMessage $ListBox_SetConfig ${LB_DELETESTRING} $0 0
-		Call ListBox_SetConfig_Change
-	FunctionEnd
-
-	Function Button_DeleteAll_SetConfig_Click
-		SendMessage $ListBox_SetConfig ${LB_RESETCONTENT} 0 0
-		Call ListBox_SetConfig_Change
-	FunctionEnd
-
-	Function Button_Add_SetConfig_Click
-		Var /GLOBAL Initial_Dir
-		StrCmp $Initial_Dir "" 0 +3
-		SetShellVarContext all
-		StrCpy $Initial_Dir "$DOCUMENTS"
-		nsDialogs::SelectFolderDialog /NOUNLOAD "$(Select_Chart_Directory)" "$Initial_Dir"
-		Pop $0
-		${If} $0 == error
-			Abort
-		${EndIf}
-		StrCpy $Initial_Dir $0
-		${NSD_LB_GetCount} $ListBox_SetConfig $2
-		${If} $2 > 0
-			SendMessage $ListBox_SetConfig ${LB_FINDSTRINGEXACT} -1 "STR:$0" $6
-			${IfNot} $6 < 0
-				Goto end
-			${EndIf}
-		${EndIf}
-		SendMessage $ListBox_SetConfig ${LB_ADDSTRING} 0 "STR:$0"
-		end:
-		Call ListBox_SetConfig_Change
-	FunctionEnd
-
-	Function ListBox_SetConfig_Change
-		${NSD_LB_GetCount} $ListBox_SetConfig $0
-		${If} $0 > 0
-			StrCpy $CHART_DIR_EMPTY 0
-			${NSD_LB_GetSelection} $ListBox_SetConfig $1
-			${If} $1 != ""
-				EnableWindow $Button_Delete_SetConfig 1
-			${Else}
-				EnableWindow $Button_Delete_SetConfig 0
-			${EndIf}
-			EnableWindow $Button_DeleteAll_SetConfig 1
-		${Else}
-			EnableWindow $Button_Delete_SetConfig 0
-			EnableWindow $Button_DeleteAll_SetConfig 0
-			StrCpy $CHART_DIR_EMPTY 1
-		${EndIf}
-	FunctionEnd
-
-*/
-/*
-;--------------------------------
-# Page_SetConfig_Leave
-#	Var CHART_DIR_TMP_FILE
-
-	Function Page_SetConfig_Leave
-		${NSD_LB_GetCount} $ListBox_SetConfig $0
-		${If} $0 > 0
-			ClearErrors
-			FileOpen $R0 "$TEMP\opencpn_chart_dirs.tmp" w
-			IfErrors done
-			IntOp $0 $0 - 1
-			${For} $1 0 $0
-				SendMessage $ListBox_SetConfig ${LB_SETCURSEL} $1 0
-				System::Call "User32::SendMessage(i $ListBox_SetConfig, i ${LB_GETTEXT}, i $1, t .r2)"
-				FileWriteUTF16LE $R0 $2
-				FileWriteUTF16LE $R0 "$\r$\n"
-			${Next}
-			FileClose $R0
-			StrCpy $CHART_DIR_TMP_FILE 1
-		${Else}
-			StrCpy $CHART_DIR_EMPTY 1
-		${EndIf}
-
-		done:
-		${NSD_GetState} $CheckBox_Language_SetConfig $0
-		${If} $0 == ${BST_CHECKED}
-			StrCpy $CONFIG_SET_LANG 1
-		${Else}
-			StrCpy $CONFIG_SET_LANG 0
-		${EndIf}
-	FunctionEnd
-*/
 ;--------------------------------
 ;# Page_Confirm
 	Var Install_Options
@@ -2535,101 +1473,9 @@ FunctionEnd
 		;# add the installation directory to '$Install_Options'
 		StrCpy $Install_Options "$Install_Options$\r$\n$\r$\n$(Installation_Directory):$\r$\n$\t$INSTDIR"
 
-/*
-		;# add the delete config settings to '$Install_Options'
-		${If} $CONFIG_EXISTS == 1
-		${AndIf} $CONFIG_EMPTY != 1
-			StrCpy $Install_Options "$Install_Options$\r$\n$\r$\n$(Installation_Delete_Config):"
-			SectionGetFlags ${SecGrpResetConfig} $0
-			SectionGetFlags ${SecGrpResetConfig} $1
-			IntOp $0 $0 & ${SF_SELECTED}
-			IntOp $1 $1 & ${SF_PSELECTED}
-			StrCmp $0 0 +3 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecGrpResetConfig_Text)"
-			Goto cont
 
-			StrCmp $1 0 none_selected 0
-			SectionGetFlags ${SecDeleteConfigFile} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteConfigFile_Text)"
-			SectionGetFlags ${SecDeleteChartDB} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteChartDB_Text)"
-			SectionGetFlags ${SecDeleteSENC} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteSENC_Text)"
-			SectionGetFlags ${SecDeleteCM93} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteCM93_Text)"
-			SectionGetFlags ${SecDeleteNavobjFile} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteNavobjFile_Text)"
-			SectionGetFlags ${SecDeleteLogFile} $0
-			IntOp $0 $0 & ${SF_SELECTED}
-			StrCmp $0 0 +2 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(SecDeleteLogFile_Text)"
-			Goto cont
 
-			none_selected:
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(text_none)"
 
-			cont:
-		${EndIf}
-*/
-
-/*
-		;# add the shortcut settings to '$Install_Options'
-		StrCpy $Install_Options "$Install_Options$\r$\n$\r$\n$(Create_Shortcuts):"
-		SectionGetFlags ${SecShortcutStartmenu} $0
-		IntOp $0 $0 & ${SF_SELECTED}
-		${If} $0 != 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(Create_Shortcut_Start_Menu): $STARTMENU_FOLDER"
-			StrCpy $2 1
-		${Else}
-			StrCpy $2 0
-		${EndIf}
-
-		SectionGetFlags ${SecShortcutDesktop} $0
-		IntOp $0 $0 & ${SF_SELECTED}
-		${If} $0 != 0
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(Create_Shortcut_Desktop): $DESKTOP"
-		${Else}
-			StrCmp $2 0 0 +2
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(text_none)"
-		${EndIf}
-*/
-
-/*
-		;# add the pre-config settings to '$Install_Options'
-		${IfNot} ${SectionIsReadOnly} ${SecSetConfig}
-		${AndIf} ${SectionIsSelected} ${SecSetConfig}
-			StrCpy $Install_Options "$Install_Options$\r$\n$\r$\n$(SecSetConfig_Text):"
-			StrCmp $CONFIG_SET_LANG 1 0 +2
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(CB_Language_SetConfig_Text)"
-			StrCmp $CHART_DIR_TMP_FILE 1 0 end
-			IfFileExists "$TEMP\opencpn_chart_dirs.tmp" 0 end
-			StrCpy $Install_Options "$Install_Options$\r$\n$\t$(GB_ChartDir_SetConfig_Text)"
-			ClearErrors
-			FileOpen $0 "$TEMP\opencpn_chart_dirs.tmp" r
-			IfErrors end
-			${Do}
-				FileReadUTF16LE $0 $1
-				IfErrors done
-				${TrimNewLines} $1 $1
-				StrCmp $1 "" +2
-				StrCpy $Install_Options "$Install_Options$\r$\n$\t - $1"
-			${Loop}
-			done:
-			FileClose $0
-			end:
-		${EndIf}
-		;# end '$Install_Options'
-*/
 		nsDialogs::Create /NOUNLOAD 1018
 		Pop $0
 		${If} $0 == error
@@ -3151,7 +1997,7 @@ Function Found_OpenCPN_Installation
 	Push $0
 FunctionEnd
 
-
+/*
 ;Var counter_tmp
 Function Full_Scan_Old_Versions
   ;# Get all HDD Drive Letters on the system
@@ -3162,12 +2008,12 @@ FunctionEnd
 
 Function Scan_Drive
   ;# Scan the given Drive for file "opencpn.exe"
-	/*;#DEBUG - scan only crtain drives
+	;#DEBUG - scan only crtain drives
 	${IfNot} $9 == "D:\"
 	;${AndIfNot} $9 == "F:\"
 		Goto end
 	${EndIf}
-	;#DEBUG End */
+	;#DEBUG End
 	StrCpy $3 "$(Banner_Scan_Drive)"
 	GetDlgItem $2 $Banner_Handle 76
 	SendMessage $2 ${WM_SETTEXT} 0 "STR:$3"
@@ -3246,7 +2092,7 @@ Function Found_OCPN_Exe
 	Pop $1
 	Push $0
 FunctionEnd
-
+*/
 
 Function Delete_Installation_Dir
 	StrCmp $Uninstall_Path_Tmp "" end
@@ -3517,6 +2363,7 @@ Function un.onInit
 		Abort
 	${EndIf}
 
+
 	Call un.GetUserInfo
 	StrCpy $USERS_NAME $USERNAME
 
@@ -3620,7 +2467,7 @@ Function un.onInit
 	Delete "$TEMP\opencpn_*.tmp"
 
 	Call un.VersionDate
-
+/*
 	Call un.Check_Prev_Installs
 
 	;# If there are other installations of OCPN do not remove the config folder!
@@ -3632,7 +2479,7 @@ Function un.onInit
 	${EndIf}
 
 	ReadRegStr $0 HKLM "${REG_KEY_UN}" "CompareVersion"
-
+*/
 	end:
 FunctionEnd
 
@@ -3715,6 +2562,7 @@ FunctionEnd
 		StrCpy $R0 0
 		StrCpy $R1 ""
 		StrCpy $R5 0
+		StrCpy $R7 0
 		StrCpy $VERSION_EXISTS 0
 		SetShellVarContext all
 		${Do}
@@ -3725,27 +2573,35 @@ FunctionEnd
 				IntOp $R0 $R0 + 1
 				${If} $R3 == "s63_pi"
 				${AndIf} $R2 > 7
+
 					ReadRegStr $R4 SHCTX "${REG_ROOT_KEY_UN}\$R1" "CompareVersion"
 					ReadRegStr $R6 SHCTX "${REG_ROOT_KEY_UN}\$R1" "InstallLocation"
 					${If} $R4 != ""
-						${VersionCompare} $VERSION_DATE $R4 $Compare_Version_Result
-						${Switch} $Compare_Version_Result
+                                                ${If} $R7 == 0
+                                                    StrCpy $R7 1
+                                                    ${VersionCompare} $VERSION_DATE $R4 $Compare_Version_Result
+                                                    ${Switch} $Compare_Version_Result
 							${Case} 0 ;equal
 								StrCpy $VERSION_EXISTS 1
-								${Break}
+;								${Break}
 							${Case} 1 ;version to install is newer
 								StrCpy $VERSION_NEWER 1
-								${Break}
+;								${Break}
 							${Case} 2 ;version to install is older
 								StrCpy $VERSION_OLDER 1
-								${Break}
+;								${Break}
 							${Default}
-								${Break}
-						${EndSwitch}
+;								${Break}
+                                                    ${EndSwitch}
+
+                                                    StrCpy $Prev_Install_RegKey "${REG_ROOT_KEY_UN}\$R1"
+						${Endif}
+
 						IntOp $R5 $R5 + 1
-						StrCpy $Prev_Install_RegKey "${REG_ROOT_KEY_UN}\$R1"
+
 					${EndIf}
-					StrCmp ${un} "" 0 uninst ;# only execute when it is the Installer function
+
+
 					${If} $R6 != ""
 						ClearErrors
 						${If} ${FileExists} "$TEMP\opencpn_prev_installs.tmp"
@@ -3761,9 +2617,9 @@ FunctionEnd
 						done:
 					${EndIf}
 
-					${If} $VERSION_EXISTS == 1
-						${Break}
-					${EndIf}
+;					${If} $VERSION_EXISTS == 1
+;						${Break}
+;					${EndIf}
 
 					uninst:
 				${EndIf}
@@ -3771,7 +2627,25 @@ FunctionEnd
 				Goto done2
 			${EndIf}
 		${Loop}
-		done2:
+
+	    done2:
+
+            ;# Special case.. User deleted the one and only OCPN install, without running PlugIn uninstaller
+            ;# Treat this case as a new install
+                ${If} $R5 == 1
+                    ReadRegStr $0 HKLM "$Prev_Install_RegKey" "UninstallString"
+                    ${StrFilter} "$0" "" "" "$\"" $1
+                    ${If} ${FileExists} $1
+                    ${Else}
+                          StrCpy $R5 0
+                    ${EndIf}
+                ${EndIf}
+
+            ;#  Uninstall one previous version
+                ${If} $R5 == 1
+                    StrCmp ${un} "" 0 uninst ;# only execute when it is the Installer function
+                ${EndIf}
+
 		${If} $R5 > 0
 			StrCpy $MULTIPLE_INSTALLS $R5
 		${Else}
