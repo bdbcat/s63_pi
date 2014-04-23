@@ -36,9 +36,10 @@
 #include "wx/socket.h"
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
+#include <wx/notebook.h>
 
 #define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    4
+#define     PLUGIN_VERSION_MINOR    5
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11
@@ -47,7 +48,8 @@
 
 
 enum {
-    ID_BUTTONCELLIMPORT
+    ID_BUTTONCELLIMPORT,
+    ID_NOTEBOOK
 };
 
 //      Private logging functions
@@ -142,7 +144,10 @@ public:
    
     wxStaticText        *m_up_text;
     wxStaticText        *m_ip_text;
-    wxScrolledWindow  *m_s63chartPanelWin;
+    wxScrolledWindow    *m_s63chartPanelWinTop;
+    wxPanel             *m_s63chartPanelWin;
+    wxPanel             *m_s63chartPanelKeys;
+    wxNotebook          *m_s63NB;
     
 private:
     wxString GetPermitDir();
@@ -376,6 +381,38 @@ public:
     
     
 };
+
+class InfoWin: public wxWindow
+{
+public:
+    InfoWin( wxWindow *parent, const wxString&s = _T(""), bool show_gauge = true );
+    ~InfoWin();
+    
+    void SetString(const wxString &s);
+    const wxString& GetString(void) { return m_string; }
+    
+    void SetPosition( wxPoint pt ){ m_position = pt; }
+    void SetWinSize( wxSize sz ){ m_size = sz; }
+    void Realize( void );
+    wxSize GetWinSize( void ){ return m_size; }
+    void OnPaint( wxPaintEvent& event );
+    void OnEraseBackground( wxEraseEvent& event );
+    void OnTimer( wxTimerEvent& event );
+    
+    wxStaticText *m_pInfoTextCtl;
+    wxGauge   *m_pGauge;
+    wxTimer     m_timer;
+    
+private:
+    
+    wxString m_string;
+    wxSize m_size;
+    wxPoint m_position;
+    bool m_bGauge;
+    
+    DECLARE_EVENT_TABLE()
+};
+
 
 #endif
 

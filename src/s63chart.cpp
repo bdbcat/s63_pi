@@ -61,8 +61,11 @@ extern wxString         g_s57data_dir;
 extern bool             g_bsuppress_log;
 extern wxString         g_pi_filename;
 extern wxString         g_SENCdir;
+extern bool             g_benable_screenlog;
 
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
+
+InfoWin                 *g_pInfo;
 
 wxDialog                *s_plogcontainer;
 wxTextCtrl              *s_plogtc;
@@ -206,10 +209,12 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
     
-    cmd += _T(" -b ");
-    wxString port;
-    port.Printf( _T("%d"), g_backchannel_port );
-    cmd += port;
+    if(g_benable_screenlog) {
+        cmd += _T(" -b ");
+        wxString port;
+        port.Printf( _T("%d"), g_backchannel_port );
+        cmd += port;
+    }
 
     cmd += _T(" -p ");
     cmd += m_cell_permit;
@@ -220,7 +225,6 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T("\"");
     
     
-    wxLogMessage( cmd );
     wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
     
@@ -615,11 +619,13 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
-    
-    cmd += _T(" -b ");
-    wxString port;
-    port.Printf( _T("%d"), g_backchannel_port );
-    cmd += port;
+
+    if(g_benable_screenlog){
+        cmd += _T(" -b ");
+        wxString port;
+        port.Printf( _T("%d"), g_backchannel_port );
+        cmd += port;
+    }
     
     cmd += _T(" -r ");
     cmd += _T("\"");
@@ -2512,6 +2518,13 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
 
 int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENCFileName )
 {
+    int retval = BUILD_SENC_OK;
+    
+    if(!g_benable_screenlog) {
+        g_pInfo = new InfoWin( GetOCPNCanvasWindow(), _("Building eSENC") );
+        g_pInfo->Realize();
+        g_pInfo->Center();
+    }
     
     //  Build the array of update filenames into a temporary file
     wxString tmp_up_file = wxFileName::CreateTempFileName( _T("") );
@@ -2562,10 +2575,12 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
     
-    cmd += _T(" -b ");
-    wxString port;
-    port.Printf( _T("%d"), g_backchannel_port );
-    cmd += port;
+    if(g_benable_screenlog){
+        cmd += _T(" -b ");
+        wxString port;
+        port.Printf( _T("%d"), g_backchannel_port );
+        cmd += port;
+    }
     
     cmd += _T(" -r ");
     cmd += _T("\"");
@@ -2607,18 +2622,25 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
                 ScreenLogMessage( _T("\n") );
         }
  */       
-    if( wxNOT_FOUND == s_last_sync_error.Find(_T("NOEXEC")) ){        // OCPNsenc ran, with errors
+        if( wxNOT_FOUND == s_last_sync_error.Find(_T("NOEXEC")) ){        // OCPNsenc ran, with errors
             //ScreenLogMessage( _T(" Removing bad eSENC file"));
 
             //TODO  this does not work, due to a fault in the Chrtdb remove code
             //wxRemoveFile( outfile );     //  so kill a bad SENC
         }
             
-        return BUILD_SENC_NOK_PERMANENT;
+        retval = BUILD_SENC_NOK_PERMANENT;
     }
+    else
+        retval = BUILD_SENC_OK;
     
-//    HideScreenLog();
-    return BUILD_SENC_OK;
+    if(g_pInfo){
+        g_pInfo->Destroy();
+        g_pInfo = NULL;
+    }
+
+
+    return retval;
 }
 
 int ChartS63::_insertRules( PI_S57Obj *obj )
