@@ -603,17 +603,11 @@ int s63_pi::ImportCells( void )
         return 0;
     }
 
-    wxString msg = _("OpenCPN can create eSENC files as cells are imported.\n\n");
-    msg += _("Note:\n");
-    msg += _("This process may take some time.\n");
-    msg += _("The process may be Cancelled by the user at any time.\n");
-    msg += _("eSENCS not yet processed will be created as needed by OpenCPN.\n\n");
-    msg += _("Create eSENCs on Import?\n");
-    
+    wxString msg = _("OpenCPN can create eSENC files as cells are imported.\n\nNote:\nThis process may take some time.\neSENCS not processed here will be created as needed by OpenCPN.\n\nCreate eSENCs on Import?\n");
     
     int dret = OCPNMessageBox_PlugIn(NULL,
                           msg,
-                          _T("s63_pi Message"),  wxYES_NO, -1, -1);
+                          _("s63_pi Message"),  wxYES_NO, -1, -1);
               
     bool bSENC = (dret == wxID_YES);
 
@@ -692,7 +686,7 @@ int s63_pi::ImportCells( void )
         wxString msg = _("Security Scheme Error\n\n SSE 10 - Permits not available for this data provider.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -949,17 +943,17 @@ int s63_pi::ImportCells( void )
                             if(update_updn != installed_updn + 1){
                                 wxString msg = _("Security Scheme Error\n\n SSE 23 - Non sequential update, previous update(s) missing.\nTry reloading from the base media. \n If the problem persists contact your data supplier.\n\n");
                                 wxString m1;
-                                m1.Printf(_T("cell:"));
+                                m1.Printf(_("cell:"));
                                 msg += m1;
                                 msg += fn2.GetFullPath();
                                 msg += _T("\n");
-                                m1.Printf(_T("Latest intalled update: %d\n"), installed_updn);
+                                m1.Printf(_("Latest intalled update: %d\n"), installed_updn);
                                 msg += m1;
-                                m1.Printf(_T("Attempted update: %d\n"), update_updn);
+                                m1.Printf(_("Attempted update: %d\n"), update_updn);
                                 msg += m1;
                                 OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                                       msg,
-                                                      _T("s63_pi Message"),  wxOK, -1, -1);
+                                                      _("s63_pi Message"),  wxOK, -1, -1);
                                 
                                 ScreenLogMessage( msg );
                                 wxLogMessage(_T("s63_pi: ") + msg);
@@ -1098,11 +1092,10 @@ int s63_pi::ImportCert(void)
         ScreenLogMessage(_T("SA Digital Certificate format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\n");
-        msg += _("A valid certificate can be obtained from the IHO website or your data supplier.\n");
+        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\nA valid certificate can be obtained from the IHO website or your data supplier.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -1127,7 +1120,7 @@ int s63_pi::ImportCert(void)
     
 
     OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(), msg,
-                             _T("s63_pi Message"),  wxOK, -1, -1);
+                             _("s63_pi Message"),  wxOK, -1, -1);
     
     m_cert_list->BuildList( GetCertificateDir() );
     
@@ -1146,6 +1139,9 @@ int s63_pi::ImportCellPermits(void)
     int response = openDialog->ShowModal();
     if( response == wxID_OK )
         permit_file_name = openDialog->GetPath();
+    else if( response == wxID_CANCEL )
+        return 0;
+        
     
     wxFileName fn(permit_file_name);
     m_SelectPermit_dir = fn.GetPath();          // save for later
@@ -1190,8 +1186,8 @@ int s63_pi::ImportCellPermits(void)
 
     if( !n_permits){
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
-                              _T("Security Scheme Error\n\nSSE 11 - Cell permit not found"),
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("Security Scheme Error\n\nSSE 11 - Cell permit not found"),
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi:  SSE 11 – Cell permit not found" ));
     }
@@ -1224,12 +1220,12 @@ int s63_pi::ProcessCellPermit( wxString &permit )
 
     //  A simple length test for poorly formatted cell permits
     if( cellpermitstring.Length() != 64) {
-        wxString msg = _T("Security Scheme Error\n\nSSE 12 – Cell permit format is incorrect\n\nIncorrect cell permit line starts with ");
+        wxString msg = _("Security Scheme Error\n\nSSE 12 – Cell permit format is incorrect\n\nIncorrect cell permit line starts with ");
         msg += cellpermitstring.Mid(0, 16);
         msg += _T("...");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -1255,14 +1251,12 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
         wxString line = valup_result[i];
         if(line.Upper().Find(_T("ERROR")) != wxNOT_FOUND){
-            wxString msg = _("Security Scheme Error\n\nSSE 13 - Cell Permit is invalid (checksum is incorrect)\n");
-            msg += _("or the Cell Permit is for a different system.\n\n");
-            msg += _("Invalid cell permit starts with ");
+            wxString msg = _("Security Scheme Error\n\nSSE 13 - Cell Permit is invalid (checksum is incorrect)\nor the Cell Permit is for a different system.\n\n Invalid cell permit starts with ");
             msg += cellpermitstring.Mid(0, 24);
             msg += _T("...");
             OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                   msg,
-                                  _T("s63_pi Message"),  wxOK, -1, -1);
+                                  _("s63_pi Message"),  wxOK, -1, -1);
                                   
             wxLogMessage(_T("s63_pi: ") + msg);
                                   
@@ -1533,12 +1527,11 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
         ScreenLogMessage(_T("Signature file format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 24 - ENC Signature format is incorrect.\n\n");
-        msg += _T("Cell name: ");
+        wxString msg = _("Security Scheme Error\n\nSSE 24 - ENC Signature format is incorrect.\n\n Cell name: ");
         msg += cell_file;
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -1556,11 +1549,10 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
         ScreenLogMessage(_T("SA Digital Certificate format OK\n") );
     }
     else {
-        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\n");
-        msg += _("A valid certificate can be obtained from the IHO website or your data supplier.\n");
+        wxString msg = _("Security Scheme Error\n\nSSE 08 - SA Digital Certificate file incorrect format.\nA valid certificate can be obtained from the IHO website or your data supplier.\n");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -1596,14 +1588,11 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
     if( !b_auth ){
         ScreenLogMessage(_T("Certificate Authentication FAILED\n\n") );
         
-        wxString msg = _T("Security Scheme Error\n\nSSE 06 - The SA Signed Data Server Certificate is invalid.\n");
-        msg += _T("The SA may have issued a new public key or the ENC may originate from another service.\n");
-        msg += _T("A new SA public key can be obtained from the IHO website or from your data supplier.\n\n");
-        msg += _T("Cell name: ");
+        wxString msg = _("Security Scheme Error\n\nSSE 06 - The SA Signed Data Server Certificate is invalid.\nThe SA may have issued a new public key or the ENC may originate from another service.\nA new SA public key can be obtained from the IHO website or from your data supplier.\n\nCell name: ");
         msg += cell_file;
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -1611,12 +1600,11 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
     }
     else {
         if( !iho_result && !m_bSSE26_shown ) {
-            wxString msg = _T("Security Scheme Warning\n\nSSE 26 – ENC is not authenticated by the IHO acting as the SA.\n\n");
-            msg += _T("Cell name: ");
+            wxString msg = _("Security Scheme Warning\n\nSSE 26 – ENC is not authenticated by the IHO acting as the SA.\n\nCell name: ");
             msg += cell_file;
             OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                   msg,
-                                  _T("s63_pi Message"),  wxOK, -1, -1);
+                                  _("s63_pi Message"),  wxOK, -1, -1);
                                   
                                   wxLogMessage(_T("s63_pi: ") + msg);
             m_bSSE26_shown = true;                      
@@ -1629,12 +1617,11 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
     
     b_auth = validate_enc_cell( sig_file, cell_file );
     if(!b_auth){
-        wxString msg = _T("Security Scheme Error\n\nSSE 09 – ENC Signature is invalid.\n");
-        msg += _T("Cell name: ");
+        wxString msg = _("Security Scheme Error\n\nSSE 09 – ENC Signature is invalid.\nCell name: ");
         msg += cell_file;
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
-                              _T("s63_pi Message"),  wxOK, -1, -1);
+                              _("s63_pi Message"),  wxOK, -1, -1);
         
         wxLogMessage(_T("s63_pi: ") + msg);
         
@@ -2556,6 +2543,8 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
      
      long wstyle = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER;
      wxDialog::Create( parent, id, caption, pos, size, wstyle );
+
+     SetTitle( _("S63_pi Userpermit Required"));
      
      CreateControls();
      GetSizer()->SetSizeHints( this );
@@ -2803,6 +2792,8 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
 #endif
      
      wxDialog::Create( parent, id, caption, pos, size, wstyle );
+     
+     SetTitle( _("S63_pi Install Permit Required"));
      
      CreateControls();
      GetSizer()->SetSizeHints( this );
