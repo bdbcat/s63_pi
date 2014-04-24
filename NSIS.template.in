@@ -814,6 +814,7 @@ Section "-Install Section" SecInstall
         CopyFiles "$INSTDIR\lib\locale\es\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\es\LC_MESSAGES"
         CopyFiles "$INSTDIR\lib\locale\et\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\et\LC_MESSAGES"
         CopyFiles "$INSTDIR\lib\locale\pl\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\pl\LC_MESSAGES"
+        CopyFiles "$INSTDIR\lib\locale\ru\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\ru\LC_MESSAGES"
 
 	;# Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe"
@@ -3521,8 +3522,6 @@ Var explArrCount
 
 	LangString Banner_Installation_Found_Plural ${LANG_ENGLISH} "Found $counter_tmp installations"
 
-  ;added on 2010-10-21
-	LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
 
   ;added on 2011-06-13
 	LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
