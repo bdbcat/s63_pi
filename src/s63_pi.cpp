@@ -1828,15 +1828,134 @@ void ClearScreenLog(void)
     
 }
 
+
+BEGIN_EVENT_TABLE(InfoWinDialog, wxDialog)
+EVT_PAINT ( InfoWinDialog::OnPaint )
+EVT_ERASE_BACKGROUND(InfoWinDialog::OnEraseBackground)
+EVT_TIMER(-1, InfoWinDialog::OnTimer)
+END_EVENT_TABLE()
+
+
+// Define a constructor
+InfoWinDialog::InfoWinDialog( wxWindow *parent, const wxString&s, bool show_gauge ) :
+wxDialog( parent, wxID_ANY, _T("Info"), wxDefaultPosition, wxDefaultSize,  wxSTAY_ON_TOP )
+{
+    int ststyle = wxALIGN_LEFT | wxST_NO_AUTORESIZE;
+    m_pInfoTextCtl = new wxStaticText( this, -1, _T ( "" ), wxDefaultPosition, wxDefaultSize,
+                                       ststyle );
+    
+    
+    m_pGauge = NULL;
+    m_bGauge = show_gauge;
+    SetString( s );
+    
+    if(m_bGauge) {
+        m_timer.SetOwner( this, -1 );
+        m_timer.Start( 100 );
+    }
+    
+    
+    Hide();
+}
+
+InfoWinDialog::~InfoWinDialog()
+{
+    delete m_pInfoTextCtl;
+}
+
+void InfoWinDialog::OnTimer(wxTimerEvent &evt)
+{
+    if(m_pGauge)
+        m_pGauge->Pulse();
+    
+    #ifdef __WXMAC__
+        Raise();
+    #endif
+        
+    
+}
+
+
+void InfoWinDialog::OnEraseBackground( wxEraseEvent& event )
+{
+}
+
+void InfoWinDialog::OnPaint( wxPaintEvent& event )
+{
+    int width, height;
+    GetClientSize( &width, &height );
+    wxPaintDC dc( this );
+    
+    wxColour c;
+
+    GetGlobalColor( _T ( "UIBCK" ), &c );
+    dc.SetBrush( wxBrush( c ) );
+    
+    GetGlobalColor( _T ( "UITX1" ), &c );
+    dc.SetPen( wxPen( c ) );
+    
+    dc.DrawRectangle( 0, 0, width, height );
+}
+
+void InfoWinDialog::Realize()
+{
+    wxColour c;
+    
+    GetGlobalColor( _T ( "UIBCK" ), &c );
+    SetBackgroundColour( c );
+    
+    GetGlobalColor( _T ( "UIBCK" ), &c );
+    m_pInfoTextCtl->SetBackgroundColour( c );
+    
+    GetGlobalColor( _T ( "UITX1" ), &c );
+    m_pInfoTextCtl->SetForegroundColour( c );
+    
+    int x;
+    GetTextExtent(m_string, &x, NULL);
+    
+    m_pInfoTextCtl->SetSize( (m_size.x - x)/2, 4, m_size.x - 2, m_size.y - 2 );
+    m_pInfoTextCtl->SetLabel( m_string );
+    
+    if(m_bGauge){
+        if(m_pGauge)
+            delete m_pGauge;
+        m_pGauge = new wxGauge(this, -1, 10, wxPoint(10, 20), wxSize(m_size.x - 20, 20),  wxGA_HORIZONTAL | wxGA_SMOOTH);
+    }
+    
+    SetSize( m_position.x, m_position.y, m_size.x, m_size.y );
+    
+    Show();
+}
+
+void InfoWinDialog::SetString(const wxString &s)
+{
+    m_string = s; 
+    
+    wxSize size;
+    
+    size.x = GetCharWidth() * m_string.Len();
+    size.y = GetCharHeight()+10;
+    
+    if(m_bGauge)
+        size.y += 30;
+    
+    SetWinSize( size );
+    
+}     
+
+
+
+
 BEGIN_EVENT_TABLE(InfoWin, wxWindow)
 EVT_PAINT ( InfoWin::OnPaint )
 EVT_ERASE_BACKGROUND(InfoWin::OnEraseBackground)
 EVT_TIMER(-1, InfoWin::OnTimer)
 END_EVENT_TABLE()
 
+
 // Define a constructor
 InfoWin::InfoWin( wxWindow *parent, const wxString&s, bool show_gauge ) :
-wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER )
+wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize )
 {
     int ststyle = wxALIGN_LEFT | wxST_NO_AUTORESIZE;
     m_pInfoTextCtl = new wxStaticText( this, -1, _T ( "" ), wxDefaultPosition, wxDefaultSize,
@@ -1865,6 +1984,7 @@ void InfoWin::OnTimer(wxTimerEvent &evt)
 {
     if(m_pGauge)
         m_pGauge->Pulse();
+    
 }
 
 
@@ -1879,7 +1999,7 @@ void InfoWin::OnPaint( wxPaintEvent& event )
     wxPaintDC dc( this );
     
     wxColour c;
-
+    
     GetGlobalColor( _T ( "UIBCK" ), &c );
     dc.SetBrush( wxBrush( c ) );
     
@@ -1934,8 +2054,6 @@ void InfoWin::SetString(const wxString &s)
     SetWinSize( size );
     
 }     
-
-
 
 
 

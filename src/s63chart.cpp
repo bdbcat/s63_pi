@@ -66,6 +66,7 @@ extern bool             g_benable_screenlog;
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
 InfoWin                 *g_pInfo;
+InfoWinDialog           *g_pInfoDlg;
 
 wxDialog                *s_plogcontainer;
 wxTextCtrl              *s_plogtc;
@@ -2521,9 +2522,15 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     int retval = BUILD_SENC_OK;
     
     if(!g_benable_screenlog) {
+#ifdef __WXOSX__        
+        g_pInfoDlg = new InfoWinDialog( GetOCPNCanvasWindow(), _("Building eSENC") );
+        g_pInfoDlg->Realize();
+        g_pInfoDlg->Center();
+#else
         g_pInfo = new InfoWin( GetOCPNCanvasWindow(), _("Building eSENC") );
         g_pInfo->Realize();
         g_pInfo->Center();
+#endif        
     }
     
     //  Build the array of update filenames into a temporary file
@@ -2639,7 +2646,12 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
         g_pInfo = NULL;
     }
 
-
+    if(g_pInfoDlg){
+        g_pInfoDlg->Destroy();
+        g_pInfoDlg = NULL;
+    }
+    
+    
     return retval;
 }
 

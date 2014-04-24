@@ -413,6 +413,36 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
+class InfoWinDialog: public wxDialog
+{
+public:
+    InfoWinDialog( wxWindow *parent, const wxString&s = _T(""), bool show_gauge = true );
+    ~InfoWinDialog();
+    
+    void SetString(const wxString &s);
+    const wxString& GetString(void) { return m_string; }
+    
+    void SetPosition( wxPoint pt ){ m_position = pt; }
+    void SetWinSize( wxSize sz ){ m_size = sz; }
+    void Realize( void );
+    wxSize GetWinSize( void ){ return m_size; }
+    void OnPaint( wxPaintEvent& event );
+    void OnEraseBackground( wxEraseEvent& event );
+    void OnTimer( wxTimerEvent& event );
+    
+    wxStaticText *m_pInfoTextCtl;
+    wxGauge   *m_pGauge;
+    wxTimer     m_timer;
+    
+private:
+    
+    wxString m_string;
+    wxSize m_size;
+    wxPoint m_position;
+    bool m_bGauge;
+    
+    DECLARE_EVENT_TABLE()
+};
 
 #endif
 
