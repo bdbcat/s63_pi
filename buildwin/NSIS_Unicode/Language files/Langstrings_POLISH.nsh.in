@@ -65,10 +65,6 @@
 
 #LangString Msg_Path_Invalid ${LANG_ENGLISH} "The entered path is invalid!$\r$\n$\r$\nPlease check your input."
 
-
-;added on 2010-10-21
-#LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
-
 ;added on 2011-06-13
 #LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
 

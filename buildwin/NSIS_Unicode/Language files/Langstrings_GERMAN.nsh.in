@@ -97,14 +97,8 @@ LangString Msg_Error_Remove_InstDir ${LANG_GERMAN} "Das Installationsverzeichnis
 #LangString Msg_Path_Invalid ${LANG_ENGLISH} "The entered path is invalid!$\r$\n$\r$\nPlease check your input."
 LangString Msg_Path_Invalid ${LANG_GERMAN} "Der angegebene Pfad ist ungültig!$\r$\n$\r$\nBitte überprüfen Sie Ihre Eingabe."
 
-
 #LangString Banner_Installation_Found_Plural ${LANG_ENGLISH} "Found $counter_tmp installations"
 LangString Banner_Installation_Found_Plural ${LANG_GERMAN} "$counter_tmp Installationen gefunden"
-
-
-;added on 2010-10-21
-#LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
-LangString Uninstall_Folder_Name ${LANG_GERMAN} "Deinstallation"
 
 #LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
 LangString ^NameDA ${LANG_GERMAN} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"

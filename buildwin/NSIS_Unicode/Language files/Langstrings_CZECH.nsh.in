@@ -98,10 +98,6 @@ LangString Msg_Error_Remove_InstDir ${LANG_CZECH} "Instalační složka$\r$\n'$I
 #LangString Msg_Path_Invalid ${LANG_ENGLISH} "The entered path is invalid!$\r$\n$\r$\nPlease check your input."
 LangString Msg_Path_Invalid ${LANG_CZECH} "Zadaná cesta je neplatná!$\r$\n$\r$\nZkontrolujte prosím své zadání."
 
-;added on 2010-10-21
-#LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
-LangString Uninstall_Folder_Name ${LANG_CZECH} "Odinstalovat"
-
 ;added on 2011-06-13
 #LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
 LangString ^NameDA ${LANG_CZECH} "@CPACK_PACKAGE_NAME@ Verze @CPACK_PACKAGE_VERSION@"

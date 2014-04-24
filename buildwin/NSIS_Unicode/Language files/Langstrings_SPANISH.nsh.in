@@ -94,10 +94,6 @@ LangString Msg_Error_Remove_InstDir ${LANG_SPANISH} "No ha sido posible eliminar
 #LangString Msg_Path_Invalid ${LANG_ENGLISH} "The entered path is invalid!$\r$\n$\r$\nPlease check your input."
 LangString Msg_Path_Invalid ${LANG_SPANISH} "La dirección indicada no es válida!$\r$\n$\r$\nComprube la entrada."
 
-;added on 2010-10-21
-#LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
-LangString Uninstall_Folder_Name ${LANG_SPANISH} "Desinstalación"
-
 ;added on 2011-06-13
 #LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
 LangString ^NameDA ${LANG_SPANISH} "@CPACK_PACKAGE_NAME@ versión @CPACK_PACKAGE_VERSION@"

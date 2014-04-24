@@ -98,10 +98,6 @@ LangString Msg_Error_Remove_InstDir ${LANG_FRENCH} "Le répertoire d'installatio
 #LangString Msg_Path_Invalid ${LANG_ENGLISH} "The entered path is invalid!$\r$\n$\r$\nPlease check your input."
 LangString Msg_Path_Invalid ${LANG_FRENCH} "L'adresse est invalide!$\r$\n$\r$\Veuillez vérifier votre saisie."
 
-;added on 2010-10-21
-#LangString Uninstall_Folder_Name ${LANG_ENGLISH} "Uninstall"
-LangString Uninstall_Folder_Name ${LANG_FRENCH} "Désinstallation"
-
 ;added on 2011-06-13
 #LangString ^NameDA ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
 LangString ^NameDA ${LANG_FRENCH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@"
