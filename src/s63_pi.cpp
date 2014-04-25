@@ -1900,7 +1900,7 @@ void InfoWinDialog::Realize()
     int x;
     GetTextExtent(m_string, &x, NULL);
     
-    m_pInfoTextCtl->SetSize( (m_size.x - x)/2, 4, m_size.x - 2, m_size.y - 2 );
+    m_pInfoTextCtl->SetSize( (m_size.x - x)/2, 4, x + 10, m_size.y - 6  );
     m_pInfoTextCtl->SetLabel( m_string );
     
     if(m_bGauge){
@@ -1920,7 +1920,7 @@ void InfoWinDialog::SetString(const wxString &s)
     
     wxSize size;
     
-    size.x = GetCharWidth() * m_string.Len();
+    size.x = (GetCharWidth() * m_string.Len()) + 20;
     size.y = GetCharHeight()+10;
     
     if(m_bGauge)
@@ -1993,7 +1993,7 @@ void InfoWin::OnPaint( wxPaintEvent& event )
     GetGlobalColor( _T ( "UITX1" ), &c );
     dc.SetPen( wxPen( c ) );
     
-    dc.DrawRectangle( 0, 0, width, height );
+    dc.DrawRectangle( 0, 0, width-1, height-1 );
 }
 
 void InfoWin::Realize()
@@ -2012,7 +2012,7 @@ void InfoWin::Realize()
     int x;
     GetTextExtent(m_string, &x, NULL);
     
-    m_pInfoTextCtl->SetSize( (m_size.x - x)/2, 4, m_size.x - 2, m_size.y - 2 );
+    m_pInfoTextCtl->SetSize( (m_size.x - x)/2, 4, x + 10, m_size.y - 6 );
     m_pInfoTextCtl->SetLabel( m_string );
     
     if(m_bGauge){
@@ -2032,7 +2032,7 @@ void InfoWin::SetString(const wxString &s)
     
     wxSize size;
     
-    size.x = GetCharWidth() * m_string.Len();
+    size.x = (GetCharWidth() * m_string.Len()) + 20;
     size.y = GetCharHeight()+10;
     
     if(m_bGauge)
@@ -2607,23 +2607,23 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
      itemStaticBoxSizer4->Add( m_PermitCtl, 0,
                                wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 5 );
  
-     wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxHORIZONTAL );
-     itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL, 5 );
+     wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxVERTICAL );
+     itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL | wxEXPAND, 5 );
      
      m_testBtn = new wxButton(itemDialog1, ID_GETUP_TEST, _("Test Userpermit"));
      m_testBtn->Disable();
      itemBoxSizerTest->Add( m_testBtn, 0, wxALIGN_LEFT | wxALL, 5 );
 
      wxStaticBox* itemStaticBoxTestResults = new wxStaticBox( itemDialog1, wxID_ANY,
-                                                                  _("Test Results"), wxDefaultPosition, wxSize(500, 40) );
+                                                                  _("Test Results"), wxDefaultPosition, wxSize(-1, 40) );
      
-     wxStaticBoxSizer* itemStaticBoxSizerTest = new wxStaticBoxSizer( itemStaticBoxTestResults,  wxVERTICAL );
-     itemBoxSizerTest->Add( itemStaticBoxSizerTest, 0,  wxALIGN_RIGHT |wxALL, 5 );
+     wxStaticBoxSizer* itemStaticBoxSizerTest = new wxStaticBoxSizer( itemStaticBoxTestResults,  wxHORIZONTAL );
+     itemBoxSizerTest->Add( itemStaticBoxSizerTest, 0,  wxALIGN_RIGHT | wxALL | wxEXPAND, 5 );
      
      
-     m_TestResult = new wxStaticText( itemDialog1, -1, _T(""), wxDefaultPosition, wxSize( 180, -1 ), 0 );
+     m_TestResult = new wxStaticText( itemDialog1, -1, _T(""), wxDefaultPosition, wxSize( -1, -1 ), 0 );
      
-     itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL, 5 );
+     itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL | wxEXPAND, 5 );
      
      
      
@@ -2830,23 +2830,23 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      itemStaticBoxSizer4->Add( m_PermitCtl, 0,
                                wxALIGN_LEFT | wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 5 );
  
-     wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxHORIZONTAL );
-     itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL, 5 );
+     wxBoxSizer* itemBoxSizerTest = new wxBoxSizer( wxVERTICAL );
+     itemBoxSizer2->Add( itemBoxSizerTest, 0, wxALIGN_LEFT | wxALL | wxEXPAND, 5 );
      
      m_testBtn = new wxButton(itemDialog1, ID_GETIP_TEST, _("Test Installpermit"));
      m_testBtn->Disable();
      itemBoxSizerTest->Add( m_testBtn, 0, wxALIGN_LEFT | wxALL, 5 );
 
      wxStaticBox* itemStaticBoxTestResults = new wxStaticBox( itemDialog1, wxID_ANY,
-                                                                  _("Test Results"), wxDefaultPosition, wxSize(500, 40) );
+                                                                  _("Test Results"), wxDefaultPosition, wxSize(-1, 40) );
      
-     wxStaticBoxSizer* itemStaticBoxSizerTest = new wxStaticBoxSizer( itemStaticBoxTestResults,  wxVERTICAL );
-     itemBoxSizerTest->Add( itemStaticBoxSizerTest, 0,  wxALIGN_RIGHT |wxALL, 5 );
+     wxStaticBoxSizer* itemStaticBoxSizerTest = new wxStaticBoxSizer( itemStaticBoxTestResults,  wxHORIZONTAL );
+     itemBoxSizerTest->Add( itemStaticBoxSizerTest, 0,  wxALIGN_RIGHT |wxALL | wxEXPAND, 5 );
      
      
-     m_TestResult = new wxStaticText( itemDialog1, -1, _T(""), wxDefaultPosition, wxSize( 180, -1 ), 0 );
+     m_TestResult = new wxStaticText( itemDialog1, -1, _T(""), wxDefaultPosition, wxSize( -1, -1 ), 0 );
      
-     itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL, 5 );
+     itemStaticBoxSizerTest->Add( m_TestResult, 0, wxALIGN_LEFT | wxALL | wxEXPAND, 5 );
      
      
      wxBoxSizer* itemBoxSizer16 = new wxBoxSizer( wxHORIZONTAL );
