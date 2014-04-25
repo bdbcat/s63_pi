@@ -284,7 +284,12 @@ MACRO(GETTEXT_BUILD_MO  _poFile _lang)
 
 IF(APPLE)
 #  Copy/rename the .mo file into a spot where Packages installer can find it
-      configure_file(${_gmoFile} "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo" COPYONLY)
+      ADD_CUSTOM_COMMAND(
+         OUTPUT "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo"
+         COMMAND configure_file(${_gmoFile} "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo" COPYONLY)
+         DEPENDS ${_absFile}
+         COMMENT "s63-i18n [${_poBasename}]: Copied mo file." )
+
 ENDIF(APPLE)
 
 IF(APPLE)
@@ -471,10 +476,52 @@ IF(APPLE)
  ADD_CUSTOM_TARGET(create-dmg COMMENT "create-dmg: Done."
  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.dmg)
 
+ #  Copy a bunch of files so the Packages installer builder can find them
+ #  relative to ${CMAKE_CURRENT_BINARY_DIR}
+ #  This avoids absolute paths in the S63.pkgproj file
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/OCPNsenc/OCPNsenc
+            ${CMAKE_CURRENT_BINARY_DIR}/OCPNsenc COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-cz.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-cz.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_erklaert-0_4.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_erklaert-0_4.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-0_4en.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-0_4en.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-es.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-es.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-fr.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-fr.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-it.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-it.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S-63_plug-in_explained-nl.rtf
+            ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-nl.rtf COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/license.txt
+            ${CMAKE_CURRENT_BINARY_DIR}/license.txt COPYONLY)
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/Readme.txt
+            ${CMAKE_CURRENT_BINARY_DIR}/Readme.txt COPYONLY)
+
+ # Patch the pkgproj.in file to make the output package name conform to S63-Plugin_x.x.x.pkg format
+ #  Key is:
+ #  <key>NAME</key>
+ #  <string>S63-Plugin_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}</string>
+
+ configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S63.pkgproj.in
+            ${CMAKE_CURRENT_BINARY_DIR}/S63.pkgproj)
+
  ADD_CUSTOM_COMMAND(
    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/S63-Plugin.pkg
-   COMMAND /usr/local/bin/packagesbuild ${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S63.pkgproj
-   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+   COMMAND /usr/local/bin/packagesbuild -F ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/S63.pkgproj
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
    DEPENDS s63_pi
    COMMENT "create-pkg [${PACKAGE_NAME}]: Generating pkg file."
 )

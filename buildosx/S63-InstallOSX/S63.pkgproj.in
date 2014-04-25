@@ -34,7 +34,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/libs63_pi.dylib</string>
+																	<string>libs63_pi.dylib</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -50,7 +50,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>../OCPNsenc/OCPNsenc</string>
+																	<string>OCPNsenc</string>
 																	<key>PATH_TYPE</key>
 																	<integer>1</integer>
 																	<key>PERMISSIONS</key>
@@ -100,7 +100,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/Resources/de.lproj/s63_pi.mo</string>
+																	<string>Resources/de.lproj/s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -133,7 +133,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/Resources/es.lproj/s63_pi.mo</string>
+																	<string>Resources/es.lproj/s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -166,7 +166,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/Resources/et.lproj/s63_pi.mo</string>
+																	<string>Resources/et.lproj/s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -199,7 +199,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/Resources/fr.lproj/s63_pi.mo</string>
+																	<string>Resources/fr.lproj/s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -232,7 +232,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>build/Resources/pl.lproj/s63_pi.mo</string>
+																	<string>Resources/pl.lproj/s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -1035,7 +1035,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1046,7 +1046,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1057,7 +1057,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1068,7 +1068,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1079,7 +1079,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1090,7 +1090,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1101,7 +1101,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1112,7 +1112,7 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>S63-InstallOSX/license.txt</string>
+							<string>license.txt</string>
 							<key>PATH_TYPE</key>
 							<integer>3</integer>
 						</dict>
@@ -1131,9 +1131,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-cz.rtf</string>
+							<string>S-63_plug-in_explained-cz.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1142,9 +1142,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-nl.rtf</string>
+							<string>S-63_plug-in_explained-nl.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1153,9 +1153,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-0_4en.rtf</string>
+							<string>S-63_plug-in_explained-0_4en.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1164,9 +1164,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-fr.rtf</string>
+							<string>S-63_plug-in_explained-fr.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1175,9 +1175,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_erklaert-0_4.rtf</string>
+							<string>S-63_plug-in_erklaert-0_4.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1186,9 +1186,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-it.rtf</string>
+							<string>S-63_plug-in_explained-it.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 					<dict>
@@ -1197,9 +1197,9 @@ Plugin S63 para OpenCPN</string>
 						<key>VALUE</key>
 						<dict>
 							<key>PATH</key>
-							<string>/Users/dsr/Projects/s63_pi/S63-InstallOSX/S-63_plug-in_explained-es.rtf</string>
+							<string>S-63_plug-in_explained-es.rtf</string>
 							<key>PATH_TYPE</key>
-							<integer>0</integer>
+							<integer>3</integer>
 						</dict>
 					</dict>
 				</array>
@@ -1532,9 +1532,9 @@ Plugin S63 para OpenCPN</string>
 				</dict>
 			</array>
 			<key>NAME</key>
-			<string>S63-Plugin</string>
+			<string>S63-Plugin_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}</string>
 			<key>REFERENCE_FOLDER_PATH</key>
-			<string>/Users/dsr/Projects/s63_pi</string>
+			<string>build</string>
 		</dict>
 	</dict>
 	<key>SHARED_GLOBAL_DATA</key>
