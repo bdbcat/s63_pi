@@ -1220,7 +1220,7 @@ int s63_pi::ProcessCellPermit( wxString &permit )
 
     //  A simple length test for poorly formatted cell permits
     if( cellpermitstring.Length() != 64) {
-        wxString msg = _("Security Scheme Error\n\nSSE 12 – Cell permit format is incorrect\n\nIncorrect cell permit line starts with ");
+        wxString msg = _("Security Scheme Error\n\nSSE 12 - Cell permit format is incorrect\n\nIncorrect cell permit line starts with ");
         msg += cellpermitstring.Mid(0, 16);
         msg += _T("...");
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
@@ -1600,7 +1600,7 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
     }
     else {
         if( !iho_result && !m_bSSE26_shown ) {
-            wxString msg = _("Security Scheme Warning\n\nSSE 26 – ENC is not authenticated by the IHO acting as the SA.\n\nCell name: ");
+            wxString msg = _("Security Scheme Warning\n\nSSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\nCell name: ");
             msg += cell_file;
             OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                   msg,
@@ -1617,7 +1617,7 @@ int s63_pi::AuthenticateCell( const wxString & cell_file )
     
     b_auth = validate_enc_cell( sig_file, cell_file );
     if(!b_auth){
-        wxString msg = _("Security Scheme Error\n\nSSE 09 – ENC Signature is invalid.\nCell name: ");
+        wxString msg = _("Security Scheme Error\n\nSSE 09 - ENC Signature is invalid.\nCell name: ");
         msg += cell_file;
         OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                               msg,
