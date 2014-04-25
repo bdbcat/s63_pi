@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 20:18-0400\n"
+"POT-Creation-Date: 2014-04-24 20:12-0400\n"
 "PO-Revision-Date: 2014-04-07 18:54+0100\n"
 "Last-Translator: Pepo II <Pepo_II@outlok.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,10 +21,9 @@ msgstr ""
 msgid "   Error: Cannot create "
 msgstr "   Error: No puedo crear "
 #
-msgid ""
-"A valid certificate can be obtained from the IHO website or your data "
-"supplier.\n"
-msgstr "Puede obtener un certificado válido de la web IHO o de su proveedor.\n"
+#, c-format
+msgid "Attempted update: %d\n"
+msgstr ""
 #
 msgid "Cancel"
 msgstr "Cancelar"
@@ -44,8 +43,9 @@ msgstr "Importación Llave certificada correcta\n"
 msgid "Certificate Name"
 msgstr "Nombre Certificado"
 #
-msgid "Create eSENCs on Import?\n"
-msgstr "¿Crear eSENCs o Importar?\n"
+#, fuzzy
+msgid "Charts"
+msgstr "Cartas S63"
 #
 msgid "Creating eSenc"
 msgstr "Creando eSENC"
@@ -93,8 +93,13 @@ msgstr "Permisos de Celda S63 instalado"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Certificados/Llaves S63 Instalados"
 #
-msgid "Invalid cell permit starts with "
-msgstr "Inicio con Permiso de Celda no válido"
+#, fuzzy
+msgid "Keys/Permits"
+msgstr "Permiso de Usuario"
+#
+#, c-format
+msgid "Latest intalled update: %d\n"
+msgstr ""
 #
 msgid "New Installpermit..."
 msgstr "Nuevo Permiso de Instalación"
@@ -102,18 +107,18 @@ msgstr "Nuevo Permiso de Instalación"
 msgid "New Userpermit..."
 msgstr "Nuevo Permiso de Usuario..."
 #
-msgid "Note:\n"
-msgstr "Nota:\n"
-#
 msgid "OK"
 msgstr "OK"
 #
 msgid ""
 "OpenCPN can create eSENC files as cells are imported.\n"
 "\n"
-msgstr ""
-"OpenCPN puede crear archivos eSENC para las celdas importadas.\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n"
 "\n"
+"Create eSENCs on Import?\n"
+msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
@@ -141,8 +146,15 @@ msgstr ""
 "Da soporte a cartas S63.\n"
 "\n"
 #
+#, fuzzy
+msgid "S63_pi Install Permit Required"
+msgstr "Permiso de Instalación no válido"
+#
 msgid "S63_pi Log"
 msgstr "S63_pi Log"
+#
+msgid "S63_pi Userpermit Required"
+msgstr ""
 #
 msgid "S63_pi backchannel could not listen at the specified port !\n"
 msgstr "¡S63_pi backchannel  no escucha en el puerto especificado!\n"
@@ -181,31 +193,92 @@ msgstr ""
 msgid ""
 "Security Scheme Error\n"
 "\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another "
+"service.\n"
+"A new SA public key can be obtained from the IHO website or from your data "
+"supplier.\n"
+"\n"
+"Cell name: "
+msgstr ""
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
-msgstr ""
-"Error Esquema Seguridad\n"
-"\n"
-"SSE 08 - Formato incorrecto del archivo de Certificado Digital SA.\n"
+"A valid certificate can be obtained from the IHO website or your data "
+"supplier.\n"
+msgstr "Puede obtener un certificado válido de la web IHO o de su proveedor.\n"
 #
+#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
-"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
-msgstr ""
-"Error Esquema Seguridad\n"
-"\n"
-"SSE 13 - Permiso de Celda no válido (checksum incorrecto)\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 24 - ENC Signature format is incorrect.\n"
-"\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
 msgstr ""
 "Error Esquema Seguridad\n"
 "\n"
 "SSE 24 - ENC Formato de firma es incorrecto.\n"
 "\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 11 - Cell permit not found"
+msgstr ""
+"Error Esquema Seguridad\n"
+"\n"
+"SSE 13 - Permiso de Celda no válido (checksum incorrecto)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 12 - Cell permit format is incorrect\n"
+"\n"
+"Incorrect cell permit line starts with "
+msgstr ""
+"Error Esquema Seguridad\n"
+"\n"
+"SSE 24 - ENC Formato de firma es incorrecto.\n"
+"\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n"
+"\n"
+" Invalid cell permit starts with "
+msgstr ""
+"Error Esquema Seguridad\n"
+"\n"
+"SSE 13 - Permiso de Celda no válido (checksum incorrecto)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 24 - ENC Signature format is incorrect.\n"
+"\n"
+" Cell name: "
+msgstr ""
+"Error Esquema Seguridad\n"
+"\n"
+"SSE 24 - ENC Formato de firma es incorrecto.\n"
+"\n"
+#
+msgid ""
+"Security Scheme Warning\n"
+"\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n"
+"\n"
+"Cell name: "
+msgstr ""
 #
 msgid "Select PERMIT.TXT File"
 msgstr "Seleccionar archivo PERMIT.TXT"
@@ -228,12 +301,6 @@ msgstr "Prueba Resultados"
 msgid "Test Userpermit"
 msgstr "Prueba Permiso de Usuario"
 #
-msgid "The process may be Cancelled by the user at any time.\n"
-msgstr "Este proceso puede ser Cancelado por el usuario en cualquier momento.\n"
-#
-msgid "This process may take some time.\n"
-msgstr "Este proceso puede llevar algún tiempo.\n"
-#
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
@@ -254,16 +321,63 @@ msgstr "Permiso de Usuario OK"
 msgid "Userpermit invalid"
 msgstr "Permiso de Usuario no válido"
 #
-msgid ""
-"eSENCS not yet processed will be created as needed by OpenCPN.\n"
-"\n"
+msgid "cell:"
 msgstr ""
-"eSENCS aún no procesados se crearán cuando lo necesite OpenCPN..\n"
-"\n"
 #
-msgid ""
-"or the Cell Permit is for a different system.\n"
-"\n"
+msgid "s63_pi Message"
 msgstr ""
-"o el Permiso de Celda es para un sistema diferente.\n"
-"\n"
+#
+#
+#~ msgid "Create eSENCs on Import?\n"
+#~ msgstr "¿Crear eSENCs o Importar?\n"
+#
+#
+#~ msgid "Invalid cell permit starts with "
+#~ msgstr "Inicio con Permiso de Celda no válido"
+#
+#
+#~ msgid "Note:\n"
+#~ msgstr "Nota:\n"
+#
+#
+#~ msgid ""
+#~ "OpenCPN can create eSENC files as cells are imported.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "OpenCPN puede crear archivos eSENC para las celdas importadas.\n"
+#~ "\n"
+#
+#
+#~ msgid ""
+#~ "Security Scheme Error\n"
+#~ "\n"
+#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
+#~ msgstr ""
+#~ "Error Esquema Seguridad\n"
+#~ "\n"
+#~ "SSE 08 - Formato incorrecto del archivo de Certificado Digital SA.\n"
+#
+#
+#~ msgid "The process may be Cancelled by the user at any time.\n"
+#~ msgstr ""
+#~ "Este proceso puede ser Cancelado por el usuario en cualquier momento.\n"
+#
+#
+#~ msgid "This process may take some time.\n"
+#~ msgstr "Este proceso puede llevar algún tiempo.\n"
+#
+#
+#~ msgid ""
+#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "eSENCS aún no procesados se crearán cuando lo necesite OpenCPN..\n"
+#~ "\n"
+#
+#
+#~ msgid ""
+#~ "or the Cell Permit is for a different system.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "o el Permiso de Celda es para un sistema diferente.\n"
+#~ "\n"

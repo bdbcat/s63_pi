@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenCPN Plugin S63\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 20:18-0400\n"
+"POT-Creation-Date: 2014-04-24 20:12-0400\n"
 "PO-Revision-Date: 2014-04-03 12:45+0100\n"
 "Last-Translator: Gilletarom <contact@gilletarom.fr>\n"
 "Language-Team: Gilletarom <contact@gilletarom.fr>\n"
@@ -21,12 +21,9 @@ msgstr ""
 msgid "   Error: Cannot create "
 msgstr "   Erreur : Création impossible "
 #
-msgid ""
-"A valid certificate can be obtained from the IHO website or your data "
-"supplier.\n"
+#, c-format
+msgid "Attempted update: %d\n"
 msgstr ""
-"Un certificat valide peut être obtenu sur le site web de l'IHO ou auprès de "
-"votre fournisseur de données.\n"
 #
 msgid "Cancel"
 msgstr "Annuler"
@@ -46,8 +43,9 @@ msgstr "Succès de l'importation de la clé du certificat\n"
 msgid "Certificate Name"
 msgstr "Nom du certificat"
 #
-msgid "Create eSENCs on Import?\n"
-msgstr "Créer les eSENCs lors de l'importation ?\n"
+#, fuzzy
+msgid "Charts"
+msgstr "Cartes S 63"
 #
 msgid "Creating eSenc"
 msgstr "eSenc en cours de création"
@@ -95,8 +93,13 @@ msgstr "Permis de cellules S63 installés"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Certificats/Clés S63 installés"
 #
-msgid "Invalid cell permit starts with "
-msgstr "Permis de cellule invalide commençant par "
+#, fuzzy
+msgid "Keys/Permits"
+msgstr "UserPermit"
+#
+#, c-format
+msgid "Latest intalled update: %d\n"
+msgstr ""
 #
 msgid "New Installpermit..."
 msgstr "Nouveau InstallPermit ...."
@@ -104,19 +107,18 @@ msgstr "Nouveau InstallPermit ...."
 msgid "New Userpermit..."
 msgstr "Nouveau UserPermit ....."
 #
-msgid "Note:\n"
-msgstr "Note :\n"
-#
 msgid "OK"
 msgstr "Ok"
 #
 msgid ""
 "OpenCPN can create eSENC files as cells are imported.\n"
 "\n"
-msgstr ""
-"OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
-"importées\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n"
 "\n"
+"Create eSENCs on Import?\n"
+msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
@@ -144,8 +146,15 @@ msgstr ""
 "fournit un support pour l'affichage des cartes S63\n"
 "\n"
 #
+#, fuzzy
+msgid "S63_pi Install Permit Required"
+msgstr "InstallPermit invalide"
+#
 msgid "S63_pi Log"
 msgstr "Log du fonctionnement du complément S63"
+#
+msgid "S63_pi Userpermit Required"
+msgstr ""
 #
 msgid "S63_pi backchannel could not listen at the specified port !\n"
 msgstr ""
@@ -186,31 +195,94 @@ msgstr ""
 msgid ""
 "Security Scheme Error\n"
 "\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another "
+"service.\n"
+"A new SA public key can be obtained from the IHO website or from your data "
+"supplier.\n"
+"\n"
+"Cell name: "
+msgstr ""
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
+"A valid certificate can be obtained from the IHO website or your data "
+"supplier.\n"
 msgstr ""
-"Erreur système de sécurité\n"
-"\n"
-" SS08 - Format incorrect du fichier du certificat SA Digital\n"
+"Un certificat valide peut être obtenu sur le site web de l'IHO ou auprès de "
+"votre fournisseur de données.\n"
 #
+#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
-"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 24 - ENC Signature format is incorrect.\n"
-"\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
 msgstr ""
 "Erreur système de sécurité \n"
 "\n"
 " SSE24 - Format invalide de la signature de l'ENC.\n"
 "\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 11 - Cell permit not found"
+msgstr ""
+"Erreur système de sécurité \n"
+"\n"
+" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 12 - Cell permit format is incorrect\n"
+"\n"
+"Incorrect cell permit line starts with "
+msgstr ""
+"Erreur système de sécurité \n"
+"\n"
+" SSE24 - Format invalide de la signature de l'ENC.\n"
+"\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n"
+"\n"
+" Invalid cell permit starts with "
+msgstr ""
+"Erreur système de sécurité \n"
+"\n"
+" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 24 - ENC Signature format is incorrect.\n"
+"\n"
+" Cell name: "
+msgstr ""
+"Erreur système de sécurité \n"
+"\n"
+" SSE24 - Format invalide de la signature de l'ENC.\n"
+"\n"
+#
+msgid ""
+"Security Scheme Warning\n"
+"\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n"
+"\n"
+"Cell name: "
+msgstr ""
 #
 msgid "Select PERMIT.TXT File"
 msgstr "Sélectionnez un fichier PERMIT.TXT"
@@ -233,12 +305,6 @@ msgstr "Résultats du test"
 msgid "Test Userpermit"
 msgstr "Tester le UserPermit"
 #
-msgid "The process may be Cancelled by the user at any time.\n"
-msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
-#
-msgid "This process may take some time.\n"
-msgstr "Le processus peut prendre un certain temps.\n"
-#
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
@@ -258,24 +324,42 @@ msgstr "UserPermit ok"
 msgid "Userpermit invalid"
 msgstr "UserPermit invalide"
 #
-msgid ""
-"eSENCS not yet processed will be created as needed by OpenCPN.\n"
-"\n"
+msgid "cell:"
 msgstr ""
-"Les eSENCS non encore traitées seront créés selon les besoins par OpenCPN.\n"
 #
-msgid ""
-"or the Cell Permit is for a different system.\n"
-"\n"
-msgstr ""
-"ou bien le Permis de la cellule est destiné à un système différent.\n"
-"\n"
+#, fuzzy
+msgid "s63_pi Message"
+msgstr "Message du complément S63_pi"
+#
 #
 #~ msgid " mag"
 #~ msgstr " magnét."
 #
+#
 #~ msgid "Cannot find ENC_ROOT directory"
 #~ msgstr "Impossible de trouver le dossier ENC_ROOT"
+#
+#
+#~ msgid "Create eSENCs on Import?\n"
+#~ msgstr "Créer les eSENCs lors de l'importation ?\n"
+#
+#
+#~ msgid "Invalid cell permit starts with "
+#~ msgstr "Permis de cellule invalide commençant par "
+#
+#
+#~ msgid "Note:\n"
+#~ msgstr "Note :\n"
+#
+#
+#~ msgid ""
+#~ "OpenCPN can create eSENC files as cells are imported.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
+#~ "importées\n"
+#~ "\n"
+#
 #
 #~ msgid ""
 #~ "S63 PlugIn for OpenCPN\n"
@@ -290,5 +374,36 @@ msgstr ""
 #~ "Les cartes supportées doivent avoir été installées au préalable\n"
 #~ "Le certificat de décodage doit être en place.\n"
 #
-#~ msgid "S63_pi Message"
-#~ msgstr "Message du complément S63_pi"
+#
+#~ msgid ""
+#~ "Security Scheme Error\n"
+#~ "\n"
+#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
+#~ msgstr ""
+#~ "Erreur système de sécurité\n"
+#~ "\n"
+#~ " SS08 - Format incorrect du fichier du certificat SA Digital\n"
+#
+#
+#~ msgid "The process may be Cancelled by the user at any time.\n"
+#~ msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
+#
+#
+#~ msgid "This process may take some time.\n"
+#~ msgstr "Le processus peut prendre un certain temps.\n"
+#
+#
+#~ msgid ""
+#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Les eSENCS non encore traitées seront créés selon les besoins par "
+#~ "OpenCPN.\n"
+#
+#
+#~ msgid ""
+#~ "or the Cell Permit is for a different system.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "ou bien le Permis de la cellule est destiné à un système différent.\n"
+#~ "\n"

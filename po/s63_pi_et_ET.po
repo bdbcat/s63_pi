@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 20:18-0400\n"
+"POT-Creation-Date: 2014-04-24 20:12-0400\n"
 "PO-Revision-Date: 2014-04-04 18:51+0200\n"
 "Last-Translator: Highlander <highlander.et@gmail.com>\n"
 "Language-Team:  <open_en_et@googlegroups.com>\n"
@@ -20,12 +20,9 @@ msgstr ""
 msgid "   Error: Cannot create "
 msgstr " Viga: ei saa luua"
 #
-msgid ""
-"A valid certificate can be obtained from the IHO website or your data "
-"supplier.\n"
+#, c-format
+msgid "Attempted update: %d\n"
 msgstr ""
-"Kehtivat serifikaati on võimalik saada IHO kodulehelt või oma "
-"andmelevitajalt.\n"
 #
 msgid "Cancel"
 msgstr "Katkesta"
@@ -45,8 +42,9 @@ msgstr "Sertifikaadivõti on õnnestunult imporditud\n"
 msgid "Certificate Name"
 msgstr "Sertifikaadi nimi"
 #
-msgid "Create eSENCs on Import?\n"
-msgstr "Loo importimisel eSENC'id?\n"
+#, fuzzy
+msgid "Charts"
+msgstr "S63 kaardid"
 #
 msgid "Creating eSenc"
 msgstr "eSENC'i loomas"
@@ -94,8 +92,13 @@ msgstr "Paigaldatud S63-ruuduload"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Paigaldatud S63 sertifikaadid/võtmed"
 #
-msgid "Invalid cell permit starts with "
-msgstr "Kõlbmatu  ruuduluba algab"
+#, fuzzy
+msgid "Keys/Permits"
+msgstr "Kasutajaluba"
+#
+#, c-format
+msgid "Latest intalled update: %d\n"
+msgstr ""
 #
 msgid "New Installpermit..."
 msgstr "Uus paigaldusluba..."
@@ -103,16 +106,18 @@ msgstr "Uus paigaldusluba..."
 msgid "New Userpermit..."
 msgstr "Uus kasutajaluba..."
 #
-msgid "Note:\n"
-msgstr "Märkus:\n"
-#
 msgid "OK"
 msgstr "OK"
 #
 msgid ""
 "OpenCPN can create eSENC files as cells are imported.\n"
 "\n"
-msgstr "OpenCPN võib ruutude importimise ajal luua eSENC-faile.\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n"
+"\n"
+"Create eSENCs on Import?\n"
+msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr "PUB-failid (*.PUB)|*.PUB|txt-failid (*.txt)|*.txt|Kõik failid (*.*)|*.*"
@@ -138,8 +143,15 @@ msgstr ""
 "Tagab S63 kaartide toe.\n"
 "\n"
 #
+#, fuzzy
+msgid "S63_pi Install Permit Required"
+msgstr "Kehtetu paigaldusluba"
+#
 msgid "S63_pi Log"
 msgstr "S63_pi logi"
+#
+msgid "S63_pi Userpermit Required"
+msgstr ""
 #
 msgid "S63_pi backchannel could not listen at the specified port !\n"
 msgstr "S63_pi tagavarakanal ei suutnud jälgida määratud porti !\n"
@@ -176,31 +188,94 @@ msgstr ""
 msgid ""
 "Security Scheme Error\n"
 "\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another "
+"service.\n"
+"A new SA public key can be obtained from the IHO website or from your data "
+"supplier.\n"
+"\n"
+"Cell name: "
+msgstr ""
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
+"A valid certificate can be obtained from the IHO website or your data "
+"supplier.\n"
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE 08 - SA Digital Certificate fail ei ole korrektses formaadis.\n"
+"Kehtivat serifikaati on võimalik saada IHO kodulehelt või oma "
+"andmelevitajalt.\n"
 #
+#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
-"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
-msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE 13- ruuduluba on kõlbmatu (väär kontrollsumma)\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 24 - ENC Signature format is incorrect.\n"
-"\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
 msgstr ""
 "Turvaseade viga\n"
 "\n"
 "SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
 "\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 11 - Cell permit not found"
+msgstr ""
+"Turvaseade viga\n"
+"\n"
+"SSE 13- ruuduluba on kõlbmatu (väär kontrollsumma)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 12 - Cell permit format is incorrect\n"
+"\n"
+"Incorrect cell permit line starts with "
+msgstr ""
+"Turvaseade viga\n"
+"\n"
+"SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
+"\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n"
+"\n"
+" Invalid cell permit starts with "
+msgstr ""
+"Turvaseade viga\n"
+"\n"
+"SSE 13- ruuduluba on kõlbmatu (väär kontrollsumma)\n"
+#
+#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 24 - ENC Signature format is incorrect.\n"
+"\n"
+" Cell name: "
+msgstr ""
+"Turvaseade viga\n"
+"\n"
+"SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
+"\n"
+#
+msgid ""
+"Security Scheme Warning\n"
+"\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n"
+"\n"
+"Cell name: "
+msgstr ""
 #
 msgid "Select PERMIT.TXT File"
 msgstr "Vali PERMIT.TXT fail"
@@ -223,12 +298,6 @@ msgstr "Testi tulemused"
 msgid "Test Userpermit"
 msgstr "Testi kasutajaluba"
 #
-msgid "The process may be Cancelled by the user at any time.\n"
-msgstr "Kasutaja võib protsessi igal ajal katkestada.\n"
-#
-msgid "This process may take some time.\n"
-msgstr "See protsees võib natuke aega võtta.\n"
-#
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
@@ -247,16 +316,60 @@ msgstr "Kasutajaluba OK"
 msgid "Userpermit invalid"
 msgstr "Kehtetu kasutajaluba"
 #
-msgid ""
-"eSENCS not yet processed will be created as needed by OpenCPN.\n"
-"\n"
+msgid "cell:"
 msgstr ""
-"Veel loomata eSENC luuakse OpenCPN'i poolt vajaduse tekkimisel.\n"
-"\n"
 #
-msgid ""
-"or the Cell Permit is for a different system.\n"
-"\n"
+msgid "s63_pi Message"
 msgstr ""
-"või ruuduluba on teistsuguse süsteemi jaoks.\n"
-"\n"
+#
+#
+#~ msgid "Create eSENCs on Import?\n"
+#~ msgstr "Loo importimisel eSENC'id?\n"
+#
+#
+#~ msgid "Invalid cell permit starts with "
+#~ msgstr "Kõlbmatu  ruuduluba algab"
+#
+#
+#~ msgid "Note:\n"
+#~ msgstr "Märkus:\n"
+#
+#
+#~ msgid ""
+#~ "OpenCPN can create eSENC files as cells are imported.\n"
+#~ "\n"
+#~ msgstr "OpenCPN võib ruutude importimise ajal luua eSENC-faile.\n"
+#
+#
+#~ msgid ""
+#~ "Security Scheme Error\n"
+#~ "\n"
+#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
+#~ msgstr ""
+#~ "Turvaseade viga\n"
+#~ "\n"
+#~ "SSE 08 - SA Digital Certificate fail ei ole korrektses formaadis.\n"
+#
+#
+#~ msgid "The process may be Cancelled by the user at any time.\n"
+#~ msgstr "Kasutaja võib protsessi igal ajal katkestada.\n"
+#
+#
+#~ msgid "This process may take some time.\n"
+#~ msgstr "See protsees võib natuke aega võtta.\n"
+#
+#
+#~ msgid ""
+#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Veel loomata eSENC luuakse OpenCPN'i poolt vajaduse tekkimisel.\n"
+#~ "\n"
+#
+#
+#~ msgid ""
+#~ "or the Cell Permit is for a different system.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "või ruuduluba on teistsuguse süsteemi jaoks.\n"
+#~ "\n"
