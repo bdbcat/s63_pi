@@ -108,3 +108,16 @@ LangString License_Message ${LANG_RUSSIAN} "OpenCPN является свобо�
 ;Needs to be translated:
 #LangString Installer_Unsupported_XP_SP_Version ${LANG_ENGLISH} "Your Windows XP Service Pack version is not supported (it's too old)!$\r$\nYou need at least Windows XP SP3."
 LangString Installer_Unsupported_XP_SP_Version ${LANG_RUSSIAN} "Ваша версия пакета обновлений Windows XP слишком старая и не поддерживается.$\r$\nТребуется Windows XP с пакетом обновления 3 или более современные системы."
+
+#LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+LangString Label_TypeInst_Parallel_Text ${LANG_RUSSIAN} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+
+#LangString Type_Parallel_Installation ${LANG_ENGLISH} "Parallel installation"
+LangString Type_Parallel_Installation ${LANG_RUSSIAN} "Parallel installation"
+
+#LangString Page_TypeInst_Title ${LANG_ENGLISH} "Previous Installations"
+LangString Page_TypeInst_Title ${LANG_RUSSIAN} "Previous Installations"
+
+#LangString Page_TypeInst_Subtitle ${LANG_ENGLISH} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
+LangString Page_TypeInst_Subtitle ${LANG_RUSSIAN} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
+

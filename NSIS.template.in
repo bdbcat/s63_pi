@@ -719,10 +719,14 @@ FunctionEnd
 	!include /NONFATAL "Langstrings_FRENCH.nsh"
 	!insertmacro MUI_LANGUAGE "Czech"
 	!include /NONFATAL "Langstrings_CZECH.nsh"
+        !insertmacro MUI_LANGUAGE "Russian"
+        !include /NONFATAL "Langstrings_RUSSIAN.nsh"
+        !insertmacro MUI_LANGUAGE "Spanish"
+        !include /NONFATAL "Langstrings_SPANISH.nsh"
+
+/*
 	!insertmacro MUI_LANGUAGE "Danish"
 	!include /NONFATAL "Langstrings_DANISH.nsh"
-	!insertmacro MUI_LANGUAGE "Spanish"
-	!include /NONFATAL "Langstrings_SPANISH.nsh"
 	!insertmacro MUI_LANGUAGE "Italian"
 	!include /NONFATAL "Langstrings_ITALIAN.nsh"
 	!insertmacro MUI_LANGUAGE "Dutch"
@@ -733,8 +737,6 @@ FunctionEnd
 	!include /NONFATAL "Langstrings_PORTUGUESEBR.nsh"
 	!insertmacro MUI_LANGUAGE "Portuguese"
 	!include /NONFATAL "Langstrings_PORTUGUESE.nsh"
-	!insertmacro MUI_LANGUAGE "Russian"
-	!include /NONFATAL "Langstrings_RUSSIAN.nsh"
 	!insertmacro MUI_LANGUAGE "Swedish"
 	!include /NONFATAL "Langstrings_SWEDISH.nsh"
 	!insertmacro MUI_LANGUAGE "Finnish"
@@ -747,6 +749,7 @@ FunctionEnd
 	!include /NONFATAL "Langstrings_TURKISH.nsh"
 	;!insertmacro MUI_LANGUAGE "Hungarian"
 	;!include /NONFATAL "Langstrings_HUNGARIAN.nsh"
+*/
 
 ;--------------------------------
 ;# Reserve Files
@@ -1265,7 +1268,7 @@ FunctionEnd
 			${NSD_AddStyle} $RB_Reinstall ${WS_GROUP}
 			${NSD_SetState} $RB_Reinstall ${BST_CHECKED}
 
-                        ${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
+                        ${NSD_CreateRadioButton} 10u 85u 100% 10u "$(Type_Parallel_Installation)"
                         Pop $RB_Parallel
                         ${If} $TI_PARALLEL != ""
                                 ${NSD_SetState} $RB_Parallel $TI_PARALLEL
@@ -1289,7 +1292,7 @@ FunctionEnd
 				${NSD_SetState} $RB_Upgrade ${BST_CHECKED}
 			${EndIf}
 
-			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
+			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(Type_Parallel_Installation)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
@@ -1312,7 +1315,7 @@ FunctionEnd
 				${NSD_SetState} $RB_Downgrade ${BST_CHECKED}
 			${EndIf}
 
-			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(RB_Parallel_TypeInst_Text)"
+			${NSD_CreateRadioButton} 10u 85u 100% 10u "$(Type_Parallel_Installation)"
 			Pop $RB_Parallel
 			${If} $TI_PARALLEL != ""
 				${NSD_SetState} $RB_Parallel $TI_PARALLEL
@@ -1325,7 +1328,7 @@ FunctionEnd
 			${NSD_CreateLabel} 0 0 100% 32u "$(Label_TypeInst_Parallel_Text)"
 			Pop $Label_TypeInst_Parallel
 
-			${NSD_CreateRadioButton} 10u 65u 100% 10u "$(RB_Parallel_TypeInst_Text)"
+			${NSD_CreateRadioButton} 10u 65u 100% 10u "$(Type_Parallel_Installation)"
 			Pop $RB_Parallel
 			${NSD_AddStyle} $RB_Parallel ${WS_GROUP}
 			${NSD_SetState} $RB_Parallel ${BST_CHECKED}
@@ -3425,7 +3428,7 @@ Var explArrCount
 	LangString Page_TypeInst_Title ${LANG_ENGLISH} "Previous Installations"
 
 	;Subtitle
-    LangString Page_TypeInst_Subtitle ${LANG_ENGLISH} "$MULTIPLE_INSTALLS installations of s63_pi found.$\r$\nChoose how you want to install s63_pi."
+    LangString Page_TypeInst_Subtitle ${LANG_ENGLISH} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
 
   ;Multiple Install = 1
     ;Title
@@ -3463,7 +3466,7 @@ Var explArrCount
 
   ;Multiple versions
 	;Label
-	LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of s63_pi on your system. It is recommended to have only one version of s63_pi installed at a time. Select the operation you want to perform and click Next to continue."
+        LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
 
 	;Radio button 'Parallel Installation'
 	LangString RB_Parallel_TypeInst_Text ${LANG_ENGLISH} "Parallel Installation (advanced users)"

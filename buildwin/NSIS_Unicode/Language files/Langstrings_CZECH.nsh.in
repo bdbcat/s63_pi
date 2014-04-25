@@ -108,3 +108,16 @@ LangString License_Message ${LANG_CZECH} "OpenCPN je svobodný software. Můžet
 
 #LangString Installer_Unsupported_XP_SP_Version ${LANG_ENGLISH} "Your Windows XP Service Pack version is not supported (it's too old)!$\r$\nYou need at least Windows XP SP3."
 LangString Installer_Unsupported_XP_SP_Version ${LANG_CZECH} "Verze instalovaného service packu Windows XP není podporována (je prříliš stará)!$\r$\nPotřebuješ alespoŇ Windows XP SP3."
+
+#LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+LangString Label_TypeInst_Parallel_Text ${LANG_CZECH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+
+#LangString Type_Parallel_Installation ${LANG_ENGLISH} "Parallel installation"
+LangString Type_Parallel_Installation ${LANG_CZECH} "Parallel installation"
+
+#LangString Page_TypeInst_Title ${LANG_ENGLISH} "Previous Installations"
+LangString Page_TypeInst_Title ${LANG_CZECH} "Previous Installations"
+
+#LangString Page_TypeInst_Subtitle ${LANG_ENGLISH} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
+LangString Page_TypeInst_Subtitle ${LANG_CZECH} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
+

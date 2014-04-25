@@ -106,6 +106,18 @@ LangString ^NameDA ${LANG_FRENCH} "@CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_V
 #LangString License_Message ${LANG_ENGLISH} "OpenCPN is software libre. You are encouraged and legally entitled to copy, reinstall, modify, and redistribute this program for yourself and your friends under the terms of the GPL. $\r$\nSmooth sailing!"
 LangString License_Message ${LANG_FRENCH} "OpenCpn est un logiciel libre. Vous êtes encouragés et légalement autorisés à copier, réinstaller, modifier et redistribuer ce programme, pour vous-même et vos amis, selon les termes de la licence GPL. Bonnes navigations!"
 
-;Needs to be translated:
 #LangString Installer_Unsupported_XP_SP_Version ${LANG_ENGLISH} "Your Windows XP Service Pack version is not supported (it's too old)!$\r$\nYou need at least Windows XP SP3."
 LangString Installer_Unsupported_XP_SP_Version ${LANG_FRENCH} "Votre version de Windows XP Service Pack version n'est pas supportée (car trop ancienne)!$\r$\nVous avez besoin d'au moins Windows XP SP3."
+
+#LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+LangString Label_TypeInst_Parallel_Text ${LANG_FRENCH} "Plusieurs versions ont été détectées.On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+
+#LangString Type_Parallel_Installation ${LANG_ENGLISH} "Parallel installation"
+LangString Type_Parallel_Installation ${LANG_FRENCH} "Installation parallèle"
+
+#LangString Page_TypeInst_Title ${LANG_ENGLISH} "Previous Installations"
+LangString Page_TypeInst_Title ${LANG_FRENCH} "Installations précédentes"
+
+#LangString Page_TypeInst_Subtitle ${LANG_ENGLISH} "$MULTIPLE_INSTALLS installations of @CPACK_PACKAGE_NAME@ found."
+LangString Page_TypeInst_Subtitle ${LANG_FRENCH} "$MULTIPLE_INSTALLS installations d'@CPACK_PACKAGE_NAME@ détectées."
+
