@@ -1359,7 +1359,7 @@ Plugin S63 para OpenCPN</string>
 			<key>BUILD_PATH</key>
 			<dict>
 				<key>PATH</key>
-				<string>build</string>
+				<string>.</string>
 				<key>PATH_TYPE</key>
 				<integer>3</integer>
 			</dict>
@@ -1534,7 +1534,7 @@ Plugin S63 para OpenCPN</string>
 			<key>NAME</key>
 			<string>S63-Plugin_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}</string>
 			<key>REFERENCE_FOLDER_PATH</key>
-			<string>build</string>
+			<string>.</string>
 		</dict>
 	</dict>
 	<key>SHARED_GLOBAL_DATA</key>
