@@ -517,7 +517,9 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
 wxString s63_pi::GetPermitDir()
 {
     wxString os63_dirname = *GetpPrivateApplicationDataLocation();
-    os63_dirname += wxFileName::GetPathSeparator();
+    
+    if( os63_dirname.Last() != wxFileName::GetPathSeparator() )
+        os63_dirname += wxFileName::GetPathSeparator();
     os63_dirname += _T("s63");
     os63_dirname += wxFileName::GetPathSeparator();
     os63_dirname += _T("s63charts");
@@ -1130,6 +1132,24 @@ int s63_pi::ImportCert(void)
 
 int s63_pi::ImportCellPermits(void)
 {
+    //  Verify that UserPermit and Install permit are actually present, and not set to default values
+    bool bok = true;
+    if( (g_userpermit == _T("X")) || !g_userpermit.Len() )
+        bok = false;
+    if( (g_installpermit == _T("Y")) || !g_installpermit.Len() )
+        bok = false;
+    
+    if(!bok) {
+        wxString msg = _("Please enter valid Userpermit and Installpermit on Keys/Permits tab");
+        OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                  msg,
+                                  _("s63_pi Message"),  wxOK, -1, -1);
+                                      
+        wxLogMessage(_T("s63_pi: ") + msg);
+        
+        return 1;
+    }
+    
 
     //  Get the PERMIT.TXT file from a dialog
     wxString permit_file_name;
