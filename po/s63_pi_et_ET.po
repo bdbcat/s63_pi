@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 20:12-0400\n"
+"POT-Creation-Date: 2014-05-02 23:08-0400\n"
 "PO-Revision-Date: 2014-04-04 18:51+0200\n"
 "Last-Translator: Highlander <highlander.et@gmail.com>\n"
 "Language-Team:  <open_en_et@googlegroups.com>\n"
@@ -121,6 +121,9 @@ msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr "PUB-failid (*.PUB)|*.PUB|txt-failid (*.txt)|*.txt|Kõik failid (*.*)|*.*"
+#
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 #
 msgid "Remove Permits"
 msgstr "Kõrvalda load"
@@ -323,22 +326,27 @@ msgid "s63_pi Message"
 msgstr ""
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Loo importimisel eSENC'id?\n"
+#
 #
 #
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Kõlbmatu  ruuduluba algab"
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Märkus:\n"
+#
 #
 #
 #~ msgid ""
 #~ "OpenCPN can create eSENC files as cells are imported.\n"
 #~ "\n"
 #~ msgstr "OpenCPN võib ruutude importimise ajal luua eSENC-faile.\n"
+#
 #
 #
 #~ msgid ""
@@ -351,12 +359,15 @@ msgstr ""
 #~ "SSE 08 - SA Digital Certificate fail ei ole korrektses formaadis.\n"
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Kasutaja võib protsessi igal ajal katkestada.\n"
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "See protsees võib natuke aega võtta.\n"
+#
 #
 #
 #~ msgid ""
@@ -365,6 +376,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Veel loomata eSENC luuakse OpenCPN'i poolt vajaduse tekkimisel.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""

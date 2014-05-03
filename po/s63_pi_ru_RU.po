@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 20:12-0400\n"
+"POT-Creation-Date: 2014-05-02 23:08-0400\n"
 "PO-Revision-Date: 2014-04-24 18:00+0400\n"
 "Last-Translator: Anton Samsonov <epolyan@gmail.com>\n"
 "Language-Team: Agat-Aquarius R&P <epolyan@gmail.com>\n"
@@ -124,6 +124,9 @@ msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
 "Файлы открытых ключей (*.PUB)|*.PUB|Текстовые файлы (*.TXT)|*.TXT|Все файлы "
 "(*.*)|*.*"
+#
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 #
 msgid "Remove Permits"
 msgstr "Удалить лицензии"
@@ -330,16 +333,20 @@ msgid "s63_pi Message"
 msgstr ""
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Преобразовать карты в системный формат при импорте?\n"
+#
 #
 #
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr " Первые знаки недействительной лицензии: "
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Имейте в виду:\n"
+#
 #
 #
 #~ msgid ""
@@ -348,6 +355,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN может преобразовывать карты в системный формат при импорте.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""
@@ -361,12 +369,15 @@ msgstr ""
 #~ "центра.\n"
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Процесс можно прервать в любое время.\n"
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Этот процесс может занять некоторое время.\n"
+#
 #
 #
 #~ msgid ""
@@ -376,6 +387,7 @@ msgstr ""
 #~ "Непреобразованные в системный формат карты будут обработаны по мере "
 #~ "необходимости.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""

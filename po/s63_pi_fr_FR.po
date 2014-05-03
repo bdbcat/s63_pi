@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenCPN Plugin S63\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 20:12-0400\n"
+"POT-Creation-Date: 2014-05-02 23:08-0400\n"
 "PO-Revision-Date: 2014-04-03 12:45+0100\n"
 "Last-Translator: Gilletarom <contact@gilletarom.fr>\n"
 "Language-Team: Gilletarom <contact@gilletarom.fr>\n"
@@ -122,6 +122,9 @@ msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+#
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 #
 msgid "Remove Permits"
 msgstr "Supprimer les Permis"
@@ -332,24 +335,30 @@ msgid "s63_pi Message"
 msgstr "Message du complément S63_pi"
 #
 #
+#
 #~ msgid " mag"
 #~ msgstr " magnét."
+#
 #
 #
 #~ msgid "Cannot find ENC_ROOT directory"
 #~ msgstr "Impossible de trouver le dossier ENC_ROOT"
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Créer les eSENCs lors de l'importation ?\n"
+#
 #
 #
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Permis de cellule invalide commençant par "
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Note :\n"
+#
 #
 #
 #~ msgid ""
@@ -359,6 +368,7 @@ msgstr "Message du complément S63_pi"
 #~ "OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
 #~ "importées\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""
@@ -375,6 +385,7 @@ msgstr "Message du complément S63_pi"
 #~ "Le certificat de décodage doit être en place.\n"
 #
 #
+#
 #~ msgid ""
 #~ "Security Scheme Error\n"
 #~ "\n"
@@ -385,12 +396,15 @@ msgstr "Message du complément S63_pi"
 #~ " SS08 - Format incorrect du fichier du certificat SA Digital\n"
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Le processus peut prendre un certain temps.\n"
+#
 #
 #
 #~ msgid ""
@@ -399,6 +413,7 @@ msgstr "Message du complément S63_pi"
 #~ msgstr ""
 #~ "Les eSENCS non encore traitées seront créés selon les besoins par "
 #~ "OpenCPN.\n"
+#
 #
 #
 #~ msgid ""

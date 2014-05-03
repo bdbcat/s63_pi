@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 20:12-0400\n"
+"POT-Creation-Date: 2014-05-02 23:08-0400\n"
 "PO-Revision-Date: 2014-04-07 18:54+0100\n"
 "Last-Translator: Pepo II <Pepo_II@outlok.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,6 +124,9 @@ msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
 "PUB archivos (*.PUB)|*.PUB|txt archivos (*.txt)|*.txt| Todos los archivos (*."
 "*)|*.*"
+#
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 #
 msgid "Remove Permits"
 msgstr "Quitar Permisos"
@@ -328,16 +331,20 @@ msgid "s63_pi Message"
 msgstr ""
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "¿Crear eSENCs o Importar?\n"
+#
 #
 #
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Inicio con Permiso de Celda no válido"
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Nota:\n"
+#
 #
 #
 #~ msgid ""
@@ -346,6 +353,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN puede crear archivos eSENC para las celdas importadas.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""
@@ -358,13 +366,16 @@ msgstr ""
 #~ "SSE 08 - Formato incorrecto del archivo de Certificado Digital SA.\n"
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr ""
 #~ "Este proceso puede ser Cancelado por el usuario en cualquier momento.\n"
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Este proceso puede llevar algún tiempo.\n"
+#
 #
 #
 #~ msgid ""
@@ -373,6 +384,7 @@ msgstr ""
 #~ msgstr ""
 #~ "eSENCS aún no procesados se crearán cuando lo necesite OpenCPN..\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""

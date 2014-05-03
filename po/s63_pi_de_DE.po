@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 20:12-0400\n"
+"POT-Creation-Date: 2014-05-02 23:08-0400\n"
 "PO-Revision-Date: 2014-04-03 10:40+0100\n"
 "Last-Translator: CarCode <carcode@me.com>\n"
 "Language-Team: DE <carcode@me.com>\n"
@@ -122,6 +122,9 @@ msgstr ""
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
 "PUB Dateien (*.PUB)|*.PUB|txt Dateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*"
+#
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 #
 msgid "Remove Permits"
 msgstr "Entferne Freigaben"
@@ -328,16 +331,20 @@ msgid "s63_pi Message"
 msgstr ""
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Erzeuge eSENCs bei Import?\n"
+#
 #
 #
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Ungültiger Zellen Permit startet mit "
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Hinweis:\n"
+#
 #
 #
 #~ msgid ""
@@ -346,6 +353,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN kann eSENC Dateien bei Zellen-Import erzeugen.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""
@@ -358,12 +366,15 @@ msgstr ""
 #~ "SSE 08 - SA Digital Zertifikat Datei falsches Format.\n"
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Der Prozeß kann jederzeit vom Anwender abgebrochen werden.\n"
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Dieser Prozeß kann etwas dauern.\n"
+#
 #
 #
 #~ msgid ""
@@ -372,6 +383,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Noch nicht gemachte eSENCS werden bei Bedarf von OpenCPN erzeugt.\n"
 #~ "\n"
+#
 #
 #
 #~ msgid ""
