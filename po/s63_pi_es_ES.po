@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-02 23:08-0400\n"
+"POT-Creation-Date: 2014-05-04 22:52-0400\n"
 "PO-Revision-Date: 2014-04-07 18:54+0100\n"
 "Last-Translator: Pepo II <Pepo_II@outlok.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgid "Certificate Name"
 msgstr "Nombre Certificado"
 #
 #, fuzzy
-msgid "Charts"
+msgid "Chart Cells"
 msgstr "Cartas S63"
 #
 msgid "Creating eSenc"
@@ -332,8 +332,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "¿Crear eSENCs o Importar?\n"
+#
 #
 #
 #
@@ -342,8 +344,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Nota:\n"
+#
 #
 #
 #
@@ -353,6 +357,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN puede crear archivos eSENC para las celdas importadas.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -367,14 +372,17 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr ""
 #~ "Este proceso puede ser Cancelado por el usuario en cualquier momento.\n"
 #
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Este proceso puede llevar algún tiempo.\n"
+#
 #
 #
 #
@@ -384,6 +392,7 @@ msgstr ""
 #~ msgstr ""
 #~ "eSENCS aún no procesados se crearán cuando lo necesite OpenCPN..\n"
 #~ "\n"
+#
 #
 #
 #

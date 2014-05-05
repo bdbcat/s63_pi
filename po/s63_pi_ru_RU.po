@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-02 23:08-0400\n"
+"POT-Creation-Date: 2014-05-04 22:52-0400\n"
 "PO-Revision-Date: 2014-04-24 18:00+0400\n"
 "Last-Translator: Anton Samsonov <epolyan@gmail.com>\n"
 "Language-Team: Agat-Aquarius R&P <epolyan@gmail.com>\n"
@@ -44,7 +44,7 @@ msgid "Certificate Name"
 msgstr "Имя файла"
 #
 #, fuzzy
-msgid "Charts"
+msgid "Chart Cells"
 msgstr "Карты S-63"
 #
 msgid "Creating eSenc"
@@ -334,8 +334,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Преобразовать карты в системный формат при импорте?\n"
+#
 #
 #
 #
@@ -344,8 +346,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Имейте в виду:\n"
+#
 #
 #
 #
@@ -355,6 +359,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN может преобразовывать карты в системный формат при импорте.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -370,13 +375,16 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Процесс можно прервать в любое время.\n"
 #
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Этот процесс может занять некоторое время.\n"
+#
 #
 #
 #
@@ -387,6 +395,7 @@ msgstr ""
 #~ "Непреобразованные в системный формат карты будут обработаны по мере "
 #~ "необходимости.\n"
 #~ "\n"
+#
 #
 #
 #

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-02 23:08-0400\n"
+"POT-Creation-Date: 2014-05-04 22:52-0400\n"
 "PO-Revision-Date: 2014-04-03 22:36+0100\n"
 "Last-Translator: mrm <mrm@wp.pl>\n"
 "Language-Team: PL <mrm@wp.pl>\n"
@@ -42,7 +42,7 @@ msgid "Certificate Name"
 msgstr "Nazwa certyfikatu"
 #
 #, fuzzy
-msgid "Charts"
+msgid "Chart Cells"
 msgstr "Mapy S63"
 #
 msgid "Creating eSenc"
@@ -328,8 +328,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Wygenerować pliki eSENC przy imporcie?\n"
+#
 #
 #
 #
@@ -338,8 +340,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Zauważ:\n"
+#
 #
 #
 #
@@ -349,6 +353,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN może generować pliki eSENC podczas importu komórek.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -363,14 +368,17 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr ""
 #~ "Ta czynność może być anulowana przez użytkownika w dowolnej chwili.\n"
 #
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "To może chwilę potrwać.\n"
+#
 #
 #
 #
@@ -381,6 +389,7 @@ msgstr ""
 #~ "Jeszcze nie przetworzone pliki eSENC zostaną wygenerowane przez OpenCPN w "
 #~ "miarę potrzeb.\n"
 #~ "\n"
+#
 #
 #
 #

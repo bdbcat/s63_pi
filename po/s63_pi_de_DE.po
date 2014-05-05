@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-02 23:08-0400\n"
+"POT-Creation-Date: 2014-05-04 22:52-0400\n"
 "PO-Revision-Date: 2014-04-03 10:40+0100\n"
 "Last-Translator: CarCode <carcode@me.com>\n"
 "Language-Team: DE <carcode@me.com>\n"
@@ -43,7 +43,7 @@ msgid "Certificate Name"
 msgstr "Zertifikat Name"
 #
 #, fuzzy
-msgid "Charts"
+msgid "Chart Cells"
 msgstr "S63 Karten"
 #
 msgid "Creating eSenc"
@@ -332,8 +332,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Erzeuge eSENCs bei Import?\n"
+#
 #
 #
 #
@@ -342,8 +344,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Hinweis:\n"
+#
 #
 #
 #
@@ -353,6 +357,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN kann eSENC Dateien bei Zellen-Import erzeugen.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -367,13 +372,16 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Der Prozeß kann jederzeit vom Anwender abgebrochen werden.\n"
 #
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Dieser Prozeß kann etwas dauern.\n"
+#
 #
 #
 #
@@ -383,6 +391,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Noch nicht gemachte eSENCS werden bei Bedarf von OpenCPN erzeugt.\n"
 #~ "\n"
+#
 #
 #
 #
