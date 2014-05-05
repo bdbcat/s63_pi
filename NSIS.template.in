@@ -58,6 +58,7 @@ CMake variables
 
 ;--------------------------------
 ;# Variables
+        Var TIME_HASH
         Var THIS_UN
         Var INSTROOT
 	Var INST_USER_SID
@@ -139,6 +140,8 @@ CMake variables
 	Var TI_PARALLEL
 	Var GroupBox_Size
 	Var INSTALL_TYPE
+	Var LATEST_INSTALL_LOCATION
+	Var LATEST_INSTALL_DATE
 # Page_SetConfig
 	Var Label_SetConfig
 	Var GroupBox_Language_SetConfig
@@ -541,6 +544,55 @@ CMake variables
 ;#                                            FUNCTIONS                                           #
 ;##################################################################################################
 
+Function GetLocalTimeHash
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $5
+  Push $6
+
+  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+        ; $0="01"      day
+        ; $1="04"      month
+        ; $2="2005"    year
+        ; $3="Friday"  day of week name
+        ; $4="16"      hour
+        ; $5="05"      minute
+        ; $6="50"      seconds
+
+
+  IntOp   $0 $0 * 1440
+  IntOp   $1 $1 * 44640
+  IntOp   $2 $2 - 2014
+  IntOp   $2 $2 * 483840
+  IntOp   $4 $4 * 60
+  IntOp   $5 $5 + $4
+  IntOp   $5 $5 + $2
+  IntOp   $5 $5 + $1
+  IntOp   $5 $5 + $0
+  StrCpy $TIME_HASH $5
+
+  Pop $6
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
+FunctionEnd
+
+
+
+
+
+
+
+
+
+
+
 ; StrContains
 ; This function does a case sensitive searches for an occurrence of a substring in a string.
 ; It returns the substring if it is found.
@@ -819,6 +871,8 @@ Section "-Install Section" SecInstall
         CopyFiles "$INSTDIR\lib\locale\pl\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\pl\LC_MESSAGES"
         CopyFiles "$INSTDIR\lib\locale\ru\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\ru\LC_MESSAGES"
 
+        RMDir /r  "$INSTDIR\lib"
+
 	;# Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe"
 
@@ -834,6 +888,9 @@ Section "-Install Section" SecInstall
         StrCpy $THIS_UN "$R0 $R1"
 
 ;        MessageBox MB_OK|MB_ICONSTOP "THIS_UN $THIS_UN"
+
+        Call GetLocalTimeHash
+        WriteRegStr SHCTX $THIS_UN "InstallDate" "$TIME_HASH"
 
 	WriteRegStr SHCTX $THIS_UN "DisplayName" "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ Installed for $INSTROOT"
 	WriteRegStr SHCTX $THIS_UN "DisplayVersion" "@CPACK_PACKAGE_VERSION@"
@@ -1388,6 +1445,15 @@ FunctionEnd
 		${EndIf}
 
 ;                MessageBox MB_OK|MB_ICONSTOP "Install dirA $INSTDIR"
+
+                ;  On parallel install, try to set default install location to latest
+                ${If} $INSTALL_TYPE == 4
+                    ${If} $LATEST_INSTALL_LOCATION != ""
+                        StrCpy $INSTDIR $LATEST_INSTALL_LOCATION
+                    ${EndIf}
+                ${EndIf}
+
+
 
 		; On Upgrade or Downgrade or parallel, tentatively trim any Package Version trailer from install location
                 ${If} $INSTALL_TYPE == 2
@@ -2568,6 +2634,9 @@ FunctionEnd
 		StrCpy $R5 0
 		StrCpy $R7 0
 		StrCpy $VERSION_EXISTS 0
+                StrCpy $LATEST_INSTALL_DATE ""
+                StrCpy $LATEST_INSTALL_LOCATION ""
+
 		SetShellVarContext all
 		${Do}
 			EnumRegKey $R1 SHCTX "${REG_ROOT_KEY_UN}" $R0
@@ -2621,9 +2690,17 @@ FunctionEnd
 						done:
 					${EndIf}
 
-;					${If} $VERSION_EXISTS == 1
-;						${Break}
-;					${EndIf}
+                                        ; In the loop, find and record the latest install location
+                                        ; in order to give a better hint to parallel installs
+                                        ReadRegStr $R4 SHCTX "${REG_ROOT_KEY_UN}\$R1" "InstallDate"
+                                        ${If} $R4 != ""
+                                            ${If} $R4 > $LATEST_INSTALL_DATE
+                                                StrCpy $LATEST_INSTALL_DATE $R4
+                                                ReadRegStr $R4 SHCTX "${REG_ROOT_KEY_UN}\$R1" "InstallLocation"
+                                                StrCpy $LATEST_INSTALL_LOCATION $R4
+#                                                MessageBox MB_OK|MB_ICONSTOP "LatestlocationUpdate $R4"
+                                            ${EndIf}
+                                        ${EndIf}
 
 					uninst:
 				${EndIf}
