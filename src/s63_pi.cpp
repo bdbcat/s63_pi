@@ -307,7 +307,7 @@ void s63_pi::OnSetupOptions(){
     chartPanelTopSizerV->Add( m_s63NB, 0, wxEXPAND, 0 );
     
     m_s63chartPanelWin = new wxPanel(m_s63NB, wxID_ANY);
-    m_s63NB->AddPage(m_s63chartPanelWin, _("Charts"), true );
+    m_s63NB->AddPage(m_s63chartPanelWin, _("Chart Cells"), true );
     
     wxBoxSizer *chartPanelSizer = new wxBoxSizer( wxVERTICAL );
     m_s63chartPanelWin->SetSizer( chartPanelSizer );
