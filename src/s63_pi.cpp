@@ -585,6 +585,11 @@ int s63_pi::ImportCells( void )
     m_bSSE26_shown = false;
     bool b_error = false;
     g_pprog = NULL;
+    unsigned int nproc = 0;
+    wxArrayString os63_file_array;
+    wxArrayString unique_cellname_array;
+    
+    wxString os63_dirname = GetPermitDir();
     
     //  Get the ENC_ROOT directory
     wxString enc_root_dir;
@@ -632,10 +637,19 @@ int s63_pi::ImportCells( void )
     
     // Read and parse the CATALOG.031
     wxString cat_file = enc_root_dir + wxFileName::GetPathSeparator() + _T("CATALOG.031");
+    if( !::wxFileExists(cat_file) ){
+        wxString msg = _("CATALOG.031 file not found in ENC_ROOT");
+        
+        ScreenLogMessage( msg + _T("\n"));
+        wxLogMessage(_T("s63_pi: ") + msg );
+        
+        b_error = true;
+        goto finish;
+    }
+        
     m_catalog = CreateCatalog31(cat_file);
 
     //  Make a list of all the unique cell names appearing in the exchange set
-    wxArrayString unique_cellname_array;
     for(unsigned int i=0 ; i < m_catalog->Count() ; i++){
         wxString file = m_catalog->Item(i).m_filename;
         wxFileName fn( file );
@@ -676,12 +690,10 @@ int s63_pi::ImportCells( void )
     //  Walk the unique cell list, and
     //  search high and low for a .os63 file that matches
     
-    wxString os63_dirname = GetPermitDir();
 
     //  Get a list of all the os63 files in the directory corresponding to the Data Server identified above
     os63_dirname += wxFileName::GetPathSeparator();
     os63_dirname += data_server_string;
-    wxArrayString os63_file_array;
     wxDir::GetAllFiles(os63_dirname, &os63_file_array, _T("*.os63"));
 
     if( 0 == os63_file_array.GetCount() ){
@@ -710,7 +722,6 @@ int s63_pi::ImportCells( void )
                                        pprogress_parent,  wstyle );
     }
 #endif    
-    unsigned int nproc = 0;
     
     for(unsigned int i=0 ; i < unique_cellname_array.Count() ; i++){
 
@@ -1054,7 +1065,7 @@ int s63_pi::ImportCells( void )
         }
     }
         
-
+finish:
     if(g_pprog){
         g_pprog->Update(10000, _T(""));
         
