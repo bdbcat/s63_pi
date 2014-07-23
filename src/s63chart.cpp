@@ -62,6 +62,8 @@ extern bool             g_bsuppress_log;
 extern wxString         g_pi_filename;
 extern wxString         g_SENCdir;
 extern bool             g_benable_screenlog;
+extern S63ScreenLogContainer           *g_pScreenLog;
+extern S63ScreenLog                    *g_pPanelScreenLog;
 
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
@@ -210,7 +212,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
     
-    if(g_benable_screenlog) {
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) ) {
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -507,8 +509,6 @@ void ChartS63::FreeObjectsAndRules()
 {
     //      Delete the created PI_S57Obj array
     //      and any child lists
-    //      The LUPs of base elements are deleted elsewhere ( void s52plib::DestroyLUPArray ( wxArrayOfLUPrec *pLUPArray ))
-    //      But we need to manually destroy any LUPS related to children
     
     PI_S57Obj *top;
     PI_S57Obj *nxx;
@@ -517,22 +517,11 @@ void ChartS63::FreeObjectsAndRules()
             
             top = razRules[i][j];
             while( top != NULL ) {
-                 
-                if( top->child ) {
-                    PI_S57Obj *ctop = top->child;
-                    while( ctop ) {
-                        delete ctop;
-                        
-                        //TODO  Need to add method to API1.11 to access DestroyLup for LUPs associated with children
-//                        if( ps52plib ) ps52plib->DestroyLUP( ctop->LUP );
-//                        delete ctop->LUP;
-                        
-                        PI_S57Obj *cnxx = ctop->next;
-                        delete ctop;
-                        ctop = cnxx;
-                    }
-                }
- 
+
+//  Needs 3.3.1618 ++                
+                if( top->S52_Context )
+                    PI_PLIBFreeContext( top->S52_Context );
+                
  
                 nxx = top->next;
                 
@@ -621,7 +610,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog){
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) ){
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -967,6 +956,14 @@ void ChartS63::SetColorScheme(int cs, bool bApplyImmediate)
 
     m_global_color_scheme = cs;
 
+    if( bApplyImmediate ) {
+        delete pDIB;        // Toss any current cache
+        pDIB = NULL;
+    }
+
+    //  Force a reload of text caches
+    m_plib_state_hash = 0;
+    
 
 }
 
@@ -1337,7 +1334,6 @@ void ChartS63::SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& V
         upd++;
 
     }
-
     if( b_useStencil ) {
         //    Now set the stencil ops to subsequently render only where the stencil bit is "1"
         glStencilFunc( GL_EQUAL, 1, 1 );
@@ -2582,7 +2578,7 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
     
-    if(g_benable_screenlog){
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) ){
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -2748,6 +2744,8 @@ void ChartS63::UpdateLUPsOnStateChange( void )
             top = razRules[i][j];
             while( top != NULL ) {
                 PI_S57Obj *obj = top;
+                PI_PLIBFreeContext( obj->S52_Context );
+                obj->S52_Context = NULL;
                 PI_PLIBSetContext( obj );
                 top = top->next;
             }
@@ -5521,6 +5519,7 @@ PI_S57Obj::PI_S57Obj()
     bIsClone = false;
     Scamin = 10000000;                              // ten million enough?
     nRef = 0;
+    pPolyTessGeo = NULL;
 
     bIsAton = false;
     bIsAssociable = false;
@@ -5561,6 +5560,10 @@ PI_S57Obj::~PI_S57Obj()
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
 
+        if( pPolyTessGeo ) delete (PolyTessGeo*)pPolyTessGeo;
+        
+//        if(S52_Context) delete (S52PLIB_Context *)S52_Context;
+        
         if( m_lsindex_array ) free( m_lsindex_array );
     }
 }
@@ -5604,6 +5607,8 @@ PI_S57ObjX::PI_S57ObjX()
     S52_Context = NULL;
     child = NULL;
     next = NULL;
+    pPolyTessGeo = NULL;
+    
 }
 
 //----------------------------------------------------------------------------------
@@ -5629,6 +5634,8 @@ PI_S57ObjX::~PI_S57ObjX()
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
 
+        if( pPolyTessGeo ) delete (PolyTessGeo*)pPolyTessGeo;
+        
         if( m_lsindex_array ) free( m_lsindex_array );
     }
 }

@@ -370,10 +370,10 @@ void s63_pi::OnSetupOptions(){
         delete g_pScreenLog;
         g_pScreenLog = NULL;
     }
-
+    g_backchannel_port++;
+    
     wxStaticBoxSizer* sbSizerSL= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelWin, wxID_ANY, _("S63_pi Log") ), wxVERTICAL );
     
-    g_backchannel_port++;
     g_pPanelScreenLog = new S63ScreenLog( m_s63chartPanelWin );
     sbSizerSL->Add( g_pPanelScreenLog, 1, wxEXPAND, 5 );
 
@@ -495,6 +495,8 @@ void s63_pi::OnSetupOptions(){
     
     g_benable_screenlog = true;
     
+    m_buttonImportPermit->SetFocus();
+    
 }
 
 void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
@@ -504,13 +506,11 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
     if(g_pPanelScreenLog){
         g_pPanelScreenLog->Close();
         delete g_pPanelScreenLog;
+        g_pPanelScreenLog = NULL;
     }
     
     g_backchannel_port++;
-    g_pScreenLog = new S63ScreenLogContainer( GetOCPNCanvasWindow() );
-    g_pScreenLog->Centre();
     
-    g_benable_screenlog = false;
     
 }
 
@@ -2162,7 +2162,21 @@ S63ScreenLog::S63ScreenLog(wxWindow *parent):
 
 S63ScreenLog::~S63ScreenLog()
 {
+    if(this == g_pPanelScreenLog)
+        g_pPanelScreenLog = NULL;
+    else if( g_pScreenLog && (this == g_pScreenLog->m_slog) )
+        g_pScreenLog = NULL;
+
+    if( !g_pPanelScreenLog && !g_pScreenLog )
+        g_benable_screenlog = false;
+    
+    g_backchannel_port++;
+    
     delete m_plogtc;
+    if(m_server) {
+        m_server->Notify(false);
+        m_server->Destroy();
+    }
 }
 
 void S63ScreenLog::OnSize( wxSizeEvent& event)
@@ -2309,6 +2323,7 @@ void S63ScreenLog::OnSocketEvent(wxSocketEvent& event)
                     // this for us.
                     
 //                    m_plogtc->AppendText(_("Deleting socket.\n\n"));
+
                     sock->Destroy();
                     break;
                 }

@@ -224,9 +224,9 @@ public:
  
     void LogMessage(wxString &s);
     void ClearLog(void);
+    S63ScreenLog        *m_slog;
     
 private:    
-    S63ScreenLog        *m_slog;
 };
 
 

@@ -47,13 +47,13 @@ LangString Type_Fresh_Installation ${LANG_FRENCH} "Nouvelle installation"
 LangString Uninstall_Link ${LANG_FRENCH} "Désinstalle @CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@"
 
 #LangString Page_TypeInst_Title_1 ${LANG_ENGLISH} "Already Installed"
-LangString Page_TypeInst_Title_1 ${LANG_FRENCH} "Déjà installée"
+LangString Page_TypeInst_Title_1 ${LANG_FRENCH} "Déjà installé"
 
 #LangString Page_TypeInst_Title_Exists ${LANG_ENGLISH} "Version Already Installed"
 LangString Page_TypeInst_Title_Exists ${LANG_FRENCH} "Version déjà installée"
 
 #LangString Page_TypeInst_Subtitle_Exists ${LANG_ENGLISH} "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ is already installed."
-LangString Page_TypeInst_Subtitle_Exists ${LANG_FRENCH} "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ est déjà installée."
+LangString Page_TypeInst_Subtitle_Exists ${LANG_FRENCH} "@CPACK_PACKAGE_NAME@ @CPACK_PACKAGE_VERSION@ est déjà installé."
 
 #LangString Page_TypeInst_Subtitle_1 ${LANG_ENGLISH} "Found installed version of @CPACK_PACKAGE_NAME@."
 LangString Page_TypeInst_Subtitle_1 ${LANG_FRENCH} "Version @CPACK_PACKAGE_NAME@ déjà installée."
@@ -90,7 +90,7 @@ LangString Msg_UAC_Admin_Abort ${LANG_FRENCH} "Cette $Inst_Ou_Desinst demande de
 LangString Msg_UAC_Logon_Abort ${LANG_FRENCH} "Connexion impossible, abandon!"
 
 #LangString Msg_UAC_No_Elevation ${LANG_ENGLISH} "Unable to elevate , error $0"
-LangString Msg_UAC_No_Elevation ${LANG_FRENCH} "Unable to elevate , error $0"
+LangString Msg_UAC_No_Elevation ${LANG_FRENCH} "Impossible d'accéder aux privilèges nécessaires, erreur $0"
 
 #LangString Msg_Error_Remove_InstDir ${LANG_ENGLISH} "The installation directory$\r$\n'$INSTDIR'$\r$\ncould not be removed because it is not empty."
 LangString Msg_Error_Remove_InstDir ${LANG_FRENCH} "Le répertoire d'installation$\r$\n'$INSTDIR'$\r$\ne peut être supprimé , car il n'est pas vide."
@@ -110,7 +110,7 @@ LangString License_Message ${LANG_FRENCH} "OpenCpn est un logiciel libre. Vous �
 LangString Installer_Unsupported_XP_SP_Version ${LANG_FRENCH} "Votre version de Windows XP Service Pack version n'est pas supportée (car trop ancienne)!$\r$\nVous avez besoin d'au moins Windows XP SP3."
 
 #LangString Label_TypeInst_Parallel_Text ${LANG_ENGLISH} "Setup has detected several installed versions of @CPACK_PACKAGE_NAME@ on your system.  On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
-LangString Label_TypeInst_Parallel_Text ${LANG_FRENCH} "Plusieurs versions ont été détectées.On the next screen, you will be asked to choose the desired install location for @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
+LangString Label_TypeInst_Parallel_Text ${LANG_FRENCH} "Plusieurs versions ont été détectées de @CPACK_PACKAGE_NAME@ sur votre système.Sur l'écran suivant, vous serez invité à choisir l'emplacement d'installation souhaité pour @CPACK_PACKAGE_NAME@ Version @CPACK_PACKAGE_VERSION@."
 
 #LangString Type_Parallel_Installation ${LANG_ENGLISH} "Parallel installation"
 LangString Type_Parallel_Installation ${LANG_FRENCH} "Installation parallèle"
