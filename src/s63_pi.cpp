@@ -65,6 +65,8 @@ wxProgressDialog                *g_pprog;
 wxString                        g_old_installpermit;
 wxString                        g_old_userpermit;
 bool                            g_benable_screenlog;
+wxArrayString                   g_logarray;
+bool                            gb_global_log;
 
 
 //      A prototype of the default IHO.PUB public key file
@@ -169,7 +171,7 @@ s63_pi::s63_pi(void *ppimgr)
       m_up_text = NULL;
       LoadConfig();
       
-      
+      gb_global_log = false;      
       
 }
 
@@ -590,6 +592,10 @@ int s63_pi::ImportCells( void )
     wxArrayString unique_cellname_array;
     
     wxString os63_dirname = GetPermitDir();
+
+    //  Keep a global log
+    g_logarray.Clear();
+    gb_global_log = true;
     
     //  Get the ENC_ROOT directory
     wxString enc_root_dir;
@@ -612,13 +618,14 @@ int s63_pi::ImportCells( void )
 
     wxString msg = _("OpenCPN can create eSENC files as cells are imported.\n\nNote:\nThis process may take some time.\neSENCS not processed here will be created as needed by OpenCPN.\n\nCreate eSENCs on Import?\n");
     
-    int dret = OCPNMessageBox_PlugIn(NULL,
-                          msg,
-                          _("s63_pi Message"),  wxYES_NO, -1, -1);
-              
+    int dret = OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxYES_NO, -1, -1);
     bool bSENC = (dret == wxID_YES);
 
-  
+    m_s63chartPanelWinTop->Refresh();
+    wxYield();
+    
+    wxStopWatch sw_import;
+    
     //  Read the SERIAL.ENC file to absolutlely identify the Data Server ID
     wxString data_server_string;
     wxFileName serial_enc(enc_root_dir);
@@ -722,9 +729,14 @@ int s63_pi::ImportCells( void )
                                        pprogress_parent,  wstyle );
     }
 #endif    
-    
-    for(unsigned int i=0 ; i < unique_cellname_array.Count() ; i++){
 
+
+    for(unsigned int iloop=0 ; iloop < unique_cellname_array.Count() ; iloop++){
+        m_s63chartPanelWin->Refresh();
+        ::wxYield();
+      
+         
+        wxStopWatch il_timer;
         if(bSENC){
             if(g_pprog){
                 g_pprog->Raise();
@@ -743,20 +755,23 @@ int s63_pi::ImportCells( void )
                 }
             }
         }
+        wxFileName fn1(unique_cellname_array[iloop]);
         
-        for(unsigned int j=0 ; j < os63_file_array.Count() ; j++){
-            wxFileName fn1(unique_cellname_array[i]);
-            wxFileName fn2(os63_file_array[j]);
+        for(unsigned int jo=0 ; jo < os63_file_array.Count() ; jo++){
+            
+            wxFileName fn2(os63_file_array[jo]);
             
             if(fn1.GetName() == fn2.GetName()){         // found the matching os63 file
-                
+ 
+                ClearScreenLog();
+       
                 wxString base_file_name;
                 wxString base_comt;
                 wxString cell_name = fn1.GetName(); 
                 wxString os63_filename = fn2.GetFullPath();
                 //  Examine the Catalog.031 again
                 //  Find the base cell, if present, and build an array of relevent updates
-                
+
                 wxDateTime date000;
                 long edtn;
                 
@@ -813,6 +828,21 @@ int s63_pi::ImportCells( void )
                 }
 
              // Now authenticate the base cell file, if it is actually in the Exchange Set
+             
+             //  Is the cell present?
+                if(base_file_name.Len()){
+                    wxString tfile =  enc_root_dir + wxFileName::GetPathSeparator() + base_file_name;
+                    if(!::wxFileExists(tfile)){
+                        wxString msg;
+                        msg.Printf(_("cell: "));
+                        msg += tfile;
+                        msg += _(" is not present in exchange set.\n");
+                        ScreenLogMessage( msg );
+                 
+                        continue;
+                    }
+                }
+             
                 if(base_file_name.Len()){
                     int base_auth = AuthenticateCell( enc_root_dir + wxFileName::GetPathSeparator() + base_file_name );
                     if(base_auth != 0){        // failed to authenticate
@@ -1019,7 +1049,9 @@ int s63_pi::ImportCells( void )
 //                    return rv;
                 }
                 else {
-                    ScreenLogMessage(_T("Cell added successfully\n\n") );
+                    wxString msgs;
+                    msgs.Printf(_T("Cell added successfully  (%d/%d)\n\n"), iloop, unique_cellname_array.Count() );
+                    ScreenLogMessage(msgs);
                     
                     //  Build the eSENC inline, if requested
                     if(bSENC){
@@ -1055,11 +1087,14 @@ int s63_pi::ImportCells( void )
                             }
                         }
                     }
+                    wxString msgt;
+                    msgt = wxString::Format(_T("Cell Processing time (msec.): %5ld\n"), il_timer.Time());
+                    ScreenLogMessage(msgt);
                     
                 }
                     
                 
-                break;
+                break;          // for loop
                 
             }
         }
@@ -1079,7 +1114,20 @@ finish:
     else
         ScreenLogMessage(_T("Finished Cell Update,  ERRORS encountered\n"));
     
-        
+    wxString mm;
+    mm = _T("Total import time: ");
+    wxTimeSpan dt(0,0,0,sw_import.Time());
+    wxString mmt = dt.Format();
+    mmt += _T("\n");
+    ScreenLogMessage(mm + mmt);
+    
+    //  Paint the global log to the screenlog
+    ClearScreenLog();    
+    gb_global_log = false;
+    
+    for(unsigned int i=0 ; i < g_logarray.GetCount() ; i++)
+        ScreenLogMessage(g_logarray.Item(i));
+    
     return 0;
 }
 
@@ -1192,6 +1240,9 @@ int s63_pi::ImportCellPermits(void)
             wxString line = permit_file.GetFirstLine();
 
             while( !permit_file.Eof() ){
+                m_s63chartPanelWin->Refresh();
+                ::wxYield();
+                
                 if(line.StartsWith( _T(":ENC" ) ) ) {
                     wxString cell_line = permit_file.GetNextLine();
                     while(!permit_file.Eof() && !cell_line.StartsWith( _T(":") ) ){
@@ -1473,6 +1524,11 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     os63file.Write();
     os63file.Close();
 
+    wxString msg = _T("Added cellpermit: ");
+    msg += permit.Mid(0, 8);
+    msg += _T("\n");
+    ScreenLogMessage( msg );
+    
 #if 0    
     //  Add the chart(cell) to the OCPN database
     ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
@@ -2212,22 +2268,27 @@ void S63ScreenLog::LogMessage(wxString &s)
                 m_plogtc->Remove(lp-ll, lp);
             m_plogtc->SetInsertionPoint(lp - ll );
             m_plogtc->WriteText(s.Mid(1));
+            m_plogtc->SetInsertionPointEnd();
+            
         }
         else {
-            m_plogtc->AppendText(seq);
-            m_plogtc->AppendText(sp);
+            m_plogtc->AppendText(seq + sp);
+//            m_plogtc->AppendText(sp);
         }
         
-        m_plogtc->SetInsertionPointEnd();
         Show();
+        
+        if(gb_global_log)
+            g_logarray.Add(seq + sp);
+        
     }
 }
 
 void S63ScreenLog::ClearLog(void)
 {
-//    if(m_plogtc){
-//        m_plogtc->Clear();
-//    }
+    if(m_plogtc){
+        m_plogtc->Clear();
+    }
 }
 
 void S63ScreenLog::OnServerEvent(wxSocketEvent& event)
