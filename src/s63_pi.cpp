@@ -787,13 +787,13 @@ int s63_pi::ImportCells( void )
                     //  and have numeric extension
                     if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
                             
-                         wxString comt = m_catalog->Item(k).m_comt;
+                         wxString comt_catalog = m_catalog->Item(k).m_comt;
                             
                             //      Check updates for applicability
                         if(0 == tmp) {    // the base .000 cell
                             base_file_name = file;
-                            base_comt = comt;
-                            wxStringTokenizer tkz(comt, _T(","));
+                            base_comt = comt_catalog;
+                            wxStringTokenizer tkz(comt_catalog, _T(","));
                             while ( tkz.HasMoreTokens() ){
                                 wxString token = tkz.GetNextToken();
                                 wxString rest;
@@ -874,8 +874,8 @@ int s63_pi::ImportCells( void )
                 //      Branch on results
                 if(base_present){               // This could be an update or replace
                     // Check the EDTN of the currently installed base cell
-                    wxString base_comt = str.AfterFirst(';');
-                    wxStringTokenizer tkz(base_comt, _T(","));
+                    wxString base_comt_installed = str.AfterFirst(';');
+                    wxStringTokenizer tkz(base_comt_installed, _T(","));
                     while ( tkz.HasMoreTokens() ){
                         wxString token = tkz.GetNextToken();
                         wxString rest;
@@ -900,7 +900,22 @@ int s63_pi::ImportCells( void )
                                 date000 = base_installed_UADT;
                             }
                             else {
-//                                int yyp = 5;                    // TODO a new base cell edition is coming in
+                                //  Its a new Edition of an existing cell
+                                //  Recreate the os63 file, thereby removing any old updates
+                                //  that are presumably incorporated into this new revision.
+                                wxString msgs;
+                                msgs.Printf(_T("Updating base cell from Edition %d to Edition %d\n\n"), base_installed_edtn, edtn);
+                                ScreenLogMessage(msgs);
+                                
+                                wxString line0 = os63file.GetFirstLine();       // grab a copy of cell permit
+                                os63file.Clear();
+                                os63file.AddLine(line0);
+                                line = _T("cellbase:");
+                                line += enc_root_dir + wxFileName::GetPathSeparator();
+                                line += base_file_name;
+                                line += _T(";");
+                                line += base_comt;
+                                os63file.AddLine(line);
                             }
                         }
                     }
