@@ -3205,7 +3205,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     m_this_chart_context->ref_lon = m_ref_lon;
     m_this_chart_context->pFloatingATONArray = pFloatingATONArray;
     m_this_chart_context->pRigidATONArray = pRigidATONArray;
-    m_this_chart_context->chart = NULL;
+    m_this_chart_context->chart = this;
     m_this_chart_context->safety_contour = 1e6;    // to be evaluated later
     
     //  Loop and populate all the objects

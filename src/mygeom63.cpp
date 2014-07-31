@@ -164,11 +164,7 @@ wxArrayPtrVoid        *s_pCombineVertexArray;
 static const double   CM93_semimajor_axis_meters = 6378388.0;            // CM93 semimajor axis
 
 #endif
-static bool           s_bSENC_SM;
 
-static int            tess_orient;
-static wxMemoryOutputStream *ostream1;
-static wxMemoryOutputStream *ostream2;
 
 int s_idx;
 
@@ -2307,7 +2303,11 @@ PolyTriGroup::PolyTriGroup()
     pgroup_geom = NULL;           // pointer to Raw geometry, used for contour line drawing
     tri_prim_head = NULL;         // head of linked list of TriPrims
     m_bSMSENC = false;
-
+    bsingle_alloc = false;
+    single_buffer = NULL;
+    single_buffer_size = 0;
+    data_type = DATA_TYPE_DOUBLE;
+    
 }
 
 PolyTriGroup::~PolyTriGroup()
@@ -2317,11 +2317,17 @@ PolyTriGroup::~PolyTriGroup()
     //Walk the list of TriPrims, deleting as we go
     TriPrim *tp_next;
     TriPrim *tp = tri_prim_head;
-    while(tp)
-    {
-        tp_next = tp->p_next;
-        delete tp;
-        tp = tp_next;
+    
+    if(bsingle_alloc){
+        free(single_buffer);
+    }
+    else {
+        while(tp) {
+            tp_next = tp->p_next;
+            tp->FreeMem();
+            delete tp;
+            tp = tp_next;
+        }
     }
 }
 
@@ -2334,7 +2340,10 @@ TriPrim::TriPrim()
 
 TriPrim::~TriPrim()
 {
+}
 
+void TriPrim::FreeMem()
+{
     free(p_vertex);
 }
 

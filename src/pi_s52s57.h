@@ -292,7 +292,7 @@ typedef struct _pi_chart_context{
     double                  ref_lon;
     wxArrayPtrVoid          *pFloatingATONArray;
     wxArrayPtrVoid          *pRigidATONArray;
-    void *                  *chart;
+    void                    *chart;
     double                  safety_contour;                  
 }pi_chart_context;
 
