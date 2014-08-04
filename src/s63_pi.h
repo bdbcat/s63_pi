@@ -39,7 +39,7 @@
 #include <wx/notebook.h>
 
 #define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    6
+#define     PLUGIN_VERSION_MINOR    7
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11

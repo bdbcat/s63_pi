@@ -147,6 +147,83 @@ s63_pi::s63_pi(void *ppimgr)
            _T("PlugIns/s63_pi/OCPNsenc\"");
 #endif 
 
+           
+      //Verify that OCPNsenc actually exists, and runs, and is the correct version.
+       wxString bin_test = g_sencutil_bin;
+      
+      if(wxNOT_FOUND != g_sencutil_bin.Find('\"'))
+          bin_test = g_sencutil_bin.Mid(1).RemoveLast();
+      
+      wxString msg = _("Checking OCPNsenc utility at ");
+      msg += _T("{");
+      msg += bin_test;
+      msg += _T("}");
+      wxLogMessage(_T("s63_pi: ") + msg);
+      
+      
+      if(!::wxFileExists(bin_test)){
+          wxString msg = _("Cannot find the OCPNsenc utility at \n");
+          msg += _T("{");
+          msg += bin_test;
+          msg += _T("}");
+          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+          wxLogMessage(_T("s63_pi: ") + msg);
+      }
+      
+      //Will it run?
+      wxArrayString ret_array;
+      ret_array.Alloc(1000);
+      wxString cmd = g_sencutil_bin;
+      cmd += _T(" -a");                 // get version
+      long rv = wxExecute(cmd, ret_array, ret_array );
+      
+      if(0 != rv) {
+          wxString msg = _("Cannot execute OCPNsenc utility at \n");
+          msg += _T("{");
+          msg += bin_test;
+          msg += _T("}");
+          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+          wxLogMessage(_T("s63_pi: ") + msg);
+      }
+          
+      // Check results
+      bool bad_ver = false;
+      wxString ver_line;
+      for(unsigned int i=0 ; i < ret_array.GetCount() ; i++){
+          wxString line = ret_array[i];
+          if(ret_array[i].Upper().Find(_T("VERSION")) != wxNOT_FOUND){
+              ver_line = line;
+              wxStringTokenizer tkz(line, _T(" ")); 
+              while ( tkz.HasMoreTokens() ){
+                   wxString token = tkz.GetNextToken();
+                   double ver;
+                   if(token.ToDouble(&ver)){
+                       if( ver < 1.009)
+                           bad_ver = true;
+                   }
+              }
+                                        
+          }
+      }
+
+      if(!ver_line.Length())                    // really old version.
+          bad_ver = true;
+      
+      if(bad_ver) {
+          wxString msg = _("OCPNsenc utility at \n");
+          msg += _T("{");
+          msg += bin_test;
+          msg += _T("}\n");
+          msg += _(" is incorrect version, reports as:\n\n");
+          msg += ver_line;
+          msg += _T("\n\n");
+          wxString msg1;
+          msg1.Printf(_("This version of S63_PI requires OCPNsenc of version 1.01 or later."));
+          msg += msg1;
+          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+          wxLogMessage(_T("s63_pi: ") + msg);
+      }
+      
       //        Set up a globally accesible string pointing to the eSENC storage location     
       g_SENCdir = *GetpPrivateApplicationDataLocation();
       g_SENCdir += wxFileName::GetPathSeparator();
@@ -602,20 +679,51 @@ int s63_pi::ImportCells( void )
     
     wxDirDialog *DiropenDialog = new wxDirDialog( NULL, _("Select S63 exchange set root directory (usually ENC_ROOT)"),
                                                   m_last_enc_root_dir);
-    int dirresponse = DiropenDialog->ShowModal();
-    if( dirresponse == wxID_OK ){
-        enc_root_dir = DiropenDialog->GetPath();
-        m_last_enc_root_dir = enc_root_dir;
-        SaveConfig();
-    }
-    else {
-        enc_root_dir = _T("");
+    
+    while(!enc_root_dir.Length()){
+        int dirresponse = DiropenDialog->ShowModal();
+        
+        if( dirresponse == wxID_OK ){
+            wxString potential_root_dir = DiropenDialog->GetPath();
+            if(potential_root_dir.EndsWith(_T("ENC_ROOT"))){
+                enc_root_dir = potential_root_dir;
+            }
+            else{
+                wxDir top_dir(potential_root_dir);
+                if(top_dir.HasSubDirs()){
+                    wxString file;
+                    bool bn = top_dir.GetFirst(&file, wxEmptyString);
+                    while((file != _T("ENC_ROOT") && bn)){
+                        bn = top_dir.GetNext(&file);
+                    }
+                    
+                    if(file == _T("ENC_ROOT")){
+                        enc_root_dir = potential_root_dir + wxFileName::GetPathSeparator() + file;
+                    }
+                }
+            }
+            if(!enc_root_dir.Length()){
+                wxString msg = _("Cannot find \"ENC_ROOT\" directory");
+                    
+                int dret = OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxCANCEL | wxOK, -1, -1);
+                if(dret == wxID_CANCEL){
+                    return 0;
+                }
+            }                   
+            
+        }
+        else {
+            return 0;
+        }
     }
     
     if( !enc_root_dir.Len() ){
         return 0;
     }
 
+    m_last_enc_root_dir = enc_root_dir;
+    SaveConfig();
+    
     wxString msg = _("OpenCPN can create eSENC files as cells are imported.\n\nNote:\nThis process may take some time.\neSENCS not processed here will be created as needed by OpenCPN.\n\nCreate eSENCs on Import?\n");
     
     int dret = OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxYES_NO, -1, -1);
@@ -1263,7 +1371,10 @@ int s63_pi::ImportCellPermits(void)
                     while(!permit_file.Eof() && !cell_line.StartsWith( _T(":") ) ){
 
                         //      Process a single cell permit
-                        ProcessCellPermit( cell_line );
+                        int pret = ProcessCellPermit( cell_line );
+                        if( 2 == pret){                  // cancel requested
+                            goto over_loop;
+                        }
                         n_permits++;
 
                         cell_line = permit_file.GetNextLine();
@@ -1289,7 +1400,7 @@ int s63_pi::ImportCellPermits(void)
         wxLogMessage(_T("s63_pi:  SSE 11 – Cell permit not found" ));
     }
     
-    
+over_loop:    
     //  Set status
     
     if(m_permit_list){
@@ -1351,13 +1462,16 @@ int s63_pi::ProcessCellPermit( wxString &permit )
             wxString msg = _("Security Scheme Error\n\nSSE 13 - Cell Permit is invalid (checksum is incorrect)\nor the Cell Permit is for a different system.\n\n Invalid cell permit starts with ");
             msg += cellpermitstring.Mid(0, 24);
             msg += _T("...");
-            OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+            int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                   msg,
-                                  _("s63_pi Message"),  wxOK, -1, -1);
+                                  _("s63_pi Message"),  wxCANCEL | wxOK, -1, -1);
                                   
             wxLogMessage(_T("s63_pi: ") + msg);
-                                  
-            return 1;
+            
+            if(wxID_CANCEL == dret)
+                return 2;
+            else
+                return 1;
                                   
         }
     }
@@ -1378,107 +1492,6 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     // 10.5.5          Check Cell Permit Expiry Date
     // 10.5.6          Check Data Server ID
 
-#if 0    
-    //Examine the Catalog.031 as previously parsed
-    //  Find the base cell, if present, and build an array of relevent updates
-    
-    wxDateTime date000;
-    long edtn;
-    
-    wxArrayString cell_array;
-    bool b_found_cell = false;
-    for(size_t i=0 ; i < m_catalog->GetCount() ; i++){
-
-        wxString file = m_catalog->Item(i).m_filename;
-        wxFileName fn( file );
-        wxString ext = fn.GetExt();
-
-        long tmp;
-        //  Files of interest have the same base name is the target .000 cell,
-        //  and have numeric extension
-        if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
-            wxString tent_cell_file = file;
-            wxCharBuffer buffer=tent_cell_file.ToUTF8();             // Check file namme for convertability
-
-            if( buffer.data() ) {   
-                b_found_cell = true;
-
-                wxString comt = m_catalog->Item(i).m_comt;
-                
-                //      Check updates for applicability
-                if(0 == tmp) {    // the base .000 cell
-                    base_file_name = file;
-                    base_comt = comt;
-                    wxStringTokenizer tkz(comt, _T(","));
-                    while ( tkz.HasMoreTokens() ){
-                        wxString token = tkz.GetNextToken();
-                        wxString rest;
-                        if(token.StartsWith(_T("EDTN="), &rest))
-                            rest.ToLong(&edtn);
-                        else if(token.StartsWith(_T("UADT="), &rest)){       
-                            date000.ParseFormat( rest, _T("%Y%m%d") );
-                            if( !date000.IsValid() )
-                                date000.ParseFormat( _T("20000101"), _T("%Y%m%d") );
-                        date000.ResetTime();
-                        }
-                    }
-                }
-                else {
-                    if(comt.Len()){
-                        long update_edtn;
-                        wxDateTime update_time;
-                        wxStringTokenizer tkz(comt, _T(","));
-                        while ( tkz.HasMoreTokens() ){
-                            wxString token = tkz.GetNextToken();
-                            wxString rest;
-                            if(token.StartsWith(_T("EDTN="), &rest))
-                                rest.ToLong(&update_edtn);
-                            else if(token.StartsWith(_T("ISDT="), &rest)){       
-                                update_time.ParseFormat( rest, _T("%Y%m%d") );
-                                if( !update_time.IsValid() )
-                                    update_time.ParseFormat( _T("20000101"), _T("%Y%m%d") );
-                                update_time.ResetTime();
-                            }
-                        }
-                        
-                        if(update_time.IsValid() && date000.IsValid()){
-                            if( ( !update_time.IsEarlierThan( date000 ) ) && ( update_edtn == edtn ) )  
-                                cell_array.Add( file );                    
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //      Sort the candidates
-    cell_array.Sort( ExtensionCompare );
-    
-    //      Walk the sorted array, appending the CATALOG m_comt field to the file name.
-    
-    for(unsigned int i=0 ; i < cell_array.Count() ; i++) {
-        for(unsigned int j=0 ; j < m_catalog->Count() ; j++){
-            if(m_catalog->Item(j).m_filename == cell_array[i]){
-                cell_array[i] += _T(";") + m_catalog->Item(j).m_comt;
-                break;
-            }
-        }
-    }
-    
-                
-    
-    if( !b_found_cell ) {
-        ScreenLogMessage( _T("   Error: Cannot find ENC cell base or update in specified exchange set...")
-                + cell_name + _T("\n"));
-        return -1;
-    }
-
-    if( !base_file_name.Len() ) {
-        ScreenLogMessage( _T("   Error: Cannot find ENC cell base in specified exchange set...")
-        + cell_name + _T("\n"));
-        return -1;
-    }
-#endif    
     //  Create the text file 
 
     wxString os63_filename = GetPermitDir();
@@ -1488,10 +1501,23 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     os63_filename += cell_name;
     os63_filename += _T(".os63");
 
-    //TODO  Check if file exists...What then?  a dialog asking to replace?
 
-    if( wxFileName::FileExists( os63_filename ) )
+    if( wxFileName::FileExists( os63_filename ) ) {
+        wxString msg = _("Permit\n");
+        msg += cellpermitstring;
+        msg += _("\nalready imported.\nWould you like to replace it?");
+        int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                         msg,
+                                         _("s63_pi Message"),  wxCANCEL | wxYES_NO, -1, -1);
+        
+        if(wxID_CANCEL == dret)
+            return 2;
+        else if(wxID_NO == dret)
+            return 1;
+     
+        //       must be yes
         wxRemoveFile( os63_filename );
+    }
 
     //  Create the target dir if necessary
     wxFileName tfn( os63_filename );
