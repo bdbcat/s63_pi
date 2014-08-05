@@ -21,7 +21,7 @@ SET(PLUGIN_SOURCE_DIR .)
 MESSAGE (STATUS "*** Building ${PACKAGE_NAME} ***")
 
 SET(VERSION_MAJOR "0")
-SET(VERSION_MINOR "6")
+SET(VERSION_MINOR "7")
 SET(VERSION_PATCH "0")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
@@ -32,6 +32,8 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 IF (PREFIX)
  SET(CMAKE_INSTALL_PREFIX ${PREFIX})
 ENDIF (PREFIX)
+
+MESSAGE (STATUS "*** Will install to ${CMAKE_INSTALL_PREFIX}  ***")
 
 SET(PREFIX_BIN bin)
 SET(PREFIX_INCLUDE include)
@@ -202,7 +204,7 @@ INSTALL(FILES "buildlinux64/OCPNsenc/OCPNsenc"
        DESTINATION ${PREFIX_PARENTBIN})
 ELSE (ARCH MATCHES "amd64")
 INSTALL(FILES "buildlinux/OCPNsenc/OCPNsenc"
-       PERMISSIONS OWNER_EXECUTE OWNER_WRITE WORLD_READ WORLD_EXECUTE
+       PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ WORLD_EXECUTE
        DESTINATION ${PREFIX_PARENTBIN})
 ENDIF (ARCH MATCHES "amd64")
 
@@ -278,19 +280,11 @@ MACRO(GETTEXT_BUILD_MO  _poFile _lang)
       ADD_CUSTOM_COMMAND(
          OUTPUT ${_gmoFile}
          COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_absFile}
+         COMMAND ${CMAKE_COMMAND} -E copy ${_gmoFile} "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo"
          DEPENDS ${_absFile}
          COMMENT "s63-i18n [${_poBasename}]: Created mo file."
       )
 
-IF(APPLE)
-#  Copy/rename the .mo file into a spot where Packages installer can find it
-      ADD_CUSTOM_COMMAND(
-         OUTPUT "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo"
-         COMMAND configure_file(${_gmoFile} "Resources/${_lang}.lproj/${PACKAGE_NAME}.mo" COPYONLY)
-         DEPENDS ${_absFile}
-         COMMENT "s63-i18n [${_poBasename}]: Copied mo file." )
-
-ENDIF(APPLE)
 
 IF(APPLE)
       INSTALL(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/s63_pi/s63_pi/Resources/${_lang}.lproj RENAME ${PACKAGE_NAME}.mo )
