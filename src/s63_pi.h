@@ -39,7 +39,7 @@
 #include <wx/notebook.h>
 
 #define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    7
+#define     PLUGIN_VERSION_MINOR    8
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11
@@ -128,7 +128,6 @@ public:
     void OnCloseToolboxPanel(int page_sel, int ok_apply_cancel);
 
     void SetPluginMessage(wxString &message_id, wxString &message_body);
-    
     int ImportCellPermits( void );
     int RemoveCellPermit( void );
     int ImportCells( void );
@@ -154,7 +153,7 @@ private:
     
     Catalog31 *CreateCatalog31(const wxString &file31);
     
-    int ProcessCellPermit( wxString &permit );
+    int ProcessCellPermit( wxString &permit, bool b_confirm_existing );
     int AuthenticateCell( const wxString & cell_file );
     
     bool LoadConfig( void );

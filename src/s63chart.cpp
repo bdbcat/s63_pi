@@ -65,6 +65,9 @@ extern bool             g_benable_screenlog;
 extern S63ScreenLogContainer           *g_pScreenLog;
 extern S63ScreenLog                    *g_pPanelScreenLog;
 
+extern bool             g_b_validated;
+extern bool             g_bSENCutil_valid;
+    
 static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
 InfoWin                 *g_pInfo;
@@ -101,10 +104,118 @@ int DOUBLECMPFUNC(double *first, double *second)
     return (*first - *second);
 }
 
+void validate_SENC_util(void)
+{
+    //Verify that OCPNsenc actually exists, and runs, and is the correct version.
+    wxString bin_test = g_sencutil_bin;
+    
+    if(wxNOT_FOUND != g_sencutil_bin.Find('\"'))
+        bin_test = g_sencutil_bin.Mid(1).RemoveLast();
+    
+    wxString msg = _("Checking OCPNsenc utility at ");
+    msg += _T("{");
+    msg += bin_test;
+    msg += _T("}");
+    wxLogMessage(_T("s63_pi: ") + msg);
+    
+    
+    if(!::wxFileExists(bin_test)){
+        wxString msg = _("Cannot find the OCPNsenc utility at \n");
+        msg += _T("{");
+        msg += bin_test;
+        msg += _T("}");
+        OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+        wxLogMessage(_T("s63_pi: ") + msg);
+        
+        g_sencutil_bin.Clear();
+        return;
+    }
+    
+    //Will it run?
+    wxArrayString ret_array;
+    ret_array.Alloc(1000);
+    wxString cmd = g_sencutil_bin;
+    cmd += _T(" -a");                 // get version
+    long rv = wxExecute(cmd, ret_array, ret_array );
+    
+    if(0 != rv) {
+        wxString msg = _("Cannot execute OCPNsenc utility at \n");
+        msg += _T("{");
+        msg += bin_test;
+        msg += _T("}");
+        OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+        wxLogMessage(_T("s63_pi: ") + msg);
+    
+        g_sencutil_bin.Clear();
+        return;
+    }
+    
+    // Check results
+    bool bad_ver = false;
+    wxString ver_line;
+    for(unsigned int i=0 ; i < ret_array.GetCount() ; i++){
+        wxString line = ret_array[i];
+        if(ret_array[i].Upper().Find(_T("VERSION")) != wxNOT_FOUND){
+            ver_line = line;
+            wxStringTokenizer tkz(line, _T(" ")); 
+            while ( tkz.HasMoreTokens() ){
+                wxString token = tkz.GetNextToken();
+                double ver;
+                if(token.ToDouble(&ver)){
+                    if( ver < 1.009)
+                        bad_ver = true;
+                }
+            }
+            
+        }
+    }
+    
+    if(!ver_line.Length())                    // really old version.
+          bad_ver = true;
+    
+    if(bad_ver) {
+        wxString msg = _("OCPNsenc utility at \n");
+        msg += _T("{");
+        msg += bin_test;
+        msg += _T("}\n");
+        msg += _(" is incorrect version, reports as:\n\n");
+        msg += ver_line;
+        msg += _T("\n\n");
+        wxString msg1;
+        msg1.Printf(_("This version of S63_PI requires OCPNsenc of version 1.01 or later."));
+        msg += msg1;
+        OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
+        wxLogMessage(_T("s63_pi: ") + msg);
+        
+        g_sencutil_bin.Clear();
+        return;
+        
+    }
+    
+    wxLogMessage(_T("s63_pi: OCPNsenc Check OK"));
+    
+}
+
+
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
     wxArrayString ret_array;
     ret_array.Alloc(1000);
+    
+    if(!g_b_validated && !g_bSENCutil_valid){
+        validate_SENC_util();
+        g_b_validated = true;
+    }
+    
+    if(!g_sencutil_bin.Length()){
+        ret_array.Add(_T("ERROR: s63_pi could not execute OCPNsenc utility\n"));
+        
+        return ret_array;
+    }
+    
+    cmd.Prepend(g_sencutil_bin + _T(" "));
+ 
+    wxLogMessage( cmd );
     
     if( bshowlog ){
         ScreenLogMessage(_T("\n"));
@@ -193,7 +304,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     wxString tmp_file = wxFileName::CreateTempFileName( _T("") );
     
     //  Get the one-time pad key
-    wxString cmd = g_sencutil_bin;
+    wxString cmd;
     cmd += _T(" -n ");          
     
     cmd += _T(" -i ");
@@ -228,7 +339,6 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T("\"");
     
     
-    wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
     
     //  Read the key
@@ -588,7 +698,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
         
     // build the SENC utility command line
     
-    wxString cmd = g_sencutil_bin;
+    wxString cmd;
     cmd += _T(" -l ");                  // create secure header
     
     cmd += _T(" -i ");
@@ -636,7 +746,6 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T("\"");
       
     
-    wxLogMessage( cmd );
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
  
 //    ::wxRemoveFile( tmp_up_file );
@@ -2556,7 +2665,7 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     // build the SENC utility command line
     wxString outfile = SENCFileName; 
     
-    wxString cmd = g_sencutil_bin;
+    wxString cmd;
     cmd += _T(" -c ");                  // create secure SENC
     
     cmd += _T(" -i ");
@@ -2602,8 +2711,6 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += g_pi_filename;
     cmd += _T("\"");
     
-    
-    wxLogMessage( cmd );
     
     ClearScreenLog();
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true );

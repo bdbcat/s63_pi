@@ -67,6 +67,8 @@ wxString                        g_old_userpermit;
 bool                            g_benable_screenlog;
 wxArrayString                   g_logarray;
 bool                            gb_global_log;
+bool                            g_b_validated;
+bool                            g_bSENCutil_valid;
 
 
 //      A prototype of the default IHO.PUB public key file
@@ -147,83 +149,8 @@ s63_pi::s63_pi(void *ppimgr)
            _T("PlugIns/s63_pi/OCPNsenc\"");
 #endif 
 
-           
-      //Verify that OCPNsenc actually exists, and runs, and is the correct version.
-       wxString bin_test = g_sencutil_bin;
-      
-      if(wxNOT_FOUND != g_sencutil_bin.Find('\"'))
-          bin_test = g_sencutil_bin.Mid(1).RemoveLast();
-      
-      wxString msg = _("Checking OCPNsenc utility at ");
-      msg += _T("{");
-      msg += bin_test;
-      msg += _T("}");
-      wxLogMessage(_T("s63_pi: ") + msg);
-      
-      
-      if(!::wxFileExists(bin_test)){
-          wxString msg = _("Cannot find the OCPNsenc utility at \n");
-          msg += _T("{");
-          msg += bin_test;
-          msg += _T("}");
-          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
-          wxLogMessage(_T("s63_pi: ") + msg);
-      }
-      
-      //Will it run?
-      wxArrayString ret_array;
-      ret_array.Alloc(1000);
-      wxString cmd = g_sencutil_bin;
-      cmd += _T(" -a");                 // get version
-      long rv = wxExecute(cmd, ret_array, ret_array );
-      
-      if(0 != rv) {
-          wxString msg = _("Cannot execute OCPNsenc utility at \n");
-          msg += _T("{");
-          msg += bin_test;
-          msg += _T("}");
-          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
-          wxLogMessage(_T("s63_pi: ") + msg);
-      }
-          
-      // Check results
-      bool bad_ver = false;
-      wxString ver_line;
-      for(unsigned int i=0 ; i < ret_array.GetCount() ; i++){
-          wxString line = ret_array[i];
-          if(ret_array[i].Upper().Find(_T("VERSION")) != wxNOT_FOUND){
-              ver_line = line;
-              wxStringTokenizer tkz(line, _T(" ")); 
-              while ( tkz.HasMoreTokens() ){
-                   wxString token = tkz.GetNextToken();
-                   double ver;
-                   if(token.ToDouble(&ver)){
-                       if( ver < 1.009)
-                           bad_ver = true;
-                   }
-              }
-                                        
-          }
-      }
+      g_bSENCutil_valid = false;                // not confirmed yet     
 
-      if(!ver_line.Length())                    // really old version.
-          bad_ver = true;
-      
-      if(bad_ver) {
-          wxString msg = _("OCPNsenc utility at \n");
-          msg += _T("{");
-          msg += bin_test;
-          msg += _T("}\n");
-          msg += _(" is incorrect version, reports as:\n\n");
-          msg += ver_line;
-          msg += _T("\n\n");
-          wxString msg1;
-          msg1.Printf(_("This version of S63_PI requires OCPNsenc of version 1.01 or later."));
-          msg += msg1;
-          OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
-          wxLogMessage(_T("s63_pi: ") + msg);
-      }
-      
       //        Set up a globally accesible string pointing to the eSENC storage location     
       g_SENCdir = *GetpPrivateApplicationDataLocation();
       g_SENCdir += wxFileName::GetPathSeparator();
@@ -1314,6 +1241,9 @@ int s63_pi::ImportCert(void)
 
 int s63_pi::ImportCellPermits(void)
 {
+    int n_permits = 0;
+    bool b_existing_query = true;
+    
     //  Verify that UserPermit and Install permit are actually present, and not set to default values
     bool bok = true;
     if( (g_userpermit == _T("X")) || !g_userpermit.Len() )
@@ -1349,14 +1279,86 @@ int s63_pi::ImportCellPermits(void)
     m_SelectPermit_dir = fn.GetPath();          // save for later
     SaveConfig();
     
- 
 
+    //  Take a look at the list of permits
+    //  Try to determine if this appears to be anupdate to permits.
+    //  If so, ask the user if it is OK to update them all quietly.
+    
+    bool b_yes_to_all = false;
+    
+    if(permit_file_name.Len()){
+        bool b_update = false;
+        
+        wxTextFile permit_file( permit_file_name );
+        if( permit_file.Open() ){
+            wxString line = permit_file.GetFirstLine();
+            
+            while( !permit_file.Eof() ){
+                
+                if(line.StartsWith( _T(":ENC" ) ) ) {
+                    wxString cell_line = permit_file.GetNextLine();
+                    while(!permit_file.Eof() && !cell_line.StartsWith( _T(":") ) ){
+
+                        wxStringTokenizer tkz(cell_line, _T(","));
+                        wxString cellpermitstring = tkz.GetNextToken();
+                        wxString service_level_indicator = tkz.GetNextToken();
+                        wxString edition_number = tkz.GetNextToken();
+                        wxString data_server_ID = tkz.GetNextToken();
+                        wxString comment = tkz.GetNextToken();
+                        
+                        wxString cell_name = cell_line.Mid(0, 8);
+                        
+                        wxString os63_filename = GetPermitDir();
+                        os63_filename += wxFileName::GetPathSeparator();
+                        os63_filename += data_server_ID;
+                        os63_filename += wxFileName::GetPathSeparator();
+                        os63_filename += cell_name;
+                        os63_filename += _T(".os63");
+                        
+                        if( wxFileName::FileExists( os63_filename ) ) {
+                                b_update = true;
+                                break;
+                        }
+                        
+                        cell_line = permit_file.GetNextLine();
+                    }
+                    
+                    if( !permit_file.Eof() )
+                        line = cell_line;
+                    else
+                        line = _T("");
+                }
+                else
+                    line = permit_file.GetNextLine();
+               
+                if(b_update)
+                    break;
+            }
+            
+            if(b_update){
+                wxString msg = _("Update all existing cell permits?");
+                int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(), msg,
+                                                 _("s63_pi Message"),  wxCANCEL | wxYES_NO, -1, -1);
+                                                 
+                 if(wxID_CANCEL == dret)
+                     goto over_loop;
+                 else if(wxID_YES == dret)
+                     b_yes_to_all = true;
+                 else
+                     b_yes_to_all = false;
+            }
+        }
+    }
+    
+
+    //  If I mean "yes to all", then there should be no confirmation dialogs.
+    b_existing_query = !b_yes_to_all;
+    
     //  Open PERMIT.TXT as text file
 
     //  Validate file format
 
     //  In a loop, process the individual cell permits
-    int n_permits = 0;
     if(permit_file_name.Len()){
         wxTextFile permit_file( permit_file_name );
         if( permit_file.Open() ){
@@ -1371,7 +1373,7 @@ int s63_pi::ImportCellPermits(void)
                     while(!permit_file.Eof() && !cell_line.StartsWith( _T(":") ) ){
 
                         //      Process a single cell permit
-                        int pret = ProcessCellPermit( cell_line );
+                        int pret = ProcessCellPermit( cell_line, b_existing_query );
                         if( 2 == pret){                  // cancel requested
                             goto over_loop;
                         }
@@ -1401,6 +1403,10 @@ int s63_pi::ImportCellPermits(void)
     }
     
 over_loop:    
+
+    wxString msg = _T("Cellpermit import complete.\n\n");
+    ScreenLogMessage( msg );
+
     //  Set status
     
     if(m_permit_list){
@@ -1414,7 +1420,7 @@ over_loop:
 
 
 
-int s63_pi::ProcessCellPermit( wxString &permit )
+int s63_pi::ProcessCellPermit( wxString &permit, bool b_confirm_existing )
 {
     int rv = 0;
 
@@ -1441,7 +1447,7 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     }
  
     //  Go to the SENC utility to validate the encrypted cell permit checksum
-    wxString cmd = g_sencutil_bin;
+    wxString cmd;
     cmd += _T(" -d ");                  // validate cell permit
     
     cmd += _T(" -p ");
@@ -1453,7 +1459,6 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
     
-    wxLogMessage( cmd );
     wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
     
     for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
@@ -1503,20 +1508,56 @@ int s63_pi::ProcessCellPermit( wxString &permit )
 
 
     if( wxFileName::FileExists( os63_filename ) ) {
-        wxString msg = _("Permit\n");
-        msg += cellpermitstring;
-        msg += _("\nalready imported.\nWould you like to replace it?");
-        int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+        
+        if(b_confirm_existing){
+            wxString msg = _("Permit\n");
+            msg += cellpermitstring;
+            msg += _("\nalready imported.\nWould you like to replace it?");
+            int dret = OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                          msg,
                                          _("s63_pi Message"),  wxCANCEL | wxYES_NO, -1, -1);
         
-        if(wxID_CANCEL == dret)
-            return 2;
-        else if(wxID_NO == dret)
-            return 1;
+            if(wxID_CANCEL == dret)
+                return 2;
+            else if(wxID_NO == dret)
+                return 1;
+        }
      
-        //       must be yes
-        wxRemoveFile( os63_filename );
+        //       must be yes, and what I really mean is to update the file
+        //       with a new permit string, leaving details of cellbase and existing updates intact.    
+        wxTextFile uos63file( os63_filename );
+        wxString line;
+        if( uos63file.Open() ){
+            
+            //  Remove existing "cellpermit" line
+            wxString line = uos63file.GetFirstLine();
+            int nline = 0;
+            
+            while( !uos63file.Eof() ){
+                if(line.StartsWith( _T("cellpermit:" ) ) ) {
+                    uos63file.RemoveLine(nline);
+                    break;
+                }
+                
+                line = uos63file.GetNextLine();
+                nline++;
+            }
+            
+            // Insert the new "cellpermit" line
+            line = _T("cellpermit:");
+            line += permit;
+            uos63file.InsertLine( line, 0 );
+            
+            uos63file.Write();
+            uos63file.Close();
+
+            wxString msg = _T("Updated cellpermit: ");
+            msg += permit.Mid(0, 8);
+            msg += _T("\n");
+            ScreenLogMessage( msg );
+            
+            return 0;
+        }
     }
 
     //  Create the target dir if necessary
@@ -1547,21 +1588,7 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     line = _T("cellpermit:");
     line += permit;
     os63file.AddLine(line);
-#if 0
-    line = _T("cellbase:");
-    line += enc_root_dir + wxFileName::GetPathSeparator();
-    line += base_file_name;
-    line += _T(";");
-    line += base_comt;
-    os63file.AddLine(line);
 
-    for(unsigned int i=0 ; i < cell_array.Count() ; i++){
-        line = _T("cellupdate:");
-        line += enc_root_dir + wxFileName::GetPathSeparator();
-        line += cell_array[i];
-        os63file.AddLine(line);
-    }
-#endif        
     os63file.Write();
     os63file.Close();
 
@@ -1570,17 +1597,6 @@ int s63_pi::ProcessCellPermit( wxString &permit )
     msg += _T("\n");
     ScreenLogMessage( msg );
     
-#if 0    
-    //  Add the chart(cell) to the OCPN database
-    ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
-    int rv_add = 1;//AddChartToDBInPlace( os63_filename, false );
-    if(!rv_add) {
-        ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n"));
-        wxRemoveFile( os63_filename );
-        rv = rv_add;
-        return rv;
-    }
-#endif
     return rv;
 }
 
@@ -2801,13 +2817,12 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
  
  void GetUserpermitDialog::OnTestClick( wxCommandEvent& event )
  {
-     wxString cmd = g_sencutil_bin;
+     wxString cmd;
      cmd += _T(" -y ");                  // validate Userpermit
      
      cmd += _T(" -u ");
      cmd += m_PermitCtl->GetValue();
      
-     wxLogMessage( cmd );
      wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
 
      bool berr = false;
@@ -3022,7 +3037,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
  
  void GetInstallpermitDialog::OnTestClick( wxCommandEvent& event )
  {
-     wxString cmd = g_sencutil_bin;
+     wxString cmd;
      cmd += _T(" -k ");                  // validate Installpermit
      
      cmd += _T(" -e ");
@@ -3033,7 +3048,6 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      
      
      
-     wxLogMessage( cmd );
      wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
 
      bool berr = false;
