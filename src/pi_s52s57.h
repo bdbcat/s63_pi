@@ -293,7 +293,8 @@ typedef struct _pi_chart_context{
     wxArrayPtrVoid          *pFloatingATONArray;
     wxArrayPtrVoid          *pRigidATONArray;
     void                    *chart;
-    double                  safety_contour;                  
+    double                  safety_contour;
+    float                   *vertex_buffer;
 }pi_chart_context;
 
 

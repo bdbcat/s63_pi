@@ -88,6 +88,14 @@ WX_DEFINE_OBJARRAY(ArrayOfLights);
 #include <wx/listimpl.cpp>
 WX_DEFINE_LIST(ListOfPI_S57Obj);                // Implement a list of PI_S57 Objects
 
+#ifdef ocpnUSE_GL                         
+extern PFNGLGENBUFFERSPROC                 s_glGenBuffers;
+extern PFNGLBINDBUFFERPROC                 s_glBindBuffer;
+extern PFNGLBUFFERDATAPROC                 s_glBufferData;
+extern PFNGLDELETEBUFFERSPROC              s_glDeleteBuffers;
+#endif
+
+extern bool              g_b_EnableVBO;
 
 // ----------------------------------------------------------------------------
 // Random Prototypes
@@ -527,6 +535,8 @@ ChartS63::ChartS63()
     m_next_safe_contour = 1e6;
     m_plib_state_hash = 0;
     
+    m_line_vertex_buffer = 0;
+    
 #if 0
       m_depth_unit_id = PI_DEPTH_UNIT_UNKNOWN;
 
@@ -608,10 +618,21 @@ ChartS63::~ChartS63()
           }
       }
       m_vc_hash.clear();
- 
+
+      PI_connected_segment_hash::iterator itcsc;
+      for( itcsc = m_connector_hash.begin(); itcsc != m_connector_hash.end(); ++itcsc ) {
+          PI_connector_segment *value = itcsc->second;
+          if( value ) {
+              delete value;
+          }
+      }
+      m_connector_hash.clear();
+      
+      
       m_pcontour_array->Clear();
       delete m_pcontour_array;
       
+      free(m_line_vertex_buffer);
 }
 
 
@@ -1031,22 +1052,15 @@ bool ChartS63::IsRenderDelta(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_propo
 
 double ChartS63::GetNormalScaleMin(double canvas_scale_factor, bool b_allow_overzoom)
 {
-    double ppm = canvas_scale_factor / m_Chart_Scale; // true_chart_scale_on_display   = m_canvas_scale_factor / pixels_per_meter of displayed chart
-
-    //Adjust overzoom factor based on  b_allow_overzoom option setting
-    double oz_factor;
-    if( b_allow_overzoom ) oz_factor = 256.;
+    if( b_allow_overzoom )
+        return m_Chart_Scale * 0.125;
     else
-        oz_factor = 4.;
-
-    ppm *= oz_factor;
-
-    return canvas_scale_factor / ppm;
+        return m_Chart_Scale * 0.25;
 }
 
 double ChartS63::GetNormalScaleMax(double canvas_scale_factor, int canvas_width)
 {
-    return 1.0e7;
+    return m_Chart_Scale * 2.0;
 }
 
 
@@ -1180,6 +1194,7 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 {
     SetVPParms( VPoint );
 
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -1229,6 +1244,7 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
 
 //    if( Region != m_last_Region ) force_new_view = true;
 
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -3029,6 +3045,19 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                     //              Establish Object's Display Category
                     obj->m_DisplayCat = PI_GetObjectDisplayCategory( obj );
                     
+
+                    //  Is this a catagory-movable object?
+                    if( !strncmp(obj->FeatureName, "OBSTRN", 6) ||
+                        !strncmp(obj->FeatureName, "WRECKS", 6) ||
+                        !strncmp(obj->FeatureName, "DEPCNT", 6) ||
+                        !strncmp(obj->FeatureName, "UWTROC", 6) )
+                    {
+                        obj->m_bcategory_mutable = true;
+                    }
+                    else{
+                        obj->m_bcategory_mutable = false;
+                    }
+                    
                     //              Establish chart reference position
                     obj->chart_ref_lat = m_ref_lat;
                     obj->chart_ref_lon = m_ref_lon;
@@ -3303,6 +3332,8 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                 }
             }
     
+    AssembleLineGeometry();
+
     //  Set up the chart context
     m_this_chart_context = (pi_chart_context *)calloc( sizeof(pi_chart_context), 1);
     m_this_chart_context->m_pvc_hash = (void *)&m_vc_hash;
@@ -3314,6 +3345,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     m_this_chart_context->pRigidATONArray = pRigidATONArray;
     m_this_chart_context->chart = this;
     m_this_chart_context->safety_contour = 1e6;    // to be evaluated later
+    m_this_chart_context->vertex_buffer = m_line_vertex_buffer;
     
     //  Loop and populate all the objects
     for( int i = 0; i < PI_PRIO_NUM; ++i ) {
@@ -3599,7 +3631,40 @@ void ChartS63::SetLinePriorities( void )
             }
         }
     }
-
+    // Traverse the entire object list again, setting the priority of each line_segment_element
+    // to the maximum priority seen for that segment
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        for( int j = 0; j < LUPNAME_NUM; j++ ) {
+            PI_S57Obj *obj = razRules[i][j];
+            while( obj ) {
+                
+                PI_VE_Element *pedge;
+                PI_connector_segment *pcs;
+                PI_line_segment_element *list = obj->m_ls_list;
+                while( list ){
+                    switch (list->type){
+                        case TYPE_EE:
+                            
+                            pedge = (PI_VE_Element *)list->private0;
+                            if(pedge)
+                                list->priority = pedge->max_priority;
+                            break;
+                            
+                        default:
+                            pcs = (PI_connector_segment *)list->private0;
+                            if(pcs)
+                                list->priority = pcs->max_priority;
+                            break;
+                    }
+                    
+                    list = list->next;
+                }
+                
+                obj = obj->next;
+            }
+        }
+    }
+    
     //      Mark the priority as set.
     //      Generally only reset by Options Dialog post processing
     m_bLinePrioritySet = true;
@@ -3662,6 +3727,7 @@ bool ChartS63::DoRenderRegionViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VP
     
     if( Region != m_last_Region ) force_new_view = true;
     
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -3800,7 +3866,8 @@ bool ChartS63::RenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint )
 {
     
     SetVPParms( VPoint );
-
+    
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -5182,6 +5249,452 @@ wxString ChartS63::GetAttributeDecode( wxString& att, int ival )
 
 
 
+void ChartS63::AssembleLineGeometry( void )
+{
+    // Walk the hash tables to get the required buffer size
+    
+    //  Start with the edge hash table
+    size_t nPoints = 0;
+    PI_VE_Hash::iterator it;
+    for( it = m_ve_hash.begin(); it != m_ve_hash.end(); ++it ) {
+        PI_VE_Element *pedge = it->second;
+        if( pedge ) {
+            nPoints += pedge->nCount;
+        }
+    }
+    
+    
+    int ndelta = 0;
+    //  Get the end node connected segments.  To do this, we
+    //  walk the Feature array and process each feature that potetially has a LINE type element
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        for( int j = 0; j < LUPNAME_NUM; j++ ) {
+            PI_S57Obj *obj = razRules[i][j];
+            while(obj)
+            {
+                for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
+                    int seg_index = iseg * 3;
+                    int *index_run = &obj->m_lsindex_array[seg_index];
+                    
+                    //  Get first connected node
+                    unsigned int inode = *index_run++;
+                    
+                    //  Get the edge
+                    unsigned int venode = *index_run++;
+                    PI_VE_Element *pedge = 0;
+                    pedge = m_ve_hash[venode];
+                    
+                    //  Get end connected node
+                    unsigned int enode = *index_run++;
+                    
+                    //  Get first connected node
+                    PI_VC_Element *ipnode = 0;
+                    ipnode = m_vc_hash[inode];
+                    
+                    //  Get end connected node
+                    PI_VC_Element *epnode = 0;
+                    epnode = m_vc_hash[enode];
+                    
+                    if( ipnode ) {
+                        if(pedge && pedge->nCount)
+                        {
+                            //      The initial node exists and connects to the start of an edge
+                            wxString key;
+                            key.Printf(_T("CE%d%d"), inode, venode);
+                            
+                            if(m_connector_hash.find( key ) == m_connector_hash.end()){
+                                ndelta += 2;
+                                PI_connector_segment *pcs = new PI_connector_segment;
+                                pcs->type = TYPE_CE;
+                                pcs->start = ipnode;
+                                pcs->end = pedge;
+                                m_connector_hash[key] = pcs;
+                            }
+                        }
+                    }
+                    
+                    if(pedge && pedge->nCount){
+                        
+                    }   //pedge
+                    
+                    // end node
+                    if( epnode ) {
+                        if(ipnode){
+                            if(pedge && pedge->nCount){
+                                
+                                wxString key;
+                                key.Printf(_T("EC%d%d"), venode, enode);
+                                
+                                if(m_connector_hash.find( key ) == m_connector_hash.end()){
+                                    ndelta += 2;
+                                    PI_connector_segment *pcs = new PI_connector_segment;
+                                    pcs->type = TYPE_EC;
+                                    pcs->start = pedge;
+                                    pcs->end = epnode;
+                                    m_connector_hash[key] = pcs;
+                                }
+                            }
+                            else {
+                                wxString key;
+                                key.Printf(_T("CC%d%d"), inode, enode);
+                                
+                                if(m_connector_hash.find( key ) == m_connector_hash.end()){
+                                    ndelta += 2;
+                                    PI_connector_segment *pcs = new PI_connector_segment;
+                                    pcs->type = TYPE_CC;
+                                    pcs->start = ipnode;
+                                    pcs->end = epnode;
+                                    m_connector_hash[key] = pcs;
+                                }
+                            }
+                        }
+                    }
+                }  // for
+                obj = obj->next;
+            }
+        }
+    }
+    
+    //  We have the total VBO point count, and a nice hashmap of the connector segments
+    nPoints += ndelta;
+    
+    size_t vbo_byte_length = 2 * nPoints * sizeof(float);
+    m_vbo_byte_length = vbo_byte_length;
+    
+    m_line_vertex_buffer = (float *)malloc( vbo_byte_length);
+    float *lvr = m_line_vertex_buffer;
+    size_t offset = 0;
+    
+    //      Copy and convert the edge points from doubles to floats,
+    //      and recording each segment's offset in the array
+    for( it = m_ve_hash.begin(); it != m_ve_hash.end(); ++it ) {
+        PI_VE_Element *pedge = it->second;
+        if( pedge ) {
+            double *pp = pedge->pPoints;
+            for(int i = 0 ; i < pedge->nCount ; i++){
+                double x = *pp++;
+                double y = *pp++;
+                
+                *lvr++ = (float)x;
+                *lvr++ = (float)y;
+            }
+            
+            pedge->vbo_offset = offset;
+            offset += pedge->nCount * 2 * sizeof(float);
+            
+        }
+    }
+    
+    //      Now iterate on the hashmap, adding the connector segments in the hashmap to the VBO buffer
+    double e0, n0, e1, n1;
+    double *ppt;
+    PI_VC_Element *ipnode;
+    PI_VC_Element *epnode;
+    PI_VE_Element *pedge;
+    PI_connected_segment_hash::iterator itc;
+    for( itc = m_connector_hash.begin(); itc != m_connector_hash.end(); ++itc )
+    {
+        wxString key = itc->first;
+        PI_connector_segment *pcs = itc->second;
+        
+        switch(pcs->type){
+            case TYPE_CC:
+                ipnode = (PI_VC_Element *)pcs->start;
+                epnode = (PI_VC_Element *)pcs->end;
+                
+                ppt = ipnode->pPoint;
+                e0 = *ppt++;
+                n0 = *ppt;
+                
+                ppt = epnode->pPoint;
+                e1 = *ppt++;
+                n1 = *ppt;
+                
+                *lvr++ = (float)e0;
+                *lvr++ = (float)n0;
+                *lvr++ = (float)e1;
+                *lvr++ = (float)n1;
+                
+                pcs->vbo_offset = offset;
+                offset += 4 * sizeof(float);
+                
+                break;
+                
+            case TYPE_CE:
+                ipnode = (PI_VC_Element *)pcs->start;
+                ppt = ipnode->pPoint;
+                e0 = *ppt++;
+                n0 = *ppt;
+                
+                pedge = (PI_VE_Element *)pcs->end;
+                e1 = pedge->pPoints[ 0 ];
+                n1 = pedge->pPoints[ 1 ];
+                
+                *lvr++ = (float)e0;
+                *lvr++ = (float)n0;
+                *lvr++ = (float)e1;
+                *lvr++ = (float)n1;
+                
+                pcs->vbo_offset = offset;
+                offset += 4 * sizeof(float);
+                break;
+                
+            case TYPE_EC:
+                pedge = (PI_VE_Element *)pcs->start;
+                e0 = pedge->pPoints[ (2 * (pedge->nCount - 1))];
+                n0 = pedge->pPoints[ (2 * (pedge->nCount - 1)) + 1];
+                
+                epnode = (PI_VC_Element *)pcs->end;
+                ppt = epnode->pPoint;
+                e1 = *ppt++;
+                n1 = *ppt;
+                
+                *lvr++ = (float)e0;
+                *lvr++ = (float)n0;
+                *lvr++ = (float)e1;
+                *lvr++ = (float)n1;
+                
+                pcs->vbo_offset = offset;
+                offset += 4 * sizeof(float);
+                
+                break;
+            default:
+                break;
+        }
+    }
+    
+    // Now ready to walk the object array again, building the per-object list of renderable segments
+    for( int i = 0; i < PRIO_NUM; ++i ) {
+        for( int j = 0; j < LUPNAME_NUM; j++ ) {
+            PI_S57Obj *obj = razRules[i][j];
+            while (obj)
+            {
+                PI_line_segment_element *list_top = new PI_line_segment_element;
+                list_top->n_points = 0;
+                list_top->next = 0;
+                
+                PI_line_segment_element *le_current = list_top;
+                
+                for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
+                    int seg_index = iseg * 3;
+                    int *index_run = &obj->m_lsindex_array[seg_index];
+                    
+                    //  Get first connected node
+                    unsigned int inode = *index_run++;
+                    
+                    //  Get the edge
+                    unsigned int venode = *index_run++;
+                    PI_VE_Element *pedge = 0;
+                    pedge = m_ve_hash[venode];
+                    
+                    //  Get end connected node
+                    unsigned int enode = *index_run++;
+                    
+                    //  Get first connected node
+                    PI_VC_Element *ipnode = 0;
+                    ipnode = m_vc_hash[inode];
+                    
+                    //  Get end connected node
+                    PI_VC_Element *epnode = 0;
+                    epnode = m_vc_hash[enode];
+                    
+                    double e0, n0, e1, n1;
+                    
+                    if( ipnode ) {
+                        double *ppt = ipnode->pPoint;
+                        e0 = *ppt++;
+                        n0 = *ppt;
+                        
+                        if(pedge && pedge->nCount)
+                        {
+                            wxString key;
+                            key.Printf(_T("CE%d%d"), inode, venode);
+                            
+                            if(m_connector_hash.find( key ) != m_connector_hash.end()){
+                                
+                                PI_connector_segment *pcs = m_connector_hash[key];
+                                
+                                PI_line_segment_element *pls = new PI_line_segment_element;
+                                pls->next = 0;
+                                pls->vbo_offset = pcs->vbo_offset;
+                                pls->n_points = 2;
+                                pls->priority = 0;
+                                pls->private0 = pcs;
+                                pls->type = TYPE_CE;
+                                
+                                //  Get the bounding box
+                                e1 = pedge->pPoints[0];
+                                n1 = pedge->pPoints[1];
+                                
+                                double lat0, lon0, lat1, lon1;
+                                fromSM_Plugin( e0, n0, m_ref_lat, m_ref_lon, &lat0, &lon0 );
+                                fromSM_Plugin( e1, n1, m_ref_lat, m_ref_lon, &lat1, &lon1 );
+                                
+                                pls->lat_max = wxMax(lat0, lat1);
+                                pls->lat_min = wxMin(lat0, lat1);
+                                pls->lon_max = wxMax(lon0, lon1);
+                                pls->lon_min = wxMin(lon0, lon1);
+                                
+                                le_current->next = pls;             // hook it up
+                                le_current = pls;
+                            }
+                        }
+                    }
+                    
+                    if(pedge && pedge->nCount){
+                        PI_line_segment_element *pls = new PI_line_segment_element;
+                        pls->next = 0;
+                        pls->vbo_offset = pedge->vbo_offset;
+                        pls->n_points = pedge->nCount;
+                        pls->priority = 0;
+                        pls->private0 = pedge;
+                        pls->type = TYPE_EE;
+ 
+                        double lat_max = -100;
+                        double lat_min = 100;
+                        double lon_max = -400;
+                        double lon_min = 400;
+                        
+                        for(int i= 0 ; i < pedge->nCount ; i++){
+                            double lat, lon;
+                            fromSM_Plugin( e0, n0, m_ref_lat, m_ref_lon, &lat, &lon );
+                            lat_max = wxMax(lat_max, lat);
+                            lat_min = wxMin(lat_min, lat);
+                            lon_max = wxMax(lon_max, lon);
+                            lon_min = wxMin(lon_min, lon);
+                        }
+
+                        pls->lat_max = lat_max;
+                        pls->lat_min = lat_min;
+                        pls->lon_max = lon_max;
+                        pls->lon_min = lon_min;
+                        
+                        le_current->next = pls;             // hook it up
+                        le_current = pls;
+                        
+                        e0 = pedge->pPoints[ (2 * (pedge->nCount - 1))];
+                        n0 = pedge->pPoints[ (2 * (pedge->nCount - 1)) + 1];
+                        
+                        
+                    }   //pedge
+                    
+                    // end node
+                    if( epnode ) {
+                        double *ppt = epnode->pPoint;
+                        e1 = *ppt++;
+                        n1 = *ppt;
+                        
+                        if(ipnode){
+                            if(pedge && pedge->nCount){
+                                
+                                wxString key;
+                                key.Printf(_T("EC%d%d"), venode, enode);
+                                
+                                if(m_connector_hash.find( key ) != m_connector_hash.end()){
+                                    PI_connector_segment *pcs = m_connector_hash[key];
+                                    
+                                    PI_line_segment_element *pls = new PI_line_segment_element;
+                                    pls->next = 0;
+                                    pls->vbo_offset = pcs->vbo_offset;
+                                    pls->n_points = 2;
+                                    pls->priority = 0;
+                                    pls->private0 = pcs;
+                                    pls->type = TYPE_EC;
+                                    
+                                    double lat0, lon0, lat1, lon1;
+                                    fromSM_Plugin( e0, n0, m_ref_lat, m_ref_lon, &lat0, &lon0 );
+                                    fromSM_Plugin( e1, n1, m_ref_lat, m_ref_lon, &lat1, &lon1 );
+                                    
+                                    pls->lat_max = wxMax(lat0, lat1);
+                                    pls->lat_min = wxMin(lat0, lat1);
+                                    pls->lon_max = wxMax(lon0, lon1);
+                                    pls->lon_min = wxMin(lon0, lon1);
+                                    
+                                    le_current->next = pls;             // hook it up
+                                    le_current = pls;
+                                }
+                            }
+                            else {
+                                wxString key;
+                                key.Printf(_T("CC%d%d"), inode, enode);
+                                
+                                if(m_connector_hash.find( key ) != m_connector_hash.end()){
+                                    PI_connector_segment *pcs = m_connector_hash[key];
+                                    
+                                    PI_line_segment_element *pls = new PI_line_segment_element;
+                                    pls->next = 0;
+                                    pls->vbo_offset = pcs->vbo_offset;
+                                    pls->n_points = 2;
+                                    pls->priority = 0;
+                                    pls->private0 = pcs;
+                                    pls->type = TYPE_CC;
+                                    
+                                    double lat0, lon0, lat1, lon1;
+                                    fromSM_Plugin( e0, n0, m_ref_lat, m_ref_lon, &lat0, &lon0 );
+                                    fromSM_Plugin( e1, n1, m_ref_lat, m_ref_lon, &lat1, &lon1 );
+                                    
+                                    pls->lat_max = wxMax(lat0, lat1);
+                                    pls->lat_min = wxMin(lat0, lat1);
+                                    pls->lon_max = wxMax(lon0, lon1);
+                                    pls->lon_min = wxMin(lon0, lon1);
+                                    
+                                    le_current->next = pls;             // hook it up
+                                    le_current = pls;
+                                }
+                            }
+                        }
+                    }
+                }  // for
+                
+                //  All done, so assign the list to the object
+                obj->m_ls_list = list_top->next;    // skipping the empty first placeholder element
+                delete list_top;
+
+                obj = obj->next;
+                
+            }
+        }
+    }
+    
+}
+
+
+void ChartS63::BuildLineVBO( void )
+{
+    #ifdef ocpnUSE_GL
+     
+    if(!g_b_EnableVBO)
+        return;
+    
+    if(m_LineVBO_name == -1){
+        
+        //      Create the VBO
+        GLuint vboId;
+        (s_glGenBuffers)(1, &vboId);
+        
+        // bind VBO in order to use
+        (s_glBindBuffer)(GL_ARRAY_BUFFER, vboId);
+        
+        // upload data to VBO
+        glEnableClientState(GL_VERTEX_ARRAY);             // activate vertex coords array
+        (s_glBufferData)(GL_ARRAY_BUFFER, m_vbo_byte_length, m_line_vertex_buffer, GL_STATIC_DRAW);
+        
+        glDisableClientState(GL_VERTEX_ARRAY);            // deactivate vertex array
+        (s_glBindBuffer)(GL_ARRAY_BUFFER, 0);
+        
+        //  Loop and populate all the objects
+        for( int i = 0; i < PRIO_NUM; ++i ) {
+            for( int j = 0; j < LUPNAME_NUM; j++ ) {
+                PI_S57Obj *obj = razRules[i][j];
+                obj->auxParm2 = vboId;
+            }
+        }
+        
+        m_LineVBO_name = vboId;
+        
+    }
+    #endif    
+}
 
 
 
@@ -5642,6 +6155,8 @@ PI_S57Obj::PI_S57Obj()
     y_origin = 0.0;
 
     S52_Context = NULL;
+    m_ls_list = 0;
+    
 }
 
 //----------------------------------------------------------------------------------
@@ -5672,6 +6187,16 @@ PI_S57Obj::~PI_S57Obj()
 //        if(S52_Context) delete (S52PLIB_Context *)S52_Context;
         
         if( m_lsindex_array ) free( m_lsindex_array );
+        
+        if(m_ls_list){
+            PI_line_segment_element *element = m_ls_list;
+            while(element){
+                PI_line_segment_element *next = element->next;
+                delete element;
+                element = next;
+            }
+        }
+        
     }
 }
 
@@ -5691,8 +6216,9 @@ PI_S57ObjX::PI_S57ObjX()
     att_array = NULL;
     attVal = NULL;
     n_attr = 0;
-
-     geoPtMulti = NULL;
+    m_bcategory_mutable = false;
+    
+    geoPtMulti = NULL;
     geoPtz = NULL;
     geoPt = NULL;
     bIsClone = false;
@@ -5776,6 +6302,7 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
     S52_Context = NULL;
     child = NULL;
     next = NULL;
+    m_bcategory_mutable = false;
     
     //        Set default (unity) auxiliary transform coefficients
     x_rate = 1.0;

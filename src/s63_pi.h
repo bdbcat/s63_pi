@@ -39,12 +39,12 @@
 #include <wx/notebook.h>
 
 #define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    8
+#define     PLUGIN_VERSION_MINOR    9
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11
 
-#include "ocpn_plugin.h"
+#include "/home/dsr/Projects/opencpn_sf/opencpn/include/ocpn_plugin.h"
 
 
 enum {

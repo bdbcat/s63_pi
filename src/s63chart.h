@@ -22,9 +22,11 @@
 
 class PI_VE_Element;
 class PI_VC_Element;
+class PI_connector_segment;
 
 WX_DECLARE_HASH_MAP( unsigned int, PI_VE_Element *, wxIntegerHash, wxIntegerEqual, PI_VE_Hash );
 WX_DECLARE_HASH_MAP( unsigned int, PI_VC_Element *, wxIntegerHash, wxIntegerEqual, PI_VC_Hash );
+WX_DECLARE_STRING_HASH_MAP( PI_connector_segment *, PI_connected_segment_hash );
 
 WX_DEFINE_ARRAY_DOUBLE(double, ArrayOfSortedDoubles);
 
@@ -189,6 +191,9 @@ protected:
       unsigned char     *GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize );
       
       void              FreeObjectsAndRules();
+
+      void              BuildLineVBO( void );
+      void              AssembleLineGeometry( void );
       
         // Rendering
       bool DoRenderViewOnDC(wxMemoryDC& dc, const PlugIn_ViewPort& VPoint, bool force_new_view);
@@ -275,6 +280,12 @@ protected:
       
       PI_VE_Hash     m_ve_hash;
       PI_VC_Hash     m_vc_hash;
+
+      PI_connected_segment_hash m_connector_hash;
+      float      *m_line_vertex_buffer;
+      size_t      m_vbo_byte_length;
+      int         m_LineVBO_name;
+      
       
       PI_S57Obj *razRules[PI_PRIO_NUM][PI_LUPNAME_NUM];
       
@@ -337,6 +348,8 @@ public:
     int         nCount;
     double      *pPoints;
     int         max_priority;
+    size_t      vbo_offset;
+//    wxBoundingBox BBox;
 };
 
 class PI_VC_Element
@@ -349,6 +362,25 @@ public:
 
 WX_DECLARE_OBJARRAY(PI_VE_Element, PI_ArrayOfVE_Elements);
 WX_DECLARE_OBJARRAY(PI_VC_Element, PI_ArrayOfVC_Elements);
+
+
+typedef enum
+{
+    TYPE_CE = 0,
+    TYPE_CC,
+    TYPE_EC,
+    TYPE_EE
+} SegmentType;
+
+class PI_connector_segment
+{
+public:
+    void *start;
+    void *end;
+    SegmentType type;
+    int vbo_offset;
+    int max_priority;
+};
 
 //----------------------------------------------------------------------------------
 //      SENC Server Process container
