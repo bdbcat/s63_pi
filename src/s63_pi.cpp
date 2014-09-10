@@ -69,6 +69,7 @@ wxArrayString                   g_logarray;
 bool                            gb_global_log;
 bool                            g_b_validated;
 bool                            g_bSENCutil_valid;
+wxString                        g_CommonDataDir;
 
 
 //      A prototype of the default IHO.PUB public key file
@@ -151,14 +152,7 @@ s63_pi::s63_pi(void *ppimgr)
 
       g_bSENCutil_valid = false;                // not confirmed yet     
 
-      //        Set up a globally accesible string pointing to the eSENC storage location     
-      g_SENCdir = *GetpPrivateApplicationDataLocation();
-      g_SENCdir += wxFileName::GetPathSeparator();
-      g_SENCdir += _T("s63");
-      g_SENCdir += wxFileName::GetPathSeparator();
-      g_SENCdir += _T("s63SENC");
-           
-      
+       
       g_backchannel_port = 49500; //49152;       //ports 49152–65535 are unallocated
       
       g_pScreenLog = NULL; 
@@ -174,6 +168,25 @@ s63_pi::s63_pi(void *ppimgr)
     
       m_up_text = NULL;
       LoadConfig();
+
+      
+      //        Set up a common data location,
+      //        Using a config file specified location if found
+      if( g_CommonDataDir.Len()){
+          if( g_CommonDataDir.Last() != wxFileName::GetPathSeparator() )
+              g_CommonDataDir += wxFileName::GetPathSeparator();
+      }
+      else{
+          g_CommonDataDir = *GetpPrivateApplicationDataLocation();
+          g_CommonDataDir += wxFileName::GetPathSeparator();
+          g_CommonDataDir += _T("s63");
+          g_CommonDataDir += wxFileName::GetPathSeparator();
+      }
+          
+      //        Set up a globally accesible string pointing to the eSENC storage location     
+      g_SENCdir = g_CommonDataDir;
+      g_SENCdir += _T("s63SENC");
+      
       
       gb_global_log = false;      
       
@@ -522,12 +535,7 @@ void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
 
 wxString s63_pi::GetPermitDir()
 {
-    wxString os63_dirname = *GetpPrivateApplicationDataLocation();
-    
-    if( os63_dirname.Last() != wxFileName::GetPathSeparator() )
-        os63_dirname += wxFileName::GetPathSeparator();
-    os63_dirname += _T("s63");
-    os63_dirname += wxFileName::GetPathSeparator();
+    wxString os63_dirname = g_CommonDataDir;
     os63_dirname += _T("s63charts");
     
     return os63_dirname;
@@ -1640,10 +1648,7 @@ int s63_pi::RemoveCellPermit( void )
 
 wxString s63_pi::GetCertificateDir()
 {
-    wxString dir = *GetpPrivateApplicationDataLocation();
-    dir += wxFileName::GetPathSeparator();
-    dir += _T("s63");
-    dir += wxFileName::GetPathSeparator();
+    wxString dir = g_CommonDataDir;
     dir += _T("s63_certificates");
     
     return dir;
@@ -1802,6 +1807,7 @@ bool s63_pi::LoadConfig( void )
         pConf->Read( _T("Userpermit"), &g_userpermit );
         pConf->Read( _T("Installpermit"), &g_installpermit );
         pConf->Read( _T("LastENCROOT"), &m_last_enc_root_dir);
+        pConf->Read( _T("S63CommonDataDir"), &g_CommonDataDir);
     }        
      
     return true;

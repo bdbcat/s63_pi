@@ -180,7 +180,7 @@ class PolyTessGeo
         PolyTessGeo();
         ~PolyTessGeo();
 
-        PolyTessGeo(unsigned char *polybuf, int nrecl, int index);      // Build this from SENC file record
+        PolyTessGeo(unsigned char *polybuf, int nrecl, int index,  int senc_file_version);      // Build this from SENC file record
 
         bool IsOk(){ return m_bOK;}
 

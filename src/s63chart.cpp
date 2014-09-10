@@ -88,11 +88,13 @@ WX_DEFINE_OBJARRAY(ArrayOfLights);
 #include <wx/listimpl.cpp>
 WX_DEFINE_LIST(ListOfPI_S57Obj);                // Implement a list of PI_S57 Objects
 
+#ifdef BUILD_VBO
 #ifdef ocpnUSE_GL                         
 extern PFNGLGENBUFFERSPROC                 s_glGenBuffers;
 extern PFNGLBINDBUFFERPROC                 s_glBindBuffer;
 extern PFNGLBUFFERDATAPROC                 s_glBufferData;
 extern PFNGLDELETEBUFFERSPROC              s_glDeleteBuffers;
+#endif
 #endif
 
 extern bool              g_b_EnableVBO;
@@ -170,7 +172,7 @@ void validate_SENC_util(void)
                 wxString token = tkz.GetNextToken();
                 double ver;
                 if(token.ToDouble(&ver)){
-                    if( ver < 1.009)
+                    if( ver < 1.03)
                         bad_ver = true;
                 }
             }
@@ -190,7 +192,7 @@ void validate_SENC_util(void)
         msg += ver_line;
         msg += _T("\n\n");
         wxString msg1;
-        msg1.Printf(_("This version of S63_PI requires OCPNsenc of version 1.01 or later."));
+        msg1.Printf(_("This version of S63_PI requires OCPNsenc of version 1.03 or later."));
         msg += msg1;
         OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxOK, -1, -1);
         wxLogMessage(_T("s63_pi: ") + msg);
@@ -200,7 +202,7 @@ void validate_SENC_util(void)
         
     }
     
-    wxLogMessage(_T("s63_pi: OCPNsenc Check OK"));
+    wxLogMessage(_T("s63_pi: OCPNsenc Check OK...") + ver_line);
     
 }
 
@@ -874,7 +876,7 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         //      Could not find the os63 file...
         //      So remove from database permanently to prevent thrashing
         wxString fn = name_os63;
-        RemoveChartFromDBInPlace( fn );
+//        RemoveChartFromDBInPlace( fn );
         
         s_PI_bInS57--;
         return PI_INIT_FAIL_REMOVE;
@@ -1194,7 +1196,7 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 {
     SetVPParms( VPoint );
 
-    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -1244,7 +1246,7 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
 
 //    if( Region != m_last_Region ) force_new_view = true;
 
-    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -2051,7 +2053,8 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     wxFileInputStream fpx_u( ifs );
     wxBufferedInputStream fpxb( fpx_u );
     CryptInputStream fpx(fpxb);
-
+    int senc_file_version = 0;
+    
     size_t crypt_size;
     unsigned char *cb = GetSENCCryptKeyBuffer( efn, &crypt_size );
     fpx.SetCryptBuffer( cb, crypt_size );
@@ -2097,7 +2100,6 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
         }
         
         else if( !strncmp( buf, "SENC", 4 ) ) {
-            int senc_file_version;
             sscanf( buf, "SENC Version=%i", &senc_file_version );
             if( senc_file_version != CURRENT_SENC_FORMAT_VERSION ) {
                 wxString msg( _T("   Wrong version on SENC file ") );
@@ -2146,7 +2148,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
         
         else if( !strncmp( buf, "OGRF", 4 ) ) {
             
-            PI_S57ObjX *obj = new PI_S57ObjX( buf, &fpx );
+            PI_S57ObjX *obj = new PI_S57ObjX( buf, &fpx, senc_file_version);
             if( !strncmp( obj->FeatureName, "M_COVR", 6 ) ){
 
                 wxString catcov_str = obj->GetAttrValueAsString( "CATCOV" );
@@ -2897,6 +2899,9 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
     wxFileInputStream fpx_u( FullPath );
 
     CryptInputStream *pfpx;
+    
+    int senc_file_version = 0;
+    
 #if 0    
     SENCclient scli;
     
@@ -2992,7 +2997,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
         
         if( !strncmp( buf, "OGRF", 4 ) ) {
             
-            PI_S57ObjX *obj = new PI_S57ObjX( buf, pfpx );
+            PI_S57ObjX *obj = new PI_S57ObjX( buf, pfpx, senc_file_version );
             if( obj ) {
                 
                 //      Build/Maintain the ATON floating/rigid arrays
@@ -3044,8 +3049,10 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                     
                     //              Establish Object's Display Category
                     obj->m_DisplayCat = PI_GetObjectDisplayCategory( obj );
-                    
 
+                    //              Establish objects base display priority         
+                    obj->m_DPRI = -1; //LUP->DPRI - '0';
+                    
                     //  Is this a catagory-movable object?
                     if( !strncmp(obj->FeatureName, "OBSTRN", 6) ||
                         !strncmp(obj->FeatureName, "WRECKS", 6) ||
@@ -3162,7 +3169,6 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
         }
         
         else if( !strncmp( buf, "SENC", 4 ) ) {
-            int senc_file_version;
             sscanf( buf, "SENC Version=%i", &senc_file_version );
             if( senc_file_version != CURRENT_SENC_FORMAT_VERSION ) {
                 wxString msg( _T("   Wrong version on SENC file ") );
@@ -3727,7 +3733,7 @@ bool ChartS63::DoRenderRegionViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VP
     
     if( Region != m_last_Region ) force_new_view = true;
     
-    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -3867,7 +3873,7 @@ bool ChartS63::RenderViewOnDC( wxMemoryDC& dc, const PlugIn_ViewPort& VPoint )
     
     SetVPParms( VPoint );
     
-    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER );
+    PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
     PI_PLIBPrepareForNewRender();
     
     if( m_plib_state_hash != PI_GetPLIBStateHash() ) {
@@ -5661,7 +5667,9 @@ void ChartS63::AssembleLineGeometry( void )
 
 void ChartS63::BuildLineVBO( void )
 {
-    #ifdef ocpnUSE_GL
+    
+#ifdef BUILD_VBO    
+#ifdef ocpnUSE_GL
      
     if(!g_b_EnableVBO)
         return;
@@ -5693,7 +5701,8 @@ void ChartS63::BuildLineVBO( void )
         m_LineVBO_name = vboId;
         
     }
-    #endif    
+#endif    
+#endif
 }
 
 
@@ -6277,7 +6286,7 @@ PI_S57ObjX::~PI_S57ObjX()
 //      PI_S57ObjX CTOR from SENC file
 //----------------------------------------------------------------------------------
 
-PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
+PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_version )
 {
     att_array = NULL;
     attVal = NULL;
@@ -6756,7 +6765,7 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx )
                             char *polybuf = (char *) malloc( nrecl + 1 );
                             fpx->Read( polybuf, nrecl );
                             polybuf[nrecl] = 0;                     // endit
-                            PolyTessGeo *ppg = new PolyTessGeo( (unsigned char *)polybuf, nrecl, FEIndex );
+                            PolyTessGeo *ppg = new PolyTessGeo( (unsigned char *)polybuf, nrecl, FEIndex, senc_file_version );
                             free( polybuf );
 
                             pPolyTessGeo = (void *)ppg;

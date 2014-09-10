@@ -316,7 +316,7 @@ public:
     //  Public Methods
     PI_S57ObjX();
     ~PI_S57ObjX();
-    PI_S57ObjX(char *first_line, CryptInputStream *scl);
+    PI_S57ObjX(char *first_line, CryptInputStream *scl, int senc_file_version );
     
     //      wxString GetAttrValueAsString ( char *attr );
     //      int GetAttributeIndex( const char *AttrSeek );
