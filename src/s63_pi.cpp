@@ -70,7 +70,8 @@ bool                            gb_global_log;
 bool                            g_b_validated;
 bool                            g_bSENCutil_valid;
 wxString                        g_CommonDataDir;
-
+extern int                      s_PI_bInS57;
+bool                            g_buser_enable_screenlog;
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -236,7 +237,7 @@ int s63_pi::Init(void)
 
     wxLogMessage(_T("Path to OCPNsenc is: ") + g_sencutil_bin);
     
-    g_benable_screenlog = false;
+    g_benable_screenlog = g_buser_enable_screenlog;
     
     return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE | WANTS_PLUGIN_MESSAGING);
 
@@ -664,6 +665,7 @@ int s63_pi::ImportCells( void )
     int dret = OCPNMessageBox_PlugIn(NULL, msg, _("s63_pi Message"),  wxYES_NO, -1, -1);
     bool bSENC = (dret == wxID_YES);
 
+     
     m_s63chartPanelWinTop->Refresh();
     wxYield();
     
@@ -776,8 +778,12 @@ int s63_pi::ImportCells( void )
 
     for(unsigned int iloop=0 ; iloop < unique_cellname_array.Count() ; iloop++){
         m_s63chartPanelWin->Refresh();
+        //  Preclude trying to render S63 charts while the cell import process is underway
+        //  by setting recursion counter
+        s_PI_bInS57 ++;     
         ::wxYield();
-      
+        s_PI_bInS57 --;     
+        
          
         wxStopWatch il_timer;
         if(bSENC){
@@ -1180,7 +1186,8 @@ finish:
     ScreenLogMessage(mm + mmt);
     
     //  Paint the global log to the screenlog
-    ClearScreenLog();    
+    ClearScreenLog();
+    ClearScreenLogSeq();
     gb_global_log = false;
     
     for(unsigned int i=0 ; i < g_logarray.GetCount() ; i++)
@@ -1808,6 +1815,7 @@ bool s63_pi::LoadConfig( void )
         pConf->Read( _T("Installpermit"), &g_installpermit );
         pConf->Read( _T("LastENCROOT"), &m_last_enc_root_dir);
         pConf->Read( _T("S63CommonDataDir"), &g_CommonDataDir);
+        pConf->Read( _T("ShowScreenLog"), &g_buser_enable_screenlog);
     }        
      
     return true;
@@ -1961,6 +1969,17 @@ void ClearScreenLog(void)
     }
     else if( g_pPanelScreenLog ) {
         g_pPanelScreenLog->ClearLog();
+    }
+    
+}
+
+void ClearScreenLogSeq(void)
+{
+    if( g_pScreenLog ) {
+        g_pScreenLog->m_slog->ClearLogSeq();
+    }
+    else if( g_pPanelScreenLog ) {
+        g_pPanelScreenLog->ClearLogSeq();
     }
     
 }
@@ -2297,8 +2316,10 @@ S63ScreenLog::~S63ScreenLog()
     else if( g_pScreenLog && (this == g_pScreenLog->m_slog) )
         g_pScreenLog = NULL;
 
-    if( !g_pPanelScreenLog && !g_pScreenLog )
-        g_benable_screenlog = false;
+    if( !g_pPanelScreenLog && !g_pScreenLog ){
+        if(!g_buser_enable_screenlog)
+            g_benable_screenlog = false;
+    }
     
     g_backchannel_port++;
     

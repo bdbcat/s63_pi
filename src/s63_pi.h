@@ -56,6 +56,7 @@ enum {
 void ScreenLogMessage(wxString s);
 void HideScreenLog(void);
 void ClearScreenLog(void);
+void ClearScreenLogSeq(void);
 
 extern "C++" wxString GetUserpermit(void);
 extern "C++" wxString GetInstallpermit(void);
@@ -199,7 +200,8 @@ public:
     
     void LogMessage(wxString &s);
     void ClearLog(void);
- 
+    void ClearLogSeq(void){ m_nseq = 0; }
+    
     void OnServerEvent(wxSocketEvent& event);
     void OnSocketEvent(wxSocketEvent& event);
     void OnSize( wxSizeEvent& event);
