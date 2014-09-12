@@ -64,6 +64,7 @@ extern wxString         g_SENCdir;
 extern bool             g_benable_screenlog;
 extern S63ScreenLogContainer           *g_pScreenLog;
 extern S63ScreenLog                    *g_pPanelScreenLog;
+extern bool             g_brendered_expired;
 
 extern bool             g_b_validated;
 extern bool             g_bSENCutil_valid;
@@ -887,7 +888,17 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         s_PI_bInS57--;
         return PI_INIT_FAIL_REMOVE;
     }
-                
+
+    //  Check the permit expiry date
+    wxDateTime permit_date;
+    wxString expiry_date = m_cell_permit.Mid(8, 8);
+    wxString ftime = expiry_date.Mid(0, 4) + _T(" ") + expiry_date.Mid(4,2) + _T(" ") + expiry_date.Mid(6,2);
+    permit_date.ParseDate(ftime.wchar_str());
+    if( permit_date.IsValid()){
+        wxDateTime now = wxDateTime::Now();
+        m_bexpired = now.IsLaterThan(permit_date);
+    }
+            
     if( PI_HEADER_ONLY == init_flags ){
         
        //      else if the ehdr file exists, we init from there (normal path for adding cell to dB)
@@ -1194,6 +1205,9 @@ wxBitmap *ChartS63::GetThumbnail(int tnx, int tny, int cs)
 
 wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegion &Region)
 {
+    if(m_bexpired)
+        g_brendered_expired = true;
+    
     SetVPParms( VPoint );
 
     PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
@@ -1236,6 +1250,8 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
                           const wxRegion &Region, bool b_use_stencil )
 {
+    if(m_bexpired)
+        g_brendered_expired = true;
 
 #ifdef ocpnUSE_GL
     
@@ -2067,7 +2083,7 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
     fpx.Rewind();
     
     if(strncmp(verf, "SENC Version", 12)){
-        ScreenLogMessage( _T("   Info: ehdr decrypt failed first chance.\n "));
+//        ScreenLogMessage( _T("   Info: ehdr decrypt failed first chance.\n "));
         free( cb );
         return false;
     }

@@ -72,6 +72,9 @@ bool                            g_bSENCutil_valid;
 wxString                        g_CommonDataDir;
 extern int                      s_PI_bInS57;
 bool                            g_buser_enable_screenlog;
+bool                            g_bshown_sse15;
+bool                            g_brendered_expired;
+bool                            g_bnoShow_sse25;
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -239,7 +242,8 @@ int s63_pi::Init(void)
     
     g_benable_screenlog = g_buser_enable_screenlog;
     
-    return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE | WANTS_PLUGIN_MESSAGING);
+    return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE | WANTS_PLUGIN_MESSAGING
+            | WANTS_OVERLAY_CALLBACK | WANTS_OPENGL_OVERLAY_CALLBACK  );
 
 }
 
@@ -305,6 +309,73 @@ void s63_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
         ImportCells();
     }
     
+}
+
+bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
+{
+    if(g_brendered_expired && !g_bnoShow_sse25){
+        wxString msg = _("SSE 25 – The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
+        
+        
+        wxFont *pfont = wxTheFontList->FindOrCreateFont(10, wxFONTFAMILY_DEFAULT,
+                                                        wxFONTSTYLE_NORMAL,
+                                                        wxFONTWEIGHT_NORMAL);
+        
+        dc.SetFont( *pfont );
+        dc.SetPen( *wxTRANSPARENT_PEN);
+        
+        dc.SetBrush( wxColour(243, 229, 47 ) );
+        int w, h;
+        dc.GetMultiLineTextExtent( msg, &w, &h );
+        h += 2;
+        int yp = vp->pix_height - 20 - h;
+        
+        int label_offset = 10;
+        int wdraw = w + ( label_offset * 2 );
+        dc.DrawRectangle( 0, yp, wdraw, h );
+        dc.DrawLabel( msg, wxRect( label_offset, yp, wdraw, h ),
+                    wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
+        g_brendered_expired = false;
+    }
+    return false;
+}
+
+bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
+{
+    if(g_brendered_expired && !g_bnoShow_sse25){
+        wxString msg = _("SSE 25 – The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
+    
+    
+        wxFont *pfont = wxTheFontList->FindOrCreateFont(10, wxFONTFAMILY_DEFAULT,
+                                                        wxFONTSTYLE_NORMAL,
+                                                        wxFONTWEIGHT_NORMAL);
+        m_TexFontMessage.Build(*pfont);
+        int w, h;
+        m_TexFontMessage.GetTextExtent( msg, &w, &h);
+        h += 2;
+        int yp = vp->pix_height - 20 - h;
+        
+        glColor3ub( 243, 229, 47 );
+        
+        glBegin(GL_QUADS);
+        glVertex2i(0, yp);
+        glVertex2i(w, yp);
+        glVertex2i(w, yp+h);
+        glVertex2i(0, yp+h);
+        glEnd();
+        
+        glEnable(GL_BLEND);
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+        
+        glColor3ub( 0, 0, 0 );
+        glEnable(GL_TEXTURE_2D);
+        m_TexFontMessage.RenderString( msg, 5, yp);
+        glDisable(GL_TEXTURE_2D);
+        
+        g_brendered_expired = false;
+        
+    }
+    return false;
 }
 
 
@@ -605,7 +676,8 @@ int s63_pi::ImportCells( void )
     wxArrayString unique_cellname_array;
     
     wxString os63_dirname = GetPermitDir();
-
+    g_bshown_sse15 = false;
+    
     //  Keep a global log
     g_logarray.Clear();
     gb_global_log = true;
@@ -900,14 +972,34 @@ int s63_pi::ImportCells( void )
                     }
                 }
                 
-                 
+             
+             
+             
             //  Update the os63 file
                 wxTextFile os63file( os63_filename );
                 wxString line;
                 wxString str;
                 
                 os63file.Open();
-            
+
+                //  Get the expiry date of the associated cell permit
+                wxDateTime permit_date;
+                for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() >= 0; str = os63file.GetPrevLine() ) {
+                    if(str.StartsWith(_T("cellpermit:"))){
+                        wxString cellpermitstring = str.AfterFirst(':');
+                        wxString expiry_date = cellpermitstring.Mid(8, 8);
+                        wxString ftime = expiry_date.Mid(0, 4) + _T(" ") + expiry_date.Mid(4,2) + _T(" ") + expiry_date.Mid(6,2);
+                        permit_date.ParseDate(ftime.wchar_str());
+                        
+                        break;
+                    }
+                }
+                if( !permit_date.IsValid() )
+                    permit_date.ParseFormat( _T("20000101"), _T("%Y%m%d") );
+                permit_date.ResetTime();
+                
+                
+                
                 //      Read the file, to see  if there is already a cellbase entry
                 bool base_present = false;
                 for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() > 0; str = os63file.GetPrevLine() ) {
@@ -916,7 +1008,7 @@ int s63_pi::ImportCells( void )
                         break;
                     }
                 }
- 
+               
                 long base_installed_edtn = -1;
                 wxDateTime base_installed_UADT;
                 
@@ -950,21 +1042,48 @@ int s63_pi::ImportCells( void )
                             }
                             else {
                                 //  Its a new Edition of an existing cell
-                                //  Recreate the os63 file, thereby removing any old updates
-                                //  that are presumably incorporated into this new revision.
-                                wxString msgs;
-                                msgs.Printf(_T("Updating base cell from Edition %d to Edition %d\n\n"), base_installed_edtn, edtn);
-                                ScreenLogMessage(msgs);
                                 
-                                wxString line0 = os63file.GetFirstLine();       // grab a copy of cell permit
-                                os63file.Clear();
-                                os63file.AddLine(line0);
-                                line = _T("cellbase:");
-                                line += enc_root_dir + wxFileName::GetPathSeparator();
-                                line += base_file_name;
-                                line += _T(";");
-                                line += base_comt;
-                                os63file.AddLine(line);
+                                //  Must check the base cell UADT in the exchange set
+                                //  against the permit expiry date
+                                if( date000.IsLaterThan(permit_date)){
+                                    if(!g_bshown_sse15){
+                                        wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                                        msg += _("First expired base cell name: ");
+                                        msg += cell_name;
+                                        msg += _T("\n");
+                                        msg += _("Base cell edition update skipped\n");
+                                        msg += _("There may be other expired permits.  However, this message will be shown once only.");
+                                
+                                        OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                                      msg,
+                                                      _("s63_pi Message"),  wxOK, -1, -1);
+                                
+                                        g_bshown_sse15 = true;
+                                    }
+                                    wxLogMessage(_T("s63_pi: ") + msg);
+                                    ScreenLogMessage(_T("SSE 15 – Subscription service has expired.\n\n") );
+                                    ScreenLogMessage(_T("Base cell edition update skipped\n"));
+                                    
+                                    continue;
+                                }
+                                
+                                else {
+                                    //  Recreate the os63 file, thereby removing any old updates
+                                    //  that are presumably incorporated into this new revision.
+                                    wxString msgs;
+                                    msgs.Printf(_T("Updating base cell from Edition %d to Edition %d\n\n"), base_installed_edtn, edtn);
+                                    ScreenLogMessage(msgs);
+                                
+                                    wxString line0 = os63file.GetFirstLine();       // grab a copy of cell permit
+                                    os63file.Clear();
+                                    os63file.AddLine(line0);
+                                    line = _T("cellbase:");
+                                    line += enc_root_dir + wxFileName::GetPathSeparator();
+                                    line += base_file_name;
+                                    line += _T(";");
+                                    line += base_comt;
+                                    os63file.AddLine(line);
+                                }
                             }
                         }
                     }
@@ -989,6 +1108,7 @@ int s63_pi::ImportCells( void )
                 
                 //  Check the updates array for validity against edtn amd date000
                 for(unsigned int i=0 ; i < cell_array.Count() ; i++){
+                    
                     wxString up_comt = cell_array[i].AfterFirst(';');
                     long update_edtn;
                     long update_updn;
@@ -1073,7 +1193,35 @@ int s63_pi::ImportCells( void )
                         }
                             
                         if(!b_exists){
-                            
+
+                            //  Must check the update ISDT in the exchange set
+                            //  against the permit expiry date
+                            if( update_time.IsLaterThan(permit_date)){
+                                if(!g_bshown_sse15){
+                                    wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                                    msg += _("First expired base cell name: ");
+                                    msg += cell_name;
+                                    msg += _T("\n");
+                                    msg += _("Cell update skipped\n");
+                                    wxString m1;
+                                    m1.Printf(_("Attempted update: %d\n"), update_updn);
+                                    msg += m1;
+                                    msg += _("There may be other expired permits.  However, this message will be shown once only.");
+                                    
+                                    OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                                          msg,
+                                                          _("s63_pi Message"),  wxOK, -1, -1);
+                                    
+                                    g_bshown_sse15 = true;
+                                }
+                                wxLogMessage(_T("s63_pi: ") + msg);
+                                ScreenLogMessage(_T("SSE 15 – Subscription service has expired.\n\n") );
+                                ScreenLogMessage(_T("Cell update skipped\n"));
+                                
+                                break;                  // so stop the for() loop here
+                                                        // and be done with the update array
+                            }
+                            //  
                             //  Authenticate the update cells, one by one.
                             int base_auth = AuthenticateCell( enc_root_dir + wxFileName::GetPathSeparator() + cell_array[i].BeforeFirst(';') );
                             if(base_auth != 0){        // failed to authenticate
@@ -1114,7 +1262,7 @@ int s63_pi::ImportCells( void )
                 }
                 else {
                     wxString msgs;
-                    msgs.Printf(_T("Cell added successfully  (%d/%d)\n\n"), iloop, unique_cellname_array.Count() );
+                    msgs.Printf(_T("Cell added successfully  (%d/%d)\n"), iloop, unique_cellname_array.Count() );
                     ScreenLogMessage(msgs);
                     
                     //  Build the eSENC inline, if requested
@@ -1152,7 +1300,7 @@ int s63_pi::ImportCells( void )
                         }
                     }
                     wxString msgt;
-                    msgt = wxString::Format(_T("Cell Processing time (msec.): %5ld\n"), il_timer.Time());
+                    msgt = wxString::Format(_T("Cell Processing time (msec.): %5ld\n\n\n"), il_timer.Time());
                     ScreenLogMessage(msgt);
                     
                 }
@@ -1296,7 +1444,7 @@ int s63_pi::ImportCellPermits(void)
     
 
     //  Take a look at the list of permits
-    //  Try to determine if this appears to be anupdate to permits.
+    //  Try to determine if this appears to be an update to permits.
     //  If so, ask the user if it is OK to update them all quietly.
     
     bool b_yes_to_all = false;
@@ -1369,6 +1517,8 @@ int s63_pi::ImportCellPermits(void)
     //  If I mean "yes to all", then there should be no confirmation dialogs.
     b_existing_query = !b_yes_to_all;
     
+    //  Reset the trigger for SSE15 message, to be shown once per import session
+    g_bshown_sse15 = false;
     //  Open PERMIT.TXT as text file
 
     //  Validate file format
@@ -1510,6 +1660,33 @@ int s63_pi::ProcessCellPermit( wxString &permit, bool b_confirm_existing )
 
     // 10.5.4          Check Cell Permit Check Sum
     // 10.5.5          Check Cell Permit Expiry Date
+    
+    wxDateTime permit_date;
+    wxString ftime = expiry_date.Mid(0, 4) + _T(" ") + expiry_date.Mid(4,2) + _T(" ") + expiry_date.Mid(6,2);
+    
+    permit_date.ParseDate(ftime.wchar_str());
+    if(!g_bshown_sse15){
+        if( permit_date.IsValid()){
+            wxDateTime now = wxDateTime::Now();
+            if( now.IsLaterThan( permit_date )){
+                wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                msg += _("First expired cell name: ");
+                msg += cell_name;
+                msg += _T("\n");
+                msg += _("There may be other expired permits.  However, this message will be shown once only.");
+                
+                OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
+                                    msg,
+                                    _("s63_pi Message"),  wxOK, -1, -1);
+                
+                wxLogMessage(_T("s63_pi: ") + msg);
+                
+                ScreenLogMessage(_T("SSE 15 – Subscription service has expired.\n\n") );
+                
+            }
+        }
+        g_bshown_sse15 = true;
+    }
     // 10.5.6          Check Data Server ID
 
     //  Create the text file 
@@ -1816,6 +1993,7 @@ bool s63_pi::LoadConfig( void )
         pConf->Read( _T("LastENCROOT"), &m_last_enc_root_dir);
         pConf->Read( _T("S63CommonDataDir"), &g_CommonDataDir);
         pConf->Read( _T("ShowScreenLog"), &g_buser_enable_screenlog);
+        pConf->Read( _T("NoShowSSE25"), &g_bnoShow_sse25);
     }        
      
     return true;

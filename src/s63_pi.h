@@ -37,6 +37,7 @@
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
 #include <wx/notebook.h>
+#include "TexFont.h"
 
 #define     PLUGIN_VERSION_MAJOR    0
 #define     PLUGIN_VERSION_MINOR    9
@@ -122,7 +123,9 @@ public:
     wxString GetCommonName();
     wxString GetShortDescription();
     wxString GetLongDescription();
-
+    bool RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp);
+    bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
+    
     wxArrayString GetDynamicChartClassNameArray();
 
     void OnSetupOptions();
@@ -186,6 +189,8 @@ private:
     wxButton            *m_buttonImportCert;
     
     bool                m_bSSE26_shown;
+    TexFont             m_TexFontMessage;
+    
     
     
 };
