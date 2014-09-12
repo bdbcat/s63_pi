@@ -68,7 +68,7 @@ extern S63ScreenLog                    *g_pPanelScreenLog;
 extern bool             g_b_validated;
 extern bool             g_bSENCutil_valid;
     
-static int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
+int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
 InfoWin                 *g_pInfo;
 InfoWinDialog           *g_pInfoDlg;
@@ -5563,6 +5563,9 @@ void ChartS63::AssembleLineGeometry( void )
                         
                         for(int i= 0 ; i < pedge->nCount ; i++){
                             double lat, lon;
+                            e0 = pedge->pPoints[ (2 * i)];
+                            n0 = pedge->pPoints[ (2 * i) + 1];
+                            
                             fromSM_Plugin( e0, n0, m_ref_lat, m_ref_lon, &lat, &lon );
                             lat_max = wxMax(lat_max, lat);
                             lat_min = wxMin(lat_min, lat);
