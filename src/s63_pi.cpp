@@ -199,6 +199,11 @@ s63_pi::s63_pi(void *ppimgr)
 s63_pi::~s63_pi()
 {
       delete m_pplugin_icon;
+      if(g_pScreenLog) {
+          g_pScreenLog->Close();
+          g_pScreenLog->Destroy();
+          g_pScreenLog = NULL;
+      }
 }
 
 int s63_pi::Init(void)
@@ -250,6 +255,12 @@ int s63_pi::Init(void)
 bool s63_pi::DeInit(void)
 {
     SaveConfig();
+    if(g_pScreenLog) {
+        g_pScreenLog->Close();
+ //       delete g_pScreenLog;
+//        g_pScreenLog->Destroy();
+//        g_pScreenLog = NULL;
+    }
     return true;
 }
 
@@ -314,7 +325,7 @@ void s63_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
 bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if(g_brendered_expired && !g_bnoShow_sse25){
-        wxString msg = _("SSE 25 – The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
+        wxString msg = _("SSE 25..The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
         
         
         wxFont *pfont = wxTheFontList->FindOrCreateFont(10, wxFONTFAMILY_DEFAULT,
@@ -343,7 +354,7 @@ bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
     if(g_brendered_expired && !g_bnoShow_sse25){
-        wxString msg = _("SSE 25 – The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
+        wxString msg = _("SSE 25..The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
     
     
         wxFont *pfont = wxTheFontList->FindOrCreateFont(10, wxFONTFAMILY_DEFAULT,
@@ -989,8 +1000,13 @@ int s63_pi::ImportCells( void )
                         wxString cellpermitstring = str.AfterFirst(':');
                         wxString expiry_date = cellpermitstring.Mid(8, 8);
                         wxString ftime = expiry_date.Mid(0, 4) + _T(" ") + expiry_date.Mid(4,2) + _T(" ") + expiry_date.Mid(6,2);
+
+#if wxCHECK_VERSION(2, 9, 0)
+                        wxString::const_iterator end;
+                        permit_date.ParseDate(ftime, &end);
+#else
                         permit_date.ParseDate(ftime.wchar_str());
-                        
+#endif                        
                         break;
                     }
                 }
@@ -1664,7 +1680,13 @@ int s63_pi::ProcessCellPermit( wxString &permit, bool b_confirm_existing )
     wxDateTime permit_date;
     wxString ftime = expiry_date.Mid(0, 4) + _T(" ") + expiry_date.Mid(4,2) + _T(" ") + expiry_date.Mid(6,2);
     
+#if wxCHECK_VERSION(2, 9, 0)
+    wxString::const_iterator end;
+    permit_date.ParseDate(ftime, &end);
+#else
     permit_date.ParseDate(ftime.wchar_str());
+#endif                        
+
     if(!g_bshown_sse15){
         if( permit_date.IsValid()){
             wxDateTime now = wxDateTime::Now();
@@ -2504,7 +2526,8 @@ S63ScreenLog::~S63ScreenLog()
     delete m_plogtc;
     if(m_server) {
         m_server->Notify(false);
-        m_server->Destroy();
+        delete m_server;
+//        m_server->Destroy();
     }
 }
 
