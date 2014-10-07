@@ -1072,10 +1072,10 @@ bool ChartS63::IsRenderDelta(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_propo
 
 double ChartS63::GetNormalScaleMin(double canvas_scale_factor, bool b_allow_overzoom)
 {
-    if( b_allow_overzoom )
+//    if( b_allow_overzoom )
         return m_Chart_Scale * 0.125;
-    else
-        return m_Chart_Scale * 0.25;
+//    else
+//        return m_Chart_Scale * 0.25;
 }
 
 double ChartS63::GetNormalScaleMax(double canvas_scale_factor, int canvas_width)
