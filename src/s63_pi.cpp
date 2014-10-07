@@ -905,7 +905,7 @@ int s63_pi::ImportCells( void )
                 //  Find the base cell, if present, and build an array of relevent updates
 
                 wxDateTime date000;
-                long edtn;
+                long edtn = 0;
                 
                 wxArrayString cell_array;
                 for(size_t k=0 ; k < m_catalog->GetCount() ; k++){
@@ -995,7 +995,7 @@ int s63_pi::ImportCells( void )
 
                 //  Get the expiry date of the associated cell permit
                 wxDateTime permit_date;
-                for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() >= 0; str = os63file.GetPrevLine() ) {
+                for ( str = os63file.GetFirstLine(); !os63file.Eof() ; str = os63file.GetNextLine() ) {
                     if(str.StartsWith(_T("cellpermit:"))){
                         wxString cellpermitstring = str.AfterFirst(':');
                         wxString expiry_date = cellpermitstring.Mid(8, 8);
@@ -1126,8 +1126,8 @@ int s63_pi::ImportCells( void )
                 for(unsigned int i=0 ; i < cell_array.Count() ; i++){
                     
                     wxString up_comt = cell_array[i].AfterFirst(';');
-                    long update_edtn;
-                    long update_updn;
+                    long update_edtn = 0;
+                    long update_updn = 0;
                     wxDateTime update_time;
                     wxStringTokenizer tkz(up_comt, _T(","));
                     while ( tkz.HasMoreTokens() ){
