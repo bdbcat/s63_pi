@@ -213,7 +213,7 @@ int s63_pi::Init(void)
     //  Get the path of the PlugIn itself
     g_pi_filename = GetPlugInPath(this);
     
-    AddLocaleCatalog( _T("s63_pi") );
+    AddLocaleCatalog( _T("opencpn-s63_pi") );
 
       //    Build an arraystring of dynamically loadable chart class names
     m_class_name_array.Add(_T("ChartS63"));
