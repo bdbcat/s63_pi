@@ -1063,7 +1063,7 @@ int s63_pi::ImportCells( void )
                                 //  against the permit expiry date
                                 if( date000.IsLaterThan(permit_date)){
                                     if(!g_bshown_sse15){
-                                        wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                                        wxString msg = _("Security Scheme Error\n\nSSE 15 - Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
                                         msg += _("First expired base cell name: ");
                                         msg += cell_name;
                                         msg += _T("\n");
@@ -1214,7 +1214,7 @@ int s63_pi::ImportCells( void )
                             //  against the permit expiry date
                             if( update_time.IsLaterThan(permit_date)){
                                 if(!g_bshown_sse15){
-                                    wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                                    wxString msg = _("Security Scheme Error\n\nSSE 15 - Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
                                     msg += _("First expired base cell name: ");
                                     msg += cell_name;
                                     msg += _T("\n");
@@ -1691,7 +1691,7 @@ int s63_pi::ProcessCellPermit( wxString &permit, bool b_confirm_existing )
         if( permit_date.IsValid()){
             wxDateTime now = wxDateTime::Now();
             if( now.IsLaterThan( permit_date )){
-                wxString msg = _("Security Scheme Error\n\nSSE 15 – Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
+                wxString msg = _("Security Scheme Error\n\nSSE 15 - Subscription service has expired.\n Please contact your data supplier to renew the subscription licence.\n\n");
                 msg += _("First expired cell name: ");
                 msg += cell_name;
                 msg += _T("\n");
