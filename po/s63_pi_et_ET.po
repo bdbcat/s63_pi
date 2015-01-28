@@ -1,113 +1,136 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <highlander.et@gmail.com>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 22:52-0400\n"
-"PO-Revision-Date: 2014-04-04 18:51+0200\n"
-"Last-Translator: Highlander <highlander.et@gmail.com>\n"
-"Language-Team:  <open_en_et@googlegroups.com>\n"
-"Language: \n"
+"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"PO-Revision-Date: 2014-04-03 10:40+0100\n"
+"Last-Translator: \n"
+"Language-Team:\n"
+"Language:\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.6.4\n"
+
+msgid ""
+"\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
 #
 msgid "   Error: Cannot create "
-msgstr " Viga: ei saa luua"
+msgstr ""
+#
+msgid " is not present in exchange set.\n"
+msgstr ""
 #
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr ""
 #
+msgid "Base cell edition update skipped\n"
+msgstr ""
+#
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr ""
+#
 msgid "Cancel"
-msgstr "Katkesta"
+msgstr ""
+#
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr ""
 #
 msgid "Cell Name"
-msgstr "Ruudu nimi"
+msgstr ""
 #
 msgid "Cell update NOT authenticated\n"
-msgstr "Ruudu uuendus EI OLE autoriseeritud\n"
+msgstr ""
+#
+msgid "Cell update skipped\n"
+msgstr ""
 #
 msgid "Certificate Key import FAILED\n"
-msgstr "Sertifikaadivõtme import EBAÕNNESTUS\n"
+msgstr ""
 #
 msgid "Certificate Key imported successfully\n"
-msgstr "Sertifikaadivõti on õnnestunult imporditud\n"
+msgstr ""
 #
 msgid "Certificate Name"
-msgstr "Sertifikaadi nimi"
+msgstr ""
 #
-#, fuzzy
 msgid "Chart Cells"
-msgstr "S63 kaardid"
+msgstr ""
 #
 msgid "Creating eSenc"
-msgstr "eSENC'i loomas"
+msgstr ""
 #
 msgid "Data Server ID"
-msgstr "Andmeserveri ID"
+msgstr ""
 #
 msgid "Enter Installpermit"
-msgstr "Sisesta paigaldusluba"
+msgstr ""
 #
 msgid "Enter Userpermit"
-msgstr "Sisesta kasutajaluba"
+msgstr ""
 #
 msgid ""
 "Error: couldn't accept a new connection\n"
 "\n"
 msgstr ""
-"Viga: ei suutnud aksepteerida uut ühendust\n"
-"\n"
 #
 msgid "Expiration Date"
-msgstr "Aegumise aeg"
+msgstr ""
+#
+msgid "First expired base cell name: "
+msgstr ""
+#
+msgid "First expired cell name: "
+msgstr ""
 #
 msgid "Import Cell Permits..."
-msgstr "Impordi ruuduload..."
+msgstr ""
 #
 msgid "Import Certificate..."
-msgstr "Impordi sertifikaat..."
+msgstr ""
 #
 msgid "Import Charts/Updates..."
-msgstr "Impordi kaardid/uuendused"
+msgstr ""
 #
 msgid "Install permit OK"
-msgstr "Paigaldusluba OK"
+msgstr ""
 #
 msgid "Install permit invalid"
-msgstr "Kehtetu paigaldusluba"
+msgstr ""
 #
 msgid "InstallPermit"
-msgstr "Paigaldusluba"
+msgstr ""
 #
 msgid "Installed S63 Cell Permits"
-msgstr "Paigaldatud S63-ruuduload"
+msgstr ""
 #
 msgid "Installed S63 Certificates/Keys"
-msgstr "Paigaldatud S63 sertifikaadid/võtmed"
+msgstr ""
 #
-#, fuzzy
 msgid "Keys/Permits"
-msgstr "Kasutajaluba"
+msgstr ""
 #
 #, c-format
 msgid "Latest intalled update: %d\n"
 msgstr ""
 #
 msgid "New Installpermit..."
-msgstr "Uus paigaldusluba..."
+msgstr ""
 #
 msgid "New Userpermit..."
-msgstr "Uus kasutajaluba..."
+msgstr ""
 #
 msgid "OK"
-msgstr "OK"
+msgstr ""
 #
 msgid ""
 "OpenCPN can create eSENC files as cells are imported.\n"
@@ -120,58 +143,59 @@ msgid ""
 msgstr ""
 #
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr "PUB-failid (*.PUB)|*.PUB|txt-failid (*.txt)|*.txt|Kõik failid (*.*)|*.*"
+msgstr ""
+#
+msgid "Permit\n"
+msgstr ""
 #
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
 msgid "Remove Permits"
-msgstr "Kõrvalda load"
+msgstr ""
 #
 msgid "S63"
-msgstr "S63"
+msgstr ""
 #
 msgid "S63 Charts"
-msgstr "S63 kaardid"
+msgstr ""
 #
 msgid "S63 PlugIn for OpenCPN"
-msgstr "S63 plugin OpenCPN'i jaoks"
+msgstr ""
 #
 msgid ""
 "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n"
 "\n"
 msgstr ""
-"S63 plugin OpenCPN'i jaoks\n"
-"Tagab S63 kaartide toe.\n"
-"\n"
 #
-#, fuzzy
 msgid "S63_pi Install Permit Required"
-msgstr "Kehtetu paigaldusluba"
+msgstr ""
 #
 msgid "S63_pi Log"
-msgstr "S63_pi logi"
+msgstr ""
 #
 msgid "S63_pi Userpermit Required"
 msgstr ""
 #
 msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr "S63_pi tagavarakanal ei suutnud jälgida määratud porti !\n"
+msgstr ""
 #
 msgid ""
 "S63_pi backchannel server listening.\n"
 "\n"
-msgstr "S63_pi jälgib tagavarakanali serverit.\n"
+msgstr ""
+#
+msgid ""
+"SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr ""
 #
 msgid ""
 "Security Scheme Error\n"
 "\n"
 " SSE 10 - Permits not available for this data provider.\n"
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-" SSE 10 - sellele andmelevitajale pole load saadaval.\n"
 #
 msgid ""
 "Security Scheme Error\n"
@@ -181,12 +205,6 @@ msgid ""
 " If the problem persists contact your data supplier.\n"
 "\n"
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-" SSE 23 - puuduvad järjestikused uuendused, eelmised uuendused on puudu.\n"
-"Proovige alusmeediast ümberlaadida.\n"
-" Kui probleem püsib, kontakteeruge andmelevitajaga.\n"
-"\n"
 #
 msgid ""
 "Security Scheme Error\n"
@@ -200,7 +218,6 @@ msgid ""
 "Cell name: "
 msgstr ""
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -208,32 +225,20 @@ msgid ""
 "A valid certificate can be obtained from the IHO website or your data "
 "supplier.\n"
 msgstr ""
-"Kehtivat serifikaati on võimalik saada IHO kodulehelt või oma "
-"andmelevitajalt.\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 11 - Cell permit not found"
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE 13- ruuduluba on kõlbmatu (väär kontrollsumma)\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -241,12 +246,7 @@ msgid ""
 "\n"
 "Incorrect cell permit line starts with "
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -255,11 +255,15 @@ msgid ""
 "\n"
 " Invalid cell permit starts with "
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE 13- ruuduluba on kõlbmatu (väär kontrollsumma)\n"
 #
-#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n"
+"\n"
+msgstr ""
+#
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -267,10 +271,6 @@ msgid ""
 "\n"
 " Cell name: "
 msgstr ""
-"Turvaseade viga\n"
-"\n"
-"SSE S4 - ENC-signatuuri formaat ei ole korrektne.\n"
-"\n"
 #
 msgid ""
 "Security Scheme Warning\n"
@@ -281,116 +281,56 @@ msgid ""
 msgstr ""
 #
 msgid "Select PERMIT.TXT File"
-msgstr "Vali PERMIT.TXT fail"
+msgstr ""
 #
 msgid "Select Public Key File"
-msgstr "Vali avaliku võtme fail"
+msgstr ""
 #
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Vali S63 vahetuskomplekti juurkataloog (harilikult ENC_ROOT)"
+msgstr ""
 #
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
-msgstr "TXT failid (*.TXT)|*.TXT|Kõik failid (*.*)|*.*"
+msgstr ""
 #
 msgid "Test Installpermit"
-msgstr "Testi paigaldusluba"
+msgstr ""
 #
 msgid "Test Results"
-msgstr "Testi tulemused"
+msgstr ""
 #
 msgid "Test Userpermit"
-msgstr "Testi kasutajaluba"
+msgstr ""
+#
+msgid ""
+"There may be other expired permits.  However, this message will be shown once "
+"only."
+msgstr ""
 #
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
-"See uuendus ja kõik järgnevad uuendused sellele ruudule EI OLE rakendatud,\n"
 #
 msgid "Unexpected event !\n"
-msgstr "Ootamatu juhtum !\n"
+msgstr ""
+#
+msgid "Update all existing cell permits?"
+msgstr ""
 #
 msgid "UserPermit"
-msgstr "Kasutajaluba"
+msgstr ""
 #
 msgid "Userpermit OK"
-msgstr "Kasutajaluba OK"
+msgstr ""
 #
 msgid "Userpermit invalid"
-msgstr "Kehtetu kasutajaluba"
+msgstr ""
 #
 msgid "cell:"
 msgstr ""
 #
-msgid "s63_pi Message"
+msgid "cell: "
 msgstr ""
 #
-#
-#
-#
-#~ msgid "Create eSENCs on Import?\n"
-#~ msgstr "Loo importimisel eSENC'id?\n"
-#
-#
-#
-#
-#~ msgid "Invalid cell permit starts with "
-#~ msgstr "Kõlbmatu  ruuduluba algab"
-#
-#
-#
-#
-#~ msgid "Note:\n"
-#~ msgstr "Märkus:\n"
-#
-#
-#
-#
-#~ msgid ""
-#~ "OpenCPN can create eSENC files as cells are imported.\n"
-#~ "\n"
-#~ msgstr "OpenCPN võib ruutude importimise ajal luua eSENC-faile.\n"
-#
-#
-#
-#
-#~ msgid ""
-#~ "Security Scheme Error\n"
-#~ "\n"
-#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
-#~ msgstr ""
-#~ "Turvaseade viga\n"
-#~ "\n"
-#~ "SSE 08 - SA Digital Certificate fail ei ole korrektses formaadis.\n"
-#
-#
-#
-#
-#~ msgid "The process may be Cancelled by the user at any time.\n"
-#~ msgstr "Kasutaja võib protsessi igal ajal katkestada.\n"
-#
-#
-#
-#
-#~ msgid "This process may take some time.\n"
-#~ msgstr "See protsees võib natuke aega võtta.\n"
-#
-#
-#
-#
-#~ msgid ""
-#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Veel loomata eSENC luuakse OpenCPN'i poolt vajaduse tekkimisel.\n"
-#~ "\n"
-#
-#
-#
-#
-#~ msgid ""
-#~ "or the Cell Permit is for a different system.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "või ruuduluba on teistsuguse süsteemi jaoks.\n"
-#~ "\n"
+msgid "s63_pi Message"
+msgstr ""

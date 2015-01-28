@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 22:52-0400\n"
+"POT-Creation-Date: 2014-12-31 11:37-0500\n"
 "PO-Revision-Date: 2014-04-07 18:54+0100\n"
 "Last-Translator: Pepo II <Pepo_II@outlok.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,20 +18,41 @@ msgstr ""
 "X-Generator: Poedit 1.6.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #
+msgid ""
+"\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
+#
 msgid "   Error: Cannot create "
 msgstr "   Error: No puedo crear "
+#
+msgid " is not present in exchange set.\n"
+msgstr ""
 #
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr ""
 #
+msgid "Base cell edition update skipped\n"
+msgstr ""
+#
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr ""
+#
 msgid "Cancel"
 msgstr "Cancelar"
+#
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr ""
 #
 msgid "Cell Name"
 msgstr "Nombre de Celda"
 #
 msgid "Cell update NOT authenticated\n"
+msgstr "Actualización de Celda NO autenticada\n"
+#
+msgid "Cell update skipped\n"
 msgstr "Actualización de Celda NO autenticada\n"
 #
 msgid "Certificate Key import FAILED\n"
@@ -43,7 +64,6 @@ msgstr "Importación Llave certificada correcta\n"
 msgid "Certificate Name"
 msgstr "Nombre Certificado"
 #
-#, fuzzy
 msgid "Chart Cells"
 msgstr "Cartas S63"
 #
@@ -69,6 +89,12 @@ msgstr ""
 msgid "Expiration Date"
 msgstr "Fecha de Expiración"
 #
+msgid "First expired base cell name: "
+msgstr ""
+#
+msgid "First expired cell name: "
+msgstr ""
+#
 msgid "Import Cell Permits..."
 msgstr "Importar Permisos de Celda..."
 #
@@ -93,7 +119,6 @@ msgstr "Permisos de Celda S63 instalado"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Certificados/Llaves S63 Instalados"
 #
-#, fuzzy
 msgid "Keys/Permits"
 msgstr "Permiso de Usuario"
 #
@@ -125,6 +150,10 @@ msgstr ""
 "PUB archivos (*.PUB)|*.PUB|txt archivos (*.txt)|*.txt| Todos los archivos (*."
 "*)|*.*"
 #
+#, fuzzy
+msgid "Permit\n"
+msgstr "Permiso de Usuario"
+#
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
@@ -149,7 +178,6 @@ msgstr ""
 "Da soporte a cartas S63.\n"
 "\n"
 #
-#, fuzzy
 msgid "S63_pi Install Permit Required"
 msgstr "Permiso de Instalación no válido"
 #
@@ -168,6 +196,11 @@ msgid ""
 msgstr ""
 "S63_pi backchannel escuchando del servidor.\n"
 "\n"
+#
+msgid ""
+"SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr ""
 #
 msgid ""
 "Security Scheme Error\n"
@@ -205,7 +238,6 @@ msgid ""
 "Cell name: "
 msgstr ""
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -225,18 +257,14 @@ msgstr ""
 "\n"
 "SSE 24 - ENC Formato de firma es incorrecto.\n"
 "\n"
+" Cell name: "
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 11 - Cell permit not found"
 msgstr ""
-"Error Esquema Seguridad\n"
-"\n"
-"SSE 13 - Permiso de Celda no válido (checksum incorrecto)\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -244,12 +272,7 @@ msgid ""
 "\n"
 "Incorrect cell permit line starts with "
 msgstr ""
-"Error Esquema Seguridad\n"
-"\n"
-"SSE 24 - ENC Formato de firma es incorrecto.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -261,8 +284,16 @@ msgstr ""
 "Error Esquema Seguridad\n"
 "\n"
 "SSE 13 - Permiso de Celda no válido (checksum incorrecto)\n"
+" Invalid cell permit starts with "
 #
-#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n"
+"\n"
+msgstr ""
+#
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -274,6 +305,7 @@ msgstr ""
 "\n"
 "SSE 24 - ENC Formato de firma es incorrecto.\n"
 "\n"
+" Cell name: "
 #
 msgid ""
 "Security Scheme Warning\n"
@@ -305,6 +337,11 @@ msgid "Test Userpermit"
 msgstr "Prueba Permiso de Usuario"
 #
 msgid ""
+"There may be other expired permits.  However, this message will be shown once "
+"only."
+msgstr ""
+#
+msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
@@ -314,6 +351,9 @@ msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "¡Evento inesperado!\n"
+#
+msgid "Update all existing cell permits?"
+msgstr ""
 #
 msgid "UserPermit"
 msgstr "Permiso de Usuario"
@@ -327,8 +367,13 @@ msgstr "Permiso de Usuario no válido"
 msgid "cell:"
 msgstr ""
 #
+msgid "cell: "
+msgstr ""
+#
 msgid "s63_pi Message"
 msgstr ""
+#
+#
 #
 #
 #
@@ -339,8 +384,12 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Inicio con Permiso de Celda no válido"
+#
+#
 #
 #
 #
@@ -351,12 +400,16 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid ""
 #~ "OpenCPN can create eSENC files as cells are imported.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "OpenCPN puede crear archivos eSENC para las celdas importadas.\n"
 #~ "\n"
+#
+#
 #
 #
 #
@@ -373,9 +426,13 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr ""
 #~ "Este proceso puede ser Cancelado por el usuario en cualquier momento.\n"
+#
+#
 #
 #
 #
@@ -386,12 +443,16 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid ""
 #~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "eSENCS aún no procesados se crearán cuando lo necesite OpenCPN..\n"
 #~ "\n"
+#
+#
 #
 #
 #

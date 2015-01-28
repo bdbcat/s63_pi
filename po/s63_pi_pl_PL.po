@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 22:52-0400\n"
+"POT-Creation-Date: 2014-12-31 11:23-0500\n"
 "PO-Revision-Date: 2014-04-03 22:36+0100\n"
 "Last-Translator: mrm <mrm@wp.pl>\n"
 "Language-Team: PL <mrm@wp.pl>\n"
@@ -16,20 +16,41 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 #
+msgid ""
+"\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
+#
 msgid "   Error: Cannot create "
 msgstr "   Błąd: nie mogę utworzyć "
+#
+msgid " is not present in exchange set.\n"
+msgstr ""
 #
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr ""
 #
+msgid "Base cell edition update skipped\n"
+msgstr ""
+#
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr ""
+#
 msgid "Cancel"
 msgstr "Anuluj"
+#
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr ""
 #
 msgid "Cell Name"
 msgstr "Nazwa komórki"
 #
 msgid "Cell update NOT authenticated\n"
+msgstr "Aktualizacja komórki NIE uwierzytelniona\n"
+#
+msgid "Cell update skipped\n"
 msgstr "Aktualizacja komórki NIE uwierzytelniona\n"
 #
 msgid "Certificate Key import FAILED\n"
@@ -41,7 +62,6 @@ msgstr "Import Klucza Certyfikatu powiódł się.\n"
 msgid "Certificate Name"
 msgstr "Nazwa certyfikatu"
 #
-#, fuzzy
 msgid "Chart Cells"
 msgstr "Mapy S63"
 #
@@ -67,6 +87,12 @@ msgstr ""
 msgid "Expiration Date"
 msgstr "Data ważności"
 #
+msgid "First expired base cell name: "
+msgstr ""
+#
+msgid "First expired cell name: "
+msgstr ""
+#
 msgid "Import Cell Permits..."
 msgstr "Import zezwoleń..."
 #
@@ -91,7 +117,6 @@ msgstr "Zainstalowane zezwolenia komórek S63"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Zainstalowane certyfikaty/klucze S63"
 #
-#, fuzzy
 msgid "Keys/Permits"
 msgstr "Zezwolenie Użytkownika"
 #
@@ -122,6 +147,9 @@ msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
 "Pliki PUB (*.PUB)|*.PUB|Pliki TXT (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*"
 #
+msgid "Permit"
+msgstr "Zezwolenie Użytkownika"
+#
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
@@ -146,7 +174,6 @@ msgstr ""
 "Zapewnia wsparcie dla map w formacie S63\n"
 "\n"
 #
-#, fuzzy
 msgid "S63_pi Install Permit Required"
 msgstr "Zezwolenie Instalacji jest nieważne"
 #
@@ -165,6 +192,11 @@ msgid ""
 msgstr ""
 "S63_pi serwer kanału zwrotnego nasłuchuje.\n"
 "\n"
+#
+msgid ""
+"SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr ""
 #
 msgid ""
 "Security Scheme Error\n"
@@ -202,7 +234,6 @@ msgid ""
 "Cell name: "
 msgstr ""
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -212,29 +243,19 @@ msgid ""
 msgstr ""
 "Poprawny certyfikat może zostać pobrany ze strony IHO albo od dostawcy map.\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
 msgstr ""
-"Błąd schematu zabezpieczeń\n"
-"\n"
-"SSE 24 - błędna sygnatura formatu ENC.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 11 - Cell permit not found"
 msgstr ""
-"Błąd schematu zabezpieczeń\n"
-"\n"
-"SSE 13 - Zezwolenie Komórki jest nieważne (błąd sumy kontrolnej)\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -242,12 +263,7 @@ msgid ""
 "\n"
 "Incorrect cell permit line starts with "
 msgstr ""
-"Błąd schematu zabezpieczeń\n"
-"\n"
-"SSE 24 - błędna sygnatura formatu ENC.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -259,8 +275,16 @@ msgstr ""
 "Błąd schematu zabezpieczeń\n"
 "\n"
 "SSE 13 - Zezwolenie Komórki jest nieważne (błąd sumy kontrolnej)\n"
+" Invalid cell permit starts with "
 #
-#, fuzzy
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n"
+"\n"
+msgstr ""
+#
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -272,6 +296,7 @@ msgstr ""
 "\n"
 "SSE 24 - błędna sygnatura formatu ENC.\n"
 "\n"
+" Cell name: "
 #
 msgid ""
 "Security Scheme Warning\n"
@@ -303,6 +328,11 @@ msgid "Test Userpermit"
 msgstr "Test Zezwolenia Użytkownika"
 #
 msgid ""
+"There may be other expired permits.  However, this message will be shown once "
+"only."
+msgstr ""
+#
+msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
@@ -310,6 +340,9 @@ msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Nieoczekiwane zdarzenie !\n"
+#
+msgid "Update all existing cell permits?"
+msgstr ""
 #
 msgid "UserPermit"
 msgstr "Zezwolenie Użytkownika"
@@ -323,8 +356,12 @@ msgstr "Zezwolenie Użytkownika jest nieważne"
 msgid "cell:"
 msgstr ""
 #
+msgid "cell: "
+msgstr ""
+#
 msgid "s63_pi Message"
 msgstr ""
+#
 #
 #
 #
@@ -335,8 +372,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Niepoprawne Zezwolenie Komórki rozpoczyna się od "
+#
 #
 #
 #
@@ -347,12 +386,14 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid ""
 #~ "OpenCPN can create eSENC files as cells are imported.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "OpenCPN może generować pliki eSENC podczas importu komórek.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -369,6 +410,7 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr ""
 #~ "Ta czynność może być anulowana przez użytkownika w dowolnej chwili.\n"
@@ -376,8 +418,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "To może chwilę potrwać.\n"
+#
 #
 #
 #
@@ -389,6 +433,7 @@ msgstr ""
 #~ "Jeszcze nie przetworzone pliki eSENC zostaną wygenerowane przez OpenCPN w "
 #~ "miarę potrzeb.\n"
 #~ "\n"
+#
 #
 #
 #

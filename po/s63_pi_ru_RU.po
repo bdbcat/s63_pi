@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 22:52-0400\n"
+"POT-Creation-Date: 2014-12-31 11:37-0500\n"
 "PO-Revision-Date: 2014-04-24 18:00+0400\n"
 "Last-Translator: Anton Samsonov <epolyan@gmail.com>\n"
 "Language-Team: Agat-Aquarius R&P <epolyan@gmail.com>\n"
@@ -18,20 +18,41 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 #
+msgid ""
+"\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
+#
 msgid "   Error: Cannot create "
 msgstr "   Ошибка: не удалось создать "
+#
+msgid " is not present in exchange set.\n"
+msgstr ""
 #
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr ""
 #
+msgid "Base cell edition update skipped\n"
+msgstr ""
+#
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr ""
+#
 msgid "Cancel"
 msgstr "Отменить"
+#
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr ""
 #
 msgid "Cell Name"
 msgstr "Имя карты"
 #
 msgid "Cell update NOT authenticated\n"
+msgstr "Обновление карты не прошло проверку подлинности.\n"
+#
+msgid "Cell update skipped\n"
 msgstr "Обновление карты не прошло проверку подлинности.\n"
 #
 msgid "Certificate Key import FAILED\n"
@@ -43,7 +64,6 @@ msgstr "Импорт ключа успешно завершён.\n"
 msgid "Certificate Name"
 msgstr "Имя файла"
 #
-#, fuzzy
 msgid "Chart Cells"
 msgstr "Карты S-63"
 #
@@ -69,6 +89,12 @@ msgstr ""
 msgid "Expiration Date"
 msgstr "Срок лицензии"
 #
+msgid "First expired base cell name: "
+msgstr ""
+#
+msgid "First expired cell name: "
+msgstr ""
+#
 msgid "Import Cell Permits..."
 msgstr "Импортировать лицензии…"
 #
@@ -93,7 +119,6 @@ msgstr "Лицензии на карты S-63"
 msgid "Installed S63 Certificates/Keys"
 msgstr "Корневые сертификаты S-63"
 #
-#, fuzzy
 msgid "Keys/Permits"
 msgstr "Лицензия пользователя"
 #
@@ -125,6 +150,10 @@ msgstr ""
 "Файлы открытых ключей (*.PUB)|*.PUB|Текстовые файлы (*.TXT)|*.TXT|Все файлы "
 "(*.*)|*.*"
 #
+#, fuzzy
+msgid "Permit\n"
+msgstr "Лицензия пользователя"
+#
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
@@ -149,7 +178,6 @@ msgstr ""
 "Модуль «S63» для OpenCPN\n"
 "Обеспечивает поддержку карт в формате S-63.\n"
 #
-#, fuzzy
 msgid "S63_pi Install Permit Required"
 msgstr "Лицензия рабочего места недействительна"
 #
@@ -168,6 +196,11 @@ msgid ""
 msgstr ""
 "Модуль карт-сервера S-63 на связи.\n"
 "\n"
+#
+msgid ""
+"SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr ""
 #
 msgid ""
 "Security Scheme Error\n"
@@ -204,7 +237,6 @@ msgid ""
 "Cell name: "
 msgstr ""
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -215,30 +247,19 @@ msgstr ""
 " Действующий сертификат корневого удостоверяющего центра можно получить "
 "на сайте IHO или у поставщика данных.\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
 msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 24 — Некорректный заголовок файла карты.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 11 - Cell permit not found"
 msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 13 — Лицензия на карту недействительна (неправильная контрольная "
-"сумма),\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -246,12 +267,7 @@ msgid ""
 "\n"
 "Incorrect cell permit line starts with "
 msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 24 — Некорректный заголовок файла карты.\n"
-"\n"
 #
-#, fuzzy
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -262,8 +278,15 @@ msgid ""
 msgstr ""
 "Ошибка системы безопасности\n"
 "\n"
-" SSE 13 — Лицензия на карту недействительна (неправильная контрольная "
-"сумма),\n"
+" SSE 13 — Лицензия на карту недействительна (неправильная контрольная сумма)"
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n"
+"\n"
+msgstr ""
 #
 #, fuzzy
 msgid ""
@@ -308,6 +331,11 @@ msgid "Test Userpermit"
 msgstr "Проверить лицензию пользователя"
 #
 msgid ""
+"There may be other expired permits.  However, this message will be shown once "
+"only."
+msgstr ""
+#
+msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
@@ -316,6 +344,9 @@ msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Неожиданное событие!\n"
+#
+msgid "Update all existing cell permits?"
+msgstr ""
 #
 msgid "UserPermit"
 msgstr "Лицензия пользователя"
@@ -329,8 +360,13 @@ msgstr "Лицензия пользователя недействительна
 msgid "cell:"
 msgstr ""
 #
+msgid "cell: "
+msgstr ""
+#
 msgid "s63_pi Message"
 msgstr ""
+#
+#
 #
 #
 #
@@ -341,8 +377,12 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr " Первые знаки недействительной лицензии: "
+#
+#
 #
 #
 #
@@ -353,12 +393,16 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid ""
 #~ "OpenCPN can create eSENC files as cells are imported.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "OpenCPN может преобразовывать карты в системный формат при импорте.\n"
 #~ "\n"
+#
+#
 #
 #
 #
@@ -376,14 +420,20 @@ msgstr ""
 #
 #
 #
+#
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Процесс можно прервать в любое время.\n"
 #
 #
 #
 #
+#
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Этот процесс может занять некоторое время.\n"
+#
+#
 #
 #
 #
@@ -395,6 +445,8 @@ msgstr ""
 #~ "Непреобразованные в системный формат карты будут обработаны по мере "
 #~ "необходимости.\n"
 #~ "\n"
+#
+#
 #
 #
 #

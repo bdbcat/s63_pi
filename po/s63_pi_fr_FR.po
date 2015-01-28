@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenCPN Plugin S63\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 22:52-0400\n"
+"POT-Creation-Date: 2014-12-31 11:37-0500\n"
 "PO-Revision-Date: 2014-05-01 23:18+0100\n"
 "Last-Translator: Gilletarom et  EdelVoilier <contact@gilletarom.fr et  "
 "pascaljouin74@gmail.com>\n"
@@ -19,20 +19,41 @@ msgstr ""
 "X-Generator: Poedit 1.6.4\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 #
+msgid ""
+"\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
+#
 msgid "   Error: Cannot create "
 msgstr "   Erreur : Création impossible "
+#
+msgid " is not present in exchange set.\n"
+msgstr ""
 #
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr "Mise à jour tentée : %d\n"
 #
+msgid "Base cell edition update skipped\n"
+msgstr ""
+#
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr ""
+#
 msgid "Cancel"
 msgstr "Annuler"
+#
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr "Impossible de trouver le dossier ENC_ROOT"
 #
 msgid "Cell Name"
 msgstr "Nom de cellule"
 #
 msgid "Cell update NOT authenticated\n"
+msgstr "Mise à jour de la cellule non authentifiée\n"
+#
+msgid "Cell update skipped\n"
 msgstr "Mise à jour de la cellule non authentifiée\n"
 #
 msgid "Certificate Key import FAILED\n"
@@ -44,7 +65,6 @@ msgstr "Succès de l'importation de la clé du certificat\n"
 msgid "Certificate Name"
 msgstr "Nom du certificat"
 #
-#, fuzzy
 msgid "Chart Cells"
 msgstr "Cartes"
 #
@@ -69,6 +89,12 @@ msgstr ""
 #
 msgid "Expiration Date"
 msgstr "Date d'expiration"
+#
+msgid "First expired base cell name: "
+msgstr ""
+#
+msgid "First expired cell name: "
+msgstr ""
 #
 msgid "Import Cell Permits..."
 msgstr "Permis d'importation de cellules"
@@ -131,6 +157,10 @@ msgstr ""
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 #
+#, fuzzy
+msgid "Permit\n"
+msgstr "UserPermit"
+#
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
@@ -176,6 +206,11 @@ msgid ""
 msgstr ""
 "Le serveur backchannel du complément S63_pi est à l'écoute.\n"
 "\n"
+#
+msgid ""
+"SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr ""
 #
 msgid ""
 "Security Scheme Error\n"
@@ -287,6 +322,14 @@ msgstr ""
 msgid ""
 "Security Scheme Error\n"
 "\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n"
+"\n"
+msgstr ""
+#
+msgid ""
+"Security Scheme Error\n"
+"\n"
 "SSE 24 - ENC Signature format is incorrect.\n"
 "\n"
 " Cell name: "
@@ -332,6 +375,11 @@ msgid "Test Userpermit"
 msgstr "Tester le UserPermit"
 #
 msgid ""
+"There may be other expired permits.  However, this message will be shown once "
+"only."
+msgstr ""
+#
+msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
@@ -340,6 +388,9 @@ msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Evénement inattendu !\n"
+#
+msgid "Update all existing cell permits?"
+msgstr ""
 #
 msgid "UserPermit"
 msgstr "UserPermit"
@@ -353,23 +404,38 @@ msgstr "UserPermit invalide"
 msgid "cell:"
 msgstr "Cellule :"
 #
+msgid "cell: "
+msgstr "Cellule :"
+#
 msgid "s63_pi Message"
 msgstr "Message du complément S63_pi"
+#
+#
+#
 #
 #~ msgid " mag"
 #~ msgstr " magnét."
 #
-#~ msgid "Cannot find ENC_ROOT directory"
-#~ msgstr "Impossible de trouver le dossier ENC_ROOT"
+#
+#
 #
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Créer les eSENCs lors de l'importation ?\n"
 #
+#
+#
+#
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Permis de cellule invalide commençant par "
 #
+#
+#
+#
 #~ msgid "Note:\n"
 #~ msgstr "Note :\n"
+#
+#
+#
 #
 #~ msgid ""
 #~ "OpenCPN can create eSENC files as cells are imported.\n"
@@ -378,6 +444,9 @@ msgstr "Message du complément S63_pi"
 #~ "OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
 #~ "importées\n"
 #~ "\n"
+#
+#
+#
 #
 #~ msgid ""
 #~ "S63 PlugIn for OpenCPN\n"
@@ -392,6 +461,9 @@ msgstr "Message du complément S63_pi"
 #~ "Les cartes supportées doivent avoir été installées au préalable\n"
 #~ "Le certificat de décodage doit être en place.\n"
 #
+#
+#
+#
 #~ msgid ""
 #~ "Security Scheme Error\n"
 #~ "\n"
@@ -401,11 +473,20 @@ msgstr "Message du complément S63_pi"
 #~ "\n"
 #~ " SS08 - Format incorrect du fichier du certificat SA Digital\n"
 #
+#
+#
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
 #
+#
+#
+#
 #~ msgid "This process may take some time.\n"
 #~ msgstr "Le processus peut prendre un certain temps.\n"
+#
+#
+#
 #
 #~ msgid ""
 #~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
@@ -413,6 +494,9 @@ msgstr "Message du complément S63_pi"
 #~ msgstr ""
 #~ "Les eSENCS non encore traitées seront créés selon les besoins par "
 #~ "OpenCPN.\n"
+#
+#
+#
 #
 #~ msgid ""
 #~ "or the Cell Permit is for a different system.\n"
