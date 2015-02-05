@@ -14,6 +14,18 @@
 
     The Windows install package will be built, and called s63_pi_x.x.x_setup.exe
 
+    For Standalone or Independent Windows Compile
+    1. Git clone
+    2.Copy opencpn.lib from v4.0 into the /build directory.
+    3.Copy ../include/opncpn_plugin.h  in the src directory due to link errors.
+    4. CMakeLists.txt file  Line 200 and 201 comment this way:
+```
+ SET(OPENCPN_IMPORT_LIB "opencpn.lib")
+# SET(OPENCPN_IMPORT_LIB "E:/opencpn_cmake2010/${CMAKE_CFG_INTDIR}/opencpn.lib")
+```
+  5. from the build directory  cmake ..   then cmake --build . and cmake --build . --config release
+  6. Then issue cpack if you have NSIS setup.
+
 
     B. Linux
 
