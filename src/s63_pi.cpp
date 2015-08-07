@@ -140,18 +140,15 @@ s63_pi::s63_pi(void *ppimgr)
       wxFileName fn_exe(GetOCPN_ExePath());
 
       //        Specify the location of the OCPNsenc helper.
-      g_sencutil_bin = fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + _T("OCPNsenc");
-      
-      
 #ifdef __WXMSW__
       g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + 
            _T("plugins\\s63_pi\\OCPNsenc.exe\"");
-#endif 
-           
-#ifdef __WXOSX__
+#elif __WXOSX__
       fn_exe.RemoveLastDir();     
       g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + 
            _T("PlugIns/s63_pi/OCPNsenc\"");
+#else
+      g_sencutil_bin = wxT("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + wxT("OCPNsenc") + wxT("\"");
 #endif 
 
       g_bSENCutil_valid = false;                // not confirmed yet     
