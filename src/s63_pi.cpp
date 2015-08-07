@@ -870,7 +870,7 @@ int s63_pi::ImportCells( void )
             if(g_pprog){
                 g_pprog->Raise();
                 wxString msg;
-                msg.Printf(_T("Building eSENC %d/%d\n"), nproc+1, unique_cellname_array.Count()); 
+                msg.Printf(_T("Building eSENC %u/%lu\n"), nproc+1, unique_cellname_array.Count()); 
                 g_pprog->Update(nproc, msg);
                 if( nproc != unique_cellname_array.Count() ){    // not done yet
                                 wxSleep(4);
@@ -1084,7 +1084,7 @@ int s63_pi::ImportCells( void )
                                     //  Recreate the os63 file, thereby removing any old updates
                                     //  that are presumably incorporated into this new revision.
                                     wxString msgs;
-                                    msgs.Printf(_T("Updating base cell from Edition %d to Edition %d\n\n"), base_installed_edtn, edtn);
+                                    msgs.Printf(_T("Updating base cell from Edition %ld to Edition %ld\n\n"), base_installed_edtn, edtn);
                                     ScreenLogMessage(msgs);
                                 
                                     wxString line0 = os63file.GetFirstLine();       // grab a copy of cell permit
@@ -1189,7 +1189,7 @@ int s63_pi::ImportCells( void )
                                 msg += _T("\n");
                                 m1.Printf(_("Latest intalled update: %d\n"), installed_updn);
                                 msg += m1;
-                                m1.Printf(_("Attempted update: %d\n"), update_updn);
+                                m1.Printf(_("Attempted update: %ld\n"), update_updn);
                                 msg += m1;
                                 OCPNMessageBox_PlugIn(GetOCPNCanvasWindow(),
                                                       msg,
@@ -1217,7 +1217,7 @@ int s63_pi::ImportCells( void )
                                     msg += _T("\n");
                                     msg += _("Cell update skipped\n");
                                     wxString m1;
-                                    m1.Printf(_("Attempted update: %d\n"), update_updn);
+                                    m1.Printf(_("Attempted update: %ld\n"), update_updn);
                                     msg += m1;
                                     msg += _("There may be other expired permits.  However, this message will be shown once only.");
                                     
@@ -1275,13 +1275,13 @@ int s63_pi::ImportCells( void )
                 }
                 else {
                     wxString msgs;
-                    msgs.Printf(_T("Cell added successfully  (%d/%d)\n"), iloop, unique_cellname_array.Count() );
+                    msgs.Printf(_T("Cell added successfully  (%u/%lu)\n"), iloop, unique_cellname_array.Count() );
                     ScreenLogMessage(msgs);
                     
                     //  Build the eSENC inline, if requested
                     if(bSENC){
                         wxString msg;
-                        msg.Printf(_T("Building eSENC %d/%d\n"), nproc, unique_cellname_array.Count()); 
+                        msg.Printf(_T("Building eSENC %u/%lu\n"), nproc, unique_cellname_array.Count()); 
                         ScreenLogMessage( msg );
                         ChartS63 *pch = new ChartS63();
                         if(pch){
@@ -1298,7 +1298,7 @@ int s63_pi::ImportCells( void )
                         if(0/*g_pprog*/){
                             g_pprog->Raise();
                             wxString msg;
-                            msg.Printf(_T("Building eSENC %d/%d\n"), nproc, unique_cellname_array.Count()); 
+                            msg.Printf(_T("Building eSENC %u/%lu\n"), nproc, unique_cellname_array.Count()); 
                             g_pprog->Update(nproc, msg);
                             if( nproc != unique_cellname_array.Count() ){    // not done yet
                                 wxSleep(4);
@@ -2537,7 +2537,7 @@ void S63ScreenLog::LogMessage(wxString &s)
 {
     if( m_plogtc  ) {
         wxString seq;
-        seq.Printf(_T("%6d: "), m_nseq++);
+        seq.Printf(_T("%6u: "), m_nseq++);
         
         wxString sp = s;
 
