@@ -2495,7 +2495,7 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
                 //  and all updates (.001, .002, etc.)  are subsumed.
                 else if( senc_base_edtn != m_base_edtn ) {
                     wxString msg;
-                    msg.Printf(_T("   Info: Existing eSENC base edition mismatch %d %d .\n "), senc_base_edtn, m_base_edtn);
+                    msg.Printf(_T("   Info: Existing eSENC base edition mismatch %ld %d .\n "), senc_base_edtn, m_base_edtn);
                     ScreenLogMessage( msg );
                     bbuild_new_senc = true;
                 }
