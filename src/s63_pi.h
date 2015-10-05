@@ -40,7 +40,7 @@
 #include "TexFont.h"
 
 #define     PLUGIN_VERSION_MAJOR    1
-#define     PLUGIN_VERSION_MINOR    0
+#define     PLUGIN_VERSION_MINOR    2
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    11
@@ -83,6 +83,7 @@ public:
     void OnNewUserpermitClick( wxCommandEvent& event );    
     void OnNewInstallpermitClick( wxCommandEvent& event );    
     void OnImportCertClick( wxCommandEvent &event );
+    void OnNewFPRClick( wxCommandEvent &event );
     
     s63_pi  *m_parent;
 };
@@ -136,6 +137,7 @@ public:
     int RemoveCellPermit( void );
     int ImportCells( void );
     int ImportCert( void );
+    void Set_FPR();
     
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
     void GetNewUserpermit(void);
@@ -147,6 +149,8 @@ public:
    
     wxStaticText        *m_up_text;
     wxStaticText        *m_ip_text;
+    wxStaticText        *m_fpr_text;
+    
     wxScrolledWindow    *m_s63chartPanelWinTop;
     wxPanel             *m_s63chartPanelWin;
     wxPanel             *m_s63chartPanelKeys;
@@ -176,6 +180,7 @@ private:
     wxButton            *m_buttonNewUP;
     wxButton            *m_buttonImportCells;
     wxButton            *m_buttonNewIP;
+    wxButton            *m_buttonNewFPR;
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;

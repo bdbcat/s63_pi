@@ -46,6 +46,14 @@
 #include "src/myiso8211/iso8211.h"
 #include "dsa_utils.h"
 
+#ifdef __WXOSX__
+#include "GL/gl.h"
+#include "GL/glu.h"
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 //      Some PlugIn global variables
 wxString                        g_sencutil_bin;
 S63ScreenLogContainer           *g_pScreenLog;
@@ -75,6 +83,8 @@ bool                            g_buser_enable_screenlog;
 bool                            g_bshown_sse15;
 bool                            g_brendered_expired;
 bool                            g_bnoShow_sse25;
+
+wxString                        g_fpr_file;
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -562,6 +572,20 @@ void s63_pi::OnSetupOptions(){
     
     chartPanelSizerKeys->AddSpacer( 5 );
     chartPanelSizerKeys->Add( sbSizerIP, 0, wxEXPAND, 5 );
+
+    //  FPR File Permit
+    wxStaticBoxSizer* sbSizerFPR= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelKeys, wxID_ANY, _("System Identification") ), wxHORIZONTAL );
+    m_fpr_text = new wxStaticText(m_s63chartPanelKeys, wxID_ANY, _T(" "));
+    
+    sbSizerFPR->Add(m_fpr_text, wxEXPAND);
+    
+    m_buttonNewFPR = new wxButton( m_s63chartPanelKeys, wxID_ANY, _("Create System Identifier file..."), wxDefaultPosition, wxDefaultSize, 0 );
+    sbSizerFPR->Add( m_buttonNewFPR, 0, wxALL | wxALIGN_RIGHT, 5 );
+    
+    chartPanelSizerKeys->AddSpacer( 5 );
+    chartPanelSizerKeys->Add( sbSizerFPR, 0, wxEXPAND, 5 );
+  
+    
     
     chartPanelSizerKeys->AddSpacer( 15 );
     wxStaticLine *psl = new wxStaticLine(m_s63chartPanelKeys, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -594,6 +618,10 @@ void s63_pi::OnSetupOptions(){
     
     m_buttonImportCert->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
                                   wxCommandEventHandler(s63_pi_event_handler::OnImportCertClick), NULL, m_event_handler );
+
+    m_buttonNewFPR->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(s63_pi_event_handler::OnNewFPRClick), NULL, m_event_handler );
+    
     
     g_benable_screenlog = true;
     
@@ -1359,6 +1387,18 @@ finish:
     
     return 0;
 }
+
+
+void s63_pi::Set_FPR()
+{
+    if(g_fpr_file.Length()){
+        m_fpr_text->SetLabel(g_fpr_file);
+        m_buttonNewFPR->Disable();
+    }
+    else
+        m_fpr_text->SetLabel(_T(" "));
+}
+
 
 int s63_pi::ImportCert(void)
 {
@@ -2131,6 +2171,79 @@ void s63_pi_event_handler::OnImportCertClick( wxCommandEvent &event )
 {
     m_parent->ImportCert();
 }
+
+void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
+{
+
+    wxString msg = _("To obtain an Install Permit, you must generate a unique System Identifier File.\n");
+    msg += _("This file is also known as a\"fingerprint\" file.\n");
+    msg += _("The fingerprint file contains information to uniquely identifiy this computer.\n\n");
+    msg += _("After creating this file, you must send the file by email to o-charts.org.\n");
+    msg += _("You may then arrange to purchase an Install Permit.\n\n");
+    msg += _("Proceed to create Fingerprint file?");
+    
+    int ret = OCPNMessageBox_PlugIn(NULL, msg, _("S63_PI Message"), wxYES_NO);
+   
+    if(ret == wxID_YES){
+
+        wxString fpr_file;
+        wxString fpr_dir = *GetpPrivateApplicationDataLocation(); //GetWritableDocumentsDir();
+#ifdef __WXMSW__
+
+        //  On XP, we simply use the root directory, since any other directory may be hidden
+        int major, minor;
+        ::wxGetOsVersion( &major, &minor );
+        if( (major == 5) && (minor == 1) )
+            fpr_dir = _T("C:\\");
+#endif        
+        
+        wxString cmd;
+        cmd += _T(" -w ");                  // validate cell permit
+        
+        cmd += _T(" -o ");
+        cmd += fpr_dir;
+        
+        ::wxBeginBusyCursor();
+        
+        wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
+        
+        ::wxEndBusyCursor();
+        
+        bool berr = false;
+        for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
+            wxString line = valup_result[i];
+            if(line.Upper().Find(_T("ERROR")) != wxNOT_FOUND){
+                berr = true;
+                break;
+            }
+            if(line.Upper().Find(_T("FPR")) != wxNOT_FOUND){
+                fpr_file = line.AfterFirst(':');
+            }
+                
+        }
+        
+        
+        if(!berr && fpr_file.Length()){
+            wxString msg1 = _("Fingerprint file created.\n");
+            msg1 += fpr_file;
+            
+            OCPNMessageBox_PlugIn(NULL, msg1, _("S63_PI Message"), wxOK);
+        }
+        else{
+            wxLogMessage(_T("S63_pi: OCPNsenc results:"));
+            for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
+                wxString line = valup_result[i];
+                wxLogMessage( line );
+            }
+            OCPNMessageBox_PlugIn(NULL, _T("ERROR Creating Fingerprint file\n Check OpenCPN log file."), _("S63_PI Message"), wxOK);
+        }
+        
+        g_fpr_file = fpr_file;
+        
+        m_parent->Set_FPR();
+    }
+}
+
 
 //      Private logging functions
 void ScreenLogMessage(wxString s)
