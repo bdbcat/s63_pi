@@ -1080,7 +1080,7 @@ double ChartS63::GetNormalScaleMin(double canvas_scale_factor, bool b_allow_over
 
 double ChartS63::GetNormalScaleMax(double canvas_scale_factor, int canvas_width)
 {
-    return m_Chart_Scale * 2.0;
+    return m_Chart_Scale * 4.0;
 }
 
 
@@ -1356,7 +1356,7 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
             //            temp_vp.GetBBox().EnLarge(margin);
 
 
-            SetClipRegionGL( glc, temp_vp, rect, true /*!b_overlay*/, b_use_stencil );
+//            SetClipRegionGL( glc, temp_vp, rect, true /*!b_overlay*/, b_use_stencil );
             DoRenderRectOnGL( glc, temp_vp, rect, b_use_stencil);
 
             upd++;
