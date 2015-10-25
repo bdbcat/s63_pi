@@ -301,7 +301,8 @@ class DECL_EXP PlugInChartBase : public wxObject
             virtual int GetSize_X();
             virtual int GetSize_Y();
             virtual void latlong_to_chartpix(double lat, double lon, double &pixx, double &pixy);
-
+            virtual void chartpix_to_latlong(double pixx, double pixy, double *plat, double *plon);
+            
       protected:
             ChartTypeEnumPI     m_ChartType;
             ChartFamilyEnumPI   m_ChartFamily;
@@ -538,6 +539,7 @@ public:
     wxString          m_MarkName;
     wxString          m_MarkDescription;
     wxDateTime        m_CreateTime;
+	bool			  m_IsVisible;
 
     wxString          m_IconName;
 
@@ -981,20 +983,19 @@ extern "C"  DECL_EXP void GetDoubleCanvasPixLL(PlugIn_ViewPort *vp, wxPoint2DDou
 
 extern DECL_EXP double fromDMM_Plugin( wxString sdms );
 extern DECL_EXP void SetCanvasRotation(double rotation);
-extern DECL_EXP bool GetSingleWaypoint( wxString &GUID, PlugIn_Waypoint *pwaypoint );
+extern DECL_EXP bool GetSingleWaypoint( wxString GUID, PlugIn_Waypoint *pwaypoint );
 extern DECL_EXP bool CheckEdgePan_PlugIn( int x, int y, bool dragging, int margin, int delta );
 extern DECL_EXP wxBitmap GetIcon_PlugIn(const wxString & name);
 extern DECL_EXP void SetCursor_PlugIn( wxCursor *pPlugin_Cursor = NULL );
 
 /* API 1.13 */
-extern DECL_EXP void SetCanvasRotation(double rotation);
-extern DECL_EXP bool GetSingleWaypoint( wxString &GUID, PlugIn_Waypoint *pwaypoint );
 extern DECL_EXP bool PlugInPlaySoundEx( wxString &sound_file, int deviceIndex=-1 );
 extern DECL_EXP void AddChartDirectory( wxString &path );
 extern DECL_EXP void ForceChartDBUpdate();
 
 extern  DECL_EXP wxString GetWritableDocumentsDir( void );
 extern  DECL_EXP wxDialog *GetActiveOptionsDialog();
+extern  DECL_EXP wxArrayString GetWaypointGUIDArray( void );
 
 
 /*  Platform optimized File/Dir selector dialogs */
@@ -1120,7 +1121,9 @@ private:
     bool m_b_complete;
 };
 
-DECLARE_EVENT_TYPE(wxEVT_DOWNLOAD_EVENT, -1)
+//DECLARE_EVENT_TYPE(wxEVT_DOWNLOAD_EVENT, -1)
+//extern const wxEventType DECL_EXP wxEVT_DOWNLOAD_EVENT;
 
+extern WXDLLIMPEXP_CORE const wxEventType wxEVT_DOWNLOAD_EVENT;
 
 #endif //_PLUGIN_H_
