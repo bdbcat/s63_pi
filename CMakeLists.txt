@@ -524,6 +524,9 @@ IF(APPLE)
  #  <key>NAME</key>
  #  <string>S63-Plugin_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}</string>
 
+ #  This is the apackaging app that is used
+ # http://www.macupdate.com/app/mac/34613/packages
+ 
  configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S63.pkgproj.in
             ${CMAKE_CURRENT_BINARY_DIR}/S63.pkgproj)
 
