@@ -221,7 +221,13 @@ typedef enum OcpnProjTypePI
       PI_PROJECTION_UNKNOWN,
       PI_PROJECTION_MERCATOR,
       PI_PROJECTION_TRANSVERSE_MERCATOR,
-      PI_PROJECTION_POLYCONIC
+      PI_PROJECTION_POLYCONIC,
+
+      PI_PROJECTION_ORTHOGRAPHIC,
+      PI_PROJECTION_POLAR,
+      PI_PROJECTION_STEREOGRAPHIC,
+      PI_PROJECTION_GNOMONIC,
+      PI_PROJECTION_EQUIRECTANGULAR
 }_OcpnProjTypePI;
 
 typedef struct _ExtentPI{
@@ -983,12 +989,19 @@ extern "C"  DECL_EXP void GetDoubleCanvasPixLL(PlugIn_ViewPort *vp, wxPoint2DDou
 
 extern DECL_EXP double fromDMM_Plugin( wxString sdms );
 extern DECL_EXP void SetCanvasRotation(double rotation);
+extern DECL_EXP void SetCanvasProjection(int projection);
 extern DECL_EXP bool GetSingleWaypoint( wxString GUID, PlugIn_Waypoint *pwaypoint );
 extern DECL_EXP bool CheckEdgePan_PlugIn( int x, int y, bool dragging, int margin, int delta );
 extern DECL_EXP wxBitmap GetIcon_PlugIn(const wxString & name);
 extern DECL_EXP void SetCursor_PlugIn( wxCursor *pPlugin_Cursor = NULL );
+extern DECL_EXP wxFont *GetOCPNScaledFont_PlugIn(wxString TextElement, int default_size = 0);
+extern DECL_EXP wxFont GetOCPNGUIScaledFont_PlugIn(wxString item);
+extern DECL_EXP double GetOCPNGUIToolScaleFactor_PlugIn(int GUIScaledFactor);
+extern DECL_EXP wxColour GetFontColour_PlugIn(wxString TextElement);
 
-/* API 1.13 */
+extern DECL_EXP double GetCanvasTilt();
+extern DECL_EXP void SetCanvasTilt(double tilt);
+
 extern DECL_EXP bool PlugInPlaySoundEx( wxString &sound_file, int deviceIndex=-1 );
 extern DECL_EXP void AddChartDirectory( wxString &path );
 extern DECL_EXP void ForceChartDBUpdate();
@@ -996,6 +1009,8 @@ extern DECL_EXP void ForceChartDBUpdate();
 extern  DECL_EXP wxString GetWritableDocumentsDir( void );
 extern  DECL_EXP wxDialog *GetActiveOptionsDialog();
 extern  DECL_EXP wxArrayString GetWaypointGUIDArray( void );
+
+extern  DECL_EXP bool AddPersistentFontKey(wxString TextElement);
 
 
 /*  Platform optimized File/Dir selector dialogs */
@@ -1057,6 +1072,7 @@ enum OCPN_DLDialogStyle
     OCPN_DLDS_DEFAULT_STYLE = OCPN_DLDS_CAN_START|OCPN_DLDS_CAN_PAUSE|OCPN_DLDS_CAN_ABORT|OCPN_DLDS_SHOW_ALL|OCPN_DLDS_AUTO_CLOSE
 };
 
+#define ONLINE_CHECK_RETRY 30 // Recheck the Internet connection availability every ONLINE_CHECK_RETRY s
 
 /*   Synchronous (Blocking) download of a single file  */
 
@@ -1065,6 +1081,7 @@ extern DECL_EXP _OCPN_DLStatus OCPN_downloadFile( const wxString& url, const wxS
                                        const wxBitmap& bitmap,
                                        wxWindow *parent, long style, int timeout_secs);
 
+
 /*   Asynchronous (Background) download of a single file  */
 
 extern DECL_EXP _OCPN_DLStatus OCPN_downloadFileBackground( const wxString& url, const wxString &outputFile,
@@ -1072,6 +1089,13 @@ extern DECL_EXP _OCPN_DLStatus OCPN_downloadFileBackground( const wxString& url,
 
 extern DECL_EXP void OCPN_cancelDownloadFileBackground( long handle );
 
+/*   Synchronous (Blocking) HTTP POST operation for small amounts of data */
+
+extern DECL_EXP _OCPN_DLStatus OCPN_postDataHttp( const wxString& url, const wxString& parameters, wxString& result, int timeout_secs );
+
+/*   Check whether connection to the Internet is working */
+
+extern DECL_EXP bool OCPN_isOnline();
 
 /*  Supporting  Event for Background downloading          */
 /*  OCPN_downloadEvent Definition  */
