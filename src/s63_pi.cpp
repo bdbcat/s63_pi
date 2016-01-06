@@ -2178,10 +2178,9 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
     wxString msg = _("To obtain an Install Permit, you must generate a unique System Identifier File.\n");
     msg += _("This file is also known as a\"fingerprint\" file.\n");
     msg += _("The fingerprint file contains information to uniquely identifiy this computer.\n\n");
-    msg += _("After creating this file, you must send the file by email to o-charts.org.\n");
-    msg += _("You may then arrange to purchase an Install Permit.\n\n");
+    msg += _("After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n");
     msg += _("Proceed to create Fingerprint file?");
-    
+   
     int ret = OCPNMessageBox_PlugIn(NULL, msg, _("S63_PI Message"), wxYES_NO);
    
     if(ret == wxID_YES){
