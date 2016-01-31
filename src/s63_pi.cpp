@@ -576,7 +576,8 @@ void s63_pi::OnSetupOptions(){
     //  FPR File Permit
     wxStaticBoxSizer* sbSizerFPR= new wxStaticBoxSizer( new wxStaticBox( m_s63chartPanelKeys, wxID_ANY, _("System Identification") ), wxHORIZONTAL );
     m_fpr_text = new wxStaticText(m_s63chartPanelKeys, wxID_ANY, _T(" "));
-    
+    if(g_fpr_file.Len())
+        m_fpr_text->SetLabel( g_fpr_file );
     sbSizerFPR->Add(m_fpr_text, wxEXPAND);
     
     m_buttonNewFPR = new wxButton( m_s63chartPanelKeys, wxID_ANY, _("Create System Identifier file..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -2056,6 +2057,7 @@ bool s63_pi::LoadConfig( void )
         pConf->Read( _T("S63CommonDataDir"), &g_CommonDataDir);
         pConf->Read( _T("ShowScreenLog"), &g_buser_enable_screenlog);
         pConf->Read( _T("NoShowSSE25"), &g_bnoShow_sse25);
+        pConf->Read( _T("LastFPRFile"), &g_fpr_file);
     }        
      
     return true;
@@ -2072,6 +2074,7 @@ bool s63_pi::SaveConfig( void )
         pConf->Write( _T("Userpermit"), g_userpermit );
         pConf->Write( _T("Installpermit"), g_installpermit );
         pConf->Write( _T("LastENCROOT"), m_last_enc_root_dir );
+        pConf->Write( _T("LastFPRFile"), g_fpr_file );
         
     }
 
