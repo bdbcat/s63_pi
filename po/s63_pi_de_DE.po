@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"POT-Creation-Date: 2016-01-06 00:31-0500\n"
 "PO-Revision-Date: 2014-04-03 10:40+0100\n"
 "Last-Translator: CarCode <carcode@me.com>\n"
 "Language-Team: DE <carcode@me.com>\n"
@@ -27,6 +27,11 @@ msgid "   Error: Cannot create "
 msgstr "   Fehler: Kann nicht erzeugen "
 #
 msgid " is not present in exchange set.\n"
+msgstr ""
+#
+msgid ""
+"After creating this file, you will need it to generate your InstallPermit at "
+"the o-charts.org shop.\n"
 msgstr ""
 #
 #, c-format
@@ -66,6 +71,9 @@ msgstr "Zertifikat Name"
 msgid "Chart Cells"
 msgstr "S63 Karten"
 #
+msgid "Create System Identifier file..."
+msgstr ""
+#
 msgid "Creating eSenc"
 msgstr "Erzeuge eSenc"
 #
@@ -87,6 +95,9 @@ msgstr ""
 #
 msgid "Expiration Date"
 msgstr "Ablauf-Datum"
+#
+msgid "Fingerprint file created.\n"
+msgstr ""
 #
 msgid "First expired base cell name: "
 msgstr ""
@@ -155,6 +166,9 @@ msgstr "UserPermit"
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+#
 msgid "Remove Permits"
 msgstr "Entferne Freigaben"
 #
@@ -175,6 +189,9 @@ msgstr ""
 "S63 PlugIn für OpenCPN\n"
 "Unterstützt S63 Karten.\n"
 "\n"
+#
+msgid "S63_PI Message"
+msgstr ""
 #
 msgid "S63_pi Install Permit Required"
 msgstr "InstallPermit ungültig"
@@ -322,6 +339,9 @@ msgstr "Wähle Public Key Datei"
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
 msgstr "Wähle S63 Austausch-Verzeichnis (normal: ENC_ROOT)"
 #
+msgid "System Identification"
+msgstr ""
+#
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr "TXT Dateien (*.TXT)|*.TXT|Alle Dateien (*.*)|*.*"
 #
@@ -335,8 +355,17 @@ msgid "Test Userpermit"
 msgstr "Teste UserPermit"
 #
 msgid ""
+"The fingerprint file contains information to uniquely identifiy this "
+"computer.\n"
+"\n"
+msgstr ""
+#
+msgid ""
 "There may be other expired permits.  However, this message will be shown once "
 "only."
+msgstr ""
+#
+msgid "This file is also known as a\"fingerprint\" file.\n"
 msgstr ""
 #
 msgid ""
@@ -346,6 +375,11 @@ msgstr ""
 "Dieses Update und alle folgenden Updates für diese Zelle werden NICHT "
 "gemacht.\n"
 "\n"
+#
+msgid ""
+"To obtain an Install Permit, you must generate a unique System Identifier "
+"File.\n"
+msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Unerwarteter Event !\n"
@@ -376,8 +410,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Erzeuge eSENCs bei Import?\n"
+#
 #
 #
 #
@@ -392,8 +428,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Hinweis:\n"
+#
 #
 #
 #
@@ -406,6 +444,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN kann eSENC Dateien bei Zellen-Import erzeugen.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -426,8 +465,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Der Prozeß kann jederzeit vom Anwender abgebrochen werden.\n"
+#
 #
 #
 #
@@ -442,12 +483,14 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid ""
 #~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "Noch nicht gemachte eSENCS werden bei Bedarf von OpenCPN erzeugt.\n"
 #~ "\n"
+#
 #
 #
 #

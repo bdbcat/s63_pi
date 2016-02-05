@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"POT-Creation-Date: 2016-01-06 00:31-0500\n"
 "PO-Revision-Date: 2014-04-03 10:40+0100\n"
 "Last-Translator: \n"
 "Language-Team:\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.4\n"
-
+#
 msgid ""
 "\n"
 "already imported.\n"
@@ -27,6 +27,11 @@ msgid "   Error: Cannot create "
 msgstr ""
 #
 msgid " is not present in exchange set.\n"
+msgstr ""
+#
+msgid ""
+"After creating this file, you will need it to generate your InstallPermit at "
+"the o-charts.org shop.\n"
 msgstr ""
 #
 #, c-format
@@ -66,6 +71,9 @@ msgstr ""
 msgid "Chart Cells"
 msgstr ""
 #
+msgid "Create System Identifier file..."
+msgstr ""
+#
 msgid "Creating eSenc"
 msgstr ""
 #
@@ -84,6 +92,9 @@ msgid ""
 msgstr ""
 #
 msgid "Expiration Date"
+msgstr ""
+#
+msgid "Fingerprint file created.\n"
 msgstr ""
 #
 msgid "First expired base cell name: "
@@ -151,6 +162,9 @@ msgstr ""
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+#
 msgid "Remove Permits"
 msgstr ""
 #
@@ -167,6 +181,9 @@ msgid ""
 "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n"
 "\n"
+msgstr ""
+#
+msgid "S63_PI Message"
 msgstr ""
 #
 msgid "S63_pi Install Permit Required"
@@ -289,6 +306,9 @@ msgstr ""
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
 msgstr ""
 #
+msgid "System Identification"
+msgstr ""
+#
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr ""
 #
@@ -302,13 +322,27 @@ msgid "Test Userpermit"
 msgstr ""
 #
 msgid ""
+"The fingerprint file contains information to uniquely identifiy this "
+"computer.\n"
+"\n"
+msgstr ""
+#
+msgid ""
 "There may be other expired permits.  However, this message will be shown once "
 "only."
+msgstr ""
+#
+msgid "This file is also known as a\"fingerprint\" file.\n"
 msgstr ""
 #
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
+msgstr ""
+#
+msgid ""
+"To obtain an Install Permit, you must generate a unique System Identifier "
+"File.\n"
 msgstr ""
 #
 msgid "Unexpected event !\n"

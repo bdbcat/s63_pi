@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: s63_pi 1.0.0\n"
+"Project-Id-Version: s63_pi 1.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"POT-Creation-Date: 2016-01-06 00:31-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,118 +17,126 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/s63_pi.cpp:294
+#: src/s63_pi.cpp:304
 msgid "S63"
 msgstr ""
 
-#: src/s63_pi.cpp:300
+#: src/s63_pi.cpp:310
 msgid "S63 PlugIn for OpenCPN"
 msgstr ""
 
-#: src/s63_pi.cpp:306
+#: src/s63_pi.cpp:316
 msgid ""
 "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n"
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:328 src/s63_pi.cpp:357
+#: src/s63_pi.cpp:338 src/s63_pi.cpp:367
 msgid ""
 "SSE 25..The ENC permit for this cell has expired.\n"
 " This cell may be out of date and MUST NOT be used for NAVIGATION."
 msgstr ""
 
-#: src/s63_pi.cpp:400
+#: src/s63_pi.cpp:410
 msgid "S63 Charts"
 msgstr ""
 
-#: src/s63_pi.cpp:412
+#: src/s63_pi.cpp:422
 msgid "Chart Cells"
 msgstr ""
 
-#: src/s63_pi.cpp:423
+#: src/s63_pi.cpp:433
 msgid "Installed S63 Cell Permits"
 msgstr ""
 
-#: src/s63_pi.cpp:432
+#: src/s63_pi.cpp:442
 msgid "Cell Name"
 msgstr ""
 
-#: src/s63_pi.cpp:437 src/s63_pi.cpp:512
+#: src/s63_pi.cpp:447 src/s63_pi.cpp:522
 msgid "Data Server ID"
 msgstr ""
 
-#: src/s63_pi.cpp:442 src/s63_pi.cpp:517
+#: src/s63_pi.cpp:452 src/s63_pi.cpp:527
 msgid "Expiration Date"
 msgstr ""
 
-#: src/s63_pi.cpp:453
+#: src/s63_pi.cpp:463
 msgid "Import Cell Permits..."
 msgstr ""
 
-#: src/s63_pi.cpp:456
+#: src/s63_pi.cpp:466
 msgid "Remove Permits"
 msgstr ""
 
-#: src/s63_pi.cpp:460
+#: src/s63_pi.cpp:470
 msgid "Import Charts/Updates..."
 msgstr ""
 
-#: src/s63_pi.cpp:477
+#: src/s63_pi.cpp:487
 msgid "S63_pi Log"
 msgstr ""
 
-#: src/s63_pi.cpp:492
+#: src/s63_pi.cpp:502
 msgid "Keys/Permits"
 msgstr ""
 
-#: src/s63_pi.cpp:498
+#: src/s63_pi.cpp:508
 msgid "Installed S63 Certificates/Keys"
 msgstr ""
 
-#: src/s63_pi.cpp:506
+#: src/s63_pi.cpp:516
 msgid "Certificate Name"
 msgstr ""
 
-#: src/s63_pi.cpp:529
+#: src/s63_pi.cpp:539
 msgid "Import Certificate..."
 msgstr ""
 
-#: src/s63_pi.cpp:539
+#: src/s63_pi.cpp:549
 msgid "UserPermit"
 msgstr ""
 
-#: src/s63_pi.cpp:546
+#: src/s63_pi.cpp:556
 msgid "New Userpermit..."
 msgstr ""
 
-#: src/s63_pi.cpp:553
+#: src/s63_pi.cpp:563
 msgid "InstallPermit"
 msgstr ""
 
-#: src/s63_pi.cpp:560
+#: src/s63_pi.cpp:570
 msgid "New Installpermit..."
 msgstr ""
 
-#: src/s63_pi.cpp:699
+#: src/s63_pi.cpp:577
+msgid "System Identification"
+msgstr ""
+
+#: src/s63_pi.cpp:582
+msgid "Create System Identifier file..."
+msgstr ""
+
+#: src/s63_pi.cpp:727
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
 msgstr ""
 
-#: src/s63_pi.cpp:725
+#: src/s63_pi.cpp:753
 msgid "Cannot find \"ENC_ROOT\" directory"
 msgstr ""
 
-#: src/s63_pi.cpp:727 src/s63_pi.cpp:748 src/s63_pi.cpp:838 src/s63_pi.cpp:1075
-#: src/s63_pi.cpp:1199 src/s63_pi.cpp:1229 src/s63_pi.cpp:1388
-#: src/s63_pi.cpp:1413 src/s63_pi.cpp:1437 src/s63_pi.cpp:1520
-#: src/s63_pi.cpp:1581 src/s63_pi.cpp:1623 src/s63_pi.cpp:1653
-#: src/s63_pi.cpp:1702 src/s63_pi.cpp:1732 src/s63_pi.cpp:1889
-#: src/s63_pi.cpp:1910 src/s63_pi.cpp:1950 src/s63_pi.cpp:1962
-#: src/s63_pi.cpp:1979
+#: src/s63_pi.cpp:755 src/s63_pi.cpp:776 src/s63_pi.cpp:866 src/s63_pi.cpp:1103
+#: src/s63_pi.cpp:1227 src/s63_pi.cpp:1257 src/s63_pi.cpp:1428
+#: src/s63_pi.cpp:1453 src/s63_pi.cpp:1477 src/s63_pi.cpp:1560
+#: src/s63_pi.cpp:1621 src/s63_pi.cpp:1663 src/s63_pi.cpp:1693
+#: src/s63_pi.cpp:1742 src/s63_pi.cpp:1772 src/s63_pi.cpp:1929
+#: src/s63_pi.cpp:1950 src/s63_pi.cpp:1990 src/s63_pi.cpp:2002
+#: src/s63_pi.cpp:2019
 msgid "s63_pi Message"
 msgstr ""
 
-#: src/s63_pi.cpp:746
+#: src/s63_pi.cpp:774
 msgid ""
 "OpenCPN can create eSENC files as cells are imported.\n"
 "\n"
@@ -139,30 +147,30 @@ msgid ""
 "Create eSENCs on Import?\n"
 msgstr ""
 
-#: src/s63_pi.cpp:776
+#: src/s63_pi.cpp:804
 msgid "CATALOG.031 file not found in ENC_ROOT"
 msgstr ""
 
-#: src/s63_pi.cpp:835
+#: src/s63_pi.cpp:863
 msgid ""
 "Security Scheme Error\n"
 "\n"
 " SSE 10 - Permits not available for this data provider.\n"
 msgstr ""
 
-#: src/s63_pi.cpp:856
+#: src/s63_pi.cpp:884
 msgid "Creating eSenc"
 msgstr ""
 
-#: src/s63_pi.cpp:969
+#: src/s63_pi.cpp:997
 msgid "cell: "
 msgstr ""
 
-#: src/s63_pi.cpp:971
+#: src/s63_pi.cpp:999
 msgid " is not present in exchange set.\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1066 src/s63_pi.cpp:1217 src/s63_pi.cpp:1694
+#: src/s63_pi.cpp:1094 src/s63_pi.cpp:1245 src/s63_pi.cpp:1734
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -171,21 +179,21 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1067 src/s63_pi.cpp:1218
+#: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246
 msgid "First expired base cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:1070
+#: src/s63_pi.cpp:1098
 msgid "Base cell edition update skipped\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1071 src/s63_pi.cpp:1225 src/s63_pi.cpp:1698
+#: src/s63_pi.cpp:1099 src/s63_pi.cpp:1253 src/s63_pi.cpp:1738
 msgid ""
 "There may be other expired permits.  However, this message will be shown once "
 "only."
 msgstr ""
 
-#: src/s63_pi.cpp:1187
+#: src/s63_pi.cpp:1215
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -195,43 +203,43 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1189
+#: src/s63_pi.cpp:1217
 msgid "cell:"
 msgstr ""
 
-#: src/s63_pi.cpp:1193
+#: src/s63_pi.cpp:1221
 #, c-format
 msgid "Latest intalled update: %d\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1195 src/s63_pi.cpp:1223
+#: src/s63_pi.cpp:1223 src/s63_pi.cpp:1251
 #, c-format
 msgid "Attempted update: %d\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1221
+#: src/s63_pi.cpp:1249
 msgid "Cell update skipped\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1245
+#: src/s63_pi.cpp:1273
 msgid "Cell update NOT authenticated\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1246
+#: src/s63_pi.cpp:1274
 msgid ""
 "This update and all subsequent updates to this cell are NOT applied.\n"
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1368
+#: src/s63_pi.cpp:1408
 msgid "Select Public Key File"
 msgstr ""
 
-#: src/s63_pi.cpp:1370
+#: src/s63_pi.cpp:1410
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
 msgstr ""
 
-#: src/s63_pi.cpp:1385 src/s63_pi.cpp:1907
+#: src/s63_pi.cpp:1425 src/s63_pi.cpp:1947
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -240,38 +248,38 @@ msgid ""
 "supplier.\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1407
+#: src/s63_pi.cpp:1447
 msgid "Certificate Key imported successfully\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1409
+#: src/s63_pi.cpp:1449
 msgid "Certificate Key import FAILED\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1434
+#: src/s63_pi.cpp:1474
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 
-#: src/s63_pi.cpp:1447
+#: src/s63_pi.cpp:1487
 msgid "Select PERMIT.TXT File"
 msgstr ""
 
-#: src/s63_pi.cpp:1449
+#: src/s63_pi.cpp:1489
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr ""
 
-#: src/s63_pi.cpp:1518
+#: src/s63_pi.cpp:1558
 msgid "Update all existing cell permits?"
 msgstr ""
 
-#: src/s63_pi.cpp:1580
+#: src/s63_pi.cpp:1620
 msgid ""
 "Security Scheme Error\n"
 "\n"
 "SSE 11 - Cell permit not found"
 msgstr ""
 
-#: src/s63_pi.cpp:1618
+#: src/s63_pi.cpp:1658
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -280,7 +288,7 @@ msgid ""
 "Incorrect cell permit line starts with "
 msgstr ""
 
-#: src/s63_pi.cpp:1648
+#: src/s63_pi.cpp:1688
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -290,26 +298,26 @@ msgid ""
 " Invalid cell permit starts with "
 msgstr ""
 
-#: src/s63_pi.cpp:1695
+#: src/s63_pi.cpp:1735
 msgid "First expired cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:1727
+#: src/s63_pi.cpp:1767
 msgid "Permit\n"
 msgstr ""
 
-#: src/s63_pi.cpp:1729
+#: src/s63_pi.cpp:1769
 msgid ""
 "\n"
 "already imported.\n"
 "Would you like to replace it?"
 msgstr ""
 
-#: src/s63_pi.cpp:1792
+#: src/s63_pi.cpp:1832
 msgid "   Error: Cannot create "
 msgstr ""
 
-#: src/s63_pi.cpp:1885
+#: src/s63_pi.cpp:1925
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -318,7 +326,7 @@ msgid ""
 " Cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:1946
+#: src/s63_pi.cpp:1986
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -331,7 +339,7 @@ msgid ""
 "Cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:1958
+#: src/s63_pi.cpp:1998
 msgid ""
 "Security Scheme Warning\n"
 "\n"
@@ -340,7 +348,7 @@ msgid ""
 "Cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:1975
+#: src/s63_pi.cpp:2015
 msgid ""
 "Security Scheme Error\n"
 "\n"
@@ -348,74 +356,109 @@ msgid ""
 "Cell name: "
 msgstr ""
 
-#: src/s63_pi.cpp:2497
+#: src/s63_pi.cpp:2178
+msgid ""
+"To obtain an Install Permit, you must generate a unique System Identifier "
+"File.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2179
+msgid "This file is also known as a\"fingerprint\" file.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2180
+msgid ""
+"The fingerprint file contains information to uniquely identifiy this "
+"computer.\n"
+"\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2181
+msgid ""
+"After creating this file, you will need it to generate your InstallPermit at "
+"the o-charts.org shop.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2182
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+
+#: src/s63_pi.cpp:2184 src/s63_pi.cpp:2229 src/s63_pi.cpp:2237
+msgid "S63_PI Message"
+msgstr ""
+
+#: src/s63_pi.cpp:2226
+msgid "Fingerprint file created.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2609
 msgid "S63_pi backchannel could not listen at the specified port !\n"
 msgstr ""
 
-#: src/s63_pi.cpp:2501
+#: src/s63_pi.cpp:2613
 msgid ""
 "S63_pi backchannel server listening.\n"
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:2590 src/s63_pi.cpp:2636
+#: src/s63_pi.cpp:2702 src/s63_pi.cpp:2748
 msgid "Unexpected event !\n"
 msgstr ""
 
-#: src/s63_pi.cpp:2609
+#: src/s63_pi.cpp:2721
 msgid ""
 "Error: couldn't accept a new connection\n"
 "\n"
 msgstr ""
 
-#: src/s63_pi.cpp:2939
+#: src/s63_pi.cpp:3051
 msgid "S63_pi Userpermit Required"
 msgstr ""
 
-#: src/s63_pi.cpp:2986
+#: src/s63_pi.cpp:3098
 msgid "Enter Userpermit"
 msgstr ""
 
-#: src/s63_pi.cpp:3005
+#: src/s63_pi.cpp:3117
 msgid "Test Userpermit"
 msgstr ""
 
-#: src/s63_pi.cpp:3010 src/s63_pi.cpp:3232
+#: src/s63_pi.cpp:3122 src/s63_pi.cpp:3344
 msgid "Test Results"
 msgstr ""
 
-#: src/s63_pi.cpp:3025 src/s63_pi.cpp:3246
+#: src/s63_pi.cpp:3137 src/s63_pi.cpp:3358
 msgid "Cancel"
 msgstr ""
 
-#: src/s63_pi.cpp:3030 src/s63_pi.cpp:3251
+#: src/s63_pi.cpp:3142 src/s63_pi.cpp:3363
 msgid "OK"
 msgstr ""
 
-#: src/s63_pi.cpp:3064
+#: src/s63_pi.cpp:3176
 msgid "Userpermit invalid"
 msgstr ""
 
-#: src/s63_pi.cpp:3072
+#: src/s63_pi.cpp:3184
 msgid "Userpermit OK"
 msgstr ""
 
-#: src/s63_pi.cpp:3187
+#: src/s63_pi.cpp:3299
 msgid "S63_pi Install Permit Required"
 msgstr ""
 
-#: src/s63_pi.cpp:3208
+#: src/s63_pi.cpp:3320
 msgid "Enter Installpermit"
 msgstr ""
 
-#: src/s63_pi.cpp:3227
+#: src/s63_pi.cpp:3339
 msgid "Test Installpermit"
 msgstr ""
 
-#: src/s63_pi.cpp:3289
+#: src/s63_pi.cpp:3401
 msgid "Install permit invalid"
 msgstr ""
 
-#: src/s63_pi.cpp:3297
+#: src/s63_pi.cpp:3409
 msgid "Install permit OK"
 msgstr ""

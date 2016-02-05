@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenCPN Plugin S63\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"POT-Creation-Date: 2016-01-06 00:31-0500\n"
 "PO-Revision-Date: 2014-05-01 23:18+0100\n"
 "Last-Translator: Gilletarom et  EdelVoilier <contact@gilletarom.fr et  "
 "pascaljouin74@gmail.com>\n"
@@ -29,6 +29,11 @@ msgid "   Error: Cannot create "
 msgstr "   Erreur : Création impossible "
 #
 msgid " is not present in exchange set.\n"
+msgstr ""
+#
+msgid ""
+"After creating this file, you will need it to generate your InstallPermit at "
+"the o-charts.org shop.\n"
 msgstr ""
 #
 #, c-format
@@ -68,6 +73,9 @@ msgstr "Nom du certificat"
 msgid "Chart Cells"
 msgstr "Cartes"
 #
+msgid "Create System Identifier file..."
+msgstr ""
+#
 msgid "Creating eSenc"
 msgstr "eSenc en cours de création"
 #
@@ -89,6 +97,9 @@ msgstr ""
 #
 msgid "Expiration Date"
 msgstr "Date d'expiration"
+#
+msgid "Fingerprint file created.\n"
+msgstr ""
 #
 msgid "First expired base cell name: "
 msgstr ""
@@ -164,6 +175,9 @@ msgstr "UserPermit"
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+#
 msgid "Remove Permits"
 msgstr "Supprimer les Permis"
 #
@@ -186,6 +200,10 @@ msgstr ""
 "Complément (plugin) S63 pour OpenCPN\n"
 "fournit un support pour l'affichage des cartes S63\n"
 "\n"
+#
+#, fuzzy
+msgid "S63_PI Message"
+msgstr "Message du complément S63_pi"
 #
 msgid "S63_pi Install Permit Required"
 msgstr "L'InstallPermit pour le complément S63 est requis"
@@ -362,6 +380,9 @@ msgstr "Sélectionnez une clé publique"
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
 msgstr "Selectionner le dossier contenant les S63 (usuellement ENC_ROOT)"
 #
+msgid "System Identification"
+msgstr ""
+#
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr "Fichier TXT (*.TXT)|*.TXT|Tous les fichiers (*.*)|*.*"
 #
@@ -375,8 +396,17 @@ msgid "Test Userpermit"
 msgstr "Tester le UserPermit"
 #
 msgid ""
+"The fingerprint file contains information to uniquely identifiy this "
+"computer.\n"
+"\n"
+msgstr ""
+#
+msgid ""
 "There may be other expired permits.  However, this message will be shown once "
 "only."
+msgstr ""
+#
+msgid "This file is also known as a\"fingerprint\" file.\n"
 msgstr ""
 #
 msgid ""
@@ -385,6 +415,11 @@ msgid ""
 msgstr ""
 "Cette mise à jour de cette cellule, et toutes les suivantes,  ne sont pas "
 "appliquées.\n"
+#
+msgid ""
+"To obtain an Install Permit, you must generate a unique System Identifier "
+"File.\n"
+msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Evénement inattendu !\n"
@@ -413,8 +448,10 @@ msgstr "Message du complément S63_pi"
 #
 #
 #
+#
 #~ msgid " mag"
 #~ msgstr " magnét."
+#
 #
 #
 #
@@ -425,14 +462,17 @@ msgstr "Message du complément S63_pi"
 #
 #
 #
+#
 #~ msgid "Invalid cell permit starts with "
 #~ msgstr "Permis de cellule invalide commençant par "
 #
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Note :\n"
+#
 #
 #
 #
@@ -444,6 +484,7 @@ msgstr "Message du complément S63_pi"
 #~ "OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
 #~ "importées\n"
 #~ "\n"
+#
 #
 #
 #
@@ -464,6 +505,7 @@ msgstr "Message du complément S63_pi"
 #
 #
 #
+#
 #~ msgid ""
 #~ "Security Scheme Error\n"
 #~ "\n"
@@ -476,8 +518,10 @@ msgstr "Message du complément S63_pi"
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
+#
 #
 #
 #
@@ -488,12 +532,14 @@ msgstr "Message du complément S63_pi"
 #
 #
 #
+#
 #~ msgid ""
 #~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "Les eSENCS non encore traitées seront créés selon les besoins par "
 #~ "OpenCPN.\n"
+#
 #
 #
 #

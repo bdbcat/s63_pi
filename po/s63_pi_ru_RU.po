@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: s63_pi 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-31 11:37-0500\n"
+"POT-Creation-Date: 2016-01-06 00:31-0500\n"
 "PO-Revision-Date: 2014-04-24 18:00+0400\n"
 "Last-Translator: Anton Samsonov <epolyan@gmail.com>\n"
 "Language-Team: Agat-Aquarius R&P <epolyan@gmail.com>\n"
@@ -28,6 +28,11 @@ msgid "   Error: Cannot create "
 msgstr "   Ошибка: не удалось создать "
 #
 msgid " is not present in exchange set.\n"
+msgstr ""
+#
+msgid ""
+"After creating this file, you will need it to generate your InstallPermit at "
+"the o-charts.org shop.\n"
 msgstr ""
 #
 #, c-format
@@ -67,6 +72,9 @@ msgstr "Имя файла"
 msgid "Chart Cells"
 msgstr "Карты S-63"
 #
+msgid "Create System Identifier file..."
+msgstr ""
+#
 msgid "Creating eSenc"
 msgstr "Преобразование карты в системный формат"
 #
@@ -88,6 +96,9 @@ msgstr ""
 #
 msgid "Expiration Date"
 msgstr "Срок лицензии"
+#
+msgid "Fingerprint file created.\n"
+msgstr ""
 #
 msgid "First expired base cell name: "
 msgstr ""
@@ -157,6 +168,9 @@ msgstr "Лицензия пользователя"
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
 msgstr ""
 #
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+#
 msgid "Remove Permits"
 msgstr "Удалить лицензии"
 #
@@ -177,6 +191,9 @@ msgid ""
 msgstr ""
 "Модуль «S63» для OpenCPN\n"
 "Обеспечивает поддержку карт в формате S-63.\n"
+#
+msgid "S63_PI Message"
+msgstr ""
 #
 msgid "S63_pi Install Permit Required"
 msgstr "Лицензия рабочего места недействительна"
@@ -318,6 +335,9 @@ msgstr "Укажите файл с открытым ключом корнево
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
 msgstr "Укажите корневую папку данных S-63 (обычно «ENC_ROOT»)"
 #
+msgid "System Identification"
+msgstr ""
+#
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr "Текстовые файлы (*.TXT)|*.TXT|Все файлы (*.*)|*.*"
 #
@@ -331,8 +351,17 @@ msgid "Test Userpermit"
 msgstr "Проверить лицензию пользователя"
 #
 msgid ""
+"The fingerprint file contains information to uniquely identifiy this "
+"computer.\n"
+"\n"
+msgstr ""
+#
+msgid ""
 "There may be other expired permits.  However, this message will be shown once "
 "only."
+msgstr ""
+#
+msgid "This file is also known as a\"fingerprint\" file.\n"
 msgstr ""
 #
 msgid ""
@@ -341,6 +370,11 @@ msgid ""
 msgstr ""
 "Это и все последующие обновления данной карты не будут применены.\n"
 "\n"
+#
+msgid ""
+"To obtain an Install Permit, you must generate a unique System Identifier "
+"File.\n"
+msgstr ""
 #
 msgid "Unexpected event !\n"
 msgstr "Неожиданное событие!\n"
@@ -371,8 +405,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Create eSENCs on Import?\n"
 #~ msgstr "Преобразовать карты в системный формат при импорте?\n"
+#
 #
 #
 #
@@ -387,8 +423,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "Note:\n"
 #~ msgstr "Имейте в виду:\n"
+#
 #
 #
 #
@@ -401,6 +439,7 @@ msgstr ""
 #~ msgstr ""
 #~ "OpenCPN может преобразовывать карты в системный формат при импорте.\n"
 #~ "\n"
+#
 #
 #
 #
@@ -422,8 +461,10 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid "The process may be Cancelled by the user at any time.\n"
 #~ msgstr "Процесс можно прервать в любое время.\n"
+#
 #
 #
 #
@@ -438,6 +479,7 @@ msgstr ""
 #
 #
 #
+#
 #~ msgid ""
 #~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
 #~ "\n"
@@ -445,6 +487,7 @@ msgstr ""
 #~ "Непреобразованные в системный формат карты будут обработаны по мере "
 #~ "необходимости.\n"
 #~ "\n"
+#
 #
 #
 #
