@@ -82,10 +82,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/dsa)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 
-IF(WIN32)
-#      INCLUDE_DIRECTORIES("U:/Projects/opencpn_sf/opencpn/include")
   ADD_DEFINITIONS( "-D__OCPN_BACKPORT40__" )
-ENDIF(WIN32)
 
 IF(UNIX)
 #     INCLUDE_DIRECTORIES("/home/dsr/Projects/opencpn_sf/opencpn/include")
