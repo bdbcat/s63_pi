@@ -307,7 +307,9 @@ class DECL_EXP PlugInChartBase : public wxObject
             virtual int GetSize_X();
             virtual int GetSize_Y();
             virtual void latlong_to_chartpix(double lat, double lon, double &pixx, double &pixy);
+#ifndef __OCPN_BACKPORT40__
             virtual void chartpix_to_latlong(double pixx, double pixy, double *plat, double *plon);
+#endif            
             
       protected:
             ChartTypeEnumPI     m_ChartType;
@@ -500,6 +502,7 @@ public:
     
 };
 
+#ifndef __OCPN_BACKPORT40__
 class DECL_EXP opencpn_plugin_113 : public opencpn_plugin_112
 {
 public:
@@ -510,6 +513,7 @@ public:
     virtual void OnToolbarToolDownCallback(int id);
     virtual void OnToolbarToolUpCallback(int id);
 };
+#endif
 
 //------------------------------------------------------------------
 //      Route and Waypoint PlugIn support
@@ -832,8 +836,13 @@ public:
     float               lat_min;
     float               lon_max;
     float               lon_min;
+#ifndef __OCPN_BACKPORT40__
     int                 type;
     void                *private0;
+#else
+    void                *private0;
+    int                 type;
+#endif    
    
     PI_line_segment_element *next;
 };
@@ -1111,6 +1120,7 @@ extern DECL_EXP bool OCPN_isOnline();
  *     getDLEventCondition == OCPN_DL_EVENT_TYPE_END
  */
 
+#ifndef __OCPN_BACKPORT40__
 class DECL_EXP OCPN_downloadEvent: public wxEvent
 {
 public:
@@ -1149,5 +1159,6 @@ private:
 //extern const wxEventType DECL_EXP wxEVT_DOWNLOAD_EVENT;
 
 extern WXDLLIMPEXP_CORE const wxEventType wxEVT_DOWNLOAD_EVENT;
+#endif
 
 #endif //_PLUGIN_H_
