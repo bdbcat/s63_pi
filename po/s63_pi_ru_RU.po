@@ -1,502 +1,443 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: s63_pi 0.4.0\n"
+"Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-06 00:31-0500\n"
-"PO-Revision-Date: 2014-04-24 18:00+0400\n"
-"Last-Translator: Anton Samsonov <epolyan@gmail.com>\n"
-"Language-Team: Agat-Aquarius R&P <epolyan@gmail.com>\n"
+"PO-Revision-Date: 2016-02-06 12:51-0500\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Russian\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-#
-msgid ""
-"\n"
-"already imported.\n"
-"Would you like to replace it?"
-msgstr ""
-#
-msgid "   Error: Cannot create "
-msgstr "   Ошибка: не удалось создать "
-#
-msgid " is not present in exchange set.\n"
-msgstr ""
-#
-msgid ""
-"After creating this file, you will need it to generate your InstallPermit at "
-"the o-charts.org shop.\n"
-msgstr ""
-#
-#, c-format
-msgid "Attempted update: %d\n"
-msgstr ""
-#
-msgid "Base cell edition update skipped\n"
-msgstr ""
-#
-msgid "CATALOG.031 file not found in ENC_ROOT"
-msgstr ""
-#
-msgid "Cancel"
-msgstr "Отменить"
-#
-msgid "Cannot find \"ENC_ROOT\" directory"
-msgstr ""
-#
-msgid "Cell Name"
-msgstr "Имя карты"
-#
-msgid "Cell update NOT authenticated\n"
-msgstr "Обновление карты не прошло проверку подлинности.\n"
-#
-msgid "Cell update skipped\n"
-msgstr "Обновление карты не прошло проверку подлинности.\n"
-#
-msgid "Certificate Key import FAILED\n"
-msgstr "Импорт ключа не завершён из-за ошибки.\n"
-#
-msgid "Certificate Key imported successfully\n"
-msgstr "Импорт ключа успешно завершён.\n"
-#
-msgid "Certificate Name"
-msgstr "Имя файла"
-#
-msgid "Chart Cells"
-msgstr "Карты S-63"
-#
-msgid "Create System Identifier file..."
-msgstr ""
-#
-msgid "Creating eSenc"
-msgstr "Преобразование карты в системный формат"
-#
-msgid "Data Server ID"
-msgstr "Код поставщика"
-#
-msgid "Enter Installpermit"
-msgstr "Введите лицензию рабочего места"
-#
-msgid "Enter Userpermit"
-msgstr "Введите лицензию пользователя"
-#
-msgid ""
-"Error: couldn't accept a new connection\n"
-"\n"
-msgstr ""
-"Ошибка: не удалось принять подключение\n"
-"\n"
-#
-msgid "Expiration Date"
-msgstr "Срок лицензии"
-#
-msgid "Fingerprint file created.\n"
-msgstr ""
-#
-msgid "First expired base cell name: "
-msgstr ""
-#
-msgid "First expired cell name: "
-msgstr ""
-#
-msgid "Import Cell Permits..."
-msgstr "Импортировать лицензии…"
-#
-msgid "Import Certificate..."
-msgstr "Импортировать…"
-#
-msgid "Import Charts/Updates..."
-msgstr "Импортировать карты…"
-#
-msgid "Install permit OK"
-msgstr "Лицензия рабочего места действительна"
-#
-msgid "Install permit invalid"
-msgstr "Лицензия рабочего места недействительна"
-#
-msgid "InstallPermit"
-msgstr "Лицензия рабочего места"
-#
-msgid "Installed S63 Cell Permits"
-msgstr "Лицензии на карты S-63"
-#
-msgid "Installed S63 Certificates/Keys"
-msgstr "Корневые сертификаты S-63"
-#
-msgid "Keys/Permits"
-msgstr "Лицензия пользователя"
-#
-#, c-format
-msgid "Latest intalled update: %d\n"
-msgstr ""
-#
-msgid "New Installpermit..."
-msgstr "Импортировать…"
-#
-msgid "New Userpermit..."
-msgstr "Импортировать…"
-#
-msgid "OK"
-msgstr "OK"
-#
-msgid ""
-"OpenCPN can create eSENC files as cells are imported.\n"
-"\n"
-"Note:\n"
-"This process may take some time.\n"
-"eSENCS not processed here will be created as needed by OpenCPN.\n"
-"\n"
-"Create eSENCs on Import?\n"
-msgstr ""
-#
-msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr ""
-"Файлы открытых ключей (*.PUB)|*.PUB|Текстовые файлы (*.TXT)|*.TXT|Все файлы "
-"(*.*)|*.*"
-#
-#, fuzzy
-msgid "Permit\n"
-msgstr "Лицензия пользователя"
-#
-msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
-msgstr ""
-#
-msgid "Proceed to create Fingerprint file?"
-msgstr ""
-#
-msgid "Remove Permits"
-msgstr "Удалить лицензии"
-#
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
+
+#: src/s63_pi.cpp:304
 msgid "S63"
 msgstr "S-63"
-#
-msgid "S63 Charts"
-msgstr "Карты S-63"
-#
+
+#: src/s63_pi.cpp:310
 msgid "S63 PlugIn for OpenCPN"
 msgstr "Модуль «S63» для OpenCPN"
-#
-# Remove trailing "\n"s once source is corrected.
-msgid ""
-"S63 PlugIn for OpenCPN\n"
-"Provides support of S63 charts.\n"
-"\n"
-msgstr ""
-"Модуль «S63» для OpenCPN\n"
+
+#: src/s63_pi.cpp:316
+msgid "S63 PlugIn for OpenCPN\n"
+"Provides support of S63 charts.\n\n"
+msgstr "Модуль «S63» для OpenCPN\n"
 "Обеспечивает поддержку карт в формате S-63.\n"
-#
-msgid "S63_PI Message"
-msgstr ""
-#
-msgid "S63_pi Install Permit Required"
-msgstr "Лицензия рабочего места недействительна"
-#
+
+#: src/s63_pi.cpp:338 src/s63_pi.cpp:367
+msgid "SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 25 — Лицензия на эту карту закончилась.\n"
+"Карта не может обновляться и не пригодна для навигации."
+
+#: src/s63_pi.cpp:410
+msgid "S63 Charts"
+msgstr "Карты S-63"
+
+#: src/s63_pi.cpp:422
+msgid "Chart Cells"
+msgstr "Ячейки карт"
+
+#: src/s63_pi.cpp:433
+msgid "Installed S63 Cell Permits"
+msgstr "Лицензии на карты S-63"
+
+#: src/s63_pi.cpp:442
+msgid "Cell Name"
+msgstr "Имя карты"
+
+#: src/s63_pi.cpp:447 src/s63_pi.cpp:522
+msgid "Data Server ID"
+msgstr "Код поставщика"
+
+#: src/s63_pi.cpp:452 src/s63_pi.cpp:527
+msgid "Expiration Date"
+msgstr "Срок лицензии"
+
+#: src/s63_pi.cpp:463
+msgid "Import Cell Permits..."
+msgstr "Импортировать лицензии…"
+
+#: src/s63_pi.cpp:466
+msgid "Remove Permits"
+msgstr "Удалить лицензии"
+
+#: src/s63_pi.cpp:470
+msgid "Import Charts/Updates..."
+msgstr "Импортировать карты…"
+
+#: src/s63_pi.cpp:487
 msgid "S63_pi Log"
 msgstr "Журнал работы модуля «S63»"
-#
-msgid "S63_pi Userpermit Required"
-msgstr ""
-#
-msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr "Модуль карт-сервера S-63 не обнаружен на указанном порту.\n"
-#
-msgid ""
-"S63_pi backchannel server listening.\n"
-"\n"
-msgstr ""
-"Модуль карт-сервера S-63 на связи.\n"
-"\n"
-#
-msgid ""
-"SSE 25..The ENC permit for this cell has expired.\n"
-" This cell may be out of date and MUST NOT be used for NAVIGATION."
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-" SSE 10 - Permits not available for this data provider.\n"
-msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 10 — Отсутствуют лицензии, подходящие для этого поставщика данных.\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-" SSE 23 - Non sequential update, previous update(s) missing.\n"
-"Try reloading from the base media. \n"
-" If the problem persists contact your data supplier.\n"
-"\n"
-msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 23 — Нарушена последовательность обновлений карты.\n"
-" Попробуйте повторно скопировать данные с носителя.\n"
-" При сохранении проблемы обратитесь к поставщику данных.\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
-"The SA may have issued a new public key or the ENC may originate from another "
-"service.\n"
-"A new SA public key can be obtained from the IHO website or from your data "
-"supplier.\n"
-"\n"
-"Cell name: "
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 08 - SA Digital Certificate file incorrect format.\n"
-"A valid certificate can be obtained from the IHO website or your data "
-"supplier.\n"
-msgstr ""
-" Действующий сертификат корневого удостоверяющего центра можно получить "
-"на сайте IHO или у поставщика данных.\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 09 - ENC Signature is invalid.\n"
-"Cell name: "
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 11 - Cell permit not found"
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 12 - Cell permit format is incorrect\n"
-"\n"
-"Incorrect cell permit line starts with "
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
-"or the Cell Permit is for a different system.\n"
-"\n"
-" Invalid cell permit starts with "
-msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 13 — Лицензия на карту недействительна (неправильная контрольная сумма)"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 15 - Subscription service has expired.\n"
-" Please contact your data supplier to renew the subscription licence.\n"
-"\n"
-msgstr ""
-#
-#, fuzzy
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 24 - ENC Signature format is incorrect.\n"
-"\n"
-" Cell name: "
-msgstr ""
-"Ошибка системы безопасности\n"
-"\n"
-" SSE 24 — Некорректный заголовок файла карты.\n"
-"\n"
-#
-msgid ""
-"Security Scheme Warning\n"
-"\n"
-"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n"
-"\n"
-"Cell name: "
-msgstr ""
-#
-msgid "Select PERMIT.TXT File"
-msgstr "Укажите файл PERMIT.TXT"
-#
-msgid "Select Public Key File"
-msgstr "Укажите файл с открытым ключом корневого удостоверяющего центра"
-#
-msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Укажите корневую папку данных S-63 (обычно «ENC_ROOT»)"
-#
-msgid "System Identification"
-msgstr ""
-#
-msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
-msgstr "Текстовые файлы (*.TXT)|*.TXT|Все файлы (*.*)|*.*"
-#
-msgid "Test Installpermit"
-msgstr "Проверить лицензию рабочего места"
-#
-msgid "Test Results"
-msgstr "Результаты проверки"
-#
-msgid "Test Userpermit"
-msgstr "Проверить лицензию пользователя"
-#
-msgid ""
-"The fingerprint file contains information to uniquely identifiy this "
-"computer.\n"
-"\n"
-msgstr ""
-#
-msgid ""
-"There may be other expired permits.  However, this message will be shown once "
-"only."
-msgstr ""
-#
-msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr ""
-#
-msgid ""
-"This update and all subsequent updates to this cell are NOT applied.\n"
-"\n"
-msgstr ""
-"Это и все последующие обновления данной карты не будут применены.\n"
-"\n"
-#
-msgid ""
-"To obtain an Install Permit, you must generate a unique System Identifier "
-"File.\n"
-msgstr ""
-#
-msgid "Unexpected event !\n"
-msgstr "Неожиданное событие!\n"
-#
-msgid "Update all existing cell permits?"
-msgstr ""
-#
+
+#: src/s63_pi.cpp:502
+msgid "Keys/Permits"
+msgstr "Лицензии"
+
+#: src/s63_pi.cpp:508
+msgid "Installed S63 Certificates/Keys"
+msgstr "Корневые сертификаты S-63"
+
+#: src/s63_pi.cpp:516
+msgid "Certificate Name"
+msgstr "Имя файла"
+
+#: src/s63_pi.cpp:539
+msgid "Import Certificate..."
+msgstr "Импортировать…"
+
+#: src/s63_pi.cpp:549
 msgid "UserPermit"
 msgstr "Лицензия пользователя"
-#
-msgid "Userpermit OK"
-msgstr "Лицензия пользователя действительна"
-#
+
+#: src/s63_pi.cpp:556
+msgid "New Userpermit..."
+msgstr "Импортировать…"
+
+#: src/s63_pi.cpp:563
+msgid "InstallPermit"
+msgstr "Лицензия рабочего места"
+
+#: src/s63_pi.cpp:570
+msgid "New Installpermit..."
+msgstr "Импортировать…"
+
+#: src/s63_pi.cpp:577
+msgid "System Identification"
+msgstr ""
+
+#: src/s63_pi.cpp:582
+msgid "Create System Identifier file..."
+msgstr ""
+
+#: src/s63_pi.cpp:727
+msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
+msgstr "Укажите корневую папку данных S-63 (обычно «ENC_ROOT»)"
+
+#: src/s63_pi.cpp:753
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr "Не удаётся обнаружить папку «ENC_ROOT»"
+
+#: src/s63_pi.cpp:755 src/s63_pi.cpp:776 src/s63_pi.cpp:866 src/s63_pi.cpp:1103
+#: src/s63_pi.cpp:1227 src/s63_pi.cpp:1257 src/s63_pi.cpp:1428
+#: src/s63_pi.cpp:1453 src/s63_pi.cpp:1477 src/s63_pi.cpp:1560
+#: src/s63_pi.cpp:1621 src/s63_pi.cpp:1663 src/s63_pi.cpp:1693
+#: src/s63_pi.cpp:1742 src/s63_pi.cpp:1772 src/s63_pi.cpp:1929
+#: src/s63_pi.cpp:1950 src/s63_pi.cpp:1990 src/s63_pi.cpp:2002
+#: src/s63_pi.cpp:2019
+msgid "s63_pi Message"
+msgstr "Модуль поддержки карт S-63 — Сообщение"
+
+#: src/s63_pi.cpp:774
+msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n\n"
+"Create eSENCs on Import?\n"
+msgstr "OpenCPN может преобразовывать карты во внутренний формат по мере импорта.\n\n"
+"Имейте в виду, что это может занять некоторое время.\n"
+"Карты, не преобразованные сейчас, будут обработаны позже по необходимости.\n\n"
+"Желаете преобразовать карты прямо сейчас?\n"
+
+#: src/s63_pi.cpp:804
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr "Файл «CATALOG.031» отсутствует в папке «ENC_ROOT»"
+
+#: src/s63_pi.cpp:863
+msgid "Security Scheme Error\n\n"
+" SSE 10 - Permits not available for this data provider.\n"
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 10 — Отсутствуют лицензии, подходящие для этого поставщика данных.\n"
+
+#: src/s63_pi.cpp:884
+msgid "Creating eSenc"
+msgstr "Преобразование карты в системный формат"
+
+#: src/s63_pi.cpp:997
+msgid "cell: "
+msgstr "Карта: "
+
+#: src/s63_pi.cpp:999
+msgid " is not present in exchange set.\n"
+msgstr " отсутствует в наборе данных.\n"
+
+#: src/s63_pi.cpp:1094 src/s63_pi.cpp:1245 src/s63_pi.cpp:1734
+msgid "Security Scheme Error\n\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n\n"
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 15 — Срок подписки истёк.\n"
+"Свяжитесь с поставщиком данных для продления лицензии.\n\n"
+
+#: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246
+msgid "First expired base cell name: "
+msgstr "Первая карта с истёкшей лицензией: "
+
+#: src/s63_pi.cpp:1098
+msgid "Base cell edition update skipped\n"
+msgstr "Пропущено новое издание карты\n"
+
+#: src/s63_pi.cpp:1099 src/s63_pi.cpp:1253 src/s63_pi.cpp:1738
+msgid "There may be other expired permits.  However, this message will be shown once only."
+msgstr "Возможно, имеются и другие закончившиеся лицензии. Это сообщение не будет повторяться."
+
+#: src/s63_pi.cpp:1215
+msgid "Security Scheme Error\n\n"
+" SSE 23 - Non sequential update, previous update(s) missing.\n"
+"Try reloading from the base media. \n"
+" If the problem persists contact your data supplier.\n\n"
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 23 — Нарушена последовательность обновлений карты.\n"
+"Попробуйте повторно скопировать данные с носителя.\n"
+"При сохранении проблемы обратитесь к поставщику данных.\n\n"
+
+#: src/s63_pi.cpp:1217
+msgid "cell:"
+msgstr "Карта:"
+
+#: src/s63_pi.cpp:1221
+#, c-format
+msgid "Latest intalled update: %d\n"
+msgstr "Последняя установленная корректура: %d\n"
+
+#: src/s63_pi.cpp:1223 src/s63_pi.cpp:1251
+#, c-format
+msgid "Attempted update: %d\n"
+msgstr "Попытка применить корректуру: %d\n"
+
+#: src/s63_pi.cpp:1249
+msgid "Cell update skipped\n"
+msgstr "Пропущена корректура карты\n"
+
+#: src/s63_pi.cpp:1273
+msgid "Cell update NOT authenticated\n"
+msgstr "Обновление карты не прошло проверку подлинности.\n"
+
+#: src/s63_pi.cpp:1274
+msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
+msgstr "Это и все последующие обновления данной карты не будут применены.\n\n"
+
+#: src/s63_pi.cpp:1408
+msgid "Select Public Key File"
+msgstr "Укажите файл с открытым ключом корневого удостоверяющего центра"
+
+#: src/s63_pi.cpp:1410
+msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+msgstr "Файлы открытых ключей (*.PUB)|*.PUB|Текстовые файлы (*.TXT)|*.TXT|Все файлы (*.*)|*.*"
+
+#: src/s63_pi.cpp:1425 src/s63_pi.cpp:1947
+msgid "Security Scheme Error\n\n"
+"SSE 08 - SA Digital Certificate file incorrect format.\n"
+"A valid certificate can be obtained from the IHO website or your data supplier.\n"
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 08 — Сертификат администратора схемы S-63 имеет неправильный формат.\n"
+"Получите актуальный файл сертификата с сайта IHO или у поставщика данных.\n"
+
+#: src/s63_pi.cpp:1447
+msgid "Certificate Key imported successfully\n"
+msgstr "Импорт ключа успешно завершён.\n"
+
+#: src/s63_pi.cpp:1449
+msgid "Certificate Key import FAILED\n"
+msgstr "Импорт ключа не завершён из-за ошибки.\n"
+
+#: src/s63_pi.cpp:1474
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr "Введите лицензии пользователя и рабочего места на вкладке «Лицензии»"
+
+#: src/s63_pi.cpp:1487
+msgid "Select PERMIT.TXT File"
+msgstr "Укажите файл PERMIT.TXT"
+
+#: src/s63_pi.cpp:1489
+msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
+msgstr "Текстовые файлы (*.TXT)|*.TXT|Все файлы (*.*)|*.*"
+
+#: src/s63_pi.cpp:1558
+msgid "Update all existing cell permits?"
+msgstr "Обновить все имеющиеся лицензии карт?"
+
+#: src/s63_pi.cpp:1620
+msgid "Security Scheme Error\n\n"
+"SSE 11 - Cell permit not found"
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 11 — Лицензия на карту не найдена"
+
+#: src/s63_pi.cpp:1658
+msgid "Security Scheme Error\n\n"
+"SSE 12 - Cell permit format is incorrect\n\n"
+"Incorrect cell permit line starts with "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 12 — Некорректный формат файла лицензии\n\n"
+"Начало некорректной строки: "
+
+#: src/s63_pi.cpp:1688
+msgid "Security Scheme Error\n\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n\n"
+" Invalid cell permit starts with "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 13 — Лицензия на карту некорректна\n"
+"или предназначена для другой системы.\n\n"
+"Начало некорректной строки: "
+
+#: src/s63_pi.cpp:1735
+msgid "First expired cell name: "
+msgstr "Первая карта с истёкшей лицензией: "
+
+#: src/s63_pi.cpp:1767
+msgid "Permit\n"
+msgstr "Лицензия\n"
+
+#: src/s63_pi.cpp:1769
+msgid "\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr "\n"
+"уже импортирована.\n"
+"Хотите заменить её?"
+
+#: src/s63_pi.cpp:1832
+msgid "   Error: Cannot create "
+msgstr "   Ошибка: не удалось создать "
+
+#: src/s63_pi.cpp:1925
+msgid "Security Scheme Error\n\n"
+"SSE 24 - ENC Signature format is incorrect.\n\n"
+" Cell name: "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 24 — Цифровая подпись карты некорректна.\n\n"
+"Название проблемной карты: "
+
+#: src/s63_pi.cpp:1986
+msgid "Security Scheme Error\n\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another service.\n"
+"A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
+"Cell name: "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 06 — Сертификат сервера данных некорректен.\n"
+"Возможно, администратор схемы S-63 выдал новый сертификат этому серверу,\n"
+"либо карта была подписана другим сервером.\n"
+"Получите актуальный файл сертификата у администратора или поставщика.\n\n"
+"Название проблемной карты: "
+
+#: src/s63_pi.cpp:1998
+msgid "Security Scheme Warning\n\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
+"Cell name: "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 26 — Подлинность карты не установлена.\n\n"
+"Название проблемной карты: "
+
+#: src/s63_pi.cpp:2015
+msgid "Security Scheme Error\n\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
+msgstr "Ошибка системы безопасности\n\n"
+"SSE 09 — Цифровая подпись карты некорректна.\n"
+"Название проблемной карты: "
+
+#: src/s63_pi.cpp:2178
+msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2179
+msgid "This file is also known as a\"fingerprint\" file.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2180
+msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2181
+msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2182
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
+
+#: src/s63_pi.cpp:2184 src/s63_pi.cpp:2229 src/s63_pi.cpp:2237
+msgid "S63_PI Message"
+msgstr ""
+
+#: src/s63_pi.cpp:2226
+msgid "Fingerprint file created.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:2609
+msgid "S63_pi backchannel could not listen at the specified port !\n"
+msgstr "Модуль карт-сервера S-63 не обнаружен на указанном порту.\n"
+
+#: src/s63_pi.cpp:2613
+msgid "S63_pi backchannel server listening.\n\n"
+msgstr "Модуль карт-сервера S-63 на связи.\n\n"
+
+#: src/s63_pi.cpp:2702 src/s63_pi.cpp:2748
+msgid "Unexpected event !\n"
+msgstr "Неожиданное событие!\n"
+
+#: src/s63_pi.cpp:2721
+msgid "Error: couldn't accept a new connection\n\n"
+msgstr "Ошибка: не удалось принять подключение\n\n"
+
+#: src/s63_pi.cpp:3051
+msgid "S63_pi Userpermit Required"
+msgstr "Требуется лицензия пользователя на модуль поддержки S-63"
+
+#: src/s63_pi.cpp:3098
+msgid "Enter Userpermit"
+msgstr "Введите лицензию пользователя"
+
+#: src/s63_pi.cpp:3117
+msgid "Test Userpermit"
+msgstr "Проверить лицензию пользователя"
+
+#: src/s63_pi.cpp:3122 src/s63_pi.cpp:3344
+msgid "Test Results"
+msgstr "Результаты проверки"
+
+#: src/s63_pi.cpp:3137 src/s63_pi.cpp:3358
+msgid "Cancel"
+msgstr "Отменить"
+
+#: src/s63_pi.cpp:3142 src/s63_pi.cpp:3363
+msgid "OK"
+msgstr "OK"
+
+#: src/s63_pi.cpp:3176
 msgid "Userpermit invalid"
 msgstr "Лицензия пользователя недействительна"
-#
-msgid "cell:"
-msgstr ""
-#
-msgid "cell: "
-msgstr ""
-#
-msgid "s63_pi Message"
-msgstr ""
-#
-#
-#
-#
-#
-#
-#
-#~ msgid "Create eSENCs on Import?\n"
-#~ msgstr "Преобразовать карты в системный формат при импорте?\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid "Invalid cell permit starts with "
-#~ msgstr " Первые знаки недействительной лицензии: "
-#
-#
-#
-#
-#
-#
-#
-#~ msgid "Note:\n"
-#~ msgstr "Имейте в виду:\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "OpenCPN can create eSENC files as cells are imported.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "OpenCPN может преобразовывать карты в системный формат при импорте.\n"
-#~ "\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "Security Scheme Error\n"
-#~ "\n"
-#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
-#~ msgstr ""
-#~ "Ошибка системы безопасности\n"
-#~ "\n"
-#~ " SSE 08 — Некорректный формат файла сертификата корневого удостоверяющего "
-#~ "центра.\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid "The process may be Cancelled by the user at any time.\n"
-#~ msgstr "Процесс можно прервать в любое время.\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid "This process may take some time.\n"
-#~ msgstr "Этот процесс может занять некоторое время.\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Непреобразованные в системный формат карты будут обработаны по мере "
-#~ "необходимости.\n"
-#~ "\n"
-#
-#
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "or the Cell Permit is for a different system.\n"
-#~ "\n"
-#~ msgstr ""
-#~ " либо лицензия предназначена для другого пользователя.\n"
-#~ "\n"
+
+#: src/s63_pi.cpp:3184
+msgid "Userpermit OK"
+msgstr "Лицензия пользователя действительна"
+
+#: src/s63_pi.cpp:3299
+msgid "S63_pi Install Permit Required"
+msgstr "Требуется лицензия рабочего места на модуль поддержки S-63"
+
+#: src/s63_pi.cpp:3320
+msgid "Enter Installpermit"
+msgstr "Введите лицензию рабочего места"
+
+#: src/s63_pi.cpp:3339
+msgid "Test Installpermit"
+msgstr "Проверить лицензию рабочего места"
+
+#: src/s63_pi.cpp:3401
+msgid "Install permit invalid"
+msgstr "Лицензия рабочего места недействительна"
+
+#: src/s63_pi.cpp:3409
+msgid "Install permit OK"
+msgstr "Лицензия рабочего места действительна"
+

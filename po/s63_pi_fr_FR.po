@@ -1,552 +1,443 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenCPN Plugin S63\n"
+"Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-06 00:31-0500\n"
-"PO-Revision-Date: 2014-05-01 23:18+0100\n"
-"Last-Translator: Gilletarom et  EdelVoilier <contact@gilletarom.fr et  "
-"pascaljouin74@gmail.com>\n"
-"Language-Team: Gilletarom <contact@gilletarom.fr>\n"
+"PO-Revision-Date: 2016-02-06 12:50-0500\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: French\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.4\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-#
-msgid ""
-"\n"
-"already imported.\n"
-"Would you like to replace it?"
-msgstr ""
-#
-msgid "   Error: Cannot create "
-msgstr "   Erreur : Création impossible "
-#
-msgid " is not present in exchange set.\n"
-msgstr ""
-#
-msgid ""
-"After creating this file, you will need it to generate your InstallPermit at "
-"the o-charts.org shop.\n"
-msgstr ""
-#
-#, c-format
-msgid "Attempted update: %d\n"
-msgstr "Mise à jour tentée : %d\n"
-#
-msgid "Base cell edition update skipped\n"
-msgstr ""
-#
-msgid "CATALOG.031 file not found in ENC_ROOT"
-msgstr ""
-#
-msgid "Cancel"
-msgstr "Annuler"
-#
-msgid "Cannot find \"ENC_ROOT\" directory"
-msgstr "Impossible de trouver le dossier ENC_ROOT"
-#
-msgid "Cell Name"
-msgstr "Nom de cellule"
-#
-msgid "Cell update NOT authenticated\n"
-msgstr "Mise à jour de la cellule non authentifiée\n"
-#
-msgid "Cell update skipped\n"
-msgstr "Mise à jour de la cellule non authentifiée\n"
-#
-msgid "Certificate Key import FAILED\n"
-msgstr "Echec de l'importation de la clé du certificat.\n"
-#
-msgid "Certificate Key imported successfully\n"
-msgstr "Succès de l'importation de la clé du certificat\n"
-#
-msgid "Certificate Name"
-msgstr "Nom du certificat"
-#
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
+
+#: src/s63_pi.cpp:304
+msgid "S63"
+msgstr "S63"
+
+#: src/s63_pi.cpp:310
+msgid "S63 PlugIn for OpenCPN"
+msgstr "Complément \"S63\", pour l'affichage des cartes S 57, cryptées S 63, par OpenCPN"
+
+#: src/s63_pi.cpp:316
+msgid "S63 PlugIn for OpenCPN\n"
+"Provides support of S63 charts.\n\n"
+msgstr "Complément (plugin) S63 pour OpenCPN\n"
+"fournit un support pour l'affichage des cartes S63\n\n"
+
+#: src/s63_pi.cpp:338 src/s63_pi.cpp:367
+msgid "SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr "SSE 25.. Le permis pour cette cellule a expiré.\n"
+" Cette cellule peut être périmée et NE DOIT PAS être utilisée en NAVIGATION."
+
+#: src/s63_pi.cpp:410
+msgid "S63 Charts"
+msgstr "Cartes S 63"
+
+#: src/s63_pi.cpp:422
 msgid "Chart Cells"
-msgstr "Cartes"
-#
-msgid "Create System Identifier file..."
-msgstr ""
-#
-msgid "Creating eSenc"
-msgstr "eSenc en cours de création"
-#
-msgid "Data Server ID"
-msgstr "ID du Serveur de données"
-#
-msgid "Enter Installpermit"
-msgstr "Entrer l'InstallPermit"
-#
-msgid "Enter Userpermit"
-msgstr "Entrer le UserPermit"
-#
-msgid ""
-"Error: couldn't accept a new connection\n"
-"\n"
-msgstr ""
-"Erreur : Impossible d'accepter une nouvelle connexion\n"
-"\n"
-#
-msgid "Expiration Date"
-msgstr "Date d'expiration"
-#
-msgid "Fingerprint file created.\n"
-msgstr ""
-#
-msgid "First expired base cell name: "
-msgstr ""
-#
-msgid "First expired cell name: "
-msgstr ""
-#
-msgid "Import Cell Permits..."
-msgstr "Permis d'importation de cellules"
-#
-msgid "Import Certificate..."
-msgstr "Importer le certificat ...."
-#
-msgid "Import Charts/Updates..."
-msgstr "Importer Cartes/Mises à jour ...."
-#
-msgid "Install permit OK"
-msgstr "InstallPermit Ok"
-#
-msgid "Install permit invalid"
-msgstr "InstallPermit invalide"
-#
-msgid "InstallPermit"
-msgstr "InstallPermit"
-#
+msgstr "Cellules"
+
+#: src/s63_pi.cpp:433
 msgid "Installed S63 Cell Permits"
 msgstr "Permis de cellules S63 installés"
-#
-msgid "Installed S63 Certificates/Keys"
-msgstr "Certificats/Clés S63 installés"
-#
+
+#: src/s63_pi.cpp:442
+msgid "Cell Name"
+msgstr "Nom de cellule"
+
+#: src/s63_pi.cpp:447 src/s63_pi.cpp:522
+msgid "Data Server ID"
+msgstr "ID du Serveur de données"
+
+#: src/s63_pi.cpp:452 src/s63_pi.cpp:527
+msgid "Expiration Date"
+msgstr "Date d'expiration"
+
+#: src/s63_pi.cpp:463
+msgid "Import Cell Permits..."
+msgstr "Permis d'importation de cellules"
+
+#: src/s63_pi.cpp:466
+msgid "Remove Permits"
+msgstr "Supprimer les Permis"
+
+#: src/s63_pi.cpp:470
+msgid "Import Charts/Updates..."
+msgstr "Importer Cartes/Mises à jour ...."
+
+#: src/s63_pi.cpp:487
+msgid "S63_pi Log"
+msgstr "Log du fonctionnement du complément S63"
+
+#: src/s63_pi.cpp:502
 msgid "Keys/Permits"
 msgstr "Clés/Permis"
-#
+
+#: src/s63_pi.cpp:508
+msgid "Installed S63 Certificates/Keys"
+msgstr "Certificats/Clés S63 installés"
+
+#: src/s63_pi.cpp:516
+msgid "Certificate Name"
+msgstr "Nom du certificat"
+
+#: src/s63_pi.cpp:539
+msgid "Import Certificate..."
+msgstr "Importer le certificat ...."
+
+#: src/s63_pi.cpp:549
+msgid "UserPermit"
+msgstr "UserPermit"
+
+#: src/s63_pi.cpp:556
+msgid "New Userpermit..."
+msgstr "Nouveau UserPermit ....."
+
+#: src/s63_pi.cpp:563
+msgid "InstallPermit"
+msgstr "InstallPermit"
+
+#: src/s63_pi.cpp:570
+msgid "New Installpermit..."
+msgstr "Nouveau InstallPermit ...."
+
+#: src/s63_pi.cpp:577
+msgid "System Identification"
+msgstr "Identification du système"
+
+#: src/s63_pi.cpp:582
+msgid "Create System Identifier file..."
+msgstr "Créer le fichier d'identification du système ..."
+
+#: src/s63_pi.cpp:727
+msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
+msgstr "Selectionner le dossier contenant les S63 (usuellement ENC_ROOT)"
+
+#: src/s63_pi.cpp:753
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr "Impossible de trouver le dossier \"ENC_ROOT\""
+
+#: src/s63_pi.cpp:755 src/s63_pi.cpp:776 src/s63_pi.cpp:866 src/s63_pi.cpp:1103
+#: src/s63_pi.cpp:1227 src/s63_pi.cpp:1257 src/s63_pi.cpp:1428
+#: src/s63_pi.cpp:1453 src/s63_pi.cpp:1477 src/s63_pi.cpp:1560
+#: src/s63_pi.cpp:1621 src/s63_pi.cpp:1663 src/s63_pi.cpp:1693
+#: src/s63_pi.cpp:1742 src/s63_pi.cpp:1772 src/s63_pi.cpp:1929
+#: src/s63_pi.cpp:1950 src/s63_pi.cpp:1990 src/s63_pi.cpp:2002
+#: src/s63_pi.cpp:2019
+msgid "s63_pi Message"
+msgstr "Message du complément S63_pi"
+
+#: src/s63_pi.cpp:774
+msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n\n"
+"Create eSENCs on Import?\n"
+msgstr "OpenCPN peut créer des fichiers eSENC pour les cellules importées.\n\n"
+"Note: \n"
+"Ce processus peut prendre un certain temps.\n"
+"Les eSENCS qui ne sont pas traités ici seront créés selon les besoins par OpenCPN.\n\n"
+"Voulez vous créer les fichiers eSENC dés maintenant ?\n"
+
+#: src/s63_pi.cpp:804
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr "Le fichier \"CATALOGUE.031\" n'est pas dans le dossier \"ENC_ROOT\""
+
+#: src/s63_pi.cpp:863
+msgid "Security Scheme Error\n\n"
+" SSE 10 - Permits not available for this data provider.\n"
+msgstr "Erreur système de sécurité \n\n"
+"  SSE 10 -. Permis non acceptable pour ce fournisseur de données \n"
+
+#: src/s63_pi.cpp:884
+msgid "Creating eSenc"
+msgstr "eSenc en cours de création"
+
+#: src/s63_pi.cpp:997
+msgid "cell: "
+msgstr "Cellule : "
+
+#: src/s63_pi.cpp:999
+msgid " is not present in exchange set.\n"
+msgstr " n'est pas présent dans l'ensemble du lot.\n"
+
+#: src/s63_pi.cpp:1094 src/s63_pi.cpp:1245 src/s63_pi.cpp:1734
+msgid "Security Scheme Error\n\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n\n"
+msgstr "Erreur système de sécurité\n\n"
+" SSE 15 - Le service d'abonnement a expiré.\\n S'il vous plait, contactez votre fournisseur de données pour renouveler votre licence.\n\n"
+
+#: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246
+msgid "First expired base cell name: "
+msgstr "Nom du premier groupe de cellules expiré : "
+
+#: src/s63_pi.cpp:1098
+msgid "Base cell edition update skipped\n"
+msgstr "La mise à jour de ce groupe de cellules a été sautée\n"
+
+#: src/s63_pi.cpp:1099 src/s63_pi.cpp:1253 src/s63_pi.cpp:1738
+msgid "There may be other expired permits.  However, this message will be shown once only."
+msgstr "Il y a peut être d'autres permis expirés. Dans tous les cas, ce message sera affiché une seule fois."
+
+#: src/s63_pi.cpp:1215
+msgid "Security Scheme Error\n\n"
+" SSE 23 - Non sequential update, previous update(s) missing.\n"
+"Try reloading from the base media. \n"
+" If the problem persists contact your data supplier.\n\n"
+msgstr "Erreur système de sécurité\n\n"
+"SSE 23 -. Mise à jour non séquentielle. Absence de la ou des mise(s) à jour précédente(s).\n"
+"Essayez de recharger à partir du support de base. \n"
+"  Si le problème persiste, contactez votre fournisseur de données. \n\n"
+
+#: src/s63_pi.cpp:1217
+msgid "cell:"
+msgstr "Cellule :"
+
+#: src/s63_pi.cpp:1221
 #, c-format
 msgid "Latest intalled update: %d\n"
 msgstr "Dernière mise à jour installée : %d\n"
-#
-msgid "New Installpermit..."
-msgstr "Nouveau InstallPermit ...."
-#
-msgid "New Userpermit..."
-msgstr "Nouveau UserPermit ....."
-#
-msgid "OK"
-msgstr "Ok"
-#
-msgid ""
-"OpenCPN can create eSENC files as cells are imported.\n"
-"\n"
-"Note:\n"
-"This process may take some time.\n"
-"eSENCS not processed here will be created as needed by OpenCPN.\n"
-"\n"
-"Create eSENCs on Import?\n"
-msgstr ""
-"OpenCPN peut créer des fichiers eSENC pour les cellules importées.\n"
-"\n"
-"Note: \n"
-"Ce processus peut prendre un certain temps.\n"
-"Les eSENCS qui ne sont pas traités ici seront créés selon les besoins par "
-"OpenCPN.\n"
-"\n"
-"Voulez vous créer les fichiers eSENC dés maintenant ?\n"
-#
-msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-#
-#, fuzzy
-msgid "Permit\n"
-msgstr "UserPermit"
-#
-msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
-msgstr ""
-#
-msgid "Proceed to create Fingerprint file?"
-msgstr ""
-#
-msgid "Remove Permits"
-msgstr "Supprimer les Permis"
-#
-msgid "S63"
-msgstr "S63"
-#
-msgid "S63 Charts"
-msgstr "Cartes S 63"
-#
-msgid "S63 PlugIn for OpenCPN"
-msgstr ""
-"Complément \"S63\", pour l'affichage des cartes S 57, cryptées S 63, par "
-"OpenCPN"
-#
-msgid ""
-"S63 PlugIn for OpenCPN\n"
-"Provides support of S63 charts.\n"
-"\n"
-msgstr ""
-"Complément (plugin) S63 pour OpenCPN\n"
-"fournit un support pour l'affichage des cartes S63\n"
-"\n"
-#
-#, fuzzy
-msgid "S63_PI Message"
-msgstr "Message du complément S63_pi"
-#
-msgid "S63_pi Install Permit Required"
-msgstr "L'InstallPermit pour le complément S63 est requis"
-#
-msgid "S63_pi Log"
-msgstr "Log du fonctionnement du complément S63"
-#
-msgid "S63_pi Userpermit Required"
-msgstr "Le UserPermit pour le complément S63 est requis"
-#
-msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr ""
-"Le backchannel du complément S63_pi ne peut écouter sur le port spécifié !\n"
-#
-msgid ""
-"S63_pi backchannel server listening.\n"
-"\n"
-msgstr ""
-"Le serveur backchannel du complément S63_pi est à l'écoute.\n"
-"\n"
-#
-msgid ""
-"SSE 25..The ENC permit for this cell has expired.\n"
-" This cell may be out of date and MUST NOT be used for NAVIGATION."
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-" SSE 10 - Permits not available for this data provider.\n"
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-"  SSE 10 -. Permis non acceptable pour ce fournisseur de données \n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-" SSE 23 - Non sequential update, previous update(s) missing.\n"
-"Try reloading from the base media. \n"
-" If the problem persists contact your data supplier.\n"
-"\n"
-msgstr ""
-"Erreur système de sécurité\n"
-"\n"
-"SSE 23 -. Mise à jour non séquentielle. Absence de la ou des mise(s) à jour "
-"précédente(s).\n"
-"Essayez de recharger à partir du support de base. \n"
-"  Si le problème persiste, contactez votre fournisseur de données. \n"
-"\n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
-"The SA may have issued a new public key or the ENC may originate from another "
-"service.\n"
-"A new SA public key can be obtained from the IHO website or from your data "
-"supplier.\n"
-"\n"
-"Cell name: "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 06 - Le certificat du serveur Data SA Signé n'est pas valide. \n"
-"La SA peut proposer une nouvelle clé publique ou l'ENC peut provenir d'un "
-"autre service. \n"
-"Une nouvelle clé publique SA peut être obtenue sur le site Web de l'OHI ou de "
-"votre fournisseur de données.\n"
-"\n"
-"Nom de la cellule :"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 08 - SA Digital Certificate file incorrect format.\n"
-"A valid certificate can be obtained from the IHO website or your data "
-"supplier.\n"
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 08 - Le format du fichier du certificat numérique SA est incorrect \n"
-".Un certificat valide peut être obtenue sur le site Web de l'OHI ou par votre "
-"fournisseur de données. \n"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 09 - ENC Signature is invalid.\n"
-"Cell name: "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 09 - La signature de l'ENC est invalide.\n"
-"\n"
-"Nom de la cellule : "
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 11 - Cell permit not found"
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE11 - Le Permis de la cellule est absent"
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 12 - Cell permit format is incorrect\n"
-"\n"
-"Incorrect cell permit line starts with "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 12 - Format invalide du permis de la cellule.n\n"
-"La ligne du permis de la cellule commence par "
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
-"or the Cell Permit is for a different system.\n"
-"\n"
-" Invalid cell permit starts with "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
-"ou le permis de la cellule est destiné à un autre système informatique.\n"
-"\n"
-"Le permis invalide de la cellule commence par "
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 15 - Subscription service has expired.\n"
-" Please contact your data supplier to renew the subscription licence.\n"
-"\n"
-msgstr ""
-#
-msgid ""
-"Security Scheme Error\n"
-"\n"
-"SSE 24 - ENC Signature format is incorrect.\n"
-"\n"
-" Cell name: "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 24 - Format invalide de la signature de l'ENC.\n"
-"\n"
-"Nom de la cellule : "
-#
-msgid ""
-"Security Scheme Warning\n"
-"\n"
-"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n"
-"\n"
-"Cell name: "
-msgstr ""
-"Erreur système de sécurité \n"
-"\n"
-" SSE 26-. L'ENC n'est pas authentifié par l'OHI agissant en tant que SA. \n"
-"\n"
-"Nom de la cellule : "
-#
-msgid "Select PERMIT.TXT File"
-msgstr "Sélectionnez un fichier PERMIT.TXT"
-#
+
+#: src/s63_pi.cpp:1223 src/s63_pi.cpp:1251
+#, c-format
+msgid "Attempted update: %d\n"
+msgstr "Mise à jour tentée : %d\n"
+
+#: src/s63_pi.cpp:1249
+msgid "Cell update skipped\n"
+msgstr "La mise à jour de cette cellule a été sautée\n"
+
+#: src/s63_pi.cpp:1273
+msgid "Cell update NOT authenticated\n"
+msgstr "Mise à jour de la cellule non authentifiée\n"
+
+#: src/s63_pi.cpp:1274
+msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
+msgstr "Cette mise à jour de cette cellule, et toutes les suivantes,  ne sont pas appliquées.\n"
+
+#: src/s63_pi.cpp:1408
 msgid "Select Public Key File"
 msgstr "Sélectionnez une clé publique"
-#
-msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Selectionner le dossier contenant les S63 (usuellement ENC_ROOT)"
-#
-msgid "System Identification"
-msgstr ""
-#
+
+#: src/s63_pi.cpp:1410
+msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+
+#: src/s63_pi.cpp:1425 src/s63_pi.cpp:1947
+msgid "Security Scheme Error\n\n"
+"SSE 08 - SA Digital Certificate file incorrect format.\n"
+"A valid certificate can be obtained from the IHO website or your data supplier.\n"
+msgstr "Erreur système de sécurité \n\n"
+" SSE 08 - Le format du fichier du certificat numérique SA est incorrect \n"
+".Un certificat valide peut être obtenue sur le site Web de l'OHI ou par votre fournisseur de données. \n"
+
+#: src/s63_pi.cpp:1447
+msgid "Certificate Key imported successfully\n"
+msgstr "Succès de l'importation de la clé du certificat\n"
+
+#: src/s63_pi.cpp:1449
+msgid "Certificate Key import FAILED\n"
+msgstr "Echec de l'importation de la clé du certificat.\n"
+
+#: src/s63_pi.cpp:1474
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr "S'il vous plait, entrer un UserPermit et un InstallPermit valides dans l'onglet Clés/Permis"
+
+#: src/s63_pi.cpp:1487
+msgid "Select PERMIT.TXT File"
+msgstr "Sélectionnez un fichier PERMIT.TXT"
+
+#: src/s63_pi.cpp:1489
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
 msgstr "Fichier TXT (*.TXT)|*.TXT|Tous les fichiers (*.*)|*.*"
-#
-msgid "Test Installpermit"
-msgstr "Tester l'InstallPermit"
-#
-msgid "Test Results"
-msgstr "Résultats du test"
-#
-msgid "Test Userpermit"
-msgstr "Tester le UserPermit"
-#
-msgid ""
-"The fingerprint file contains information to uniquely identifiy this "
-"computer.\n"
-"\n"
-msgstr ""
-#
-msgid ""
-"There may be other expired permits.  However, this message will be shown once "
-"only."
-msgstr ""
-#
+
+#: src/s63_pi.cpp:1558
+msgid "Update all existing cell permits?"
+msgstr "Mise à jour de tous les permis de cellule existant ?"
+
+#: src/s63_pi.cpp:1620
+msgid "Security Scheme Error\n\n"
+"SSE 11 - Cell permit not found"
+msgstr "Erreur système de sécurité \n\n"
+" SSE11 - Le Permis de la cellule est absent"
+
+#: src/s63_pi.cpp:1658
+msgid "Security Scheme Error\n\n"
+"SSE 12 - Cell permit format is incorrect\n\n"
+"Incorrect cell permit line starts with "
+msgstr "Erreur système de sécurité \n\n"
+" SSE 12 - Format invalide du permis de la cellule.n\n"
+"La ligne du permis de la cellule commence par "
+
+#: src/s63_pi.cpp:1688
+msgid "Security Scheme Error\n\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n\n"
+" Invalid cell permit starts with "
+msgstr "Erreur système de sécurité \n\n"
+" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
+"ou le permis de la cellule est destiné à un autre système informatique.\n\n"
+"Le permis invalide de la cellule commence par "
+
+#: src/s63_pi.cpp:1735
+msgid "First expired cell name: "
+msgstr "Nom de la première cellule expirée : "
+
+#: src/s63_pi.cpp:1767
+msgid "Permit\n"
+msgstr "Permis\n"
+
+#: src/s63_pi.cpp:1769
+msgid "\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr "\n"
+"Déjà importé.\n"
+"Voulez vous le remplacer ?"
+
+#: src/s63_pi.cpp:1832
+msgid "   Error: Cannot create "
+msgstr "   Erreur : Création impossible "
+
+#: src/s63_pi.cpp:1925
+msgid "Security Scheme Error\n\n"
+"SSE 24 - ENC Signature format is incorrect.\n\n"
+" Cell name: "
+msgstr "Erreur système de sécurité \n\n"
+" SSE 24 - Format invalide de la signature de l'ENC.\n\n"
+"Nom de la cellule : "
+
+#: src/s63_pi.cpp:1986
+msgid "Security Scheme Error\n\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another service.\n"
+"A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
+"Cell name: "
+msgstr "Erreur système de sécurité \n\n"
+" SSE 06 - Le certificat du serveur Data SA Signé n'est pas valide. \n"
+"La SA peut proposer une nouvelle clé publique ou l'ENC peut provenir d'un autre service. \n"
+"Une nouvelle clé publique SA peut être obtenue sur le site Web de l'OHI ou de votre fournisseur de données.\n\n"
+"Nom de la cellule :"
+
+#: src/s63_pi.cpp:1998
+msgid "Security Scheme Warning\n\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
+"Cell name: "
+msgstr "Erreur système de sécurité \n\n"
+" SSE 26-. L'ENC n'est pas authentifié par l'OHI agissant en tant que SA. \n\n"
+"Nom de la cellule : "
+
+#: src/s63_pi.cpp:2015
+msgid "Security Scheme Error\n\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
+msgstr "Erreur système de sécurité \n\n"
+" SSE 09 - La signature de l'ENC est invalide.\n\n"
+"Nom de la cellule : "
+
+#: src/s63_pi.cpp:2178
+msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
+msgstr "Pour obtenir un \"Install permit\", vous devez créer un unique fichier d'identification du système.\n"
+
+#: src/s63_pi.cpp:2179
 msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr ""
-#
-msgid ""
-"This update and all subsequent updates to this cell are NOT applied.\n"
+msgstr "Ce fichier est aussi connu comme un fichier d'empreinte digitale.\n"
+
+#: src/s63_pi.cpp:2180
+msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
+msgstr "Le fichier d'empreinte contient des informations permettant l'identification de cet ordinateur.\n\n"
+
+#: src/s63_pi.cpp:2181
+msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
+msgstr "Après avoir créé ce fichier, vous en aurez besoin pour générer votre InstallPermit à la boutique o-charts.org.\n"
 "\n"
-msgstr ""
-"Cette mise à jour de cette cellule, et toutes les suivantes,  ne sont pas "
-"appliquées.\n"
-#
-msgid ""
-"To obtain an Install Permit, you must generate a unique System Identifier "
-"File.\n"
-msgstr ""
-#
+""
+
+#: src/s63_pi.cpp:2182
+msgid "Proceed to create Fingerprint file?"
+msgstr "Procéder à la création d'un fichier d'empreinte ?"
+
+#: src/s63_pi.cpp:2184 src/s63_pi.cpp:2229 src/s63_pi.cpp:2237
+msgid "S63_PI Message"
+msgstr "Message du complément S63_PI"
+
+#: src/s63_pi.cpp:2226
+msgid "Fingerprint file created.\n"
+msgstr "Le fichier d'empreinte est créé.\n"
+
+#: src/s63_pi.cpp:2609
+msgid "S63_pi backchannel could not listen at the specified port !\n"
+msgstr "Le backchannel du complément S63_pi ne peut écouter sur le port spécifié !\n"
+
+#: src/s63_pi.cpp:2613
+msgid "S63_pi backchannel server listening.\n\n"
+msgstr "Le serveur backchannel du complément S63_pi est à l'écoute.\n\n"
+
+#: src/s63_pi.cpp:2702 src/s63_pi.cpp:2748
 msgid "Unexpected event !\n"
 msgstr "Evénement inattendu !\n"
-#
-msgid "Update all existing cell permits?"
-msgstr ""
-#
-msgid "UserPermit"
-msgstr "UserPermit"
-#
-msgid "Userpermit OK"
-msgstr "UserPermit ok"
-#
+
+#: src/s63_pi.cpp:2721
+msgid "Error: couldn't accept a new connection\n\n"
+msgstr "Erreur : Impossible d'accepter une nouvelle connexion\n\n"
+
+#: src/s63_pi.cpp:3051
+msgid "S63_pi Userpermit Required"
+msgstr "Le UserPermit pour le complément S63 est requis"
+
+#: src/s63_pi.cpp:3098
+msgid "Enter Userpermit"
+msgstr "Entrer le UserPermit"
+
+#: src/s63_pi.cpp:3117
+msgid "Test Userpermit"
+msgstr "Tester le UserPermit"
+
+#: src/s63_pi.cpp:3122 src/s63_pi.cpp:3344
+msgid "Test Results"
+msgstr "Résultats du test"
+
+#: src/s63_pi.cpp:3137 src/s63_pi.cpp:3358
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/s63_pi.cpp:3142 src/s63_pi.cpp:3363
+msgid "OK"
+msgstr "Ok"
+
+#: src/s63_pi.cpp:3176
 msgid "Userpermit invalid"
 msgstr "UserPermit invalide"
-#
-msgid "cell:"
-msgstr "Cellule :"
-#
-msgid "cell: "
-msgstr "Cellule :"
-#
-msgid "s63_pi Message"
-msgstr "Message du complément S63_pi"
-#
-#
-#
-#
-#
-#~ msgid " mag"
-#~ msgstr " magnét."
-#
-#
-#
-#
-#
-#~ msgid "Create eSENCs on Import?\n"
-#~ msgstr "Créer les eSENCs lors de l'importation ?\n"
-#
-#
-#
-#
-#
-#~ msgid "Invalid cell permit starts with "
-#~ msgstr "Permis de cellule invalide commençant par "
-#
-#
-#
-#
-#
-#~ msgid "Note:\n"
-#~ msgstr "Note :\n"
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "OpenCPN can create eSENC files as cells are imported.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "OpenCPN peut créer un fichier eSENC  pour autant que des cellules soient "
-#~ "importées\n"
-#~ "\n"
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "S63 PlugIn for OpenCPN\n"
-#~ "Provides support of S63 charts.\n"
-#~ "\n"
-#~ "Supported charts must have been installed with \n"
-#~ "appropriate encryption certificates in place.\n"
-#~ msgstr ""
-#~ "Complément S63 pour OpenCPN\n"
-#~ "Fournit un moyen d'afficher des cartes S 63.\n"
-#~ "\n"
-#~ "Les cartes supportées doivent avoir été installées au préalable\n"
-#~ "Le certificat de décodage doit être en place.\n"
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "Security Scheme Error\n"
-#~ "\n"
-#~ "SSE 08 - SA Digital Certificate file incorrect format.\n"
-#~ msgstr ""
-#~ "Erreur système de sécurité\n"
-#~ "\n"
-#~ " SS08 - Format incorrect du fichier du certificat SA Digital\n"
-#
-#
-#
-#
-#
-#~ msgid "The process may be Cancelled by the user at any time.\n"
-#~ msgstr "Le processus peut être annulé par l'utilisateur à tout moment.\n"
-#
-#
-#
-#
-#
-#~ msgid "This process may take some time.\n"
-#~ msgstr "Le processus peut prendre un certain temps.\n"
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "eSENCS not yet processed will be created as needed by OpenCPN.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Les eSENCS non encore traitées seront créés selon les besoins par "
-#~ "OpenCPN.\n"
-#
-#
-#
-#
-#
-#~ msgid ""
-#~ "or the Cell Permit is for a different system.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "ou bien le Permis de la cellule est destiné à un système différent.\n"
-#~ "\n"
+
+#: src/s63_pi.cpp:3184
+msgid "Userpermit OK"
+msgstr "UserPermit ok"
+
+#: src/s63_pi.cpp:3299
+msgid "S63_pi Install Permit Required"
+msgstr "L'InstallPermit pour le complément S63 est requis"
+
+#: src/s63_pi.cpp:3320
+msgid "Enter Installpermit"
+msgstr "Entrer l'InstallPermit"
+
+#: src/s63_pi.cpp:3339
+msgid "Test Installpermit"
+msgstr "Tester l'InstallPermit"
+
+#: src/s63_pi.cpp:3401
+msgid "Install permit invalid"
+msgstr "InstallPermit invalide"
+
+#: src/s63_pi.cpp:3409
+msgid "Install permit OK"
+msgstr "InstallPermit Ok"
+
