@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-06 00:31-0500\n"
-"PO-Revision-Date: 2016-02-06 12:47-0500\n"
+"PO-Revision-Date: 2016-02-06 13:13-0500\n"
 "Last-Translator: nohal <pavel@kalian.cz>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -421,7 +421,7 @@ msgstr "UserPermit OK"
 
 #: src/s63_pi.cpp:3299
 msgid "S63_pi Install Permit Required"
-msgstr "InstallPermit ungültig"
+msgstr "S-63 InstallPermit erforderlich"
 
 #: src/s63_pi.cpp:3320
 msgid "Enter Installpermit"
