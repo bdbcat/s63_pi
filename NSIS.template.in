@@ -861,17 +861,21 @@ Section "-Install Section" SecInstall
                 StrCpy $R1 $INSTDIR $0
                 StrCpy $INSTROOT $R1
 
-;      MessageBox MB_OK|MB_ICONSTOP "Install root $INSTROOT"
+      ;MessageBox MB_OK|MB_ICONSTOP "Install root $INSTROOT"
+      ;Program Files/OpenCPN
+
+      ;MessageBox MB_OK|MB_ICONSTOP "Install lang source $INSTDIR"
+      ;Program Files\OpenCPN\plugins\s63_pi
 
 ;       Manually move language (.mo) files to the opencpn share location
-	CopyFiles "$INSTDIR\lib\locale\de\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\de\LC_MESSAGES"
-        CopyFiles "$INSTDIR\lib\locale\fr\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\fr\LC_MESSAGES"
-        CopyFiles "$INSTDIR\lib\locale\es\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\es\LC_MESSAGES"
-        CopyFiles "$INSTDIR\lib\locale\et\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\et\LC_MESSAGES"
-        CopyFiles "$INSTDIR\lib\locale\pl\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\pl\LC_MESSAGES"
-        CopyFiles "$INSTDIR\lib\locale\ru\LC_MESSAGES\s63_pi.mo" "$INSTROOT\share\locale\ru\LC_MESSAGES"
+	CopyFiles "$INSTDIR\share\locale\de\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\de\LC_MESSAGES"
+        CopyFiles "$INSTDIR\share\locale\fr\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\fr\LC_MESSAGES"
+        CopyFiles "$INSTDIR\share\locale\es\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\es\LC_MESSAGES"
+        CopyFiles "$INSTDIR\share\locale\et\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\et\LC_MESSAGES"
+        CopyFiles "$INSTDIR\share\locale\pl\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\pl\LC_MESSAGES"
+        CopyFiles "$INSTDIR\share\locale\ru\LC_MESSAGES\opencpn-s63_pi.mo" "$INSTROOT\share\locale\ru\LC_MESSAGES"
 
-        RMDir /r  "$INSTDIR\lib"
+        RMDir /r  "$INSTDIR\share"
 
 	;# Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall @CPACK_PACKAGE_VERSION@.exe"
