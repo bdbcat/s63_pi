@@ -100,7 +100,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>Resources/de.lproj/s63_pi.mo</string>
+																	<string>Resources/de.lproj/opencpn-s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -133,7 +133,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>Resources/es.lproj/s63_pi.mo</string>
+                                                                                                                                     <string>Resources/es.lproj/opencpn-s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -166,7 +166,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>Resources/et.lproj/s63_pi.mo</string>
+                                                                                                                                     <string>Resources/et.lproj/opencpn-s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -199,7 +199,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>Resources/fr.lproj/s63_pi.mo</string>
+                                                                                                                                     <string>Resources/fr.lproj/opencpn-s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>
@@ -232,7 +232,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>PATH</key>
-																	<string>Resources/pl.lproj/s63_pi.mo</string>
+                                                                                                                                     <string>Resources/pl.lproj/opencpn-s63_pi.mo</string>
 																	<key>PATH_TYPE</key>
 																	<integer>3</integer>
 																	<key>PERMISSIONS</key>

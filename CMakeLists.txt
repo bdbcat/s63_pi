@@ -295,6 +295,15 @@ MACRO(GETTEXT_BUILD_MO  _poFile _lang)
       GET_FILENAME_COMPONENT(_poBasename ${_absFile} NAME_WE)
       SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_poBasename}.mo)
 
+IF(APPLE)
+      ADD_CUSTOM_COMMAND(
+         OUTPUT ${_gmoFile}
+         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_absFile}
+         COMMAND ${CMAKE_COMMAND} -E copy ${_gmoFile} "Resources/${_lang}.lproj/opencpn-${PACKAGE_NAME}.mo"
+         DEPENDS ${_absFile}
+         COMMENT "s63-i18n [${_poBasename}]: Created mo file."
+      )
+ELSE(APPLE)        
       ADD_CUSTOM_COMMAND(
          OUTPUT ${_gmoFile}
          COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_absFile}
@@ -302,6 +311,7 @@ MACRO(GETTEXT_BUILD_MO  _poFile _lang)
          DEPENDS ${_absFile}
          COMMENT "s63-i18n [${_poBasename}]: Created mo file."
       )
+ENDIF(APPLE)         
 
 
 IF(APPLE)
