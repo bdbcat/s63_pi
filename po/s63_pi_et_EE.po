@@ -5,15 +5,15 @@ msgstr ""
 "POT-Creation-Date: 2016-02-27 15:50-0300\n"
 "PO-Revision-Date: 2016-02-27 13:52-0500\n"
 "Last-Translator: nohal <pavel@kalian.cz>\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
+"Language-Team: Estonian\n"
+"Language: et_EE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
-"X-Crowdin-Language: de\n"
+"X-Crowdin-Language: et\n"
 "X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
 
 #: src/s63_pi.cpp:304
@@ -22,107 +22,107 @@ msgstr "S63"
 
 #: src/s63_pi.cpp:310
 msgid "S63 PlugIn for OpenCPN"
-msgstr "S63 PlugIn für OpenCPN"
+msgstr "S63-plugin OpenCPN'i jaoks"
 
 #: src/s63_pi.cpp:316
 msgid "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n\n"
-msgstr "S63 PlugIn für OpenCPN\n"
-"Unterstützt S63 Karten.\n\n"
+msgstr "S63-plugin OpenCPN'i jaoks\n"
+"Tagab S63-kaartide toe.\n\n"
 
 #: src/s63_pi.cpp:338 src/s63_pi.cpp:367
 msgid "SSE 25..The ENC permit for this cell has expired.\n"
 " This cell may be out of date and MUST NOT be used for NAVIGATION."
-msgstr "Der ENC Permit für diese Zelle ist abgelaufen.\n"
-" Diese Zelle könnte nicht mehr aktuell sein und DARF NICHT für die NAVIGATION genutzt werden."
+msgstr "SSE25..Selle kärje ENC luba on aegunud.\n"
+" See kärg võib olla vananenud ja teda EI TOHI kasutada NAVIGATSIOONIKS."
 
 #: src/s63_pi.cpp:410
 msgid "S63 Charts"
-msgstr "S63 Karten"
+msgstr "S63-kaardid"
 
 #: src/s63_pi.cpp:422
 msgid "Chart Cells"
-msgstr "S63 Karten"
+msgstr "Kaardi kärjed"
 
 #: src/s63_pi.cpp:433
 msgid "Installed S63 Cell Permits"
-msgstr "Installierte S63 Zellen Freigaben"
+msgstr "Paigaldatud S63-kärgede load"
 
 #: src/s63_pi.cpp:442
 msgid "Cell Name"
-msgstr "Zellen Name"
+msgstr "Kärje nimi"
 
 #: src/s63_pi.cpp:447 src/s63_pi.cpp:522
 msgid "Data Server ID"
-msgstr "Daten Server ID"
+msgstr "Andmeserveri ID"
 
 #: src/s63_pi.cpp:452 src/s63_pi.cpp:527
 msgid "Expiration Date"
-msgstr "Ablauf-Datum"
+msgstr "Aegumiskuupäev"
 
 #: src/s63_pi.cpp:463
 msgid "Import Cell Permits..."
-msgstr "Importiere Zellen Freigaben..."
+msgstr "Impordi kärgede load..."
 
 #: src/s63_pi.cpp:466
 msgid "Remove Permits"
-msgstr "Entferne Freigaben"
+msgstr "Kõrvalda load"
 
 #: src/s63_pi.cpp:470
 msgid "Import Charts/Updates..."
-msgstr "Importiere Karten/Updates..."
+msgstr "Impordi kaardid/uuendused..."
 
 #: src/s63_pi.cpp:487
 msgid "S63_pi Log"
-msgstr "S63_pi Log"
+msgstr "S63_pi logi"
 
 #: src/s63_pi.cpp:502
 msgid "Keys/Permits"
-msgstr "Schlüssel/Permits"
+msgstr "Võtmed/load"
 
 #: src/s63_pi.cpp:508
 msgid "Installed S63 Certificates/Keys"
-msgstr "Installierte S63 Zertifikate/Schlüssel"
+msgstr "Paigaldatud S63 sertifikaadid/võtmed"
 
 #: src/s63_pi.cpp:516
 msgid "Certificate Name"
-msgstr "Zertifikat Name"
+msgstr "Sertifikaadi nimi"
 
 #: src/s63_pi.cpp:539
 msgid "Import Certificate..."
-msgstr "Importiere Zertifikat..."
+msgstr "Impordi sertifikaat..."
 
 #: src/s63_pi.cpp:549
 msgid "UserPermit"
-msgstr "UserPermit"
+msgstr "Kasutajaluba"
 
 #: src/s63_pi.cpp:556
 msgid "New Userpermit..."
-msgstr "Neuer UserPermit..."
+msgstr "Uus kasutajaluba..."
 
 #: src/s63_pi.cpp:563
 msgid "InstallPermit"
-msgstr "InstallPermit"
+msgstr "Paigaldusluba"
 
 #: src/s63_pi.cpp:570
 msgid "New Installpermit..."
-msgstr "Neuer InstallPermit..."
+msgstr "Uus paigaldusluba..."
 
 #: src/s63_pi.cpp:577
 msgid "System Identification"
-msgstr "Identifikation des Systems"
+msgstr "Süsteemi tuvastamine"
 
 #: src/s63_pi.cpp:583
 msgid "Create System Identifier file..."
-msgstr "Erstelle Datei zur Identifikation des Systems..."
+msgstr "Süsteemi tuvastusfaili loomine..."
 
 #: src/s63_pi.cpp:728
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Wähle S63 Austausch-Verzeichnis (normal: ENC_ROOT)"
+msgstr "Vali S63-vahetuskompekti juurkataloog (harilikult ENC_ROOT)"
 
 #: src/s63_pi.cpp:754
 msgid "Cannot find \"ENC_ROOT\" directory"
-msgstr "Ordner \"ENC_ROOT\" nicht gefunden"
+msgstr "Ei suuda leida \"ENC_ROOT\" kataloogi"
 
 #: src/s63_pi.cpp:756 src/s63_pi.cpp:777 src/s63_pi.cpp:867 src/s63_pi.cpp:1104
 #: src/s63_pi.cpp:1228 src/s63_pi.cpp:1258 src/s63_pi.cpp:1429
@@ -132,7 +132,7 @@ msgstr "Ordner \"ENC_ROOT\" nicht gefunden"
 #: src/s63_pi.cpp:1951 src/s63_pi.cpp:1991 src/s63_pi.cpp:2003
 #: src/s63_pi.cpp:2020
 msgid "s63_pi Message"
-msgstr "s63_pi Nachricht"
+msgstr "s63_pi teade"
 
 #: src/s63_pi.cpp:775
 msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
@@ -140,178 +140,181 @@ msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
 "This process may take some time.\n"
 "eSENCS not processed here will be created as needed by OpenCPN.\n\n"
 "Create eSENCs on Import?\n"
-msgstr "OpenCPN kann eSENC Dateien beim Importieren der Zellen generieren.\n\n"
-"Note:\n"
-"Dieser Prozess kann dauern. \n"
-"Nicht generierte eSENCS werden später bei Bedarf durch OpenCPN erzeugt.\n\n"
-"eSENCs beim Import erstellen? \n"
+msgstr "OpenCPN saab luua eSENC-faile kui kärgi imporditakse.\n\n"
+"Märkus:\n"
+"See protsess võib võtta mõnda aega.\n"
+"Siin mittetöödeldud eSENC luuakse OpenCPN vajadusel  jooksvalt.\n\n"
+"Loo eSENC imoptimisel?\n"
 
 #: src/s63_pi.cpp:805
 msgid "CATALOG.031 file not found in ENC_ROOT"
-msgstr "Keine Datei CATALOG.031 in ENC_ROOT"
+msgstr "CATALOG.031 faili ei leitud ENC_ROOT'is"
 
 #: src/s63_pi.cpp:864
 msgid "Security Scheme Error\n\n"
 " SSE 10 - Permits not available for this data provider.\n"
-msgstr "SIcherheitsschema Fehler\n\n"
-" SSE 10 - Permits nicht verfügbar für diesen Karten-Händler.\n"
+msgstr "Turvaseade viga\n\n"
+" SSE 10 - Selle andmelevitaja load pole saadaval.\n"
 
 #: src/s63_pi.cpp:885
 msgid "Creating eSenc"
-msgstr "Erzeuge eSenc"
+msgstr "eSENC loomine"
 
 #: src/s63_pi.cpp:998
 msgid "cell: "
-msgstr "Zelle: "
+msgstr "kärg: "
 
 #: src/s63_pi.cpp:1000
 msgid " is not present in exchange set.\n"
-msgstr " ist nicht im Datensatz vorhanden.\n"
+msgstr " ei esine vahetuskomplektis.\n"
 
 #: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246 src/s63_pi.cpp:1735
 msgid "Security Scheme Error\n\n"
 "SSE 15 - Subscription service has expired.\n"
 " Please contact your data supplier to renew the subscription licence.\n\n"
-msgstr "Security Scheme Error\n\n"
-"SSE 15 - Ihr Abonnement ist abgelaufen.\n"
-" Setzen Sie sich mit Ihrem Kartenlieferanten in Verbindung, um das Abonnement zu erneuern.\n\n"
+msgstr "Turvaseade viga\n\n"
+"SSE 15 - tellimise teenus on aegunud.\n"
+"Palun võtke ühendust oma andmevarustajaga, et uuendada tellimuse litsentsi.\n\n"
 
 #: src/s63_pi.cpp:1096 src/s63_pi.cpp:1247
 msgid "First expired base cell name: "
-msgstr "Name der ersten ausgelaufenen Zelle: "
+msgstr "Esimese aegunud aluskärje nimi: "
 
 #: src/s63_pi.cpp:1099
 msgid "Base cell edition update skipped\n"
-msgstr "Update der Basiszelle übersprungen\n"
+msgstr "Aluskärje väljaande uueńdus on vahele jäetud\n"
 
 #: src/s63_pi.cpp:1100 src/s63_pi.cpp:1254 src/s63_pi.cpp:1739
 msgid "There may be other expired permits.  However, this message will be shown once only."
-msgstr "Möglicherweise gibt es weitere abgelaufene Permits. Diese Meldung wird jedoch nur einmal gezeigt."
+msgstr "Võib esineda muid aegunud lube. Seda teadet kuvatakse siiski ainult üks kord."
 
 #: src/s63_pi.cpp:1216
 msgid "Security Scheme Error\n\n"
 " SSE 23 - Non sequential update, previous update(s) missing.\n"
 "Try reloading from the base media. \n"
 " If the problem persists contact your data supplier.\n\n"
-msgstr "Sicherheitsschema Fehler\n\n"
-" SSE 23 - Kein fortlaufendes Update, vorherige(s) Update(s) fehlt.\n"
-"Versuche Neuladen von Basis Daten. \n"
-"Bleibt das Problem, bitte Karten-Händler kontaktieren.\n\n"
+msgstr "Turvaseade viga\n\n"
+" SSE 23 - Mittejärjestikuline uuendus, eelmine uuendus(ed) puudub,\n"
+"Proovi taaslaadida algmeediast. \n"
+" Kui probleem jätkub, kontakteeruge oma andmevarustajaga.\n\n"
 
 #: src/s63_pi.cpp:1218
 msgid "cell:"
-msgstr "Zelle:"
+msgstr "kärg:"
 
 #: src/s63_pi.cpp:1222
 #, c-format
 msgid "Latest intalled update: %d\n"
-msgstr "Letztes installiertes Update: %d\n"
+msgstr "Viimane paigaldatud uuendus: %d\n"
 
 #: src/s63_pi.cpp:1224 src/s63_pi.cpp:1252
 #, c-format
 msgid "Attempted update: %d\n"
-msgstr "Versuchtes Update: %d\n"
+msgstr "Uuendamise katse: %d\n"
 
 #: src/s63_pi.cpp:1250
 msgid "Cell update skipped\n"
-msgstr "Zellen Update übersprungen\n"
+msgstr "Kärje uuendus on vahele jäetud\n"
 
 #: src/s63_pi.cpp:1274
 msgid "Cell update NOT authenticated\n"
-msgstr "Zellen Update NICHT authentifiziert\n"
+msgstr "Kärje uuendus EI OLE autenditud\n"
 
 #: src/s63_pi.cpp:1275
 msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
-msgstr "Dieses Update und alle folgenden Updates für diese Zelle werden NICHT gemacht.\n\n"
+msgstr "Sellele kärjele EI OLE see uuendus ja kõik järgnevad uuendused lisatud.\n\n"
 
 #: src/s63_pi.cpp:1409
 msgid "Select Public Key File"
-msgstr "Wähle Public Key Datei"
+msgstr "Vali avalik võtmefail"
 
 #: src/s63_pi.cpp:1411
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr "PUB Dateien (*.PUB)|*.PUB|txt Dateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*"
+msgstr "PUB-failid (*.PUB)|*.PUB|txt-failid (*.txt)|*.txt|Kõik failid (*.*)|*.*"
 
 #: src/s63_pi.cpp:1426 src/s63_pi.cpp:1948
 msgid "Security Scheme Error\n\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
 "A valid certificate can be obtained from the IHO website or your data supplier.\n"
-msgstr "Ein gültiges Zertifikat erhält man von der IHO Website oder Ihrem Karten-Händler.\n"
+msgstr "Turvaseade viga\n\n"
+"SSE 08 - SA digitaalne serifikaadi fail vääras formaadis.\n"
+"Kehtiva serifikaadi saab IHO veebilehelt või teie andmevarustajalt.\n"
 
 #: src/s63_pi.cpp:1448
 msgid "Certificate Key imported successfully\n"
-msgstr "Zertifikat Schlüssel Import erfolgreich\n"
+msgstr "Sertifikaadi võti edukalt imporditud\n"
 
 #: src/s63_pi.cpp:1450
 msgid "Certificate Key import FAILED\n"
-msgstr "Zertifikat Schlüssel Import FEHLER\n"
+msgstr "Sertifikaadi võtme import EBAÕNNESTUS\n"
 
 #: src/s63_pi.cpp:1475
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
-msgstr "Bitte geben Sie einen gültigen UserPermit und InstallPermit ein (Reiter Schlüssel/Permits)"
+msgstr "Palun sisestage kehtiv kasutusluba ja paigaldusluba vahelehel Võtmed/load"
 
 #: src/s63_pi.cpp:1488
 msgid "Select PERMIT.TXT File"
-msgstr "Wähle PERMIT.TXT Datei"
+msgstr "Valige PERMIT.TXT fail"
 
 #: src/s63_pi.cpp:1490
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
-msgstr "TXT Dateien (*.TXT)|*.TXT|Alle Dateien (*.*)|*.*"
+msgstr "TXT- failid (*.TXT)|*.TXT|Kõik failid (*.*)|*.*"
 
 #: src/s63_pi.cpp:1559
 msgid "Update all existing cell permits?"
-msgstr "Alle vorhandenen Cell Permits erneuern?"
+msgstr "Kas uuendada kõik olemasolevate kärgede load?"
 
 #: src/s63_pi.cpp:1621
 msgid "Security Scheme Error\n\n"
 "SSE 11 - Cell permit not found"
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 11 - Cell permit nich gefunden"
+msgstr "Turvaseade viga\n\n"
+"SSE 11 - kärje luba pole leitud"
 
 #: src/s63_pi.cpp:1659
 msgid "Security Scheme Error\n\n"
 "SSE 12 - Cell permit format is incorrect\n\n"
 "Incorrect cell permit line starts with "
-msgstr "Security Scheme Error\n\n"
-"SSE 12 - Fehlerhaftes Cell Permit Format\n\n"
-" Fehlerhafter Cell Permit in Zeile "
+msgstr "Turvaseade viga\n\n"
+"SSE 12 - kärje loa formaat on väär\n\n"
+"Väära kärje loa rida algab "
 
 #: src/s63_pi.cpp:1689
 msgid "Security Scheme Error\n\n"
 "SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
 "or the Cell Permit is for a different system.\n\n"
 " Invalid cell permit starts with "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 13 - Zellen Permit ist ungültig (Prüfsumme ist falsch)\n\n"
-" Falsch cell permit beginnt mit "
+msgstr "Turvaseade viga\n\n"
+"SSE 13 - kärje luba on kehtetu (kontrollsumma on väär)\n"
+"või kärje luba on erineva süsteemi jaoks.\n\n"
+" Kehtetu kärje luba algab "
 
 #: src/s63_pi.cpp:1736
 msgid "First expired cell name: "
-msgstr "Name der Ersten abgelaufenen Zelle: "
+msgstr "Esimese aegunud kärje nimi: "
 
 #: src/s63_pi.cpp:1768
 msgid "Permit\n"
-msgstr "Permit\n"
+msgstr "Luba\n"
 
 #: src/s63_pi.cpp:1770
 msgid "\n"
 "already imported.\n"
 "Would you like to replace it?"
 msgstr "\n"
-" wurde schon importiert.\n"
-"Ersetzen?"
+"on juba imporditud.\n"
+"Kas sa soovid seda asendada?"
 
 #: src/s63_pi.cpp:1833
 msgid "   Error: Cannot create "
-msgstr "   Fehler: Kann nicht erzeugen "
+msgstr "   Viga: ei suuda luua "
 
 #: src/s63_pi.cpp:1926
 msgid "Security Scheme Error\n\n"
 "SSE 24 - ENC Signature format is incorrect.\n\n"
 " Cell name: "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 24 - ENC Signatur Format ist falsch.\n\n"
-" Cell nahme: "
+msgstr "Turvaseade viga\n\n"
+"SSE 24 - ENC signatuuri formaat on väär.\n\n"
+" Kärje nimi: "
 
 #: src/s63_pi.cpp:1987
 msgid "Security Scheme Error\n\n"
@@ -319,93 +322,91 @@ msgid "Security Scheme Error\n\n"
 "The SA may have issued a new public key or the ENC may originate from another service.\n"
 "A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
 "Cell name: "
-msgstr "Security Scheme Error\n\n"
-"SSE 06 - Das Zertifikat der SA des DataServer ist ungültig.\n"
-"Die SA hat kann eine neuen PublicKey vergeben haben oder die ENC stammt von einem anderen Service Provider.\n"
-"Sie erhalten aktuelle SA PublicKeys auf der IHO Webseite oder von Ihrem Service Provider.\n\n"
-"Zelle: "
+msgstr "Turvaseade viga\n\n"
+"SSE 06 - SA signeeritud andmeserveri sertifikaat on väär.\n"
+"SA võib olla uue avaliku võtme emiteerinud või ENC võib pärineda mõnest teisest teenusest.\n"
+"Uut SA avalikku võtit on võimalik saada IHO veebilehelt või teie andmevarustajalt.\n\n"
+"Kärje nimi: "
 
 #: src/s63_pi.cpp:1999
 msgid "Security Scheme Warning\n\n"
 "SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
 "Cell name: "
-msgstr "Security Scheme Warning\n\n"
-"SSE 26 - Die ENC wurde nicht durch die IHO als die abnehmende Stelle authentifiziert.\n\n"
-"Zelle: "
+msgstr "Turvaseade viga\n\n"
+"SSE 26 - ENC ei ole autoriseeritud IHO poolr, kes on SA õigustes.\n\n"
+"Kärje nimi: "
 
 #: src/s63_pi.cpp:2016
 msgid "Security Scheme Error\n\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 09 - ENC Signatur ist falsch.\n"
-"Cell nahme: "
+msgstr "Turvaseade viga\n\n"
+"SSE 09 - ENC signatuur on väär.\n"
+"Kärje nimi: "
 
 #: src/s63_pi.cpp:2181
 msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
-msgstr "Um einen InstallPermit zu erhalten, benötigen wir eine Datei File mit einer eindeutigen Kennung des Systems.\n"
+msgstr "Paigaldusloa saamiseks pead genereerima unikaalse süsteemi tuvastusfaili.\n"
 
 #: src/s63_pi.cpp:2182
 msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr "Diese Datei nennen wir auch \"fingerprint file\".\n"
+msgstr "Seda faili tuntakse ka kui \"sõrmejälje\" faili.\n"
 
 #: src/s63_pi.cpp:2183
 msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
-msgstr "Die Fingerprint Datei enthält Informationen, die diesen Computer eindeutig beschreiben.\n\n"
-"\n"
-""
+msgstr "Sõrmejälje fail sisaldab informatsiooni selle kompuutri unikaalseks identifitseerimiseks.\n\n"
 
 #: src/s63_pi.cpp:2184
 msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
-msgstr "Sie benötigen das Fingerprint file, um damit im o-charts.org shop einen InstallPermit zu generieren.\n"
+msgstr "Kui oled selle faili loonud, siis on sul vaja genereerida oma paigaldusluba o-charts.org poes.\n"
 
 #: src/s63_pi.cpp:2185
 msgid "Proceed to create Fingerprint file?"
-msgstr "Weiter mit der Erstellung des Fingerprint files?"
+msgstr "Jätkata sõrmejälje faili loomisega?"
 
 #: src/s63_pi.cpp:2187 src/s63_pi.cpp:2232 src/s63_pi.cpp:2240
 msgid "S63_PI Message"
-msgstr "S63_PI Meldung"
+msgstr "S63_PI sõnum"
 
 #: src/s63_pi.cpp:2229
 msgid "Fingerprint file created.\n"
-msgstr "Die Fingerprintdatei wurde erstellt.\n"
+msgstr "Sõrmejälje fail on loodud.\n"
 
 #: src/s63_pi.cpp:2612
 msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr "S63_pi Rück-Kanal hört nicht auf angegebenen Port!\n"
+msgstr "S63_pi tugikanal ei suuda jälgida määratud porti !\n"
 
 #: src/s63_pi.cpp:2616
 msgid "S63_pi backchannel server listening.\n\n"
-msgstr "S63_pi Rück-Kanal Server hört.\n\n"
+msgstr "S63_pi tugikanali serveri jälgimine.\n\n"
 
 #: src/s63_pi.cpp:2705 src/s63_pi.cpp:2751
 msgid "Unexpected event !\n"
-msgstr "Unerwarteter Event !\n"
+msgstr "Ootamatu juhtum !\n"
 
 #: src/s63_pi.cpp:2724
 msgid "Error: couldn't accept a new connection\n\n"
-msgstr "Fehler: keine neue Verbindung akzeptiert\n\n"
+msgstr "Viga: ei suutnud aksepteerida uut ühendust\n\n"
 
 #: src/s63_pi.cpp:3054
 msgid "S63_pi Userpermit Required"
-msgstr "S63_pi UserPermit erforderlich"
+msgstr "S63_pi kasutajaluba on vajalik"
 
 #: src/s63_pi.cpp:3101
 msgid "Enter Userpermit"
-msgstr "Eingabe UserPermit"
+msgstr "Sisesta kasutajaluba"
 
 #: src/s63_pi.cpp:3120
 msgid "Test Userpermit"
-msgstr "Teste UserPermit"
+msgstr "Testi kasutajaluba"
 
 #: src/s63_pi.cpp:3125 src/s63_pi.cpp:3347
 msgid "Test Results"
-msgstr "Testergebnisse"
+msgstr "Testi tulemused"
 
 #: src/s63_pi.cpp:3140 src/s63_pi.cpp:3361
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr "Loobu"
 
 #: src/s63_pi.cpp:3145 src/s63_pi.cpp:3366
 msgid "OK"
@@ -413,29 +414,29 @@ msgstr "OK"
 
 #: src/s63_pi.cpp:3179
 msgid "Userpermit invalid"
-msgstr "UserPermit ungültig"
+msgstr "Kasutajaluba on kehtetu"
 
 #: src/s63_pi.cpp:3187
 msgid "Userpermit OK"
-msgstr "UserPermit OK"
+msgstr "Kasutajaluba on OK"
 
 #: src/s63_pi.cpp:3302
 msgid "S63_pi Install Permit Required"
-msgstr "S-63 InstallPermit erforderlich"
+msgstr "S63_pi paigaldamise luba on vajalik"
 
 #: src/s63_pi.cpp:3323
 msgid "Enter Installpermit"
-msgstr "Eingabe InstallPermit"
+msgstr "Sisesta paigaldusluba"
 
 #: src/s63_pi.cpp:3342
 msgid "Test Installpermit"
-msgstr "Teste InstallPermit"
+msgstr "Testi paigaldusluba"
 
 #: src/s63_pi.cpp:3404
 msgid "Install permit invalid"
-msgstr "InstallPermit ungültig"
+msgstr "Paigaldamise luba on kehtetu"
 
 #: src/s63_pi.cpp:3412
 msgid "Install permit OK"
-msgstr "InstallPermit OK"
+msgstr "Paigaldamise luba on OK"
 

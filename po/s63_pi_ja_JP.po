@@ -5,15 +5,15 @@ msgstr ""
 "POT-Creation-Date: 2016-02-27 15:50-0300\n"
 "PO-Revision-Date: 2016-02-27 13:52-0500\n"
 "Last-Translator: nohal <pavel@kalian.cz>\n"
-"Language-Team: German\n"
-"Language: de_DE\n"
+"Language-Team: Japanese\n"
+"Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
-"X-Crowdin-Language: de\n"
+"X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
 
 #: src/s63_pi.cpp:304
@@ -22,107 +22,107 @@ msgstr "S63"
 
 #: src/s63_pi.cpp:310
 msgid "S63 PlugIn for OpenCPN"
-msgstr "S63 PlugIn für OpenCPN"
+msgstr "OpenCPN 用 S63 プラグイン"
 
 #: src/s63_pi.cpp:316
 msgid "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n\n"
-msgstr "S63 PlugIn für OpenCPN\n"
-"Unterstützt S63 Karten.\n\n"
+msgstr "OpenCPN 用 S63 プラグイン\n"
+"S63 チャートをサポートします。\n\n"
 
 #: src/s63_pi.cpp:338 src/s63_pi.cpp:367
 msgid "SSE 25..The ENC permit for this cell has expired.\n"
 " This cell may be out of date and MUST NOT be used for NAVIGATION."
-msgstr "Der ENC Permit für diese Zelle ist abgelaufen.\n"
-" Diese Zelle könnte nicht mehr aktuell sein und DARF NICHT für die NAVIGATION genutzt werden."
+msgstr "SSE 25. このセルのENC パーミットは期限切れになっています。 \n"
+" このセルは、おそらく古くなっているのでナビゲーションに使用しないで下さい。"
 
 #: src/s63_pi.cpp:410
 msgid "S63 Charts"
-msgstr "S63 Karten"
+msgstr "S63 チャート"
 
 #: src/s63_pi.cpp:422
 msgid "Chart Cells"
-msgstr "S63 Karten"
+msgstr "チャートのセル"
 
 #: src/s63_pi.cpp:433
 msgid "Installed S63 Cell Permits"
-msgstr "Installierte S63 Zellen Freigaben"
+msgstr "イストール済 S63 セルパーミット"
 
 #: src/s63_pi.cpp:442
 msgid "Cell Name"
-msgstr "Zellen Name"
+msgstr "セル名"
 
 #: src/s63_pi.cpp:447 src/s63_pi.cpp:522
 msgid "Data Server ID"
-msgstr "Daten Server ID"
+msgstr "データ サーバー ID"
 
 #: src/s63_pi.cpp:452 src/s63_pi.cpp:527
 msgid "Expiration Date"
-msgstr "Ablauf-Datum"
+msgstr "有効期限"
 
 #: src/s63_pi.cpp:463
 msgid "Import Cell Permits..."
-msgstr "Importiere Zellen Freigaben..."
+msgstr "セルパーミットのインポート"
 
 #: src/s63_pi.cpp:466
 msgid "Remove Permits"
-msgstr "Entferne Freigaben"
+msgstr "パーミットの削除"
 
 #: src/s63_pi.cpp:470
 msgid "Import Charts/Updates..."
-msgstr "Importiere Karten/Updates..."
+msgstr "チャートのインポート又は更新"
 
 #: src/s63_pi.cpp:487
 msgid "S63_pi Log"
-msgstr "S63_pi Log"
+msgstr "S63_pi ログ"
 
 #: src/s63_pi.cpp:502
 msgid "Keys/Permits"
-msgstr "Schlüssel/Permits"
+msgstr "キー/パーミット"
 
 #: src/s63_pi.cpp:508
 msgid "Installed S63 Certificates/Keys"
-msgstr "Installierte S63 Zertifikate/Schlüssel"
+msgstr "インストールされている S63 証明書/キー"
 
 #: src/s63_pi.cpp:516
 msgid "Certificate Name"
-msgstr "Zertifikat Name"
+msgstr "証明書名"
 
 #: src/s63_pi.cpp:539
 msgid "Import Certificate..."
-msgstr "Importiere Zertifikat..."
+msgstr "証明書をインポートするには."
 
 #: src/s63_pi.cpp:549
 msgid "UserPermit"
-msgstr "UserPermit"
+msgstr "ユーザーパーミット"
 
 #: src/s63_pi.cpp:556
 msgid "New Userpermit..."
-msgstr "Neuer UserPermit..."
+msgstr "新規ユーザーパーミット"
 
 #: src/s63_pi.cpp:563
 msgid "InstallPermit"
-msgstr "InstallPermit"
+msgstr "イストールパーミット"
 
 #: src/s63_pi.cpp:570
 msgid "New Installpermit..."
-msgstr "Neuer InstallPermit..."
+msgstr "新規インストールパーミット"
 
 #: src/s63_pi.cpp:577
 msgid "System Identification"
-msgstr "Identifikation des Systems"
+msgstr "システム識別"
 
 #: src/s63_pi.cpp:583
 msgid "Create System Identifier file..."
-msgstr "Erstelle Datei zur Identifikation des Systems..."
+msgstr "システム 識別ファイル・・・"
 
 #: src/s63_pi.cpp:728
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Wähle S63 Austausch-Verzeichnis (normal: ENC_ROOT)"
+msgstr "S63 交換セットのルート ディレクトリ (通常は ENC_ROOT) を選択します。"
 
 #: src/s63_pi.cpp:754
 msgid "Cannot find \"ENC_ROOT\" directory"
-msgstr "Ordner \"ENC_ROOT\" nicht gefunden"
+msgstr "\"ENC_ROOT\"ディレクトリが見つかりません"
 
 #: src/s63_pi.cpp:756 src/s63_pi.cpp:777 src/s63_pi.cpp:867 src/s63_pi.cpp:1104
 #: src/s63_pi.cpp:1228 src/s63_pi.cpp:1258 src/s63_pi.cpp:1429
@@ -132,7 +132,7 @@ msgstr "Ordner \"ENC_ROOT\" nicht gefunden"
 #: src/s63_pi.cpp:1951 src/s63_pi.cpp:1991 src/s63_pi.cpp:2003
 #: src/s63_pi.cpp:2020
 msgid "s63_pi Message"
-msgstr "s63_pi Nachricht"
+msgstr ""
 
 #: src/s63_pi.cpp:775
 msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
@@ -140,178 +140,161 @@ msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
 "This process may take some time.\n"
 "eSENCS not processed here will be created as needed by OpenCPN.\n\n"
 "Create eSENCs on Import?\n"
-msgstr "OpenCPN kann eSENC Dateien beim Importieren der Zellen generieren.\n\n"
-"Note:\n"
-"Dieser Prozess kann dauern. \n"
-"Nicht generierte eSENCS werden später bei Bedarf durch OpenCPN erzeugt.\n\n"
-"eSENCs beim Import erstellen? \n"
+msgstr ""
 
 #: src/s63_pi.cpp:805
 msgid "CATALOG.031 file not found in ENC_ROOT"
-msgstr "Keine Datei CATALOG.031 in ENC_ROOT"
+msgstr "CATALOG.031 ファイル ENC_ROOT が見つかりません"
 
 #: src/s63_pi.cpp:864
 msgid "Security Scheme Error\n\n"
 " SSE 10 - Permits not available for this data provider.\n"
-msgstr "SIcherheitsschema Fehler\n\n"
-" SSE 10 - Permits nicht verfügbar für diesen Karten-Händler.\n"
+msgstr ""
 
 #: src/s63_pi.cpp:885
 msgid "Creating eSenc"
-msgstr "Erzeuge eSenc"
+msgstr ""
 
 #: src/s63_pi.cpp:998
 msgid "cell: "
-msgstr "Zelle: "
+msgstr ""
 
 #: src/s63_pi.cpp:1000
 msgid " is not present in exchange set.\n"
-msgstr " ist nicht im Datensatz vorhanden.\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246 src/s63_pi.cpp:1735
 msgid "Security Scheme Error\n\n"
 "SSE 15 - Subscription service has expired.\n"
 " Please contact your data supplier to renew the subscription licence.\n\n"
-msgstr "Security Scheme Error\n\n"
-"SSE 15 - Ihr Abonnement ist abgelaufen.\n"
-" Setzen Sie sich mit Ihrem Kartenlieferanten in Verbindung, um das Abonnement zu erneuern.\n\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1096 src/s63_pi.cpp:1247
 msgid "First expired base cell name: "
-msgstr "Name der ersten ausgelaufenen Zelle: "
+msgstr ""
 
 #: src/s63_pi.cpp:1099
 msgid "Base cell edition update skipped\n"
-msgstr "Update der Basiszelle übersprungen\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1100 src/s63_pi.cpp:1254 src/s63_pi.cpp:1739
 msgid "There may be other expired permits.  However, this message will be shown once only."
-msgstr "Möglicherweise gibt es weitere abgelaufene Permits. Diese Meldung wird jedoch nur einmal gezeigt."
+msgstr ""
 
 #: src/s63_pi.cpp:1216
 msgid "Security Scheme Error\n\n"
 " SSE 23 - Non sequential update, previous update(s) missing.\n"
 "Try reloading from the base media. \n"
 " If the problem persists contact your data supplier.\n\n"
-msgstr "Sicherheitsschema Fehler\n\n"
-" SSE 23 - Kein fortlaufendes Update, vorherige(s) Update(s) fehlt.\n"
-"Versuche Neuladen von Basis Daten. \n"
-"Bleibt das Problem, bitte Karten-Händler kontaktieren.\n\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1218
 msgid "cell:"
-msgstr "Zelle:"
+msgstr ""
 
 #: src/s63_pi.cpp:1222
 #, c-format
 msgid "Latest intalled update: %d\n"
-msgstr "Letztes installiertes Update: %d\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1224 src/s63_pi.cpp:1252
 #, c-format
 msgid "Attempted update: %d\n"
-msgstr "Versuchtes Update: %d\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1250
 msgid "Cell update skipped\n"
-msgstr "Zellen Update übersprungen\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1274
 msgid "Cell update NOT authenticated\n"
-msgstr "Zellen Update NICHT authentifiziert\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1275
 msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
-msgstr "Dieses Update und alle folgenden Updates für diese Zelle werden NICHT gemacht.\n\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1409
 msgid "Select Public Key File"
-msgstr "Wähle Public Key Datei"
+msgstr "公開キー ファイルを選択します。"
 
 #: src/s63_pi.cpp:1411
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr "PUB Dateien (*.PUB)|*.PUB|txt Dateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*"
+msgstr ""
 
 #: src/s63_pi.cpp:1426 src/s63_pi.cpp:1948
 msgid "Security Scheme Error\n\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
 "A valid certificate can be obtained from the IHO website or your data supplier.\n"
-msgstr "Ein gültiges Zertifikat erhält man von der IHO Website oder Ihrem Karten-Händler.\n"
+msgstr ""
 
 #: src/s63_pi.cpp:1448
 msgid "Certificate Key imported successfully\n"
-msgstr "Zertifikat Schlüssel Import erfolgreich\n"
+msgstr "証明書キーをインポートしました。\n"
 
 #: src/s63_pi.cpp:1450
 msgid "Certificate Key import FAILED\n"
-msgstr "Zertifikat Schlüssel Import FEHLER\n"
+msgstr "証明書キーのインポートに失敗しました \n"
 
 #: src/s63_pi.cpp:1475
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
-msgstr "Bitte geben Sie einen gültigen UserPermit und InstallPermit ein (Reiter Schlüssel/Permits)"
+msgstr "「キー/パーミット」タブで有効なユーザーパーミットとインストールパーミットを入力してください。"
 
 #: src/s63_pi.cpp:1488
 msgid "Select PERMIT.TXT File"
-msgstr "Wähle PERMIT.TXT Datei"
+msgstr "PERMIT.TXT ファイルを選択"
 
 #: src/s63_pi.cpp:1490
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
-msgstr "TXT Dateien (*.TXT)|*.TXT|Alle Dateien (*.*)|*.*"
+msgstr ""
 
 #: src/s63_pi.cpp:1559
 msgid "Update all existing cell permits?"
-msgstr "Alle vorhandenen Cell Permits erneuern?"
+msgstr "既存のすべてのセルパーミットを更新しますか？。"
 
 #: src/s63_pi.cpp:1621
 msgid "Security Scheme Error\n\n"
 "SSE 11 - Cell permit not found"
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 11 - Cell permit nich gefunden"
+msgstr ""
 
 #: src/s63_pi.cpp:1659
 msgid "Security Scheme Error\n\n"
 "SSE 12 - Cell permit format is incorrect\n\n"
 "Incorrect cell permit line starts with "
-msgstr "Security Scheme Error\n\n"
-"SSE 12 - Fehlerhaftes Cell Permit Format\n\n"
-" Fehlerhafter Cell Permit in Zeile "
+msgstr ""
 
 #: src/s63_pi.cpp:1689
 msgid "Security Scheme Error\n\n"
 "SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
 "or the Cell Permit is for a different system.\n\n"
 " Invalid cell permit starts with "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 13 - Zellen Permit ist ungültig (Prüfsumme ist falsch)\n\n"
-" Falsch cell permit beginnt mit "
+msgstr ""
 
 #: src/s63_pi.cpp:1736
 msgid "First expired cell name: "
-msgstr "Name der Ersten abgelaufenen Zelle: "
+msgstr "最初の有効期限が切れたセル名: "
 
 #: src/s63_pi.cpp:1768
 msgid "Permit\n"
-msgstr "Permit\n"
+msgstr "パーミット\n"
 
 #: src/s63_pi.cpp:1770
 msgid "\n"
 "already imported.\n"
 "Would you like to replace it?"
 msgstr "\n"
-" wurde schon importiert.\n"
-"Ersetzen?"
+"すでにインポートされています \n"
+"置き換えてもよろしいですか?。"
 
 #: src/s63_pi.cpp:1833
 msgid "   Error: Cannot create "
-msgstr "   Fehler: Kann nicht erzeugen "
+msgstr "   Error: 作成できません。 "
 
 #: src/s63_pi.cpp:1926
 msgid "Security Scheme Error\n\n"
 "SSE 24 - ENC Signature format is incorrect.\n\n"
 " Cell name: "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 24 - ENC Signatur Format ist falsch.\n\n"
-" Cell nahme: "
+msgstr ""
 
 #: src/s63_pi.cpp:1987
 msgid "Security Scheme Error\n\n"
@@ -319,93 +302,85 @@ msgid "Security Scheme Error\n\n"
 "The SA may have issued a new public key or the ENC may originate from another service.\n"
 "A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
 "Cell name: "
-msgstr "Security Scheme Error\n\n"
-"SSE 06 - Das Zertifikat der SA des DataServer ist ungültig.\n"
-"Die SA hat kann eine neuen PublicKey vergeben haben oder die ENC stammt von einem anderen Service Provider.\n"
-"Sie erhalten aktuelle SA PublicKeys auf der IHO Webseite oder von Ihrem Service Provider.\n\n"
-"Zelle: "
+msgstr ""
 
 #: src/s63_pi.cpp:1999
 msgid "Security Scheme Warning\n\n"
 "SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
 "Cell name: "
-msgstr "Security Scheme Warning\n\n"
-"SSE 26 - Die ENC wurde nicht durch die IHO als die abnehmende Stelle authentifiziert.\n\n"
-"Zelle: "
+msgstr ""
 
 #: src/s63_pi.cpp:2016
 msgid "Security Scheme Error\n\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
-msgstr "Sicherheitsschema Fehler\n\n"
-"SSE 09 - ENC Signatur ist falsch.\n"
-"Cell nahme: "
+msgstr ""
 
 #: src/s63_pi.cpp:2181
 msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
-msgstr "Um einen InstallPermit zu erhalten, benötigen wir eine Datei File mit einer eindeutigen Kennung des Systems.\n"
+msgstr "インストール許可を得るには、一意なシステム識別子ファイル。 \n"
+" を生成する必要があります。"
 
 #: src/s63_pi.cpp:2182
 msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr "Diese Datei nennen wir auch \"fingerprint file\".\n"
+msgstr "このファイルはフィンガープリントファイルとして知られています \n"
 
 #: src/s63_pi.cpp:2183
 msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
-msgstr "Die Fingerprint Datei enthält Informationen, die diesen Computer eindeutig beschreiben.\n\n"
-"\n"
-""
+msgstr "フィンガープリントファイルにはこのコンピューターを一意に識別する情報が含まれています\n\n"
 
 #: src/s63_pi.cpp:2184
 msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
-msgstr "Sie benötigen das Fingerprint file, um damit im o-charts.org shop einen InstallPermit zu generieren.\n"
+msgstr ""
 
 #: src/s63_pi.cpp:2185
 msgid "Proceed to create Fingerprint file?"
-msgstr "Weiter mit der Erstellung des Fingerprint files?"
+msgstr "指紋ファイルの作成を続行しますか。"
 
 #: src/s63_pi.cpp:2187 src/s63_pi.cpp:2232 src/s63_pi.cpp:2240
 msgid "S63_PI Message"
-msgstr "S63_PI Meldung"
+msgstr "S63_PI メッセージ"
 
 #: src/s63_pi.cpp:2229
 msgid "Fingerprint file created.\n"
-msgstr "Die Fingerprintdatei wurde erstellt.\n"
+msgstr "フィンガープリントファイル作成します \n"
+"。"
 
 #: src/s63_pi.cpp:2612
 msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr "S63_pi Rück-Kanal hört nicht auf angegebenen Port!\n"
+msgstr "S63_pi バックチャンネルは、指定されたポートでリッスンできませんでした! \n"
 
 #: src/s63_pi.cpp:2616
 msgid "S63_pi backchannel server listening.\n\n"
-msgstr "S63_pi Rück-Kanal Server hört.\n\n"
+msgstr "S63_pi バックチャンネル サーバー リスニング\n\n"
 
 #: src/s63_pi.cpp:2705 src/s63_pi.cpp:2751
 msgid "Unexpected event !\n"
-msgstr "Unerwarteter Event !\n"
+msgstr "予期しないイベント! \n"
 
 #: src/s63_pi.cpp:2724
 msgid "Error: couldn't accept a new connection\n\n"
-msgstr "Fehler: keine neue Verbindung akzeptiert\n\n"
+msgstr "Error: 新しい接続を受け入れできませんでした\n\n"
 
 #: src/s63_pi.cpp:3054
 msgid "S63_pi Userpermit Required"
-msgstr "S63_pi UserPermit erforderlich"
+msgstr "S63_pi ユーザーパーミットが必要"
 
 #: src/s63_pi.cpp:3101
 msgid "Enter Userpermit"
-msgstr "Eingabe UserPermit"
+msgstr "ユーザーパーミット を入力してください。"
 
 #: src/s63_pi.cpp:3120
 msgid "Test Userpermit"
-msgstr "Teste UserPermit"
+msgstr "ユーザーパーミットをテスト"
 
 #: src/s63_pi.cpp:3125 src/s63_pi.cpp:3347
 msgid "Test Results"
-msgstr "Testergebnisse"
+msgstr "テスト結果"
 
 #: src/s63_pi.cpp:3140 src/s63_pi.cpp:3361
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr "キャンセル"
 
 #: src/s63_pi.cpp:3145 src/s63_pi.cpp:3366
 msgid "OK"
@@ -413,29 +388,29 @@ msgstr "OK"
 
 #: src/s63_pi.cpp:3179
 msgid "Userpermit invalid"
-msgstr "UserPermit ungültig"
+msgstr "ユーザーパーミットが無効"
 
 #: src/s63_pi.cpp:3187
 msgid "Userpermit OK"
-msgstr "UserPermit OK"
+msgstr "ユーザーパーミット OK"
 
 #: src/s63_pi.cpp:3302
 msgid "S63_pi Install Permit Required"
-msgstr "S-63 InstallPermit erforderlich"
+msgstr "S63_pi インストールパーミットが必要"
 
 #: src/s63_pi.cpp:3323
 msgid "Enter Installpermit"
-msgstr "Eingabe InstallPermit"
+msgstr "インストールパーミットを入力"
 
 #: src/s63_pi.cpp:3342
 msgid "Test Installpermit"
-msgstr "Teste InstallPermit"
+msgstr "インストールパーミットをテスト"
 
 #: src/s63_pi.cpp:3404
 msgid "Install permit invalid"
-msgstr "InstallPermit ungültig"
+msgstr "インストールパーミットが無効です。"
 
 #: src/s63_pi.cpp:3412
 msgid "Install permit OK"
-msgstr "InstallPermit OK"
+msgstr "インストールパーミット OK"
 
