@@ -100,7 +100,7 @@ ENDIF(UNIX)
 #TODO: Should we use  -fno-stack-protector
 #  IF NOT DEBUGGING CFLAGS="-O2 -march=native"
 IF(NOT WIN32)
- ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden" )
+ ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden -O2" )
 
  IF(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic")
@@ -110,11 +110,6 @@ IF(NOT WIN32)
  ENDIF(NOT APPLE)
 
 ENDIF(NOT WIN32)
-
-IF (ARCH MATCHES "arm*" )
- ADD_DEFINITIONS( " -O0" )
-ENDIF (ARCH MATCHES "arm*" )
-
 
 # Add some definitions to satisfy MS
 IF(WIN32)

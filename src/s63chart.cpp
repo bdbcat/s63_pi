@@ -6720,11 +6720,19 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_v
                             *pdl++ = yll;
                         }
                         // Capture bbox limits recorded in SENC record as lon/lat
-                        float xmax = *pfs++;
-                        float xmin = *pfs++;
-                        float ymax = *pfs++;
-                        float ymin = *pfs;
-
+                        float xmax, xmin, ymax, ymin;
+#ifdef ARMHF
+                        memcpy(&xmax, pfs++, sizeof(float));
+                        memcpy(&xmin, pfs++, sizeof(float));
+                        memcpy(&ymax, pfs++, sizeof(float));
+                        memcpy(&ymin, pfs++, sizeof(float));
+                        
+#else                        
+                        xmax = *pfs++;
+                        xmin = *pfs++;
+                        ymax = *pfs++;
+                        ymin = *pfs;
+#endif
                         lon_min = xmin;
                         lon_max = xmax;
                         lat_min = ymin;
