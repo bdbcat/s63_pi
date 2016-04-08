@@ -22,7 +22,7 @@ MESSAGE (STATUS "*** Building ${PACKAGE_NAME} ***")
 
 SET(VERSION_MAJOR "1")
 SET(VERSION_MINOR "4")
-SET(VERSION_PATCH "2")
+SET(VERSION_PATCH "3")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
 
@@ -316,7 +316,7 @@ IF(APPLE)
          DEPENDS ${_absFile}
          COMMENT "s63-i18n [${_poBasename}]: Created mo file."
       )
-ELSE(APPLE)        
+ELSE(APPLE)
       ADD_CUSTOM_COMMAND(
          OUTPUT ${_gmoFile}
          COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_absFile}
@@ -324,7 +324,7 @@ ELSE(APPLE)
          DEPENDS ${_absFile}
          COMMENT "s63-i18n [${_poBasename}]: Created mo file."
       )
-ENDIF(APPLE)         
+ENDIF(APPLE)
 
 
 IF(APPLE)
@@ -549,7 +549,7 @@ IF(APPLE)
 
  #  This is the apackaging app that is used
  # http://www.macupdate.com/app/mac/34613/packages
- 
+
  configure_file(${CMAKE_SOURCE_DIR}/buildosx/S63-InstallOSX/S63.pkgproj.in
             ${CMAKE_CURRENT_BINARY_DIR}/S63.pkgproj)
 

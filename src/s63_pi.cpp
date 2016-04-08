@@ -1045,11 +1045,20 @@ int s63_pi::ImportCells( void )
                 
                 
                 
-                //      Read the file, to see  if there is already a cellbase entry
+                //      Read the file, to see  if there is already a cellbase entry, and it looks OK
                 bool base_present = false;
+                bool b_force_rebuild = false;
                 for ( str = os63file.GetLastLine(); os63file.GetCurrentLine() > 0; str = os63file.GetPrevLine() ) {
                     if(str.StartsWith(_T("cellbase:"))){
                         base_present = true;
+                        wxString tfull_base_path = str.Mid(9).BeforeFirst(';');
+                        //  Base cell name may not be available, or otherwise corrupted
+                        wxFileName fn(tfull_base_path);
+                        if(fn.IsDir())                             // must be a file, not a dir
+                            b_force_rebuild = true;
+                        if(!fn.FileExists())                       // and file must exist
+                             b_force_rebuild = true;
+                        
                         break;
                     }
                 }
@@ -1076,7 +1085,13 @@ int s63_pi::ImportCells( void )
                         }
                         
                     }
-                    
+
+                    //  Somehow, the cellbase line got corrupted.
+                    //  If so, treat this as a cellbase edition update
+                    if(b_force_rebuild){
+                        base_installed_edtn = 99;
+                    }
+                        
                     //  If the exchange set contains a base cell, then...
                     if(base_file_name.Len()){
                     //  If the currently installed base EDTN is the same as the base being imported, then do nothing
@@ -1138,6 +1153,20 @@ int s63_pi::ImportCells( void )
                     }
                     
                     
+                }
+                else if(!base_file_name.Length()){
+                    wxString msg0;
+                    msg0 = _T("Error processing updates for: ") + cell_name;
+                    ScreenLogMessage( msg0 + _T("\n") );
+                    ScreenLogMessage(_T("Base cell not found in installed database\n"));
+                    ScreenLogMessage(_T("Base cell not present in exchange set\n"));
+                    ScreenLogMessage(_T("Cell update skipped\n"));
+                    wxString msg;
+                    msg = _T("s63_pi: Update failed due to missing base cell for: ") + cell_name;
+                    wxLogMessage(msg);
+                    b_error = true;
+                    break;                              // could not find a relevent base (.000) file
+                                                        // either already existing or in the exchange set.
                 }
                 else {                          // this must be an initial import
                     line = _T("cellbase:");
@@ -1355,7 +1384,7 @@ int s63_pi::ImportCells( void )
                 
             }
         }
-    }
+    }           // for, catalog unique names
         
 finish:
     if(g_pprog){

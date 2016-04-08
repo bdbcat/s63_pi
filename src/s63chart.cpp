@@ -888,7 +888,18 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         s_PI_bInS57--;
         return PI_INIT_FAIL_REMOVE;
     }
-
+    
+    //  Base cell name may not be available, or otherwise corrupted
+    wxFileName fn(m_full_base_path);
+    if(fn.IsDir()){                             // must be a file, not a dir
+        s_PI_bInS57--;
+        return PI_INIT_FAIL_REMOVE;
+    }
+    if(!fn.FileExists()){                       // and file must exist
+        s_PI_bInS57--;
+        return PI_INIT_FAIL_REMOVE;
+    }
+    
     //  Check the permit expiry date
     wxDateTime permit_date;
     wxString expiry_date = m_cell_permit.Mid(8, 8);
