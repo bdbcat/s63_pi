@@ -100,10 +100,15 @@ ENDIF(UNIX)
 #TODO: Should we use  -fno-stack-protector
 #  IF NOT DEBUGGING CFLAGS="-O2 -march=native"
 IF(NOT WIN32)
- ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden -O2" )
+ ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden" )
 
  IF(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic")
+  IF(CMAKE_BUILD_TYPE MATCHES "Debug")
+    ADD_DEFINITIONS( " -O0")
+  ELSE(NOT APPLE)
+    ADD_DEFINITIONS( " -O2")
+  ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
  ELSE(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -undefined dynamic_lookup")
   ADD_DEFINITIONS( "-Wno-overloaded-virtual" )
