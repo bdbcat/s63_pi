@@ -164,7 +164,7 @@ s63_pi::s63_pi(void *ppimgr)
            _T("PlugIns/s63_pi/OCPNsenc\"");
 #endif 
 
-      g_bSENCutil_valid = false;                // not confirmed yet     
+      g_bSENCutil_valid = false;                // not confirmed yet
 
        
       g_backchannel_port = 49500; //49152;       //ports 49152–65535 are unallocated

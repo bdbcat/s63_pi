@@ -144,10 +144,13 @@ void validate_SENC_util(void)
     
     //Will it run?
     wxArrayString ret_array;
+    wxArrayString err_array;
     ret_array.Alloc(1000);
+    err_array.Alloc(1000);
     wxString cmd = g_sencutil_bin;
+    cmd.Replace(" ", "\\ ");
     cmd += _T(" -a");                 // get version
-    long rv = wxExecute(cmd, ret_array, ret_array );
+    long rv = wxExecute(cmd, ret_array, err_array );
     
     if(0 != rv) {
         wxString msg = _("Cannot execute OCPNsenc utility at \n");
@@ -223,8 +226,9 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         
         return ret_array;
     }
-    
-    cmd.Prepend(g_sencutil_bin + _T(" "));
+    wxString exec = g_sencutil_bin;
+    exec.Replace(" ", "\\ ");
+    cmd.Prepend(exec + _T(" "));
  
     wxLogMessage( cmd );
     
