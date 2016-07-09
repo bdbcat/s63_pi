@@ -25,8 +25,11 @@ SET(VERSION_MINOR "4")
 SET(VERSION_PATCH "3")
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
-
-SET(CMAKE_BUILD_TYPE Debug)
+IF( NOT CMAKE_BUILD_TYPE )
+  SET( CMAKE_BUILD_TYPE Release CACHE STRING
+       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+       FORCE )
+ENDIF( NOT CMAKE_BUILD_TYPE )
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 IF (PREFIX)
@@ -100,10 +103,16 @@ ENDIF(UNIX)
 #TODO: Should we use  -fno-stack-protector
 #  IF NOT DEBUGGING CFLAGS="-O2 -march=native"
 IF(NOT WIN32)
- ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden -O2" )
+ ADD_DEFINITIONS( "-Wall -g -fexceptions -fvisibility=hidden" )
 
  IF(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic")
+    IF(CMAKE_BUILD_TYPE MATCHES "Debug")
+        ADD_DEFINITIONS( " -O0")
+    ELSE(CMAKE_BUILD_TYPE MATCHES "Debug")
+        ADD_DEFINITIONS( " -O2")
+    ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
+    MESSAGE (STATUS "CMAKE_BUILD_TYPE " ${CMAKE_BUILD_TYPE} )
  ELSE(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl -undefined dynamic_lookup")
   ADD_DEFINITIONS( "-Wno-overloaded-virtual" )
