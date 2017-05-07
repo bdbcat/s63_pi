@@ -54,6 +54,11 @@
 #include <GL/glu.h>
 #endif
 
+#ifdef __MSVC__
+#include <windows.h>
+#include <Shlobj.h>
+#endif
+
 //      Some PlugIn global variables
 wxString                        g_sencutil_bin;
 S63ScreenLogContainer           *g_pScreenLog;
@@ -2204,6 +2209,7 @@ void s63_pi_event_handler::OnImportCertClick( wxCommandEvent &event )
     m_parent->ImportCert();
 }
 
+#if 0
 void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 {
 
@@ -2229,7 +2235,7 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 #endif        
         
         wxString cmd;
-        cmd += _T(" -w ");                  // validate cell permit
+        cmd += _T(" -j ");                  // create XFPR
         
         cmd += _T(" -o ");
         cmd += fpr_dir;
@@ -2274,7 +2280,222 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
         m_parent->Set_FPR();
     }
 }
+#endif
 
+void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
+{
+    
+    wxString msg = _("To obtain a User Key, you must generate a unique System Identifier File.\n");
+    msg += _("This file is also known as a\"fingerprint\" file.\n");
+    msg += _("The fingerprint file contains information to uniquely identifiy this computer.\n\n");
+    msg += _("After creating this file, you will need it to obtain your User Key at the o-charts.org shop.\n\n");
+    msg += _("Proceed to create Fingerprint file?");
+    
+    int ret = OCPNMessageBox_PlugIn(NULL, msg, _("s63_PI Message"), wxYES_NO);
+    
+    if(ret == wxID_YES){
+        
+        wxString msg1;
+        wxString fpr_file;
+        wxString fpr_dir = *GetpPrivateApplicationDataLocation(); //GetWritableDocumentsDir();
+        
+        #ifdef __WXMSW__
+        
+        //  On XP, we simply use the root directory, since any other directory may be hidden
+        int major, minor;
+        ::wxGetOsVersion( &major, &minor );
+        if( (major == 5) && (minor == 1) )
+            fpr_dir = _T("C:\\");
+        #endif        
+            
+            if( fpr_dir.Last() != wxFileName::GetPathSeparator() )
+                fpr_dir += wxFileName::GetPathSeparator();
+            
+            wxString cmd;
+            cmd += _T(" -w -o ");                  // create XFPR
+            
+            #ifndef __WXMSW__
+            cmd += _T("\"");
+            cmd += fpr_dir;
+            
+            //cmd += _T("my fpr/");             // testing
+            
+            //            wxString tst_cedilla = wxString::Format(_T("my fpr copy %cCedilla/"), 0x00E7);       // testing French cedilla
+            //            cmd += tst_cedilla;            // testing
+            
+            cmd += _T("\"");
+            #else
+            cmd += wxString('\"'); 
+            cmd += fpr_dir;
+            
+            //            cmd += _T("my fpr\\");            // testing spaces in path
+            
+            //            wxString tst_cedilla = wxString::Format(_T("my%c\\"), 0x00E7);       // testing French cedilla
+            //            cmd += tst_cedilla;            // testing
+            #endif            
+            wxLogMessage(_T("Create FPR command: ") + cmd);
+            
+            ::wxBeginBusyCursor();
+            
+            
+            wxArrayString valup_result = exec_SENCutil_sync( cmd, false);
+            
+            
+//            wxArrayString ret_array;      
+//            wxExecute(cmd, ret_array, ret_array );
+            
+            ::wxEndBusyCursor();
+            
+            bool berr = false;
+            for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
+                wxString line = valup_result[i];
+                if(line.Upper().Find(_T("ERROR")) != wxNOT_FOUND){
+                    berr = true;
+                    break;
+                }
+                if(line.Upper().Find(_T("FPR")) != wxNOT_FOUND){
+                    fpr_file = line.AfterFirst(':');
+                }
+                
+            }
+            
+            bool berror = false;
+            
+            if(!berr && fpr_file.Length()){
+                
+                bool bcopy = false;
+                wxString sdesktop_path;
+                
+                #ifdef __WXMSW__
+                TCHAR desktop_path[MAX_PATH*2] = { 0 };
+                bool bpathGood = false;
+                HRESULT  hr;
+                HANDLE ProcToken = NULL;
+                OpenProcessToken( GetCurrentProcess(), TOKEN_READ, &ProcToken );
+                
+                hr = SHGetFolderPath( NULL,  CSIDL_DESKTOPDIRECTORY, ProcToken, 0, desktop_path);
+                if (SUCCEEDED(hr))    
+                    bpathGood = true;
+                
+                CloseHandle( ProcToken );
+                
+                //                wchar_t *desktop_path = 0;
+                //                bool bpathGood = false;
+                
+                //               if( (major == 5) && (minor == 1) ){             //XP
+                //                    if(S_OK == SHGetFolderPath( (HWND)0,  CSIDL_DESKTOPDIRECTORY, NULL, SHGFP_TYPE_CURRENT, desktop_path))
+                //                        bpathGood = true;
+                
+                
+                //                 }
+                //                 else{
+                    //                     if(S_OK == SHGetKnownFolderPath( FOLDERID_Desktop, 0, 0, &desktop_path))
+                //                         bpathGood = true;
+                //                 }
+                
+                
+                if(bpathGood){
+                    
+                    char str[128];
+                    wcstombs(str, desktop_path, 128);
+                    wxString desktop_fpr(str, wxConvAuto());
+                    
+                    sdesktop_path = desktop_fpr;
+                    if( desktop_fpr.Last() != wxFileName::GetPathSeparator() )
+                        desktop_fpr += wxFileName::GetPathSeparator();
+                    
+                    wxFileName fn(fpr_file);
+                    wxString desktop_fpr_file = desktop_fpr + fn.GetFullName();
+                    
+                    
+                    wxString exe = _T("xcopy");
+                    wxString parms = fpr_file.Trim() + _T(" ") + wxString('\"') + desktop_fpr + wxString('\"');
+                    wxLogMessage(_T("FPR copy command: ") + exe + _T(" ") + parms);
+                    
+                    const wchar_t *wexe = exe.wc_str(wxConvUTF8);
+                    const wchar_t *wparms = parms.wc_str(wxConvUTF8);
+                    
+                    if( (major == 5) && (minor == 1) ){             //XP
+                        // For some reason, this does not work...
+                        //8:43:13 PM: Error: Failed to copy the file 'C:\oc01W_1481247791.fpr' to '"C:\Documents and Settings\dsr\Desktop\oc01W_1481247791.fpr"'
+                        //                (error 123: the filename, directory name, or volume label syntax is incorrect.)
+                        //8:43:15 PM: oesenc fpr file created as: C:\oc01W_1481247791.fpr
+                        
+                        bcopy = wxCopyFile(fpr_file.Trim(false), _T("\"") + desktop_fpr_file + _T("\""));
+                    }
+                    else{
+                        ::wxBeginBusyCursor();
+                        
+                        // Launch oeserverd as admin
+                        SHELLEXECUTEINFO sei = { sizeof(sei) };
+                        sei.lpVerb = L"runas";
+                        sei.lpFile = wexe;
+                        sei.hwnd = NULL;
+                        sei.lpParameters = wparms;
+                        sei.nShow = SW_SHOWMINIMIZED;
+                        sei.fMask = SEE_MASK_NOASYNC;
+                        
+                        if (!ShellExecuteEx(&sei))
+                        {
+                            DWORD dwError = GetLastError();
+                            if (dwError == ERROR_CANCELLED)
+                            {
+                                // The user refused to allow privileges elevation.
+                                OCPNMessageBox_PlugIn(NULL, _("Administrator priveleges are required to copy fpr.\n  Please try again...."), _("s63_pi Message"), wxOK);
+                                berror = true;
+                            }
+                        }
+                        else
+                            bcopy = true;
+                        
+                        ::wxEndBusyCursor();
+                        
+                    }  
+                }
+                #endif            
+                #ifdef __WXOSX__
+                wxFileName fn(fpr_file);
+                wxString desktop_fpr_path = ::wxGetHomeDir() + wxFileName::GetPathSeparator() +
+                _T("Desktop") + wxFileName::GetPathSeparator() + fn.GetFullName();
+                
+                bcopy =  ::wxCopyFile(fpr_file.Trim(false), desktop_fpr_path);
+                sdesktop_path = desktop_fpr_path;
+                msg1 += _T("\n\n OSX ");
+                #endif
+                
+                
+                {
+                    msg1 += _("Fingerprint file created.\n");
+                    msg1 += fpr_file;
+                    
+                    if(bcopy)
+                        msg1 += _("\n\n Fingerprint file is also copied to desktop.");
+                    
+                    OCPNMessageBox_PlugIn(NULL, msg1, _("s63_pi Message"), wxOK);
+                }
+                
+                wxLogMessage(_T("oeSENC fpr file created as: ") + fpr_file);
+                if(bcopy)
+                    wxLogMessage(_T("oeSENC fpr file created in desktop folder: ") + sdesktop_path);
+    }
+    else{
+        wxLogMessage(_T("s63_pi: OCPNsenc results:"));
+        for(unsigned int i=0 ; i < valup_result.GetCount() ; i++){
+            wxString line = valup_result[i];
+            wxLogMessage( line );
+        }
+        OCPNMessageBox_PlugIn(NULL, _T("ERROR Creating Fingerprint file\n Check OpenCPN log file."), _("s63_pi Message"), wxOK);
+        
+        berror = true;
+    }
+    
+    g_fpr_file = fpr_file;
+    
+    if (!berror)
+        m_parent->Set_FPR();
+    
+}
+}
 
 //      Private logging functions
 void ScreenLogMessage(wxString s)
