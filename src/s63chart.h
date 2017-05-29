@@ -307,6 +307,7 @@ protected:
       
       double            m_next_safe_contour;
       bool              m_bexpired;
+      bool              m_brotated;
 
 };
 

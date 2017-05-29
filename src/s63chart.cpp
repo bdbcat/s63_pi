@@ -40,7 +40,6 @@
 #include "s63chart.h"
 #include "mygeom63.h"
 #include "cpl_csv.h"
-
 #include "pi_s52s57.h"
 
 
@@ -1273,6 +1272,7 @@ wxBitmap &ChartS63::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxRegi
 
 }
 
+
 int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint,
                           const wxRegion &Region, bool b_use_stencil )
 {
@@ -1318,28 +1318,17 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
     //    Adjust for rotation
     glPushMatrix();
 
-    if( fabs( VPoint.rotation ) > 0.01 ) {
+    if( fabs( VPoint.rotation ) > 0.01 ) 
+        m_brotated = true;
+    else
+        m_brotated = false;
 
-        double w = VPoint.pix_width;
-        double h = VPoint.pix_height;
-
-        //    Rotations occur around 0,0, so calculate a post-rotate translation factor
-        double angle = VPoint.rotation;
-        angle -= VPoint.skew;
-
-        double ddx = ( w * cos( -angle ) - h * sin( -angle ) - w ) / 2;
-        double ddy = ( h * cos( -angle ) + w * sin( -angle ) - h ) / 2;
-
-        glRotatef( angle * 180. / PI, 0, 0, 1 );
-
-        glTranslatef( ddx, ddy, 0 );                 // post rotate translation
-    }
 
     //    Arbitrary optimization....
     //    It is cheaper to draw the entire screen if the rectangle count is large,
     //    as is the case for CM93 charts with non-rectilinear borders
     //    However, most (all?) pan operations on "normal" charts will be small rect count
-    if( n_rect < 4 ) {
+    if(( n_rect < 4 ) && (!m_brotated)){
         wxRegionIterator upd( Region ); // get the Region rect list
         while( upd.HaveRects() ) {
             wxRect rect = upd.GetRect();
@@ -1363,19 +1352,13 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
             if( temp_lon_right < temp_lon_left )        // presumably crossing Greenwich
                 temp_lon_right += 360.;
 
-//            double   lat_min, lat_max, lon_min, lon_max;
             
             temp_vp.lat_min = temp_lat_bot;
             temp_vp.lat_max = temp_lat_top;
             temp_vp.lon_min = temp_lon_left;
             temp_vp.lon_max = temp_lon_right;
 
-            //      Allow some slop in the viewport
-            //            double margin = wxMin(temp_vp.GetBBox().GetWidth(), temp_vp.GetBBox().GetHeight()) * 0.05;
-            //            temp_vp.GetBBox().EnLarge(margin);
-
-
-//            SetClipRegionGL( glc, temp_vp, rect, true /*!b_overlay*/, b_use_stencil );
+            //SetClipRegionGL( glc, temp_vp, rect, true /*!b_overlay*/, b_use_stencil );
             DoRenderRectOnGL( glc, temp_vp, rect, b_use_stencil);
 
             upd++;
@@ -1391,30 +1374,26 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
         double temp_lon_left, temp_lat_bot, temp_lon_right, temp_lat_top;
 
         wxPoint p;
-        p.x = rect.x;
-        p.y = rect.y;
+        p.x = VPoint.rv_rect.x;
+        p.y =  VPoint.rv_rect.y;
         GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_top, &temp_lon_left);
         
-        p.x += rect.width;
-        p.y += rect.height;
+        p.x +=  VPoint.rv_rect.width;
+        p.y +=  VPoint.rv_rect.height;
         GetCanvasLLPix( (PlugIn_ViewPort *)&VPoint, p, &temp_lat_bot, &temp_lon_right);
-        
+
         if( temp_lon_right < temp_lon_left )        // presumably crossing Greenwich
                 temp_lon_right += 360.;
-        
- //       double   lat_min, lat_max, lon_min, lon_max;
         
         temp_vp.lat_min = temp_lat_bot;
         temp_vp.lat_max = temp_lat_top;
         temp_vp.lon_min = temp_lon_left;
         temp_vp.lon_max = temp_lon_right;
         
-        //      Allow some slop in the viewport
-        //            double margin = wxMin(temp_vp.GetBBox().GetWidth(), temp_vp.GetBBox().GetHeight()) * 0.05;
-        //            temp_vp.GetBBox().EnLarge(margin);
+        wxRect rrot = VPoint.rv_rect;
 
-        SetClipRegionGL( glc, VPoint, Region, true /*!b_overlay*/, b_use_stencil );
-        DoRenderRectOnGL( glc, temp_vp, rect, b_use_stencil );
+       
+        DoRenderRectOnGL( glc, temp_vp, rrot, b_use_stencil );
 
     }
 //      Update last_vp to reflect current state
@@ -1599,6 +1578,8 @@ void ChartS63::SetClipRegionGL( const wxGLContext &glc, const PlugIn_ViewPort& V
 #endif
 }
 
+
+
 bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& VPoint, wxRect &rect, bool b_useStencil )
 {
 #ifdef ocpnUSE_GL
@@ -1626,7 +1607,12 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
         glEnable( GL_STENCIL_TEST );
     else
         glEnable( GL_DEPTH_TEST );
+    
+    glDepthFunc( GL_GEQUAL );
 
+    int dft;
+    glGetIntegerv(GL_DEPTH_FUNC, &dft);
+    
     //      Render the areas quickly
     for( i = 0; i < PRIO_NUM; ++i ) {
 //        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES ) 
@@ -1634,14 +1620,42 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
 //        else
             top = razRules[i][3];           // Area Plain Boundaries
 
+        
         while( top != NULL ) {
             crnt = top;
             top = top->next;               // next object
+
+            if(m_brotated)
+                glPushMatrix();
+
+            glDepthFunc( GL_GEQUAL );
             PI_PLIBRenderAreaToGL( glc, crnt, &tvp, rect );
             
+            if(m_brotated){
+                // There is a bug in OCPN 4.6 and prior in GLAP().
+                // The clip region and parameters is corrupted rendering patterns.
+                // We detect this case here, and reset the clip rectangle to the
+                // proper (rv_rect) expanded value.
+                //  Be careful in debugging.... GLAP only gets hit in category STANDARD and above.
+                
+                int df;
+                glGetIntegerv(GL_DEPTH_FUNC, &df);
+                
+                if(df != dft){
+                    glPopMatrix();
+                    SetClipRegionGL( glc, VPoint, rect, false, b_useStencil );
+                    glPushMatrix();
+                    glDepthFunc( GL_GEQUAL );
+                }
+                
+           }
+            
+            if(m_brotated)
+                glPopMatrix();
         }
     }
 
+    
     //    Render the lines and points
     for( i = 0; i < PRIO_NUM; ++i ) {
 //        if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
