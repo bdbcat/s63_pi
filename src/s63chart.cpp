@@ -242,7 +242,16 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     bool bsuppress_last = g_bsuppress_log;
     g_bsuppress_log = !bshowlog;
     
-    long rv = wxExecute(cmd, ret_array, ret_array );
+    int flags = wxEXEC_SYNC;
+#ifdef __WXMSW__
+    //  If windows, we want to avoid disabling the currently active dialog.
+    //  Reason:  the wxExecute call yields after disabling the dialog UI, and
+    //  each yield seems to be recursive, so consuming GUI resources greatly
+    //  until the next full yield() and the event queue drains.
+    flags += wxEXEC_NODISABLE;
+#endif    
+    
+    long rv = wxExecute(cmd, ret_array, ret_array, flags );
     
     g_bsuppress_log = bsuppress_last;
     

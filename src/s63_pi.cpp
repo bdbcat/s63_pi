@@ -892,6 +892,8 @@ int s63_pi::ImportCells( void )
     }
 #endif    
 
+    m_buttonImportCells->Disable();
+    m_buttonImportPermit->Disable();
 
     for(unsigned int iloop=0 ; iloop < unique_cellname_array.Count() ; iloop++){
         m_s63chartPanelWin->Refresh();
@@ -900,8 +902,7 @@ int s63_pi::ImportCells( void )
         s_PI_bInS57 ++;     
         ::wxYield();
         s_PI_bInS57 --;     
-        
-         
+
         wxStopWatch il_timer;
         if(bSENC){
             if(g_pprog){
@@ -1128,6 +1129,7 @@ int s63_pi::ImportCells( void )
                                     wxLogMessage(_T("s63_pi: ") + msg);
                                     ScreenLogMessage(_T("SSE 15 – Subscription service has expired.\n\n") );
                                     ScreenLogMessage(_T("Base cell edition update skipped\n"));
+                                    
                                     
                                     continue;
                                 }
@@ -1405,6 +1407,9 @@ finish:
     else
         ScreenLogMessage(_T("Finished Cell Update,  ERRORS encountered\n"));
     
+    m_buttonImportCells->Enable();
+    m_buttonImportPermit->Enable();
+    
     wxString mm;
     mm = _T("Total import time: ");
     wxTimeSpan dt(0,0,0,sw_import.Time());
@@ -1605,6 +1610,9 @@ int s63_pi::ImportCellPermits(void)
     }
     
 
+    m_buttonImportCells->Disable();
+    m_buttonImportPermit->Disable();
+    
     //  If I mean "yes to all", then there should be no confirmation dialogs.
     b_existing_query = !b_yes_to_all;
     
@@ -1645,7 +1653,7 @@ int s63_pi::ImportCellPermits(void)
                 }
                 else
                     line = permit_file.GetNextLine();
-
+                
             }
         }
     }
@@ -1663,6 +1671,9 @@ over_loop:
     wxString msg = _T("Cellpermit import complete.\n\n");
     ScreenLogMessage( msg );
 
+    m_buttonImportCells->Enable();
+    m_buttonImportPermit->Enable();
+    
     //  Set status
     
     if(m_permit_list){
