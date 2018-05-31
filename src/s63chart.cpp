@@ -710,6 +710,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 {
     wxString ehdr_file_name = Get_eHDR_Name( name000 );
 
+#if 0    
     //  If required, build a temp file of update file array
     
     wxString tmp_up_file = wxFileName::CreateTempFileName( _T("") );
@@ -724,7 +725,8 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
         up_file.Write();
         up_file.Close();
     }
-        
+#endif
+
     //  Make sure the S63SENC directory exists    
     wxFileName ehdrfile( ehdr_file_name );
         //      Make the target directory if needed
@@ -772,14 +774,20 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += g_s57data_dir;
     cmd += _T("\"");
 
-   
+#if 0   
     if( m_up_file_array.GetCount() ){
         cmd += _T(" -m ");
         cmd += _T("\"");
         cmd += tmp_up_file;
         cmd += _T("\"");
     }
-      
+#endif
+
+    cmd += _T(" -g ");
+    cmd += _T("\"");
+    cmd += m_FullPath;
+    cmd += _T("\"");
+    
     cmd += _T(" -z ");
     cmd += _T("\"");
     cmd += g_pi_filename;
@@ -898,6 +906,10 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
         s_PI_bInS57--;
         return PI_INIT_FAIL_REMOVE;
     }
+    
+    // Craft the m_SE field
+    m_SE.Printf(_T("%d/%d"),m_base_edtn, m_latest_update);
+    
     
     //  os63 file is a placeholder, cells have not been imported yet.
     if( !m_full_base_path.Len() ){
@@ -2724,7 +2736,8 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
         g_pInfo->Center();
 #endif        
     }
-    
+
+#if 0    
     //  Build the array of update filenames into a temporary file
     wxString tmp_up_file = wxFileName::CreateTempFileName( _T("") );
     wxTextFile up_file(tmp_up_file);
@@ -2738,7 +2751,8 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
         up_file.Write();
         up_file.Close();
     }
-    
+#endif
+
     wxFileName SENCfile( SENCFileName );
     //      Make the target directory if needed
     if( true != wxFileName::DirExists( SENCfile.GetPath() ) ) {
@@ -2785,13 +2799,21 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T("\"");
     cmd += g_s57data_dir;
     cmd += _T("\"");
-    
+
+#if 0    
     if( m_up_file_array.GetCount() ){
         cmd += _T(" -m ");
         cmd += _T("\"");
         cmd += tmp_up_file;
         cmd += _T("\"");
     }
+#endif
+
+    cmd += _T(" -g ");
+    cmd += _T("\"");
+    cmd += m_FullPath;
+    cmd += _T("\"");
+    
     
     cmd += _T(" -z ");
     cmd += _T("\"");
@@ -3341,7 +3363,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
             upd.ResetTime();
             m_EdDate = upd;
             
-            m_SE = m_edtn000;
+            //m_SE = m_edtn000;
             m_datum_str = _T("WGS84");
             
             m_SoundingsDatum = _T("MEAN LOWER LOW WATER");
@@ -6677,20 +6699,20 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_v
                         Primitive_type = GEO_POINT;
 
                         char tbuf[40];
-                        float point_ref_lat, point_ref_lon;
-                        sscanf( buf, "%s %f %f", tbuf, &point_ref_lat, &point_ref_lon );
+                        double point_ref_lat, point_ref_lon;
+                        sscanf( buf, "%s %lf %lf", tbuf, &point_ref_lat, &point_ref_lon );
 
                         py_fgets( buf, MAX_LINE, fpx );
                         int wkb_len = atoi( buf + 2 );
                         fpx->Read( buf, wkb_len );
 
-                        float easting, northing;
+                        double easting, northing;
                         npt = 1;
-                        float *pfs = (float *) ( buf + 5 );                // point to the point
+                        double *pfs = (double *) ( buf + 5 );                // point to the point
 #ifdef ARMHF
-                        float east, north;
-                        memcpy(&east, pfs++, sizeof(float));
-                        memcpy(&north, pfs, sizeof(float));
+                        double east, north;
+                        memcpy(&east, pfs++, sizeof(double));
+                        memcpy(&north, pfs, sizeof(double));
                         easting = east;
                         northing = north;
 #else
