@@ -4958,9 +4958,13 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
 #endif            
             if( GEO_POINT == current->Primitive_type ) {
                 double lon, lat;
-                fromSM_Plugin( ( current->x * current->x_rate ) + current->x_origin,
-                        ( current->y * current->y_rate ) + current->y_origin, m_ref_lat,
-                        m_ref_lon, &lat, &lon );
+//                fromSM_Plugin( ( current->x * current->x_rate ) + current->x_origin,
+//                        ( current->y * current->y_rate ) + current->y_origin, m_ref_lat,
+//                        m_ref_lon, &lat, &lon );
+                
+                // Use the m_lat/m_lon directly, since S63 chart type does not use offset/rate class members.
+                lon = current->m_lon;
+                lat = current->m_lat;
                 
                 if( lon > 180.0 ) lon -= 360.;
                 
