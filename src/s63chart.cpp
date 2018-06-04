@@ -3715,12 +3715,14 @@ void ChartS63::SetLinePriorities( void )
             }
 
     //    In the interest of speed, choose only the one necessary area boundary style index
-            int j;
-            if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
-                j = 4;
-            else
-            j = 3;
+//            int j;
+//             if( PI_GetPLIBBoundaryStyle() == SYMBOLIZED_BOUNDARIES )
+//                 j = 4;
+//             else
+//            j = 3;
     
+        // In s63_pi, we always use only the object array index "3", repopulating as necessary.
+            int j = 3;
             obj = razRules[i][j];           
             while( obj != NULL ) {
                 PI_PLIBSetLineFeaturePriority( obj, i );
