@@ -637,7 +637,7 @@ void s63_pi::OnSetupOptions(){
 
 void s63_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
 {
-    m_up_text = NULL;
+//    m_up_text = NULL;
     
     if(g_pPanelScreenLog){
         g_pPanelScreenLog->Close();
