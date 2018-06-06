@@ -1330,9 +1330,12 @@ int s63_pi::ImportCells( void )
                 nproc++;
                
                 //  Add the chart(cell) to the OCPN database
-                ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
+                //ScreenLogMessage(_T("Adding cell to database: ") + os63_filename + _T("\n"));
                 
-                int rv_add = AddChartToDBInPlace( os63_filename, false );
+                int rv_add = true;
+                // Add one chart to the database, in order to get the proper chart search directory added to the dB
+                if( nproc == 1 )
+                    AddChartToDBInPlace( os63_filename, false );
                 if(!rv_add) {
                     ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n\n"));
                     b_error = true;
@@ -1342,9 +1345,9 @@ int s63_pi::ImportCells( void )
 //                    return rv;
                 }
                 else {
-                    wxString msgs;
-                    msgs.Printf(_T("Cell added successfully  (%d/%d)\n"), iloop, unique_cellname_array.Count() );
-                    ScreenLogMessage(msgs);
+                    //wxString msgs;
+                    //msgs.Printf(_T("Cell added successfully  (%d/%d)\n"), iloop, unique_cellname_array.Count() );
+                    //ScreenLogMessage(msgs);
                     
                     //  Build the eSENC inline, if requested
                     if(bSENC){
@@ -1424,6 +1427,8 @@ finish:
     
     for(unsigned int i=0 ; i < g_logarray.GetCount() ; i++)
         ScreenLogMessage(g_logarray.Item(i));
+    
+    ForceChartDBUpdate();
     
     return 0;
 }
