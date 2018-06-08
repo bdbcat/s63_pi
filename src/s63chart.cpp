@@ -67,7 +67,8 @@ extern bool             g_brendered_expired;
 
 extern bool             g_b_validated;
 extern bool             g_bSENCutil_valid;
-    
+extern bool             g_bLogActivity;
+
 int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
 InfoWin                 *g_pInfo;
@@ -260,7 +261,12 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         ret_array.Add(cmd.Mid(0, 60) + _T("...") + _T("\n"));
         s_last_sync_error = _T("NOEXEC");
     }
-        
+    
+    if(g_bLogActivity){
+        for(unsigned int i = 0 ; i < ret_array.GetCount() ; i++)
+            wxLogMessage(ret_array[i]);     
+    }
+    
     return ret_array;
 }
 

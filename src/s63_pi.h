@@ -84,6 +84,7 @@ public:
     void OnNewInstallpermitClick( wxCommandEvent& event );    
     void OnImportCertClick( wxCommandEvent &event );
     void OnNewFPRClick( wxCommandEvent &event );
+    void OncbLogClick( wxCommandEvent &event );
     
     s63_pi  *m_parent;
 };
@@ -181,6 +182,7 @@ private:
     wxButton            *m_buttonImportCells;
     wxButton            *m_buttonNewIP;
     wxButton            *m_buttonNewFPR;
+    wxCheckBox          *m_cbLog;
     
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;

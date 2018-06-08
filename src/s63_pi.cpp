@@ -90,6 +90,7 @@ bool                            g_brendered_expired;
 bool                            g_bnoShow_sse25;
 
 wxString                        g_fpr_file;
+bool                            g_bLogActivity;
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -474,6 +475,9 @@ void s63_pi::OnSetupOptions(){
 
     m_buttonImportCells = new wxButton( m_s63chartPanelWin, wxID_ANY, _("Import Charts/Updates..."), wxDefaultPosition, wxDefaultSize, 0 );
     bSizer18->Add( m_buttonImportCells, 0, wxALL, 5 );
+
+    m_cbLog = new wxCheckBox( m_s63chartPanelWin, wxID_ANY, _("Log Activity"), wxDefaultPosition, wxDefaultSize, 0 );
+    bSizer18->Add( m_cbLog, 0, wxALL, 5 );
     
     bSizer17->Add( bSizer18, 0, wxEXPAND, 5 );
     sbSizerLB->Add( bSizer17, 1, wxEXPAND, 5 );
@@ -628,6 +632,9 @@ void s63_pi::OnSetupOptions(){
     m_buttonNewFPR->Connect( wxEVT_COMMAND_BUTTON_CLICKED,
                             wxCommandEventHandler(s63_pi_event_handler::OnNewFPRClick), NULL, m_event_handler );
     
+
+    m_cbLog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED,
+                             wxCommandEventHandler(s63_pi_event_handler::OncbLogClick), NULL, m_event_handler );
     
     g_benable_screenlog = true;
     
@@ -2225,6 +2232,11 @@ void s63_pi_event_handler::OnImportCertClick( wxCommandEvent &event )
     m_parent->ImportCert();
 }
 
+void s63_pi_event_handler::OncbLogClick( wxCommandEvent &event )
+{
+    g_bLogActivity = event.IsChecked();
+}
+
 #if 0
 void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 {
@@ -2516,6 +2528,9 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 //      Private logging functions
 void ScreenLogMessage(wxString s)
 {
+    if(g_bLogActivity)
+        wxLogMessage(s);
+        
     if(!g_benable_screenlog)
         return;
     
