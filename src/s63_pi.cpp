@@ -810,6 +810,7 @@ int s63_pi::ImportCells( void )
         }
     }
     
+    bool bDirAdded = false;
     
     // Read and parse the CATALOG.031
     wxString cat_file = enc_root_dir + wxFileName::GetPathSeparator() + _T("CATALOG.031");
@@ -825,6 +826,7 @@ int s63_pi::ImportCells( void )
         
     m_catalog = CreateCatalog31(cat_file);
 
+   
     //  Make a list of all the unique cell names appearing in the exchange set
     for(unsigned int i=0 ; i < m_catalog->Count() ; i++){
         wxString file = m_catalog->Item(i).m_filename;
@@ -1341,8 +1343,8 @@ int s63_pi::ImportCells( void )
                 
                 int rv_add = true;
                 // Add one chart to the database, in order to get the proper chart search directory added to the dB
-                if( nproc == 1 )
-                    AddChartToDBInPlace( os63_filename, false );
+                if( !bDirAdded )
+                    bDirAdded |= (AddChartToDBInPlace( os63_filename, false ) > 0);
                 if(!rv_add) {
                     ScreenLogMessage(_T("   Error adding cell to database: ") + os63_filename + _T("\n\n"));
                     b_error = true;
@@ -2528,6 +2530,9 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 //      Private logging functions
 void ScreenLogMessage(wxString s)
 {
+    if(s.IsEmpty())
+        return;
+    
     if(g_bLogActivity)
         wxLogMessage(s);
         
@@ -2934,6 +2939,9 @@ void S63ScreenLog::OnSize( wxSizeEvent& event)
 
 void S63ScreenLog::LogMessage(wxString &s)
 {
+    if(s.IsEmpty())
+        return;
+        
     if( m_plogtc  ) {
         wxString seq;
         seq.Printf(_T("%6d: "), m_nseq++);
@@ -3388,7 +3396,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetUserpermitDialog, wxDialog )
      wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _T(""),
      wxDefaultPosition, wxDefaultSize, 0 );
      itemStaticBoxSizer4->Add( itemStaticText5, 0,
-                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 5 );
+                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP, 5 );
      
      m_PermitCtl = new wxTextCtrl( itemDialog1, ID_GETUP_UP, _T(""), wxDefaultPosition,
      wxSize( 180, -1 ), 0 );
@@ -3610,7 +3618,7 @@ IMPLEMENT_DYNAMIC_CLASS( GetInstallpermitDialog, wxDialog )
      wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _T(""),
      wxDefaultPosition, wxDefaultSize, 0 );
      itemStaticBoxSizer4->Add( itemStaticText5, 0,
-                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 5 );
+                               wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP, 5 );
      
      m_PermitCtl = new wxTextCtrl( itemDialog1, ID_GETIP_IP, _T(""), wxDefaultPosition,
      wxSize( 180, -1 ), 0 );
