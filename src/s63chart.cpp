@@ -2234,60 +2234,64 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
             PI_S57ObjX *obj = new PI_S57ObjX( buf, &fpx, senc_file_version);
             if( !strncmp( obj->FeatureName, "M_COVR", 6 ) ){
 
-                wxString catcov_str = obj->GetAttrValueAsString( "CATCOV" );
-                long catcov = 0;
-                catcov_str.ToLong( &catcov );
-    
-                double area_ref_lat, area_ref_lon;
-                ((PolyTessGeo *)obj->pPolyTessGeo)->GetRefPos( &area_ref_lat, &area_ref_lon );
-                
-                //      Get the raw geometry from the PolyTessGeo
-                PolyTriGroup *pptg = ((PolyTessGeo *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
-            
-                float *ppolygeo = pptg->pgroup_geom;
-            
-                int ctr_offset = 0;
-                
-                // We use only the first contour, which is by definition the external ring of the M_COVR feature
-                int ic = 0;
-                {
-                    int npt = pptg->pn_vertex[ic];
+                if(obj->pPolyTessGeo){
+                    wxString catcov_str = obj->GetAttrValueAsString( "CATCOV" );
+                    long catcov = 0;
+                    catcov_str.ToLong( &catcov );
+        
+                    double area_ref_lat, area_ref_lon;
+                    ((PolyTessGeo *)obj->pPolyTessGeo)->GetRefPos( &area_ref_lat, &area_ref_lon );
                     
-                    if( npt >= 3 ) {
-                        float *pf = (float *) malloc( 2 * npt * sizeof(float) );
-                        float *pfr = pf;
-                       float *pfi = &ppolygeo[ctr_offset];
-                        float *pfir = pfi;
+                    //      Get the raw geometry from the PolyTessGeo
+                    PolyTriGroup *pptg = ((PolyTessGeo *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
+                
+                    float *ppolygeo = pptg->pgroup_geom;
+                
+                    int ctr_offset = 0;
+                    
+                    // We use only the first contour, which is by definition the external ring of the M_COVR feature
+                    int ic = 0;
+                    {
+                        int npt = pptg->pn_vertex[ic];
                         
-                        for( int ip = 0; ip < npt; ip++ ) {
-                            float easting = *pfir++;
-                            float northing = *pfir++;
+                        if( npt >= 3 ) {
+                            float *pf = (float *) malloc( 2 * npt * sizeof(float) );
+                            float *pfr = pf;
+                        float *pfi = &ppolygeo[ctr_offset];
+                            float *pfir = pfi;
                             
-                            //      Geom is is SM coords, so convert to lat/lon
-                            double xll, yll;
-                            fromSM_Plugin( easting, northing, m_ref_lat, m_ref_lon, &yll, &xll );
-                            
-                            //          Now store in chart cover array members
-                            pfr[0] = yll;             // lat
-                            pfr[1] = xll;             // lon
-                            
-                            pfr += 2;
-                                                 
-                        }
+                            for( int ip = 0; ip < npt; ip++ ) {
+                                float easting = *pfir++;
+                                float northing = *pfir++;
+                                
+                                //      Geom is is SM coords, so convert to lat/lon
+                                double xll, yll;
+                                fromSM_Plugin( easting, northing, m_ref_lat, m_ref_lon, &yll, &xll );
+                                
+                                //          Now store in chart cover array members
+                                pfr[0] = yll;             // lat
+                                pfr[1] = xll;             // lon
+                                
+                                pfr += 2;
+                                                    
+                            }
 
-                        
-                        if( catcov == 1 ) {
-                            pAuxPtrArray->Add( pf );
-                            pAuxCntArray->Add( npt );
-                        }
-                        else if( catcov == 2 ){
-                            pNoCovrPtrArray->Add( pf );
-                            pNoCovrCntArray->Add( npt );
+                            
+                            if( catcov == 1 ) {
+                                pAuxPtrArray->Add( pf );
+                                pAuxCntArray->Add( npt );
+                            }
+                            else if( catcov == 2 ){
+                                pNoCovrPtrArray->Add( pf );
+                                pNoCovrCntArray->Add( npt );
+                            }
                         }
                     }
                 }
+                else
+                    int yyp = 4;
             }
-                
+                 
         }               //OGRF
         
         
