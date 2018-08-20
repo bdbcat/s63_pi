@@ -3017,7 +3017,11 @@ void S63ScreenLog::OnServerEvent(wxSocketEvent& event)
     sock->SetEventHandler(*this, SOCKET_ID);
     sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
     sock->Notify(true);
+#ifdef __WXGTK__
+    sock->SetFlags(wxSOCKET_NONE);
+#else    
     sock->SetFlags(wxSOCKET_BLOCK);
+#endif    
     
     
 }
