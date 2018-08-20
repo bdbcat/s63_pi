@@ -40,10 +40,10 @@
 #include "TexFont.h"
 
 #define     PLUGIN_VERSION_MAJOR    1
-#define     PLUGIN_VERSION_MINOR    11
+#define     PLUGIN_VERSION_MINOR    12
 
 #define     MY_API_VERSION_MAJOR    1
-#define     MY_API_VERSION_MINOR    12
+#define     MY_API_VERSION_MINOR    11
 
 #include "ocpn_plugin.h"
 
