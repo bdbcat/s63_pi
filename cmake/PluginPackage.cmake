@@ -151,11 +151,19 @@ INCLUDE(CPack)
 IF(APPLE)
 
  #  Copy a few generic files so the Packages installer builder can find them relative to ${CMAKE_CURRENT_BINARY_DIR}
- #  This avoids absolute paths in the chartdldr_pi.pkgproj file
+ #  This avoids absolute paths in the ?_pi.pkgproj file
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/gpl.txt ${CMAKE_CURRENT_BINARY_DIR}/license.txt COPYONLY)
 
 configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/pkg_background.jpg ${CMAKE_CURRENT_BINARY_DIR}/pkg_background.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-cz.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-cz.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-it.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-it.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_erklaert-0_4.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_erklaert-0_4.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-es.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-es.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-nl.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-nl.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-0_4en.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-0_4en.rtf COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-fr.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-fr.rtf COPYONLY)
 
             
   # This is a bit of a hack...
