@@ -2240,10 +2240,11 @@ bool ChartS63::InitFrom_ehdr( wxString &efn )
                     catcov_str.ToLong( &catcov );
         
                     double area_ref_lat, area_ref_lon;
-                    ((PolyTessGeo *)obj->pPolyTessGeo)->GetRefPos( &area_ref_lat, &area_ref_lon );
+                    area_ref_lat = ((PolyTessGeo63 *)obj->pPolyTessGeo)->m_ref_lat; 
+                    area_ref_lon = ((PolyTessGeo63 *)obj->pPolyTessGeo)->m_ref_lon; 
                     
                     //      Get the raw geometry from the PolyTessGeo
-                    PolyTriGroup *pptg = ((PolyTessGeo *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
+                    PolyTriGroup *pptg = ((PolyTessGeo63 *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
                 
                     float *ppolygeo = pptg->pgroup_geom;
                 
@@ -3128,6 +3129,8 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                 
                 //      Ensure that Area objects actually describe a valid object
                 if( GEO_AREA == obj->Primitive_type ) {
+                    int yyp = 4;
+                    
                     //                    if( !obj->BBObj.GetValid() ) {
                         //                        delete obj;
                         //                        continue;
@@ -4275,6 +4278,7 @@ int ChartS63::DCRenderRect( wxMemoryDC& dcinput, const PlugIn_ViewPort& vp, wxRe
                 while( top != NULL ) {
                     crnt = top;
                     top = top->next;               // next object
+                    PolyTessGeo63 *ppt = (PolyTessGeo63 *)crnt->pPolyTessGeo;
                     PI_PLIBRenderAreaToDC( &dcinput, crnt, &tvp, *rect, pixbuf );
                 }
     }
@@ -4579,7 +4583,7 @@ bool ChartS63::IsPointInObjArea( float lat, float lon, float select_radius, PI_S
     
     if( obj->pPolyTessGeo ) {
         
-        PolyTriGroup *ppg = ((PolyTessGeo *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
+        PolyTriGroup *ppg = ((PolyTessGeo63 *)obj->pPolyTessGeo)->Get_PolyTriGroup_head();
         
         TriPrim *pTP = ppg->tri_prim_head;
         
@@ -5085,7 +5089,7 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
         // For lights we now have all the info gathered but no HTML output yet, now
         // run through the data and build a merged table for all lights.
         
-        lights.Sort( ( CMPFUNC_wxObjArrayArrayOfLights )( &CompareLights ) );
+        lights.Sort( /*( CMPFUNC_wxObjArrayArrayOfLights )*/( &CompareLights ) );
         
         wxString lastPos;
         
@@ -6363,7 +6367,7 @@ PI_S57Obj::~PI_S57Obj()
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
 
-        if( pPolyTessGeo ) delete (PolyTessGeo*)pPolyTessGeo;
+        if( pPolyTessGeo ) delete (PolyTessGeo63*)pPolyTessGeo;
         
 //        if(S52_Context) delete (S52PLIB_Context *)S52_Context;
         
@@ -6448,7 +6452,7 @@ PI_S57ObjX::~PI_S57ObjX()
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
 
-        if( pPolyTessGeo ) delete (PolyTessGeo*)pPolyTessGeo;
+        if( pPolyTessGeo ) delete (PolyTessGeo63*)pPolyTessGeo;
         
         if( m_lsindex_array ) free( m_lsindex_array );
     }
@@ -6945,7 +6949,7 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_v
                             char *polybuf = (char *) malloc( nrecl + 1 );
                             fpx->Read( polybuf, nrecl );
                             polybuf[nrecl] = 0;                     // endit
-                            PolyTessGeo *ppg = new PolyTessGeo( (unsigned char *)polybuf, nrecl, FEIndex, senc_file_version );
+                            PolyTessGeo63 *ppg = new PolyTessGeo63( (unsigned char *)polybuf, nrecl, FEIndex, senc_file_version );
                             free( polybuf );
 
                             pPolyTessGeo = (void *)ppg;

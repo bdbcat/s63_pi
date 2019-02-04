@@ -270,7 +270,7 @@ Extended_Geometry::~Extended_Geometry()
 //------------------------------------------------------------------------------
 //          PolyTessGeo Implementation
 //------------------------------------------------------------------------------
-PolyTessGeo::PolyTessGeo()
+PolyTessGeo63::PolyTessGeo63()
 {
 }
 
@@ -315,7 +315,7 @@ ErrorCode = PolyTessGeoTri(poly, bSENC_SM, ref_lat, ref_lon);
 
 
 //      Build PolyGeo Object from SENC file record
-PolyTessGeo::PolyTessGeo(unsigned char *polybuf, int nrecl, int index,  int senc_file_version)
+PolyTessGeo63::PolyTessGeo63(unsigned char *polybuf, int nrecl, int index,  int senc_file_version)
 {
 #define POLY_LINE_HDR_MAX 1000
 //      Todo Add a try/catch set here, in case SENC file is corrupted??
@@ -481,6 +481,7 @@ PolyTessGeo::PolyTessGeo(unsigned char *polybuf, int nrecl, int index,  int senc
 
     free(buf);
 
+    ErrorCode = 0;
     m_bOK = true;
 
 }
@@ -1110,7 +1111,7 @@ int PolyTessGeo::Write_PolyTriGroup( wxOutputStream &out_stream)
 
 #endif
 
-int PolyTessGeo::my_bufgets( char *buf, int buf_len_max )
+int PolyTessGeo63::my_bufgets( char *buf, int buf_len_max )
 {
     char        chNext;
     int         nLineLen = 0;
@@ -1144,7 +1145,7 @@ int PolyTessGeo::my_bufgets( char *buf, int buf_len_max )
 
 
 
-PolyTessGeo::~PolyTessGeo()
+PolyTessGeo63::~PolyTessGeo63()
 {
 
     delete  m_ppg_head;
@@ -1159,7 +1160,7 @@ PolyTessGeo::~PolyTessGeo()
 
 }
 
-int PolyTessGeo::BuildDeferredTess(void)
+int PolyTessGeo63::BuildDeferredTess(void)
 {
 #ifdef USE_GLU_TESS
     return BuildTessGL();
@@ -1169,13 +1170,13 @@ int PolyTessGeo::BuildDeferredTess(void)
 }
 
 
-void PolyTessGeo::GetRefPos( double *lat, double *lon)
-{
-    if(lat)
-        *lat = m_ref_lat;
-    if(lon)
-        *lon = m_ref_lon;
-}
+// void PolyTessGeo::GetRefPos( double *lat, double *lon)
+// {
+//     if(lat)
+//         *lat = m_ref_lat;
+//     if(lon)
+//         *lon = m_ref_lon;
+// }
 
 
 #ifdef USE_GLU_TESS
@@ -1199,7 +1200,7 @@ void __CALL_CONVENTION combineCallback(GLdouble coords[3],
 
 //      Build PolyTessGeo Object from OGR Polygon
 //      Using OpenGL/GLU tesselator
-int PolyTessGeo::PolyTessGeoGL(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon)
+int PolyTessGeo63::PolyTessGeoGL(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon)
 {
 #ifdef ocpnUSE_GL
 

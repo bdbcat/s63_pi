@@ -174,9 +174,9 @@ class PolyTrapGroup
 //      Triangle Tesselator Class
 //
 //--------------------------------------------------------------------------------------------------
+#if 0
 class PolyTessGeo
 {
-    public:
         PolyTessGeo();
         ~PolyTessGeo();
 
@@ -226,8 +226,101 @@ class PolyTessGeo
         double         m_ref_lat, m_ref_lon;
 
 };
+#endif
+class OGRPolygon;
+class GLUtesselator;
+
+class PolyTessGeo63
+{
+    public:
+        PolyTessGeo63();
+        ~PolyTessGeo63();
+
+        PolyTessGeo63(OGRPolygon *poly, bool bSENC_SM,
+            double ref_lat, double ref_lon, double LOD_meters);  // Build this from OGRPolygon
+
+        PolyTessGeo63(Extended_Geometry *pxGeom);
+
+        PolyTessGeo63(unsigned char *polybuf, int nrecl, int index,  int senc_file_version);
+
+        bool IsOk(){ return m_bOK;}
+
+        int BuildDeferredTess(void);
+
+        double Get_xmin(){ return xmin;}
+        double Get_xmax(){ return xmax;}
+        double Get_ymin(){ return ymin;}
+        double Get_ymax(){ return ymax;}
+        void SetExtents(double x_left, double y_bot, double x_right, double y_top);
+        
+        
+        PolyTriGroup *Get_PolyTriGroup_head(){ return m_ppg_head;}
+        int GetnVertexMax(){ return m_nvertex_max; }
+        void SetnVertexMax( int max ){ m_nvertex_max = max; }
+        int GetnContours(){ return m_ncnt; }
+        
+        int     ErrorCode;
+        void Set_PolyTriGroup_head( PolyTriGroup *head ){ m_ppg_head = head;}
+        void Set_OK( bool bok ){ m_bOK = bok;}
+        
+        void SetPPGHead( PolyTriGroup *head){ m_ppg_head = head; }
+        int my_bufgets( char *buf, int buf_len_max );
 
 
+        GLUtesselator* GLUtessobj;
+        wxArrayPtrVoid *m_pCombineVertexArray;
+        double        *m_pwork_buf;
+        int             m_buf_len;
+        int             m_buf_idx;
+        TriPrim         *m_pTPG_Last;
+        TriPrim         *m_pTPG_Head;
+        int             m_gltri_type;
+        int             m_nvcall;
+        int             m_nvmax;
+        bool           m_bmerc_transform;
+        double            mx_rate, mx_offset, my_rate, my_offset;
+        bool           m_b_senc_sm;
+        double         m_ref_lat, m_ref_lon;
+        int            m_tess_orient;
+        double         m_feature_ref_lat, m_feature_ref_lon;
+        double         m_feature_easting, m_feature_northing;
+
+        double         earthAxis;
+        bool           m_bcm93;
+        
+private:
+        int BuildTess(void);
+        //int BuildTessGL2(void);
+        //int PolyTessGeoGL(OGRPolygon *poly, bool bSENC_SM, double ref_lat, double ref_lon);
+        int BuildTessGLU( void );
+
+    //  Data
+
+        bool            m_bOK;
+
+        Extended_Geometry     *m_pxgeom;
+        
+        double         xmin, xmax, ymin, ymax;
+        PolyTriGroup    *m_ppg_head;                  // head of a PolyTriGroup chain
+        int             m_nvertex_max;                 // and computed max vertex count
+                                                      // used by drawing primitives as
+                                                      // optimization
+
+        int             m_ncnt;
+        int             m_nwkb;
+        int             *m_cntr;
+        char           *m_buf_head;
+        char           *m_buf_ptr;                   // used to read passed SENC record
+        int            m_nrecl;
+
+        double         m_LOD_meters;
+        
+
+        double         **m_vertexPtrArray;
+        bool           m_printStats;
+        bool           m_bstripify;
+
+};
 
 
 #endif

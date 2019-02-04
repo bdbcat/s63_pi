@@ -2820,7 +2820,7 @@ static int int_inserted(int segnum, int whichpt)
 
 
 
-inline int int_greater_than(ipoint_t *v0, ipoint_t *v1)
+static int int_greater_than(ipoint_t *v0, ipoint_t *v1)
 {
       if (v0->y > v1->y)
             return TRUE;
@@ -2831,12 +2831,12 @@ inline int int_greater_than(ipoint_t *v0, ipoint_t *v1)
 }
 
 
-inline int int_equal_to(ipoint_t *v0, ipoint_t *v1)
+int int_equal_to(ipoint_t *v0, ipoint_t *v1)
 {
       return ((v0->y == v1->y) && (v0->x == v1->x));
 }
 
-inline int int_greater_than_equal_to(ipoint_t *v0, ipoint_t *v1)
+int int_greater_than_equal_to(ipoint_t *v0, ipoint_t *v1)
 {
       if (v0->y > v1->y)
             return TRUE;
@@ -2846,7 +2846,7 @@ inline int int_greater_than_equal_to(ipoint_t *v0, ipoint_t *v1)
             return (v0->x >= v1->x);
 }
 
-inline int int_less_than(ipoint_t *v0, ipoint_t *v1)
+int int_less_than(ipoint_t *v0, ipoint_t *v1)
 {
       if (v0->y < v1->y)
             return TRUE;
@@ -2857,7 +2857,7 @@ inline int int_less_than(ipoint_t *v0, ipoint_t *v1)
 }
 
 /* Return the maximum of the two points into the yval structure */
-inline static int int_max(ipoint_t *yval, ipoint_t *v0, ipoint_t *v1)
+static int int_max(ipoint_t *yval, ipoint_t *v0, ipoint_t *v1)
 {
       if (v0->y > v1->y)
             *yval = *v0;
@@ -2909,7 +2909,7 @@ double iCROSS(int v0x, int v0y, int v1x, int v1y, int v2x, int v2y)
  * have the same y--cood, etc.
  */
 
-inline static int int_is_left_of(int segnum, ipoint_t *v)
+static int int_is_left_of(int segnum, ipoint_t *v)
 {
       isegment_t *s = &iseg[segnum];
       double area;
@@ -3101,7 +3101,7 @@ may need to traverse here
 #ifdef __clang__
 int int_locate_endpoint_a(ipoint_t *v, ipoint_t *vo, int r)
 #else
-inline int int_locate_endpoint_a(ipoint_t *v, ipoint_t *vo, int r)
+int int_locate_endpoint_a(ipoint_t *v, ipoint_t *vo, int r)
 #endif
 {
       register int root;
@@ -3250,7 +3250,7 @@ inline int int_locate_endpoint_a(ipoint_t *v, ipoint_t *vo, int r)
  * point v lie in. The return value is the trapezoid number.
  */
 
-inline int int_locate_endpoint(ipoint_t *v, ipoint_t *vo, int r)
+int int_locate_endpoint(ipoint_t *v, ipoint_t *vo, int r)
 {
       int ret;
       int debug = 0;
