@@ -33,6 +33,8 @@
   #include "wx/wx.h"
 #endif //precompiled headers
 
+#include<vector>
+
 #include "wx/socket.h"
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
@@ -100,7 +102,7 @@ public:
     wxString m_comt;
 };
 
-WX_DECLARE_OBJARRAY(Catalog_Entry31,      Catalog31);
+//WX_DECLARE_OBJARRAY(Catalog_Entry31,      Catalog31);
 
 
 //----------------------------------------------------------------------------------------------------------
@@ -160,7 +162,7 @@ public:
 private:
     wxString GetPermitDir();
     
-    Catalog31 *CreateCatalog31(const wxString &file31);
+    void CreateCatalog31(const wxString &file31);
     
     int ProcessCellPermit( wxString &permit, bool b_confirm_existing );
     int AuthenticateCell( const wxString & cell_file );
@@ -189,7 +191,7 @@ private:
 
     wxString            m_userpermit;
     
-    Catalog31           *m_catalog;
+    std::vector<Catalog_Entry31 *> m_catalog;
     wxString            m_last_enc_root_dir;
     
     OCPNCertificateList *m_cert_list;

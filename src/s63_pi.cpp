@@ -666,9 +666,9 @@ wxString s63_pi::GetPermitDir()
 }
 
 
-Catalog31 *s63_pi::CreateCatalog31(const wxString &file31)
+void s63_pi::CreateCatalog31(const wxString &file31)
 {
-    Catalog31 *rv = new Catalog31();
+    m_catalog.clear();
     
     DDFModule poModule;
     if( poModule.Open( file31.mb_str() ) ) {
@@ -704,7 +704,7 @@ Catalog31 *s63_pi::CreateCatalog31(const wxString &file31)
                pentry->m_comt = comt;
            }
            
-           rv->Add(pentry);
+           m_catalog.push_back(pentry);
            
            pr = poModule.ReadRecord();
         }
@@ -712,7 +712,7 @@ Catalog31 *s63_pi::CreateCatalog31(const wxString &file31)
     }
     
     
-    return rv;
+    return;
 }
 
 
@@ -824,12 +824,12 @@ int s63_pi::ImportCells( void )
         goto finish;
     }
         
-    m_catalog = CreateCatalog31(cat_file);
+    CreateCatalog31(cat_file);
 
    
     //  Make a list of all the unique cell names appearing in the exchange set
-    for(unsigned int i=0 ; i < m_catalog->Count() ; i++){
-        wxString file = m_catalog->Item(i).m_filename;
+    for(unsigned int i=0 ; i < m_catalog.size() ; i++){
+        wxString file = m_catalog[i]->m_filename;
         wxFileName fn( file );
         wxString ext = fn.GetExt();
         
@@ -952,9 +952,9 @@ int s63_pi::ImportCells( void )
                 long edtn = 0;
                 
                 wxArrayString cell_array;
-                for(size_t k=0 ; k < m_catalog->GetCount() ; k++){
+                for(size_t k=0 ; k < m_catalog.size() ; k++){
                     
-                    wxString file = m_catalog->Item(k).m_filename;
+                    wxString file = m_catalog[k]->m_filename;
                     wxFileName fn( file );
                     wxString ext = fn.GetExt();
                     
@@ -963,7 +963,7 @@ int s63_pi::ImportCells( void )
                     //  and have numeric extension
                     if( ext.ToLong( &tmp ) && ( fn.GetName() == cell_name ) ) {
                             
-                         wxString comt_catalog = m_catalog->Item(k).m_comt;
+                         wxString comt_catalog = m_catalog[k]->m_comt;
                             
                             //      Check updates for applicability
                         if(0 == tmp) {    // the base .000 cell
@@ -995,9 +995,9 @@ int s63_pi::ImportCells( void )
             //      Walk the sorted array of updates, appending the CATALOG m_comt field to the file name.
             
                 for(unsigned int i=0 ; i < cell_array.Count() ; i++) {
-                    for(unsigned int j=0 ; j < m_catalog->Count() ; j++){
-                        if(m_catalog->Item(j).m_filename == cell_array[i]){
-                            cell_array[i] += _T(";") + m_catalog->Item(j).m_comt;
+                    for(unsigned int j=0 ; j < m_catalog.size() ; j++){
+                        if(m_catalog[j]->m_filename == cell_array[i]){
+                            cell_array[i] += _T(";") + m_catalog[j]->m_comt;
                             break;
                         }
                     }
