@@ -45,6 +45,9 @@
 #include "s63chart.h"
 #include "src/myiso8211/iso8211.h"
 #include "dsa_utils.h"
+#include "json_defs.h"
+#include "jsonwriter.h"
+#include "jsonreader.h"
 
 #ifdef __WXOSX__
 #include "GL/gl.h"
@@ -52,6 +55,25 @@
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
+
+#ifdef __WXOSX__
+#include "GL/gl.h"
+#include "GL/glu.h"
+#else
+
+    #ifndef __OCPN__ANDROID__
+        #include <GL/gl.h>
+        #include <GL/glu.h>
+        #include <GL/glext.h>
+        #ifndef __WXMSW__
+            #include <GL/glx.h>
+        #endif    
+    #else
+        #include <qopengl.h>
+        #include <GL/gl_private.h>              // this is a cut-down version of gl.h
+    #endif
+
 #endif
 
 #ifdef __MSVC__
@@ -91,6 +113,17 @@ bool                            g_bnoShow_sse25;
 
 wxString                        g_fpr_file;
 bool                            g_bLogActivity;
+bool                            b_glEntryPointsSet;
+bool                            g_b_EnableVBO;
+bool                            pi_bopengl;
+bool                            g_GLOptionsSet;
+bool                            g_GLSetupOK;
+
+PFNGLGENBUFFERSPROC                 s_glGenBuffers;
+PFNGLBINDBUFFERPROC                 s_glBindBuffer;
+PFNGLBUFFERDATAPROC                 s_glBufferData;
+PFNGLDELETEBUFFERSPROC              s_glDeleteBuffers;
+
 
 //      A prototype of the default IHO.PUB public key file
 wxString i0(_T("// BIG p"));
@@ -124,6 +157,179 @@ static int ExtensionCompare( const wxString& first, const wxString& second )
     wxString ext2( fn2.GetExt() );
     
     return ext1.Cmp( ext2 );
+}
+
+static GLboolean QueryExtension( const char *extName )
+{
+    /*
+     * * Search for extName in the extensions string. Use of strstr()
+     ** is not sufficient because extension names can be prefixes of
+     ** other extension names. Could use strtok() but the constant
+     ** string returned by glGetString might be in read-only memory.
+     */
+    char *p;
+    char *end;
+    int extNameLen;
+    
+    extNameLen = strlen( extName );
+    
+    p = (char *) glGetString( GL_EXTENSIONS );
+    if( NULL == p ) {
+        return GL_FALSE;
+    }
+    
+    end = p + strlen( p );
+    
+    while( p < end ) {
+        int n = strcspn( p, " " );
+        if( ( extNameLen == n ) && ( strncmp( extName, p, n ) == 0 ) ) {
+            return GL_TRUE;
+        }
+        p += ( n + 1 );
+    }
+    return GL_FALSE;
+}
+
+typedef void (*GenericFunction)(void);
+
+#if defined(__WXMSW__)
+#define systemGetProcAddress(ADDR) wglGetProcAddress(ADDR)
+#elif defined(__WXOSX__)
+#include <dlfcn.h>
+#define systemGetProcAddress(ADDR) dlsym( RTLD_DEFAULT, ADDR)
+#elif defined(__OCPN__ANDROID__)
+#define systemGetProcAddress(ADDR) eglGetProcAddress(ADDR)
+#else
+#define systemGetProcAddress(ADDR) glXGetProcAddress((const GLubyte*)ADDR)
+#endif
+
+GenericFunction ocpnGetProcAddress(const char *addr, const char *extension)
+{
+    char addrbuf[256];
+    if(!extension)
+        return (GenericFunction)NULL;
+    
+#ifndef __OCPN__ANDROID__    
+        //  If this is an extension entry point,
+        //  We look explicitly in the extensions list to confirm
+        //  that the request is actually supported.
+        // This may be redundant, but is conservative, and only happens once per session.    
+        if(extension && strlen(extension)){
+            wxString s_extension(&addr[2], wxConvUTF8);
+            wxString s_family;
+            s_family = wxString(extension, wxConvUTF8);
+            s_extension.Prepend(_T("_"));
+            s_extension.Prepend(s_family);
+            
+            s_extension.Prepend(_T("GL_"));
+            
+            if(!QueryExtension( s_extension.mb_str() )){
+                return (GenericFunction)NULL;
+            }
+        }
+#endif    
+        
+        snprintf(addrbuf, sizeof addrbuf, "%s%s", addr, extension);
+        return (GenericFunction)systemGetProcAddress(addrbuf);
+        
+}
+
+static void GetglEntryPoints( void )
+{
+    b_glEntryPointsSet = true;
+    
+    // the following are all part of framebuffer object,
+    // according to opengl spec, we cannot mix EXT and ARB extensions
+    // (I don't know that it could ever happen, but if it did, bad things would happen)
+    
+#ifndef __OCPN__ANDROID__
+    const char *extensions[] = {"", "ARB", "EXT", 0 };
+#else
+    const char *extensions[] = {"", "OES", 0 };
+#endif
+    
+    unsigned int n_ext = (sizeof extensions) / (sizeof *extensions);
+    
+    unsigned int i;
+    for(i=0; i<n_ext; i++) {
+        if((s_glGenBuffers = (PFNGLGENBUFFERSPROC)
+            ocpnGetProcAddress( "glGenBuffers", extensions[i])))
+            break;
+    }
+    
+    if(i<n_ext){
+        //VBO
+        s_glGenBuffers = (PFNGLGENBUFFERSPROC)
+        ocpnGetProcAddress( "glGenBuffers", extensions[i]);
+        s_glBindBuffer = (PFNGLBINDBUFFERPROC)
+        ocpnGetProcAddress( "glBindBuffer", extensions[i]);
+        s_glBufferData = (PFNGLBUFFERDATAPROC)
+        ocpnGetProcAddress( "glBufferData", extensions[i]);
+        s_glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)
+        ocpnGetProcAddress( "glDeleteBuffers", extensions[i]);
+        
+//         s_glGetBufferParameteriv = (PFNGLGETBUFFERPARAMETERIV)
+//         ocpnGetProcAddress( "glGetBufferParameteriv", extensions[i]);
+        
+    }
+    
+    //  Retry VBO entry points with all extensions
+    if(0 == s_glGenBuffers){
+        for( i=0; i<n_ext; i++) {
+            if((s_glGenBuffers = (PFNGLGENBUFFERSPROC)ocpnGetProcAddress( "glGenBuffers", extensions[i])) )
+                break;
+        }
+        
+        if( i < n_ext ){
+            s_glBindBuffer = (PFNGLBINDBUFFERPROC) ocpnGetProcAddress( "glBindBuffer", extensions[i]);
+            s_glBufferData = (PFNGLBUFFERDATAPROC) ocpnGetProcAddress( "glBufferData", extensions[i]);
+            s_glDeleteBuffers = (PFNGLDELETEBUFFERSPROC) ocpnGetProcAddress( "glDeleteBuffers", extensions[i]);
+        }
+    }
+    
+ 
+#if 0 
+#ifndef __OCPN__ANDROID__            
+    for(i=0; i<n_ext; i++) {
+        if((s_glCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)
+            ocpnGetProcAddress( "glCompressedTexImage2D", extensions[i])))
+            break;
+    }
+    
+    if(i<n_ext){
+        s_glGetCompressedTexImage = (PFNGLGETCOMPRESSEDTEXIMAGEPROC)
+        ocpnGetProcAddress( "glGetCompressedTexImage", extensions[i]);
+    }
+#else    
+    s_glCompressedTexImage2D =          glCompressedTexImage2D;
+#endif
+#endif
+    
+}
+
+void init_GLLibrary(void)
+{
+   
+    // OpenGL variables
+    
+    if(g_GLOptionsSet && !g_GLSetupOK){
+        char *p = (char *) glGetString( GL_EXTENSIONS );
+        if( NULL == p )
+            pi_bopengl = false;
+        else
+            pi_bopengl = true;
+        
+    
+        char *str = (char *) glGetString( GL_RENDERER );
+        if (str == NULL)
+            wxLogMessage(_T("s63_pi failed to initialize OpenGL"));
+
+        
+        GetglEntryPoints();
+        
+        pi_bopengl = true;
+        g_GLSetupOK = true;
+    }
 }
 
 
@@ -336,7 +542,43 @@ void s63_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
         ImportCells();
     }
     
+    
+    else if(message_id == _T("OCPN_OPENGL_CONFIG"))
+    {
+        // construct the JSON root object
+        wxJSONValue  root;
+        // construct a JSON parser
+        wxJSONReader reader;
+        
+        // now read the JSON text and store it in the 'root' structure
+        // check for errors before retreiving values...
+        int numErrors = reader.Parse( message_body, &root );
+        if ( numErrors > 0 )  {
+            return;
+        }
+        
+        
+        // Capture the OpenCPN OpenGL config, and inform the PLIB
+        if( root[_T("setupComplete")].AsBool() )
+        {
+            g_b_EnableVBO = root[_T("useVBO")].AsBool();
+//             g_oe_texture_rectangle_format = root[_T("TextureRectangleFormat")].AsInt();
+// 
+//             g_b_useStencil = root[_T("useStencil")].AsBool();
+//             g_b_useStencilAP = root[_T("useStencilAP")].AsBool();
+//             g_b_useScissorTest = root[_T("useScissorTest")].AsBool();
+//             g_b_useFBO = root[_T("useFBO")].AsBool();
+        
+            g_GLOptionsSet = true;
+            
+            init_GLLibrary();                                  // once
+        }
+    }
 }
+
+
+
+
 
 bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
@@ -355,7 +597,7 @@ bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
         int w, h;
         dc.GetMultiLineTextExtent( msg, &w, &h );
         h += 2;
-        int yp = vp->pix_height - 20 - h;
+        int yp = vp->pix_height - 40 - h;
         
         int label_offset = 10;
         int wdraw = w + ( label_offset * 2 );
@@ -380,7 +622,7 @@ bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
         int w, h;
         m_TexFontMessage.GetTextExtent( msg, &w, &h);
         h += 2;
-        int yp = vp->pix_height - 20 - h;
+        int yp = vp->pix_height - 40 - h;
         
         glColor3ub( 243, 229, 47 );
         

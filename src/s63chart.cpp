@@ -78,6 +78,15 @@ wxDialog                *s_plogcontainer;
 wxTextCtrl              *s_plogtc;
 int                     nseq;
 
+extern bool             pi_bopengl;
+extern bool             g_GLOptionsSet;
+extern bool             g_GLSetupOK;
+
+extern PFNGLGENBUFFERSPROC                 s_glGenBuffers;
+extern PFNGLBINDBUFFERPROC                 s_glBindBuffer;
+extern PFNGLBUFFERDATAPROC                 s_glBufferData;
+extern PFNGLDELETEBUFFERSPROC              s_glDeleteBuffers;
+
 #include <wx/arrimpl.cpp>
 WX_DEFINE_ARRAY( float*, MyFloatPtrArray );
 
@@ -1657,7 +1666,17 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
 
             glDepthFunc( GL_GEQUAL );
             PI_PLIBRenderAreaToGL( glc, crnt, &tvp, rect );
+
+            // Correct for an error in the core.
+            // To avoid GL driver memory leakage, delete and reload the area VBO on each render.
+            //  This is a performance hit, but unavoidable.
+            //TODO  Fix in core, then conditional execute here based on core version
+//            if( g_b_EnableVBO && pi_bopengl && s_glDeleteBuffers){
+//                  s_glDeleteBuffers(1, (unsigned int *)&crnt->auxParm0);
+//                  crnt->auxParm0 = -99;
+//            }
             
+
             if(m_brotated){
                 // There is a bug in OCPN 4.6 and prior in GLAP().
                 // The clip region and parameters is corrupted rendering patterns.
@@ -6367,10 +6386,21 @@ PI_S57Obj::~PI_S57Obj()
         if( geoPtz ) free( geoPtz );
         if( geoPtMulti ) free( geoPtMulti );
 
-        if( pPolyTessGeo ) delete (PolyTessGeo63*)pPolyTessGeo;
-        
+//        if( pPolyTessGeo ) delete (PolyTessGeo63*)pPolyTessGeo;
+        if( pPolyTessGeo ) {
+#ifdef ocpnUSE_GL 
+            bool b_useVBO = g_b_EnableVBO  && (auxParm0 > 0);    // VBO allowed?
+            PolyTessGeo63  *pPTG = (PolyTessGeo63*)pPolyTessGeo;
+            PolyTriGroup *ppg_vbo = pPTG->Get_PolyTriGroup_head();
+            if (b_useVBO && ppg_vbo && auxParm0 > 0 && ppg_vbo->single_buffer && s_glDeleteBuffers) {
+                 s_glDeleteBuffers(1, (GLuint *)&auxParm0);
+            }
+#endif
+            delete (PolyTessGeo63*)pPolyTessGeo;
+        }
+
 //        if(S52_Context) delete (S52PLIB_Context *)S52_Context;
-        
+       
         if( m_lsindex_array ) free( m_lsindex_array );
         
         if(m_ls_list){
