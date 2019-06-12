@@ -201,8 +201,18 @@ SET(SRC_DSA
                 src/dsa/sha1.c
     )
 
+SET(SRC_JSON
+            src/wxJSON/json_defs.h
+            src/wxJSON/jsonreader.h
+            src/wxJSON/jsonval.h
+            src/wxJSON/jsonwriter.h
+            src/wxJSON/jsonreader.cpp
+            src/wxJSON/jsonval.cpp
+            src/wxJSON/jsonwriter.cpp
+        )
 
-ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_CPL} ${SRC_ISO8211} ${SRC_DSA})
+
+ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_S63} ${SRC_CPL} ${SRC_ISO8211} ${SRC_DSA} ${SRC_JSON})
 
 
 IF (QT_ANDROID )
