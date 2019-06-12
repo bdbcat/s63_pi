@@ -888,6 +888,13 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
             }
             else if(line.StartsWith( _T("cellpermit:" ) ) ) {
                 m_cell_permit = line.Mid(11);
+                wxStringTokenizer tkz(m_cell_permit, _T(","));
+                wxString token = tkz.GetNextToken();
+                token = tkz.GetNextToken();
+                token = tkz.GetNextToken();
+                token = tkz.GetNextToken();
+                token = tkz.GetNextToken();
+                m_data_server = token;
             }
             else if(line.StartsWith( _T("cellupdate:" ) ) ) {
                 wxString upline = line.Mid(11);
@@ -1671,10 +1678,10 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
             // To avoid GL driver memory leakage, delete and reload the area VBO on each render.
             //  This is a performance hit, but unavoidable.
             //TODO  Fix in core, then conditional execute here based on core version
-//            if( g_b_EnableVBO && pi_bopengl && s_glDeleteBuffers){
-//                  s_glDeleteBuffers(1, (unsigned int *)&crnt->auxParm0);
-//                  crnt->auxParm0 = -99;
-//            }
+            if( g_b_EnableVBO && pi_bopengl && s_glDeleteBuffers && (crnt->auxParm0 > 0)){
+                  s_glDeleteBuffers(1, (unsigned int *)&crnt->auxParm0);
+                  crnt->auxParm0 = -99;
+            }
             
 
             if(m_brotated){
@@ -4929,6 +4936,8 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
     wxString positionString;
     ArrayOfLights lights;
     PI_S57Light* curLight = NULL;
+    wxFileName file;
+
     
     for( ListOfPI_S57Obj::Node *node = obj_list->GetLast(); node; node = node->GetPrevious() ) {
         PI_S57Obj *current = node->GetData();
@@ -5101,6 +5110,36 @@ wxString ChartS63::CreateObjDescriptions( ListOfPI_S57Obj* obj_list )
                 
             }
     } // Object for loop
+
+    
+        // Add the additional info files
+    wxArrayString files;
+    file.Assign( GetFullPath() );
+    
+    wxString suppPath = file.GetPath();
+    suppPath += wxFileName::GetPathSeparator();
+    suppPath += file.GetName().Mid(0,2);
+    suppPath += wxFileName::GetPathSeparator();
+    suppPath += file.GetName();
+    
+    wxString AddFiles = wxString::Format(_T("<hr noshade><br><b>Additional info files attached to: </b> <font size=-2>%s</font><br><table border=0 cellspacing=0 cellpadding=3>"), file.GetFullName() );
+    wxDir::GetAllFiles( suppPath, &files,  wxT("*.TXT")  );
+    wxDir::GetAllFiles( suppPath, &files,  wxT("*.txt")  );
+    int nf = files.Count();
+    if ( files.Count() > 0 )
+    {      
+        for ( size_t i=0; i < files.Count(); i++){
+            wxString fileToAdd = files.Item(i);
+            file.Assign( files.Item(i) );
+            AddFiles << wxString::Format( _T("<tr><td valign=top><font size=-2><a href=\"%s\">%s</a></font></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</td>"), file.GetFullPath(), file.GetFullName() );
+            if ( files.Count() > ++i){
+                file.Assign( files.Item(i) );
+                AddFiles << wxString::Format( _T("<td valign=top><font size=-2><a href=\"%s\">%s</a></font></td>"), file.GetFullPath(), file.GetFullName() );                
+            }                
+        }
+        ret_val << AddFiles <<_T("</table>");
+    }
+
 
 #if 1    
     if( lights.Count() > 0 ) {

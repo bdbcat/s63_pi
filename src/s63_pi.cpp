@@ -968,6 +968,7 @@ int s63_pi::ImportCells( void )
     unsigned int nproc = 0;
     wxArrayString os63_file_array;
     wxArrayString unique_cellname_array;
+    wxArrayString supplementFileArray;
     
     wxString os63_dirname = GetPermitDir();
     g_bshown_sse15 = false;
@@ -1074,6 +1075,7 @@ int s63_pi::ImportCells( void )
         wxString file = m_catalog[i]->m_filename;
         wxFileName fn( file );
         wxString ext = fn.GetExt();
+        wxString comtString = m_catalog[i]->m_comt;
         
         long tmp;
         //  Files of interest have numeric extension, except for CATALOG.031
@@ -1103,6 +1105,10 @@ int s63_pi::ImportCells( void )
                         unique_cellname_array.Add(fna.GetName());
                 }
             }
+        }
+        if(ext.IsSameAs(_T("TXT")) || ext.IsSameAs(_T("txt"))){
+            wxString suppFile = file;
+            supplementFileArray.Add(file);
         }
     }
 
@@ -1646,7 +1652,33 @@ int s63_pi::ImportCells( void )
             }
         }
     }           // for, catalog unique names
+ 
+    // Process the supplemental (.TXT) files
+    for(unsigned int i=0 ; i < supplementFileArray.GetCount() ; i++){
+        wxString fileName = supplementFileArray.Item(i);
         
+        // Get the file present location in the exchange set
+        wxString fileLocn = enc_root_dir + wxFileName::GetPathSeparator() + fileName;
+        if(wxFileExists(fileLocn)){
+            
+            //Craft the distination location
+            wxString destinationFilename = GetPermitDir();
+            destinationFilename += wxFileName::GetPathSeparator();
+            destinationFilename += data_server_string;
+            destinationFilename += wxFileName::GetPathSeparator();
+            destinationFilename += fileName;
+            
+            wxFileName fn(destinationFilename);
+            wxString dir = fn.GetPath();
+             if(!wxDir::Exists(dir))
+                 wxFileName::Mkdir(dir,wxS_DIR_DEFAULT,wxPATH_MKDIR_FULL);
+ 
+             if(wxDir::Exists(dir))
+                 wxCopyFile(fileLocn, destinationFilename);
+        }
+    }
+    
+    
 finish:
     if(g_pprog){
         g_pprog->Update(10000, _T(""));
