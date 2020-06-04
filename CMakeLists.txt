@@ -21,7 +21,7 @@ ENDIF (COMMAND cmake_policy)
 # Prefer libGL.so to libOpenGL.so, see CMP0072
 set(OpenGL_GL_PREFERENCE "LEGACY")
 
-PROJECT(oesenc_pi)
+PROJECT(s63_pi)
 
 SET(PACKAGE_NAME s63_pi)
 SET(VERBOSE_NAME s63)
@@ -196,21 +196,21 @@ if (OCPN_FLATPAK)
         message(FATAL_ERROR "tar not found, required for OCPN_FLATPAK")
     endif ()
     configure_file(
-        ${CMAKE_SOURCE_DIR}/oesenc-plugin.xml.in
+        ${CMAKE_SOURCE_DIR}/s63-plugin.xml.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PLUGIN_NAME}.xml
     )
     add_custom_target(flatpak-build ALL
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/flatpak
         COMMAND flatpak-builder --force-clean
             ${CMAKE_CURRENT_BINARY_DIR}/app
-            org.opencpn.OpenCPN.Plugin.oesenc.yaml
+            org.opencpn.OpenCPN.Plugin.s63.yaml
     )
     add_custom_target("package")
     add_custom_command(
         TARGET package
         COMMAND ${TAR}
             -czf ${PKG_NVR}_${PKG_TARGET_NVR}.tar.gz
-            --transform 's|.*/files/|oesenc_pi-flatpak-${PACKAGE_VERSION}/|'
+            --transform 's|.*/files/|s63_pi-flatpak-${PACKAGE_VERSION}/|'
             ${CMAKE_CURRENT_BINARY_DIR}/app/files
     )
     return ()
