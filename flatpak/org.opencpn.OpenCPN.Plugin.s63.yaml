@@ -1,0 +1,27 @@
+id: org.opencpn.OpenCPN.Plugin.s63
+runtime: org.opencpn.OpenCPN
+runtime-version: master
+sdk: org.freedesktop.Sdk//18.08
+build-extension: true
+separate-locales: false
+appstream-compose: false
+modules:
+    - name: s63
+      no-autogen: true
+      cmake: true
+      build-options:
+          cflags: -fPIC
+          cxxflags: -fPIC -DFLATPAK
+      config-opts:
+          - -DPREFIX:PATH=/app/extensions/s63
+      post-install:
+          - >
+            mv /app/extensions/s63/bin/OCPNsenc
+            /app/extensions/s63/bin/OCPNsenc.prog
+          - install -t /app/extensions/s63/bin/ -m 755 OCPNsenc
+      sources:
+          - type: git
+            url: ..
+            branch: master
+          - type: file
+            path: OCPNsenc

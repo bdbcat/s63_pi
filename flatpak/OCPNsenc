@@ -1,0 +1,5 @@
+#!/bin/bash
+here=$(dirname $(readlink -fn $0))
+export PATH=$PATH:$here
+export LD_LIBRARY_PATH="${here}/../lib:$LD_LIBRARY_PATH"
+exec $here/OCPNsenc.prog $@
