@@ -78,7 +78,7 @@
 
 #ifdef __MSVC__
 #include <windows.h>
-#include <Shlobj.h>
+#include <shlobj.h>
 #endif
 
 //      Some PlugIn global variables
