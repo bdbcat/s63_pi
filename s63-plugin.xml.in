@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin version="1">
+  <name> S63 </name>
+  <version> ${PACKAGE_VERSION} </version>
+  <release> ${PKG_RELEASE} </release>
+  <summary> OpenCPN support for S63 Vector Charts </summary>
+
+  <api-version> ${PKG_API_VERSION} </api-version>
+  <open-source> no </open-source>
+  <author> ${PKG_AUTHOR} </author>
+  <source> https://github.com/bdbcat/s63_pi </source>
+  <info-url> https://opencpn.org/OpenCPN/plugins/oesenc.html </info-url>
+
+  <description>
+  OpenCPN support for S63 Vector Charts
+  </description>
+
+  <target>${PKG_TARGET}</target>
+  <target-version>${PKG_TARGET_VERSION}</target-version>
+  <target-arch>${ARCH}</target-arch>
+  <tarball-url> ${TARBALL_URL} </tarball-url>
+</plugin>
+

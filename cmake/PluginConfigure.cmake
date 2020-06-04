@@ -4,14 +4,7 @@
 ## License:     GPLv3+
 ##---------------------------------------------------------------------------
 
-SET(PLUGIN_SOURCE_DIR .)
-
 # This should be 2.8.0 to have FindGTK2 module
-IF (COMMAND cmake_policy)
-  CMAKE_POLICY(SET CMP0003 OLD)
-  CMAKE_POLICY(SET CMP0005 OLD)
-  CMAKE_POLICY(SET CMP0011 OLD)
-ENDIF (COMMAND cmake_policy)
 
 MESSAGE (STATUS "*** Staging to build ${PACKAGE_NAME} ***")
 
@@ -27,7 +20,7 @@ ENDIF(NOT SKIP_VERSION_CONFIG)
 SET(PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 
 
-SET(CMAKE_BUILD_TYPE Debug)
+#SET(CMAKE_BUILD_TYPE Debug)
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src)
@@ -58,7 +51,7 @@ IF(MSVC)
 ENDIF(MSVC)
 
 IF(NOT DEFINED wxWidgets_USE_FILE)
-  SET(wxWidgets_USE_LIBS base core net xml html adv)
+  SET(wxWidgets_USE_LIBS base core net xml html adv aui)
 ENDIF(NOT DEFINED wxWidgets_USE_FILE)
 
 
@@ -70,7 +63,7 @@ IF(QT_ANDROID)
   ADD_DEFINITIONS(-DOCPN_USE_WRAPPER)
   ADD_DEFINITIONS(-DANDROID)
 
-  SET(CMAKE_CXX_FLAGS "-pthread -fPIC -s -O2")
+  SET(CMAKE_CXX_FLAGS "-pthread -fPIC -O2")
 
   ## Compiler flags
  #   if(CMAKE_COMPILER_IS_GNUCXX)
@@ -120,7 +113,6 @@ ENDIF(NOT QT_ANDROID)
 #  So the OpenGL include directories, flags, etc must be stated explicitly
 #  without trying to locate them on the host build system.
 IF(QT_ANDROID)
-    MESSAGE (STATUS "Using GLESv1 for Android")
     ADD_DEFINITIONS(-DocpnUSE_GLES)
     ADD_DEFINITIONS(-DocpnUSE_GL)
 #    ADD_DEFINITIONS(-DUSE_GLU_TESS)
@@ -128,11 +120,25 @@ IF(QT_ANDROID)
 
     SET(OPENGLES_FOUND "YES")
     SET(OPENGL_FOUND "YES")
+    
+      
+  SET(USE_GLES2 ON )
+
+  IF(USE_GLES2)
+    MESSAGE (STATUS "Using GLESv2 for Android")
+    ADD_DEFINITIONS(-DUSE_ANDROID_GLES2)
+    ADD_DEFINITIONS(-DUSE_GLSL)
+  ENDIF(USE_GLES2)
+
+
 
 ENDIF(QT_ANDROID)
 
 IF (NOT QT_ANDROID )
-    FIND_PACKAGE(wxWidgets REQUIRED)
+    if(WXWIDGETS_FORCE_VERSION)
+        set (wxWidgets_CONFIG_OPTIONS --version=${WXWIDGETS_FORCE_VERSION})
+    endif()
+    find_package(wxWidgets COMPONENTS ${wxWidgets_USE_LIBS})
     INCLUDE(${wxWidgets_USE_FILE})
 ENDIF (NOT QT_ANDROID )
 
@@ -144,30 +150,21 @@ IF (QT_ANDROID )
         # Presently, Android Plugins are built in the core tree, so the variables {wxQT_BASE}, etc.
         # flow to this module from above.  If we want to build Android plugins out-of-core, this will need improvement.
 
-        # TODO This is pretty ugly, but there seems no way to avoid specifying a full path in a cross build....
-        #/home/dsr/Projects/opencpn/build-opencpn-Production_build_Android_for_armeabi_v7a_GCC_4_8_Qt_5_5_0-Release/libopencpn.so                
-        /home/dsr/Projects/opencpn/build-opencpn-Production_Android_for_armeabi_v7a_Core_55_46_GCC_4_8_Qt_5_5_0-Release/libopencpn.so
-        
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_baseu-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_core-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_html-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_baseu_xml-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_qa-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_adv-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_aui-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_baseu_net-3.1-arm-linux-androideabi.a
-        ${wxQt_Base}/${wxQt_Build}/lib/libwx_qtu_gl-3.1-arm-linux-androideabi.a
-        ${Qt_Base}/${Qt_Build}/lib/libQt5Core.so
-        ${Qt_Base}/${Qt_Build}/lib/libQt5OpenGL.so
-        ${Qt_Base}/${Qt_Build}/lib/libQt5Widgets.so
-        ${Qt_Base}/${Qt_Build}/lib/libQt5Gui.so
-        ${Qt_Base}/${Qt_Build}/lib/libQt5AndroidExtras.so
+  
+    ${Qt_Base}/${Qt_Build}/lib/libQt5Core.so
+    ${Qt_Base}/${Qt_Build}/lib/libQt5OpenGL.so
+    ${Qt_Base}/${Qt_Build}/lib/libQt5Widgets.so
+    ${Qt_Base}/${Qt_Build}/lib/libQt5Gui.so
+    ${Qt_Base}/${Qt_Build}/lib/libQt5AndroidExtras.so
 
+        libGLESv2.so
+        libEGL.so
         )
 
 ENDIF(QT_ANDROID)
 
 
+ADD_DEFINITIONS(-DBUILDING_PLUGIN)
 
 
 SET(BUILD_SHARED_LIBS TRUE)

@@ -18,8 +18,8 @@ SET(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_CURRENT_BINARY_DIR};${PACKAGE_NAME};AL
 SET(CPACK_PACKAGE_EXECUTABLES OpenCPN ${PACKAGE_NAME})
 
 IF(WIN32)
-# to protect against confusable windows users, let us _not_ generate zip packages
-#  SET(CPACK_GENERATOR "NSIS;ZIP")
+  #  The TGZ (tar.gz) is used by experimental plugin manager,
+  SET(CPACK_GENERATOR "NSIS;TGZ")
 
   # override install directory to put package files in the opencpn directory
   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "OpenCPN")
@@ -28,7 +28,10 @@ IF(WIN32)
 # CPACK_BUILDWIN_DIR ??
 # CPACK_PACKAGE_ICON ??
 
-  SET(CPACK_NSIS_PACKAGE_NAME "${PACKAGE_NAME}")
+  #SET(CPACK_PACKAGE_NAME "${PACKAGE_NAME}-ov50")
+  #SET(CPACK_NSIS_PACKAGE_NAME "${PACKAGE_NAME}-ov50")
+  #SET(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH}-ov50 )
+  SET(CPACK_PACKAGE_VERSION "${PACKAGE_VERSION}-${OCPN_MIN_VERSION}")
 
   # Let cmake find NSIS.template.in
   SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/buildwin")
@@ -79,14 +82,18 @@ IF(UNIX AND NOT APPLE)
 
 
   IF (CMAKE_SYSTEM_PROCESSOR MATCHES "arm*")
-    SET (ARCH "armhf")
+    IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
+      SET (ARCH "arm64")
+    ELSE ()
+      SET (ARCH "armhf")
+    ENDIF ()
     # don't bother with rpm on armhf
-    SET(CPACK_GENERATOR "DEB;TBZ2")
+    SET(CPACK_GENERATOR "DEB;TGZ")
   ELSE ()
-    SET(CPACK_GENERATOR "DEB;TBZ2")
+    SET(CPACK_GENERATOR "DEB;TGZ")
 
     IF (CMAKE_SIZEOF_VOID_P MATCHES "8")
-      SET (ARCH "amd64")
+      SET (ARCH "x86_64")
       SET(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
     ELSE (CMAKE_SIZEOF_VOID_P MATCHES "8")
       SET (ARCH "i386")
@@ -113,7 +120,6 @@ IF(UNIX AND NOT APPLE)
     SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_NAME} PlugIn for OpenCPN")
     SET(CPACK_PACKAGE_DESCRIPTION "${PACKAGE_NAME} PlugIn for OpenCPN")
 #    SET(CPACK_SET_DESTDIR ON)
-    SET(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 
     SET(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}_${PACKAGE_VERSION}-${PACKAGE_RELEASE}_${ARCH}" )
@@ -144,28 +150,27 @@ ENDIF(TWIN32 AND NOT UNIX)
 # apparently, the base CMakeLists.txt file must have "some" target to activate all the clean steps.
 #ADD_CUSTOM_TARGET(dummy COMMENT "dummy: Done." DEPENDS ${PACKAGE_NAME})
 
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_NAME} S63 chart PlugIn for OpenCPN")
+SET(CPACK_PACKAGE_DESCRIPTION "${PACKAGE_NAME} S63 chart PlugIn for OpenCPN")
+SET(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
+SET(CPACK_PACKAGE_FILE_NAME "${PKG_NVR}_${PKG_TARGET}-${PKG_TARGET_VERSION}")
+  
 INCLUDE(CPack)
 
 
 IF(APPLE)
 
  #  Copy a few generic files so the Packages installer builder can find them relative to ${CMAKE_CURRENT_BINARY_DIR}
- #  This avoids absolute paths in the ?_pi.pkgproj file
+ #  This avoids absolute paths in the chartdldr_pi.pkgproj file
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/gpl.txt ${CMAKE_CURRENT_BINARY_DIR}/license.txt COPYONLY)
 
 configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/pkg_background.jpg ${CMAKE_CURRENT_BINARY_DIR}/pkg_background.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/SG-LockV1.4.mpkg ${CMAKE_CURRENT_BINARY_DIR}/SG-LockV1.4.mpkg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/SGLockInstall.scptd ${CMAKE_CURRENT_BINARY_DIR}/SGLockInstall.scptd COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/sgli ${CMAKE_CURRENT_BINARY_DIR}/sgli COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-cz.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-cz.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-it.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-it.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_erklaert-0_4.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_erklaert-0_4.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-es.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-es.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-nl.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-nl.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-0_4en.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-0_4en.rtf COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-fr.rtf ${CMAKE_CURRENT_BINARY_DIR}/S-63_plug-in_explained-fr.rtf COPYONLY)
-
-            
   # This is a bit of a hack...
   # We need to copy the helper utility to the binary build directory so that the PACKAGES scripts will find it.
   # Would be nicer if this could be specified from the top level cmake file, so that this file remains generic...
@@ -195,5 +200,6 @@ configure_file(${PROJECT_SOURCE_DIR}/buildosx/InstallOSX/S-63_plug-in_explained-
  ADD_CUSTOM_TARGET(create-pkg COMMENT "create-pkg: Done."
  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${VERBOSE_NAME}-Plugin.pkg )
 
+ SET(CPACK_GENERATOR "TGZ")
 
 ENDIF(APPLE)
