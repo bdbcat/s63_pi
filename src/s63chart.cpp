@@ -68,6 +68,7 @@ extern bool             g_brendered_expired;
 extern bool             g_b_validated;
 extern bool             g_bSENCutil_valid;
 extern bool             g_bLogActivity;
+extern bool             g_bdisable_infowin;
 
 int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
@@ -1672,16 +1673,33 @@ bool ChartS63::DoRenderRectOnGL( const wxGLContext &glc, const PlugIn_ViewPort& 
                 glPushMatrix();
 
             glDepthFunc( GL_GEQUAL );
+            
+            // A little bit of trickery here.
+            //  Most MSW and Mac platforms use Intel Integrated GPU.
+            //  This shared GPU memory model does not perform well under high memory pressure conditions.
+            //  It has been found safest to disable VBO for such platforms.
+            //  But OCPN5 has no direct API for this control.  So we need to fool it.
+            //  This trickery can go away whenever OCPN core is updated to allow this type of plugin to directly disable VBO when required.
+#if defined(__WXMSW__) || defined(__WXMAC__)
+            PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
+            crnt->geoPtMulti = (double *)1;
+#endif
             PI_PLIBRenderAreaToGL( glc, crnt, &tvp, rect );
 
+#if defined(__WXMSW__) || defined(__WXMAC__)
+            crnt->geoPtMulti = (double *)0;
+            PI_PLIBSetRenderCaps( PLIB_CAPS_LINE_BUFFER | PLIB_CAPS_SINGLEGEO_BUFFER | PLIB_CAPS_OBJSEGLIST | PLIB_CAPS_OBJCATMUTATE);
+#endif
+            
+            // This patch obviated by above trickery, but left for posterity
             // Correct for an error in the core.
             // To avoid GL driver memory leakage, delete and reload the area VBO on each render.
             //  This is a performance hit, but unavoidable.
             //TODO  Fix in core, then conditional execute here based on core version
-            if( g_b_EnableVBO && pi_bopengl && s_glDeleteBuffers && (crnt->auxParm0 > 0)){
-                  s_glDeleteBuffers(1, (unsigned int *)&crnt->auxParm0);
-                  crnt->auxParm0 = -99;
-            }
+//             if( g_b_EnableVBO && pi_bopengl && s_glDeleteBuffers && (crnt->auxParm0 > 0)){
+//                   s_glDeleteBuffers(1, (unsigned int *)&crnt->auxParm0);
+//                   crnt->auxParm0 = -99;
+//             }
             
 
             if(m_brotated){
@@ -2762,7 +2780,7 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
 {
     int retval = BUILD_SENC_OK;
     
-    if(!g_benable_screenlog) {
+    if(!g_bdisable_infowin){
 #ifdef __WXOSX__        
         g_pInfoDlg = new InfoWinDialog( GetOCPNCanvasWindow(), _("Building eSENC") );
         g_pInfoDlg->Realize();
@@ -5509,6 +5527,9 @@ void ChartS63::AssembleLineGeometry( void )
             PI_S57Obj *obj = razRules[i][j];
             while(obj)
             {
+                if(obj->Index == 4947)
+                    int yyp = 4;
+                
                 for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
                     int seg_index = iseg * 3;
                     int *index_run = &obj->m_lsindex_array[seg_index];

@@ -88,6 +88,7 @@ S63ScreenLog                    *g_pPanelScreenLog;
 unsigned int                    g_backchannel_port;
 unsigned int                    g_frontchannel_port;
 wxString                        g_s57data_dir;
+bool                            g_bdisable_infowin;
 
 wxString                        g_userpermit;
 wxString                        g_installpermit;
@@ -1611,7 +1612,14 @@ int s63_pi::ImportCells( void )
                         wxString msg;
                         msg.Printf(_T("Building eSENC %d/%d\n"), nproc, unique_cellname_array.Count()); 
                         ScreenLogMessage( msg );
+
+                        // temporarily turn off infowin showing
+                        g_bdisable_infowin = true;
+
                         ChartS63 *pch = new ChartS63();
+
+                        g_bdisable_infowin = false;
+                        
                         if(pch){
                             if( PI_INIT_OK != pch->Init( os63_filename, PI_FULL_INIT) ){
                                 b_error = true;
