@@ -352,7 +352,7 @@ void init_GLLibrary(void)
 //---------------------------------------------------------------------------------------------------------
 
 s63_pi::s63_pi(void *ppimgr)
-      :opencpn_plugin_111(ppimgr)
+      :opencpn_plugin_116(ppimgr)
 {
       // Create the PlugIn icons
       m_pplugin_icon = new wxBitmap(default_pi);
