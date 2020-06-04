@@ -306,9 +306,9 @@ SET(SRC_S63
             src/s63chart.h
             src/mygeom63.h
             src/mygeom63.cpp
-            #src/tri.c
             src/TexFont.cpp
             src/TexFont.h
+            src/InstallDirs.cpp
      )
 
 SET(SRC_CPL
