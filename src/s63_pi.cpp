@@ -439,6 +439,12 @@ s63_pi::~s63_pi()
           g_pScreenLog->Destroy();
           g_pScreenLog = NULL;
       }
+      
+      if(g_pPanelScreenLog){
+        g_pPanelScreenLog->Close();
+        delete g_pPanelScreenLog;
+        g_pPanelScreenLog = NULL;
+      }
 }
 
 int s63_pi::Init(void)
@@ -496,6 +502,10 @@ bool s63_pi::DeInit(void)
 //        g_pScreenLog->Destroy();
 //        g_pScreenLog = NULL;
     }
+    
+    if(g_pPanelScreenLog)
+        g_pPanelScreenLog->Close();
+
     return true;
 }
 
