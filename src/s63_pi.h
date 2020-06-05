@@ -109,7 +109,7 @@ public:
 //    The PlugIn Class Definition
 //----------------------------------------------------------------------------------------------------------
 
-class s63_pi : public opencpn_plugin_111
+class s63_pi : public opencpn_plugin_116
 {
 public:
       s63_pi(void *ppimgr);
