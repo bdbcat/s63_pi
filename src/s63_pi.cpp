@@ -434,6 +434,8 @@ s63_pi::s63_pi(void *ppimgr)
 s63_pi::~s63_pi()
 {
       delete m_pplugin_icon;
+      delete m_event_handler;
+      
       if(g_pScreenLog) {
           g_pScreenLog->Close();
           g_pScreenLog->Destroy();
@@ -496,15 +498,13 @@ int s63_pi::Init(void)
 bool s63_pi::DeInit(void)
 {
     SaveConfig();
-    if(g_pScreenLog) {
+    if(g_pScreenLog) 
         g_pScreenLog->Close();
- //       delete g_pScreenLog;
-//        g_pScreenLog->Destroy();
-//        g_pScreenLog = NULL;
-    }
     
     if(g_pPanelScreenLog)
         g_pPanelScreenLog->Close();
+
+    DeleteOptionsPage( m_s63chartPanelWinTop );
 
     return true;
 }
