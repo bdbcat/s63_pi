@@ -9,7 +9,7 @@
   <open-source> no </open-source>
   <author> ${PKG_AUTHOR} </author>
   <source> https://github.com/bdbcat/s63_pi </source>
-  <info-url> https://opencpn.org/OpenCPN/plugins/oesenc.html </info-url>
+  <info-url> https://opencpn.org/OpenCPN/plugins/s63.html </info-url>
 
   <description>
   OpenCPN support for S63 Vector Charts
