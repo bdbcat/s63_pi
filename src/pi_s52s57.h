@@ -31,7 +31,7 @@
 
 //#include "bbox.h"
 
-#define CURRENT_SENC_FORMAT_VERSION  126
+#define CURRENT_SENC_FORMAT_VERSION  127
 
 //    Fwd Defns
 class wxArrayOfS57attVal;

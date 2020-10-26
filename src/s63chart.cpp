@@ -2620,131 +2620,12 @@ PI_InitReturn ChartS63::FindOrCreateSenc( const wxString& name )
                 
         }
                 
-                
         if( force_make_senc )
             bbuild_new_senc = true;
                 
         if( bbuild_new_senc )
             build_ret_val = BuildSENCFile( name, SENCFileName.GetFullPath() );
                 
-        
-#if 0    
-        wxFile f;
-        if( f.Open( m_SENCFileName.GetFullPath() ) ) {
-            if( f.Length() == 0 ) {
-                f.Close();
-                build_ret_val = BuildSENCFile( name, m_SENCFileName.GetFullPath() );
-            } else                                      // file exists, non-zero
-            {                                         // so check for new updates
-            
-            f.Seek( 0 );
-            wxFileInputStream *pfpx_u = new wxFileInputStream( f );
-            wxBufferedInputStream *pfpx = new wxBufferedInputStream( *pfpx_u );
-            int dun = 0;
-            int last_update = 0;
-            int senc_file_version = 0;
-            int force_make_senc = 0;
-            char buf[256];
-            char *pbuf = buf;
-            wxDateTime ModTime000;
-            int size000 = 0;
-            wxString senc_base_edtn;
-            
-            while( !dun ) {
-                if( my_fgets( pbuf, 256, *pfpx ) == 0 ) {
-                    dun = 1;
-                    force_make_senc = 1;
-                    break;
-                } else {
-                    if( !strncmp( pbuf, "OGRF", 4 ) ) {
-                        dun = 1;
-                        break;
-                    }
-                    
-                    wxString str_buf( pbuf, wxConvUTF8 );
-                    wxStringTokenizer tkz( str_buf, _T("=") );
-                    wxString token = tkz.GetNextToken();
-                    
-                    if( token.IsSameAs( _T("UPDT"), TRUE ) ) {
-                        int i;
-                        i = tkz.GetPosition();
-                        last_update = atoi( &pbuf[i] );
-                    }
-                    
-                    else if( token.IsSameAs( _T("SENC Version"), TRUE ) ) {
-                        int i;
-                        i = tkz.GetPosition();
-                        senc_file_version = atoi( &pbuf[i] );
-                    }
-                    
-                    else if( token.IsSameAs( _T("FILEMOD000"), TRUE ) ) {
-                        int i;
-                        i = tkz.GetPosition();
-                        wxString str( &pbuf[i], wxConvUTF8 );
-                        str.Trim();                               // gets rid of newline, etc...
-                        if( !ModTime000.ParseFormat( str,
-                            _T("%Y%m%d")/*(const wxChar *)"%Y%m%d"*/) ) ModTime000.SetToCurrent();
-                        ModTime000.ResetTime();                   // to midnight
-                    }
-                    
-                    else if( token.IsSameAs( _T("FILESIZE000"), TRUE ) ) {
-                        int i;
-                        i = tkz.GetPosition();
-                        size000 = atoi( &pbuf[i] );
-                    }
-                    
-                    else if( token.IsSameAs( _T("EDTN000"), TRUE ) ) {
-                        int i;
-                        i = tkz.GetPosition();
-                        wxString str( &pbuf[i], wxConvUTF8 );
-                        str.Trim();                               // gets rid of newline, etc...
-                        senc_base_edtn = str;
-                    }
-                    
-                }
-            }
-            
-            delete pfpx;
-            delete pfpx_u;
-            f.Close();
-            //              Anything to do?
-            // force_make_senc = 1;
-            //  SENC file version has to be correct for other tests to make sense
-            if( senc_file_version != CURRENT_SENC_FORMAT_VERSION ) bbuild_new_senc = true;
-                            
-                            //  Senc EDTN must be the same as .000 file EDTN.
-            //  This test catches the usual case where the .000 file is updated from the web,
-            //  and all updates (.001, .002, etc.)  are subsumed.
-            else if( !senc_base_edtn.IsSameAs( m_edtn000 ) ) bbuild_new_senc = true;
-                            
-                            else {
-                                //    See if there are any new update files  in the ENC directory
-                                int most_recent_update_file = GetUpdateFileArray( FileName000, NULL );
-                                
-                                if( last_update != most_recent_update_file ) bbuild_new_senc = true;
-                            
-                            //          Make two simple tests to see if the .000 file is "newer" than the SENC file representation
-                                //          These tests may be redundant, since the DSID:EDTN test above should catch new base files
-                                wxDateTime OModTime000;
-                                FileName000.GetTimes( NULL, &OModTime000, NULL );
-                                OModTime000.ResetTime();                      // to midnight
-                                if( ModTime000.IsValid() ) if( OModTime000.IsLaterThan( ModTime000 ) ) bbuild_new_senc =
-                                    true;
-                                
-                                int Osize000l = FileName000.GetSize().GetLo();
-                                if( size000 != Osize000l ) bbuild_new_senc = true;
-                            }
-                            
-                            if( force_make_senc ) bbuild_new_senc = true;
-                            
-                            if( bbuild_new_senc ) build_ret_val = BuildSENCFile( name,
-                                m_SENCFileName.GetFullPath() );
-                            
-            }
-        }
-#endif        
-//        build_ret_val = BuildSENCFile( name, SENCFileName.GetFullPath() );
-//        bbuild_new_senc = true;
     }
     
     else                    // SENC file does not exist
@@ -3439,7 +3320,7 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                         
                         ///
                         for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
-                            int seg_index = iseg * 3;
+                            int seg_index = iseg * 4;
                             int *index_run = &obj->m_lsindex_array[seg_index];
 
                             //  Get first connected node
@@ -3477,6 +3358,10 @@ int ChartS63::BuildRAZFromSENCFile( const wxString& FullPath )
                                     m_vc_hash[0] = 0;
                                 }
                             }
+                            index_run++;
+                            
+                            // Get the direction
+                            int iDir = *index_run;
                             index_run++;
                             
                         }
@@ -5531,7 +5416,7 @@ void ChartS63::AssembleLineGeometry( void )
                     int yyp = 4;
                 
                 for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
-                    int seg_index = iseg * 3;
+                    int seg_index = iseg * 4;
                     int *index_run = &obj->m_lsindex_array[seg_index];
                     
                     //  Get first connected node
@@ -5553,6 +5438,10 @@ void ChartS63::AssembleLineGeometry( void )
                     PI_VC_Element *epnode = 0;
                     epnode = m_vc_hash[enode];
                     
+                    // Get the direction
+                    int iDir = *index_run;
+                    index_run++;
+                    
                     if( ipnode ) {
                         if(pedge && pedge->nCount)
                         {
@@ -5566,6 +5455,7 @@ void ChartS63::AssembleLineGeometry( void )
                                 pcs->type = TYPE_CE;
                                 pcs->start = ipnode;
                                 pcs->end = pedge;
+                                pcs->dir = iDir;
                                 m_connector_hash[key] = pcs;
                             }
                         }
@@ -5589,6 +5479,7 @@ void ChartS63::AssembleLineGeometry( void )
                                     pcs->type = TYPE_EC;
                                     pcs->start = pedge;
                                     pcs->end = epnode;
+                                    pcs->dir = iDir;
                                     m_connector_hash[key] = pcs;
                                 }
                             }
@@ -5602,6 +5493,7 @@ void ChartS63::AssembleLineGeometry( void )
                                     pcs->type = TYPE_CC;
                                     pcs->start = ipnode;
                                     pcs->end = epnode;
+                                    pcs->dir = iDir;
                                     m_connector_hash[key] = pcs;
                                 }
                             }
@@ -5684,9 +5576,20 @@ void ChartS63::AssembleLineGeometry( void )
                 e0 = *ppt++;
                 n0 = *ppt;
                 
-                pedge = (PI_VE_Element *)pcs->end;
-                e1 = pedge->pPoints[ 0 ];
-                n1 = pedge->pPoints[ 1 ];
+                if(pcs->dir == 1){
+                    pedge = (PI_VE_Element *)pcs->end;
+                    e1 = pedge->pPoints[ 0 ];
+                    n1 = pedge->pPoints[ 1 ];
+                }
+                else{
+                    pedge = (PI_VE_Element *)pcs->end;
+                    //e1 = pedge->pPoints[ 0 ];
+                    //n1 = pedge->pPoints[ 1 ];
+                    e1 = pedge->pPoints[ (2 * (pedge->nCount - 1))];
+                    n1 = pedge->pPoints[ (2 * (pedge->nCount - 1)) + 1];
+
+                }
+                    
                 
                 *lvr++ = (float)e0;
                 *lvr++ = (float)n0;
@@ -5698,9 +5601,16 @@ void ChartS63::AssembleLineGeometry( void )
                 break;
                 
             case TYPE_EC:
-                pedge = (PI_VE_Element *)pcs->start;
-                e0 = pedge->pPoints[ (2 * (pedge->nCount - 1))];
-                n0 = pedge->pPoints[ (2 * (pedge->nCount - 1)) + 1];
+                if(pcs->dir == 1){
+                    pedge = (PI_VE_Element *)pcs->start;
+                    e0 = pedge->pPoints[ (2 * (pedge->nCount - 1))];
+                    n0 = pedge->pPoints[ (2 * (pedge->nCount - 1)) + 1];
+                }
+                else{
+                    pedge = (PI_VE_Element *)pcs->start;
+                    e0 = pedge->pPoints[ 0 ];
+                    n0 = pedge->pPoints[ 1 ];
+                }
                 
                 epnode = (PI_VC_Element *)pcs->end;
                 ppt = epnode->pPoint;
@@ -5734,7 +5644,7 @@ void ChartS63::AssembleLineGeometry( void )
                 PI_line_segment_element *le_current = list_top;
                 
                 for( int iseg = 0; iseg < obj->m_n_lsindex; iseg++ ) {
-                    int seg_index = iseg * 3;
+                    int seg_index = iseg * 4;
                     int *index_run = &obj->m_lsindex_array[seg_index];
                     
                     //  Get first connected node
@@ -5748,6 +5658,10 @@ void ChartS63::AssembleLineGeometry( void )
                     //  Get end connected node
                     unsigned int enode = *index_run++;
                     
+                    // Get the direction
+                    int iDir = *index_run;
+                    index_run++;
+
                     //  Get first connected node
                     PI_VC_Element *ipnode = 0;
                     ipnode = m_vc_hash[inode];
@@ -7003,8 +6917,8 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_v
 
                         sscanf( buf, "%s %d ", tbuf, &m_n_lsindex );
 
-                        m_lsindex_array = (int *) malloc( 3 * m_n_lsindex * sizeof(int) );
-                        fpx->Read( (char *)m_lsindex_array, 3 * m_n_lsindex * sizeof(int) );
+                        m_lsindex_array = (int *) malloc( 4 * m_n_lsindex * sizeof(int) );
+                        fpx->Read( (char *)m_lsindex_array, 4 * m_n_lsindex * sizeof(int) );
                         m_n_edge_max_points = 0; //TODO this could be precalulated and added to next SENC format
 
                         py_fgets( buf, MAX_LINE, fpx );     // this should be \n
@@ -7075,8 +6989,8 @@ PI_S57ObjX::PI_S57ObjX( char *first_line, CryptInputStream *fpx, int senc_file_v
 
                             sscanf( buf, "%s %d ", tbuf, &m_n_lsindex );
 
-                            m_lsindex_array = (int *) malloc( 3 * m_n_lsindex * sizeof(int) );
-                            fpx->Read( (char *)m_lsindex_array, 3 * m_n_lsindex * sizeof(int) );
+                            m_lsindex_array = (int *) malloc( 4 * m_n_lsindex * sizeof(int) );
+                            fpx->Read( (char *)m_lsindex_array, 4 * m_n_lsindex * sizeof(int) );
                             m_n_edge_max_points = 0; //TODO this could be precalulated and added to next SENC format
 
                             py_fgets( buf, MAX_LINE, fpx );     // this should be \n

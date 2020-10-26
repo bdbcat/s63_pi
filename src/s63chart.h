@@ -383,6 +383,7 @@ public:
     SegmentType type;
     int vbo_offset;
     int max_priority;
+    int dir;
 };
 
 //----------------------------------------------------------------------------------
