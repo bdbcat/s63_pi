@@ -1,0 +1,126 @@
+== S63 Vector Charts
+
+image::s63-3.png[]
+
+Chart showing Part of Jamaica, from the IHO S63 test suite.
+
+=== Links
+
+Source: https://github.com/bdbcat/s63_pi[Github Repository] +
+Website: http://o-charts.org/[S-63 O-charts.org] +
+Download: https://opencpn.org/OpenCPN/plugins/s63.html[S63_pi
+Download] +
+Forum:
+http://www.cruisersforum.com/forums/f134/s63-plugin-version-1-0-released-134287.html#post1666404[S-63
+Charts Plugin Released] +
+
+=== Goal
+
+This Plugin supports use of S63 encrypted Charts and dramatically
+expands OpenCPN's range of charts available. +
+These charts are quite reasonably priced….S-63 is the encrypted
+distribution format for S-57 vector charts. Today, hydrographical
+offices all over the world are producing their official vector charts in
+the S-57 format. Distribution is done under the S-63 standard. +
+ +
+To use the encrypted charts, you must get a license for your particular
+machine (called Permit), make sure to visit
+
+*_http://o-charts.org/_*
+
+for more information and to get the permits. +
+ +
+S63 is an encrypted version of S57 vector charts, and is the standard
+format for almost all, officially published, vector charts in today’s
+world. As a matter of fact, only NOAA and the East Asia Hydrographic
+Commission (EAHC), publishes free unencrypted S57 charts nowadays. +
+ +
+These, S57 and S63 charts, are the current state of the art charts. The
+quality of the charts are the best vector charts available. They are
+always kept up to date. No other vector chart are in the same league. +
+There are, however also some drawbacks. Many popular cruising areas are
+very poorly covered as the focus is on the needs for commercial
+shipping. One example is he Bahamas area. Another problem is the
+relatively high price. When licensing consider the licensing period.
+Your charts will be available still after expiring just without weekly
+updates. +
+ +
+OpenCPN handles these commercial, non free, charts through an open
+source plugin, that in the background connects to a “black box” helper
+application. An external entity, *_http://o-charts.org_*, handles the
+encrypted and commercial aspects of the S-63 plug-ins for OpenCPN. +
+
+=== Get Started
+
+* Download the plugin for your operating system the official OpenCPN
+download page.
+* Also download and read the informative Documentation from
+*_http://o-charts.org/downloads.html_*. Really!!
+* Install the plugin the way you normally install programs on your
+operating system. The S-63 plug-in gets enabled at installation.
+* Check that your Options→Charts shows a new “S63 Charts” tab, as in the
+pictures below.
+* At the S-63 Keys/Permit tab you can create a _system identifier file_
+which “fingerprints” your individual system - a file you will need for
+the InstallPermit. Try this on your system before licensing charts to
+ensure that a fingerprint can be created for you.
+* Now go to the O-charts shop to get your “User Permit” and “Install
+Permit”. Use these to license your chart selection.
+* Detailed instructions are available on
+*_http://o-charts.org[o-charts.org]_*
+
+=== Loading the Charts
+
+*The Keys/Permits tab.*
+
+
+image::4-s63-1.png[]
+
+
+* *Certificate Name* This should already be present after a sucessfull
+plugin installation.
+* If it's missing press the “Import Certificate…” button and import the
+file IHO.PUB. To find the location of this, file press the
+image::help.png[image] button in the toolbar. Find the
+“Config file location” at the bottom of the “About” tab.
+* Go to the same directory as the config file, and then to the
+s63→s63_certificates directory, where you will find IHO.PUB. +
+* *UserPermit* +
+
+image::s64usp.png[]
+
+* Enter your new Userpermit from O-charts and test it. The permit above
+is from IHO's test suit and is not valid in real life.
+* *New InstallPermit*
+
+image::s65inst.png[]
+
+* Enter your new Installpermit from O-charts and test it.
+* OpenCPN is now setup for S63 charts. Lincense your charts or use the
+test set. See instructions below.
+* Download and uncompress your files.
+* Install Cell Permits by using the button “Import Cell Permits…” to
+find the file PERMIT.TXT.
+* Import the downloaded charts by pressing “Import Charts/Updates..” and
+find the folder “ENC_ROOT” +
+
+image::4-s63.png[]
+
+* This dialog will pop up. I you answer “No”, the SENC creation will
+happen when you first try to use the chart. +
+
+image::s63message.png[]
+
+==== Testing
+
+Download
+
+*_http://www.iho.int/iho_pubs/standard/S-64/ENC_Test_Data_Sets/ENC_TDS_S-63_Encrypted/ENC3.1.1_TDS_S-63_Encrypted.zip_*
+
+You may exercise the S64 Test set using the following special permits: +
+<code> User Permit: 66B5CBFDF7E4139D5B6086C23130 +
+Install Permit: 38F99B50 <\code>
+
+Perhaps the best to start with is: +
+
+IHO S-64 [S-63 TDS v1.2]/8 Data Exchange Media/Test 8b/PERMIT.TXT
