@@ -22,4 +22,12 @@
     iii.     $make package
 
     The debian install package will be built, and called s63_pi_0.1.0-_i386.deb
+    
+2.   Copyright and licensing
+
+This software is copyright (c) David Register 2021. It is distributed under the terms of the Gnu Public License version 2 or, at your option, any later version. See COPYING.gplv2.
+
+The OCPNsenc binary is closed source. Re-distribution of these items is allowed.
+
+The sources also contains dependencies distributed under various open-source licenses. Refer to the source files for details.
 
