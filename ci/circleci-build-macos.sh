@@ -19,7 +19,7 @@ set -xe
 #/usr/bin/ruby -e "$(curl -fsSL $inst)"
 
 #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-brew update-reset
+#brew update-reset
 
 set -o pipefail
 for pkg in cairo cmake libarchive libexif python3 wget; do
