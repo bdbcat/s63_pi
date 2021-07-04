@@ -22,7 +22,7 @@ set -xe
 #brew update-reset
 
 set -o pipefail
-for pkg in cairo cmake libarchive libexif python wget; do
+for pkg in cairo cmake libarchive libexif  wget; do
     brew list $pkg 2>&1 >/dev/null || brew install $pkg
 done
 
