@@ -35,13 +35,10 @@ else
     #sudo -H python3 -m pip install -q setuptools
     #sudo -H python3 -m pip install -q cloudsmith-cli
  
- sudo apt install -q \
-    python3-pip python3-setuptools python3-dev python3-wheel \
-    build-essential libssl-dev libffi-dev 
+    
+    sudo apt-get install python3-pip python3-setuptools
+    sudo python3 -m pip install -q cloudsmith-cli
 
-    python3 -m pip install --user --upgrade -q setuptools
-    python3 -m pip install --user --upgrade -q wheel pip
-    python3 -m pip install --user -q cloudsmith-cli cryptography cmake
 fi
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-1}
