@@ -45,7 +45,7 @@ else
 
     python3 -m pip install  --upgrade  setuptools
     python3 -m pip install  --upgrade  wheel pip
-    python3 -m pip install   cloudsmith-cli cryptography cmake
+    python3 -m pip install   cloudsmith-cli 
 
 fi
 
