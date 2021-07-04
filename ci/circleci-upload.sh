@@ -38,6 +38,7 @@ else
     
     sudo apt-get install python3-pip python3-setuptools
     #sudo python3 -m pip install -q cloudsmith-cli
+    sudo -H python3 -m ensurepip
     sudo pip install --upgrade cloudsmith-cli
     
 fi
