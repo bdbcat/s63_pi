@@ -43,9 +43,9 @@ else
     python3-pip python3-setuptools python3-dev python3-wheel \
     build-essential libssl-dev libffi-dev 
 
-    python3 -m pip install --user --upgrade -q setuptools
-    python3 -m pip install --user --upgrade -q wheel pip
-    python3 -m pip install --user -q cloudsmith-cli cryptography cmake
+    sudo python3 -m pip install --user --upgrade -q setuptools
+    sudo python3 -m pip install --user --upgrade -q wheel pip
+    sudo python3 -m pip install --user -q cloudsmith-cli cryptography cmake
 
 fi
 
