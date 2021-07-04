@@ -9,17 +9,18 @@ set -xe
 
 # As of travis-ci-macos-10.13-xcode9.4.1-1529955246, the travis osx image
 # contains a broken homebrew. Walk-around by reinstalling:
-curl -fsSL \
-     https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh \
-    > uninstall.sh
-chmod 755 uninstall.sh
-./uninstall.sh -q -f
+#curl -fsSL \
+#     https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh \
+#    > uninstall.sh
+#chmod 755 uninstall.sh
+#./uninstall.sh -q -f
 
 #inst="https://raw.githubusercontent.com/Homebrew/install/master/install"
 #/usr/bin/ruby -e "$(curl -fsSL $inst)"
 
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-  
+#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew update-reset
+
 set -o pipefail
 for pkg in cairo cmake libarchive libexif python3 wget; do
     brew list $pkg 2>&1 >/dev/null || brew install $pkg
