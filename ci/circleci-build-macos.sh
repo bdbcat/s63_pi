@@ -15,10 +15,11 @@ curl -fsSL \
 chmod 755 uninstall.sh
 ./uninstall.sh -q -f
 
-inst="https://raw.githubusercontent.com/Homebrew/install/master/install"
-/usr/bin/ruby -e "$(curl -fsSL $inst)"
+#inst="https://raw.githubusercontent.com/Homebrew/install/master/install"
+#/usr/bin/ruby -e "$(curl -fsSL $inst)"
 
-
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  
 set -o pipefail
 for pkg in cairo cmake libarchive libexif python3 wget; do
     brew list $pkg 2>&1 >/dev/null || brew install $pkg
