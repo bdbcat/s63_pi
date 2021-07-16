@@ -39,7 +39,7 @@ docker run --privileged -d -ti -e "container=docker"  \
 DOCKER_CONTAINER_ID=$(docker ps | grep fedora | awk '{print $1}')
 docker logs $DOCKER_CONTAINER_ID
 docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-    "bash -xe $TOPDIR/ci/docker-build-flatpak.sh 28;
+    "bash -xe $TOPDIR/ci/docker-build-flatpak-x86-64-1808.sh 28;
          echo -ne \"------\nEND OPENCPN-CI BUILD\n\";"
 docker ps -a
 docker stop $DOCKER_CONTAINER_ID
