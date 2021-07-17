@@ -22,9 +22,15 @@ set -xe
 #brew update-reset
 
 set -o pipefail
-for pkg in cairo cmake libarchive libexif  wget; do
-    brew list $pkg 2>&1 >/dev/null || brew install $pkg
-done
+#for pkg in cairo cmake libarchive libexif  wget; do
+#    brew list $pkg 2>&1 >/dev/null || brew install $pkg
+#done
+
+git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
+git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
+brew update
+
+brew install cairo
 
 wget http://opencpn.navnux.org/build_deps/wx312_opencpn50_macos109.tar.xz
 tar xJf wx312_opencpn50_macos109.tar.xz -C /tmp
