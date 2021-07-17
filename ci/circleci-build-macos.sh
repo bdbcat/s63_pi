@@ -22,21 +22,21 @@ set -xe
 #brew update-reset
 
 set -o pipefail
-#for pkg in cairo cmake libarchive libexif  wget; do
-#    brew list $pkg 2>&1 >/dev/null || brew install $pkg
-#done
 
 git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
 git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
-brew update
+brew update-reset
 
+for pkg in cmake libarchive libexif  wget; do
+    brew list $pkg 2>&1 >/dev/null || brew install $pkg
+done
 
 #brew install cairo
 
 #wget http://opencpn.navnux.org/build_deps/wx312_opencpn50_macos109.tar.xz
 #tar xJf wx312_opencpn50_macos109.tar.xz -C /tmp
 
-brew list --versions libexif
+#brew list --versions libexif
 #libexif 0.6.22
 #+++ dirname ci/circleci-build-macos.sh
 #++ cd ci
@@ -44,31 +44,31 @@ brew list --versions libexif
 #+ here=/Users/distiller/project/ci
 #++ sed /#/d
 #+ for pkg in '$(sed '\''/#/d'\'' < $here/../build-deps/macos-deps)'
-brew list --versions cmake
+#brew list --versions cmake
 #cmake 3.20.5
-brew link --overwrite cmake
+##brew link --overwrite cmake
 #Linking /usr/local/Cellar/cmake/3.20.5... 33 symlinks created.
 #+ for pkg in '$(sed '\''/#/d'\'' < $here/../build-deps/macos-deps)'
-brew list --versions gettext
+#brew list --versions gettext
 #gettext 0.20.1 0.21
-brew link --overwrite gettext
+##brew link --overwrite gettext
 #Linking /usr/local/Cellar/gettext/0.21... 159 symlinks created.
 #+ for pkg in '$(sed '\''/#/d'\'' < $here/../build-deps/macos-deps)'
-brew list --versions libexif
+#brew list --versions libexif
 #libexif 0.6.22
-brew link --overwrite libexif
+##brew link --overwrite libexif
 #Linking /usr/local/Cellar/libexif/0.6.22... 42 symlinks created.
 #+ for pkg in '$(sed '\''/#/d'\'' < $here/../build-deps/macos-deps)'
-brew list --versions python
+#brew list --versions python
 #python 3.7.4_1
-brew link --overwrite python
+##brew link --overwrite python
 #Warning: Already linked: /usr/local/Cellar/python/3.7.4_1
 #To relink, run:
 #  brew unlink python && brew link python
 #+ for pkg in '$(sed '\''/#/d'\'' < $here/../build-deps/macos-deps)'
-brew list --versions wget
+#brew list --versions wget
 #wget 1.21.1
-brew link --overwrite wget
+##brew link --overwrite wget
 #Linking /usr/local/Cellar/wget/1.21.1... 80 symlinks created.
 
 
