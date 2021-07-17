@@ -30,7 +30,7 @@ fi
 #elif apt-get --version 2>&1 >/dev/null; then
 #    sudo apt-get install python3-pip python3-setuptools
 #    sudo python3 -m pip install -q cloudsmith-cli
-else
+#else
     #sudo -H python3 -m ensurepip
     #sudo -H python3 -m pip install -q setuptools
     #sudo -H python3 -m pip install -q cloudsmith-cli
@@ -47,7 +47,7 @@ else
 #    python3 -m pip install  --upgrade  wheel pip
 #    python3 -m pip install   cloudsmith-cli 
 
-fi
+#fi
 
 python3 -m pip install --upgrade --user -q pip setuptools
 python3 -m pip install --user cloudsmith-cli
