@@ -30,6 +30,8 @@ git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
 git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
 brew update
 
+brew unlink python@3.9
+
 brew install cairo
 
 wget http://opencpn.navnux.org/build_deps/wx312_opencpn50_macos109.tar.xz
