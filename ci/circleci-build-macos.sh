@@ -26,9 +26,9 @@ set -o pipefail
 #    brew list $pkg 2>&1 >/dev/null || brew install $pkg
 #done
 
-#git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
-#git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
-#brew update
+git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
+git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
+brew update
 
 
 #brew install cairo
