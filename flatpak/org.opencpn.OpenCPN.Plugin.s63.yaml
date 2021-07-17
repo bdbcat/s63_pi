@@ -22,6 +22,6 @@ modules:
       sources:
           - type: git
             url: ..
-            branch: master
+            branch: f86-1808
           - type: file
             path: OCPNsenc
