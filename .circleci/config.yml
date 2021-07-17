@@ -91,8 +91,19 @@ jobs:
        - OCPN_TARGET:  macos
      steps:
        - checkout
+       - restore_cache:
+          keys:
+            - macos-cache-v1-{{checksum "ci/circleci-build-macos.sh"}}
        - run: ci/circleci-build-macos.sh
-       - run: ci/circleci-upload.sh
+       - save_cache:
+          key: macos-cache-v1-{{checksum "ci/circleci-build-macos.sh"}}
+          paths:
+            - /usr/local/Homebrew
+            - /usr/local/Caskroom
+            - /usr/local/Cellar
+            - /usr/local/lib
+            - /usr/local/include
+       - run: ci/circleci-upload-macos.sh
 workflows:
   version: 2
   build_all:
