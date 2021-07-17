@@ -30,12 +30,18 @@ git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
 git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
 brew update
 
-brew unlink python@3.9
 
-brew install cairo
+#brew install cairo
 
-wget http://opencpn.navnux.org/build_deps/wx312_opencpn50_macos109.tar.xz
-tar xJf wx312_opencpn50_macos109.tar.xz -C /tmp
+#wget http://opencpn.navnux.org/build_deps/wx312_opencpn50_macos109.tar.xz
+#tar xJf wx312_opencpn50_macos109.tar.xz -C /tmp
+
+# Install the pre-built wxWidgets package
+wget -q https://download.opencpn.org/s/rwoCNGzx6G34tbC/download \
+    -O /tmp/wx312B_opencpn50_macos109.tar.xz
+tar -C /tmp -xJf /tmp/wx312B_opencpn50_macos109.tar.xz 
+
+
 export PATH="/usr/local/opt/gettext/bin:$PATH"
 echo 'export PATH="/usr/local/opt/gettext/bin:$PATH"' >> ~/.bash_profile
  
