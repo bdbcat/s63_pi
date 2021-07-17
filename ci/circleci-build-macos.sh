@@ -8,9 +8,13 @@
 set -xe
 set -o pipefail
 
-git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
-git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
-brew update-reset
+#git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
+#git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask fetch --unshallow
+#brew update-reset
+
+#
+# Check if the cache is with us. If not, re-install brew.
+brew list --versions libexif || brew update-reset
 
 for pkg in cmake libarchive libexif wget;  do
     brew list --versions $pkg || brew install $pkg || brew install $pkg || :
