@@ -43,14 +43,14 @@ fi
 #    python3-pip python3-setuptools python3-dev python3-wheel \
 #    build-essential libssl-dev libffi-dev 
 
-#    python3 -m pip install  --upgrade  setuptools
-#    python3 -m pip install  --upgrade  wheel pip
-#    python3 -m pip install   cloudsmith-cli 
+    python3 -m pip install  --upgrade  setuptools
+    python3 -m pip install  --upgrade  wheel pip
+    python3 -m pip install   cloudsmith-cli 
 
 #fi
 
-python3 -m pip install --upgrade --user -q pip setuptools
-python3 -m pip install --user cloudsmith-cli
+#python3 -m pip install --upgrade --user -q pip setuptools
+#python3 -m pip install --user cloudsmith-cli
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-1}
 commit=$(git rev-parse --short=7 HEAD) || commit="unknown"
