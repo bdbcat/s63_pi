@@ -18,7 +18,7 @@ execute_process(
 
 if (OCPN_FLATPAK)
     set(PKG_TARGET "flatpak-x86_64")
-    set(PKG_TARGET_VERSION "18.08")    # As of flatpak/*yaml
+    set(PKG_TARGET_VERSION "20.08")    # As of flatpak/*yaml
 elseif (MINGW)
     set(PKG_TARGET "mingw")
     if (CMAKE_SYSTEM_VERSION)
