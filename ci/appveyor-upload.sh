@@ -4,7 +4,7 @@
 # Upload the .tar.gz and .xml artifacts to cloudsmith
 #
 
-STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'david-register/ocpn-plugins-stable'}
+STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'opencpn/s63-prod'}
 UNSTABLE_REPO=${CLOUDSMITH_UNSTABLE_REPO:-'david-register/ocpn-plugins-unstable'}
 
 if [ -z "$CLOUDSMITH_API_KEY" ]; then

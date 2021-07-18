@@ -7,7 +7,7 @@
 set -xe
 
 UNSTABLE_REPO=${CLOUDSMITH_UNSTABLE_REPO:-'david-register/ocpn-plugins-unstable'}
-STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'david-register/ocpn-plugins-stable'}
+STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'opencpn/s63-prod'}
 
 source $HOME/project/ci/commons.sh
 
