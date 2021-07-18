@@ -10,7 +10,7 @@ source $HOME/project/ci/commons.sh
 
 
 UNSTABLE_REPO=${CLOUDSMITH_UNSTABLE_REPO:-'david-register/ocpn-plugins-unstable'}
-STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'opencpn/s63'}
+STABLE_REPO=${CLOUDSMITH_STABLE_REPO:-'opencpn/s63-prod'}
 
 if [ -z "$CIRCLECI" ]; then
     exit 0;
