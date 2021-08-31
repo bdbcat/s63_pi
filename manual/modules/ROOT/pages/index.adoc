@@ -55,7 +55,7 @@ encrypted and commercial aspects of the S-63 plug-ins for OpenCPN. +
 * Download the plugin for your operating system the official OpenCPN
 download page.
 * Also download and read the informative Documentation from
-*_http://o-charts.org/downloads.html_*. Really!!
+*_https://manuals.o-charts.org/_*. Really!!
 * Install the plugin the way you normally install programs on your
 operating system. The S-63 plug-in gets enabled at installation.
 * Check that your Options→Charts shows a new “S63 Charts” tab, as in the
@@ -113,9 +113,10 @@ image::s63message.png[]
 
 ==== Testing
 
-Download
+NOTE: At the time of writing this link is not available. Investigations under way...
 
-*_http://www.iho.int/iho_pubs/standard/S-64/ENC_Test_Data_Sets/ENC_TDS_S-63_Encrypted/ENC3.1.1_TDS_S-63_Encrypted.zip_*
+Download
+\http://www.iho.int/iho_pubs/standard/S-64/ENC_Test_Data_Sets/ENC_TDS_S-63_Encrypted/ENC3.1.1_TDS_S-63_Encrypted.zip
 
 You may exercise the S64 Test set using the following special permits: +
 <code> User Permit: 66B5CBFDF7E4139D5B6086C23130 +
