@@ -36,7 +36,7 @@ elseif (MSVC)
         set(PKG_TARGET_VERSION 10)
     endif ()
 elseif (APPLE)
-    set(PKG_TARGET "darwin")
+    set(PKG_TARGET "darwin-wx315")
     execute_process(COMMAND "sw_vers" "-productVersion"
                     OUTPUT_VARIABLE PKG_TARGET_VERSION)
 elseif (UNIX)
@@ -49,7 +49,7 @@ elseif (UNIX)
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 
-    # Handle gtk3 build variant           
+    # Handle gtk3 build variant
     string(STRIP "${PKG_TARGET}" PKG_TARGET)
     string(TOLOWER "${PKG_TARGET}" PKG_TARGET)
     if (NOT DEFINED wxWidgets_LIBRARIES)
