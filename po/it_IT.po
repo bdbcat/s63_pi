@@ -30,7 +30,7 @@ msgid "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n\n"
 msgstr "S63 per OpenCPN\n"
 "fornisce il supporto di visualizzazione per le carte S63.\n\n"
-" "
+
 
 #: src/s63_pi.cpp:338 src/s63_pi.cpp:367
 msgid "SSE 25..The ENC permit for this cell has expired.\n"
