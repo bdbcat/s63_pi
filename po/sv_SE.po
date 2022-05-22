@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-20 22:22-0400\n"
-"PO-Revision-Date: 2022-04-21 14:21\n"
+"POT-Creation-Date: 2016-02-27 15:50-0300\n"
+"PO-Revision-Date: 2022-05-22 04:06\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -14,1055 +14,407 @@ msgstr ""
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Project-ID: 49843\n"
 "X-Crowdin-Language: sv-SE\n"
-"X-Crowdin-File: /plugins/o-charts_pi/po/o-charts_pi.pot\n"
-"X-Crowdin-File-ID: 358\n"
+"X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
+"X-Crowdin-File-ID: 120\n"
 
-#: src/o-charts_pi.h:224 src/o-charts_pi.cpp:1505
-msgid "o-charts_pi Preferences"
-msgstr "Inställningar för o-charts_pi"
+#: src/s63_pi.cpp:304
+msgid "S63"
+msgstr "S63"
 
-#: src/o-charts_pi.h:343
-msgid "o-charts_pi Information"
-msgstr "o-charts_pi Information"
+#: src/s63_pi.cpp:310
+msgid "S63 PlugIn for OpenCPN"
+msgstr "S63-Modul för OpenCPN"
 
-#: src/o-charts_pi.cpp:361 src/o-charts_pi.cpp:4147 src/o-charts_pi.cpp:4210
-#: src/o-charts_pi.cpp:4376 src/o-charts_pi.cpp:5185 src/o-charts_pi.cpp:5248
-#: src/o-charts_pi.cpp:5433 src/ochartShop.cpp:390 src/ochartShop.cpp:540
-#: src/ochartShop.cpp:4129 src/ochartShop.cpp:4322 src/ochartShop.cpp:7251
-#: src/ochartShop.cpp:7280 src/ochartShop.cpp:7390 src/ochartShop.cpp:7415
-#: src/ochartShop.cpp:7702
-msgid "Dialog"
-msgstr "Dialog"
+#: src/s63_pi.cpp:316
+msgid "S63 PlugIn for OpenCPN\n"
+"Provides support of S63 charts.\n\n"
+msgstr "S63-modul för OpenCPN\n"
+"Erbjuder stöd för S63-kort.\n\n"
 
-#: src/o-charts_pi.cpp:722
-msgid "The o-charts plugin replaces the oeSENC plugin chart display functions.\n"
-msgstr "Plugin o-charts används för att visa sjökort och ersätter oeSENC plugin.\n"
+#: src/s63_pi.cpp:338 src/s63_pi.cpp:367
+msgid "SSE 25..The ENC permit for this cell has expired.\n"
+" This cell may be out of date and MUST NOT be used for NAVIGATION."
+msgstr "SSE 25.. ENC-certifikat för denna cell har löpt ut. \n"
+" denna cell kan vara utgången och får inte användas för navigering."
 
-#: src/o-charts_pi.cpp:723
-msgid "It is recommended that you disable any existing oeSENC plugin, and restart OpenCPN.\n"
-msgstr "Du måste inaktivera oeSENC plugin och starta om OpenCPN.\n"
+#: src/s63_pi.cpp:410
+msgid "S63 Charts"
+msgstr "S63-kort"
 
-#: src/o-charts_pi.cpp:724 src/o-charts_pi.cpp:730 src/o-charts_pi.cpp:1149
-#: src/o-charts_pi.cpp:2127 src/o-charts_pi.cpp:2167 src/o-charts_pi.cpp:2821
-#: src/o-charts_pi.cpp:2967 src/o-charts_pi.cpp:3589 src/o-charts_pi.cpp:3645
-#: src/o-charts_pi.cpp:3730 src/o-charts_pi.cpp:3740 src/o-charts_pi.cpp:3751
-#: src/o-charts_pi.cpp:3757 src/o-charts_pi.cpp:3777 src/o-charts_pi.cpp:3792
-#: src/o-charts_pi.cpp:3798 src/o-charts_pi.cpp:4595 src/o-charts_pi.cpp:4722
-#: src/fpr.cpp:369 src/ochartShop.cpp:2334 src/ochartShop.cpp:2355
-#: src/ochartShop.cpp:2378 src/ochartShop.cpp:2392 src/ochartShop.cpp:2433
-#: src/ochartShop.cpp:3052 src/ochartShop.cpp:3080 src/ochartShop.cpp:3108
-#: src/ochartShop.cpp:3133 src/ochartShop.cpp:3329 src/ochartShop.cpp:3505
-#: src/ochartShop.cpp:4945 src/ochartShop.cpp:5097 src/ochartShop.cpp:5194
-#: src/ochartShop.cpp:5240 src/ochartShop.cpp:5246 src/ochartShop.cpp:5437
-#: src/ochartShop.cpp:5482 src/ochartShop.cpp:5518 src/ochartShop.cpp:5525
-#: src/ochartShop.cpp:6133 src/ochartShop.cpp:6184 src/ochartShop.cpp:6384
-#: src/ochartShop.cpp:6401 src/ochartShop.cpp:6460 src/ochartShop.cpp:7118
-msgid "o-charts_pi Message"
-msgstr "o-charts_pi Meddelande"
+#: src/s63_pi.cpp:422
+msgid "Chart Cells"
+msgstr "Kortceller"
 
-#: src/o-charts_pi.cpp:728
-msgid "The o-charts plugin replaces the oeRNC plugin chart display functions.\n"
-msgstr "Plugin o-charts används för att visa sjökort och ersätter oeRNC plugin.\n"
+#: src/s63_pi.cpp:433
+msgid "Installed S63 Cell Permits"
+msgstr "Installerade licenser för S63 Celler"
 
-#: src/o-charts_pi.cpp:729
-msgid "It is recommended that you disable any existing oeRNC plugin, and restart OpenCPN.\n"
-msgstr "Du måste inaktivera oeRNC plugin och starta om OpenCPN.\n"
+#: src/s63_pi.cpp:442
+msgid "Cell Name"
+msgstr "Cellnamn"
 
-#: src/o-charts_pi.cpp:874 src/o-charts_pi.cpp:5040 src/o-charts_pi.cpp:5055
-msgid "o-charts"
-msgstr "o-charts"
+#: src/s63_pi.cpp:447 src/s63_pi.cpp:522
+msgid "Data Server ID"
+msgstr "Data Server ID"
 
-#: src/o-charts_pi.cpp:880
-msgid "PlugIn for OpenCPN o-charts charts"
-msgstr "OpenCPN plugIn för o-charts sjökort"
+#: src/s63_pi.cpp:452 src/s63_pi.cpp:527
+msgid "Expiration Date"
+msgstr "Giltig tom"
 
-#: src/o-charts_pi.cpp:886
-msgid "PlugIn for OpenCPN\n"
-"Provides support of o-charts charts.\n\n"
-msgstr "PlugIn till OpenCPN \n"
-"för att använda o-charts sjökort.\n\n"
+#: src/s63_pi.cpp:463
+msgid "Import Cell Permits..."
+msgstr "Importera certifikat för cellen..."
 
-#: src/o-charts_pi.cpp:1143
-msgid "To obtain a User Key, you must generate a unique System Identifier File.\n"
-msgstr "För att erhålla en användarnyckel, måste du generera en fil med ett unik System-ID.\n"
+#: src/s63_pi.cpp:466
+msgid "Remove Permits"
+msgstr "Ta bort certifikat"
 
-#: src/o-charts_pi.cpp:1144 src/o-charts_pi.cpp:3724 src/o-charts_pi.cpp:3772
-msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr "Denna fil kallas också en fil med \"fingeravtryck\" (fingerprint).\n"
+#: src/s63_pi.cpp:470
+msgid "Import Charts/Updates..."
+msgstr "Importera kortuppdateringar..."
 
-#: src/o-charts_pi.cpp:1145
-msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
-msgstr "Fingeravtrycksfilen innehåller unik information för att identifiera denna dator.\n\n"
+#: src/s63_pi.cpp:487
+msgid "S63_pi Log"
+msgstr "S63_pi log"
 
-#: src/o-charts_pi.cpp:1146
-msgid "After creating this file, you will need it to obtain your User Key at the o-charts.org shop.\n\n"
-msgstr "När filen är skapad, kommer du att behöva den för få din användarlicens hos \n"
-"o-charts.org webshop.\n\n"
+#: src/s63_pi.cpp:502
+msgid "Keys/Permits"
+msgstr "Nycklar/Licenser"
 
-#: src/o-charts_pi.cpp:1147 src/o-charts_pi.cpp:3727 src/o-charts_pi.cpp:3775
-msgid "Proceed to create Fingerprint file?"
-msgstr "Fortsätta för att skapa filen med fingeravtryck?"
+#: src/s63_pi.cpp:508
+msgid "Installed S63 Certificates/Keys"
+msgstr "Installerade S63 certifikat/nycklar"
 
-#: src/o-charts_pi.cpp:2118
-msgid "This chart cannot be loaded due to any of the following reasons:\n\n"
-"- You have made important hardware changes on your computer.\n"
-"- Your OS has been updated and your license has been suspended.\n"
-"- This chart set was prepared for another system.\n"
-"- This chart set was prepared for a USB key dongle, but dongle is not detected.\n"
-"- There are corrupted files due to errors during download or unzip.\n\n"
-"Please contact info@o-charts.org if the problem persists.\n"
-msgstr "Ett sjökort kan inte laddas på grund av ett eller flera av följande anledningar:\n\n"
-"- Datorns hårdvara har ändrats väsentligt.\n"
-"- Datorns operativsystem har ändrats väsentligt så din o-charts licens har förfallit.\n"
-"- Sjökorten är krypterade för en annan dator.\n"
-"- Sjökorten är krypterade för en USB-dongle men den är inte korrekt ansluten.\n"
-"- Sjökortsfilerna är felaktiga. Kanske pga fel vid nedladdning eller uppackning. \n\n"
-"Vänligen kontakta info@o-charts.org om problemet kvarstår och inte kan rättas till.\n"
+#: src/s63_pi.cpp:516
+msgid "Certificate Name"
+msgstr "Certifikatnamn"
 
-#: src/o-charts_pi.cpp:2137
-msgid "This chart will soon no longer display due to time restricted license requirements."
-msgstr "Detta sjökort kommer snart inte längre att visas på grund av att användarlicensen förfaller."
+#: src/s63_pi.cpp:539
+msgid "Import Certificate..."
+msgstr "Importera certifikat..."
 
-#: src/o-charts_pi.cpp:2138
-msgid "This chart will no longer display due to time restricted license requirements."
-msgstr "Detta sjökort visas inte längre på grund av tidsbegränsade licenskrav."
+#: src/s63_pi.cpp:549
+msgid "UserPermit"
+msgstr "UserPermit"
 
-#: src/o-charts_pi.cpp:2139
-msgid "Days until expiration:"
-msgstr "Dagar kvar av licensen:"
+#: src/s63_pi.cpp:556
+msgid "New Userpermit..."
+msgstr "Nya användarcertifikat..."
 
-#: src/o-charts_pi.cpp:2140
-msgid "Grace days available after expiration:"
-msgstr "Ytterligare anstånd antal dagar efter utgång:"
+#: src/s63_pi.cpp:563
+msgid "InstallPermit"
+msgstr "Installera certifikat"
 
-#: src/o-charts_pi.cpp:2141
-msgid "Please re-license the charts at o-charts.org."
-msgstr "Vänligen licensiera om sjökorten på o-charts.org."
+#: src/s63_pi.cpp:570
+msgid "New Installpermit..."
+msgstr "Nya certifikat..."
 
-#: src/o-charts_pi.cpp:2142 src/ochartShop.cpp:4354
-msgid "Expired"
-msgstr "Förfallet"
-
-#: src/o-charts_pi.cpp:2817
-msgid "Cannot find the oexserverd utility at \n"
-msgstr "Kan inte hitta nyckelserver \"oexserverd\" på\n"
-
-#: src/o-charts_pi.cpp:2962
-msgid "oexserverd utility at \n"
-msgstr "nyckelserver \"oexserverd\" på\n"
-
-#: src/o-charts_pi.cpp:2966
-msgid " could not be started.\n\n"
-msgstr " kunde inte startas.\n\n"
-
-#: src/o-charts_pi.cpp:3361
-msgid " o-charts Version: "
-msgstr " o-charts version: "
-
-#: src/o-charts_pi.cpp:3366
-msgid "Show EULA"
-msgstr "Visa licensavtalet (EULA)"
-
-#: src/o-charts_pi.cpp:3374
+#: src/s63_pi.cpp:577
 msgid "System Identification"
 msgstr "Systemidentifiering"
 
-#: src/o-charts_pi.cpp:3384
+#: src/s63_pi.cpp:583
 msgid "Create System Identifier file..."
-msgstr "Skapa system-ID fil..."
-
-#: src/o-charts_pi.cpp:3391
-msgid "Create USB key dongle System ID file..."
-msgstr "Skapa en System ID-fil med USB-dongle..."
-
-#: src/o-charts_pi.cpp:3399
-msgid "Show In Finder"
-msgstr "Visa i Finder"
-
-#: src/o-charts_pi.cpp:3401
-msgid "Show on disk"
-msgstr "Visa på disk"
-
-#: src/o-charts_pi.cpp:3414 src/o-charts_pi.cpp:3419 src/ochartShop.cpp:4488
-#: src/ochartShop.cpp:4690 src/ochartShop.cpp:4696 src/ochartShop.cpp:4973
-#: src/ochartShop.cpp:4984
-msgid "System Name:"
-msgstr "Enhetsnamn:"
-
-#: src/o-charts_pi.cpp:3416 src/ochartShop.cpp:1856 src/ochartShop.cpp:3127
-#: src/ochartShop.cpp:4692 src/ochartShop.cpp:6952 src/ochartShop.cpp:6958
-#: src/ochartShop.cpp:7459 src/ochartShop.cpp:7472
-msgid "USB Key Dongle"
-msgstr "USB-dongle systemnyckel"
-
-#: src/o-charts_pi.cpp:3422
-msgid "Pending chart refresh"
-msgstr "Väntar på uppdatering av sjökort"
-
-#: src/o-charts_pi.cpp:3437
-msgid "Reset System Name"
-msgstr "Återställ ditt systemnamn"
-
-#: src/o-charts_pi.cpp:3447
-msgid "Reset o-charts credentials"
-msgstr "Återställ o-charts inloggningsuppgifter"
-
-#: src/o-charts_pi.cpp:3463
-msgid "Enable full chart database rebuild after chart download"
-msgstr "Bygg om databasen efter varje nedladdning av sjökort"
-
-#: src/o-charts_pi.cpp:3586
-msgid "System name RESET shall be performed only by request from o-charts technical support staff."
-msgstr "Återställning av systemnamnet bör utföras endast på begäran från o-charts tekniska support."
-
-#: src/o-charts_pi.cpp:3588
-msgid "Proceed to RESET?"
-msgstr "Gå vidare till Återställning?"
-
-#: src/o-charts_pi.cpp:3645
-msgid "Credential Reset Successful"
-msgstr "Inloggningsuppgifter återställda"
-
-#: src/o-charts_pi.cpp:3723 src/o-charts_pi.cpp:3771
-msgid "To obtain a chart set, you must generate a Unique System Identifier File.\n"
-msgstr "För att ladda hem ett set sjökort, måste du skapa en fil med ett unik System-ID.\n"
-
-#: src/o-charts_pi.cpp:3725
-msgid "The fingerprint file contains information related to a connected USB key dongle.\n\n"
-msgstr "System-ID-filen innehåller information som gäller en ansluten USB-sticka (dongle).\n\n"
-
-#: src/o-charts_pi.cpp:3726 src/o-charts_pi.cpp:3774
-msgid "After creating this file, you will need it to obtain your chart sets at the o-charts.org shop.\n\n"
-msgstr "När filen är skapad, kommer du att behöva den för att ladda hem dina sjökortsfiler från o-charts.org webshop.\n\n"
-
-#: src/o-charts_pi.cpp:3740
-msgid "ERROR Creating Fingerprint file\n"
-" USB key dongle not detected."
-msgstr "Fel vid skapande av FPR, system-ID-fil\n"
-"Hittar ingen USB Dongle."
-
-#: src/o-charts_pi.cpp:3745 src/o-charts_pi.cpp:3786
-msgid "Fingerprint file created.\n"
-msgstr "System-ID-filen har skapas.\n"
-
-#: src/o-charts_pi.cpp:3749 src/o-charts_pi.cpp:3790
-msgid "\n\n"
-" Fingerprint file is also copied to desktop."
-msgstr "\n\n"
-"ID-filen, ftr, är också kopierad till skrivbordet."
-
-#: src/o-charts_pi.cpp:3757
-msgid "ERROR Creating Fingerprint file\n"
-" Check OpenCPN log file."
-msgstr "Fel vid skapande av FPR, system-ID-fil\n"
-"Se OpenCPN loggfil för mer info."
-
-#: src/o-charts_pi.cpp:3773
-msgid "The fingerprint file contains information to uniquely identify this computer.\n\n"
-msgstr "System-ID-filen innehåller unik information för att identifiera denna dator.\n\n"
-
-#: src/o-charts_pi.cpp:4300 src/o-charts_pi.cpp:5339
-msgid "Could not open o-charts_pi EULA: "
-msgstr "Kunde inte öppna o-charts_pi EULA: "
-
-#: src/o-charts_pi.cpp:4373 src/o-charts_pi.cpp:5430
-msgid "o-charts PlugIn for OpenCPN"
-msgstr "charts sjökortsplugIn för OpenCPN"
-
-#: src/o-charts_pi.cpp:4436 src/o-charts_pi.cpp:5493
-msgid "License"
-msgstr "Licens"
-
-#: src/o-charts_pi.cpp:4461 src/o-charts_pi.cpp:5518
-msgid "Accept"
-msgstr "Bekräfta"
-
-#: src/o-charts_pi.cpp:4466 src/o-charts_pi.cpp:5523
-msgid "Reject"
-msgstr "Avvisa"
-
-#: src/o-charts_pi.cpp:4512 src/o-charts_pi.cpp:4611
-msgid "No Chart sets installed."
-msgstr "Inga sjökort har installerats."
-
-#: src/o-charts_pi.cpp:4524
-msgid "Available Chart sets:"
-msgstr "Tillgängliga set av sjökort:"
-
-#: src/o-charts_pi.cpp:4562 src/o-charts_pi.cpp:4651
-msgid "Version"
-msgstr "Version"
-
-#: src/o-charts_pi.cpp:4568 src/o-charts_pi.cpp:4655
-msgid "Valid until"
-msgstr "är giltiga till"
-
-#: src/o-charts_pi.cpp:4576 src/o-charts_pi.cpp:4659
-msgid "Status"
-msgstr "Status"
-
-#: src/o-charts_pi.cpp:4631
-msgid "The following Chart sets are available : "
-msgstr "Följande set av sjökort finns tillgängliga : "
-
-#: src/o-charts_pi.cpp:4647
-msgid "Chart set"
-msgstr "Sjökortset"
-
-#: src/o-charts_pi.cpp:5087
-msgid "Add/Update o-charts chart sets"
-msgstr "Lägg till/uppdatera o-charts sjökortslista"
-
-#: src/o-charts_pi.cpp:5092
-msgid "Visit o-charts.org Website"
-msgstr "Besök o-charts.org hemsida"
-
-#: src/o-charts_pi.cpp:5093
-msgid "Here you may order new o-charts chart sets."
-msgstr "Här kan du beställa licens för nya o-charts sjökortset."
-
-#: src/eSENCChart.cpp:7323
-msgid "Sector angles are True Bearings from Seaward"
-msgstr "Sektorns vinklar är sann bäring från sjösidan"
-
-#: src/s52plib.cpp:2362 src/s52plib.cpp:2389 src/s52plib.cpp:2497
-#: src/s52plib.cpp:2683 src/s52plib.cpp:2699
-msgid "ChartTexts"
-msgstr "Text på vektorsjökort"
-
-#: src/validator.cpp:275
-msgid "No chartset selected.\n"
-msgstr "Inget sjökort är valt.\n"
-
-#: src/validator.cpp:279
-msgid "Starting chartset validation.\n"
-msgstr "Kontrollerar sjökort-set.\n"
-
-#: src/validator.cpp:281
-msgid "  Checking server installation."
-msgstr "  Kontrollerar installation av system-ID-kontroll."
-
-#: src/validator.cpp:283
-msgid "  Server not installed."
-msgstr "  System-ID-server inte installerad."
-
-#: src/validator.cpp:287
-msgid "  Server execute command: "
-msgstr "  Servern kör kommandot: "
-
-#: src/validator.cpp:291
-msgid "  Server unavailable."
-msgstr "  System-ID servern kan inte laddas."
-
-#: src/validator.cpp:295
-msgid "  Server reports version:  "
-msgstr "  Servern rapporterar version:  "
-
-#: src/validator.cpp:303
-msgid "  Checking dongle..."
-msgstr "  Kontrollerar dongeln..."
-
-#: src/validator.cpp:310
-msgid "  dongle found: "
-msgstr "  Hittade dongel: "
-
-#: src/validator.cpp:313
-msgid "  dongle not found: "
-msgstr "  Kan inte hitta rätt USB-dongle: "
-
-#: src/validator.cpp:325
-msgid "  Validating chartset assigned to dongle: "
-msgstr "  Kontrollerar kortfiler kopplade till dongel: "
-
-#: src/validator.cpp:331 src/validator.cpp:338
-msgid "  Validating chartset assigned to systemName: "
-msgstr "  Kontrollerar kortfiler kopplade till enhetsnamn: "
-
-#: src/validator.cpp:343
-msgid "  Unable to validate unassigned chartset."
-msgstr "  Det går inte att validera ej tilldelat sjökort."
-
-#: src/validator.cpp:350
-msgid "  Unable to find slot assignment."
-msgstr "  Det gick inte att hitta någon tilldelning."
-
-#: src/validator.cpp:358
-msgid "  Selected chartset is not installed for dongle."
-msgstr "  Markerat kortset är inte installerat för en dongle."
-
-#: src/validator.cpp:360
-msgid "  Selected chartset is not installed."
-msgstr "  Markerat kortset är inte installerat."
-
-#: src/validator.cpp:366
-msgid "  Installation directory: "
-msgstr "  Installationskatalog: "
-
-#: src/validator.cpp:376
-msgid "  ProcessingChartList.XML"
-msgstr "  Bearbetar ChartList.XML"
-
-#: src/validator.cpp:380
-msgid "    Checking for ChartList.XML at: "
-msgstr "    Letar efter ChartList.XML på: "
-
-#: src/validator.cpp:385
-msgid "    ChartList.XML not found in installation directory."
-msgstr "    Hittar inte ChartList.XML i katalogen."
-
-#: src/validator.cpp:389
-msgid "    Loading ChartList.XML"
-msgstr "    Läser ChartList.XML"
-
-#: src/validator.cpp:392
-msgid "    Error loading ChartList.XML"
-msgstr "    Fel vid läsning av ChartList.XML"
-
-#: src/validator.cpp:400
-msgid "    Checking ChartList for presence of each chart referenced"
-msgstr "    Kontrollerar att alla kort finns som är listade i ChartList"
-
-#: src/validator.cpp:411
-msgid "    Referenced chart is not present: "
-msgstr "    Saknar följande kort som finns i ChartList: "
-
-#: src/validator.cpp:423
-msgid "    Checking all charts for reference in ChartList"
-msgstr "    Kontrollera att alla sjökortfiler finns i ChartList"
-
-#: src/validator.cpp:445
-msgid "    Found chart file not referenced in ChartList: "
-msgstr "    Hittade sjökortsfil(er) som inte finns listad i ChartList: "
-
-#: src/validator.cpp:456
-msgid "    ChartList.XML validates OK."
-msgstr "    Kontrollerat ChartList.XML - OK."
-
-#: src/validator.cpp:460
-msgid "  Checking chart key files."
-msgstr "  Kontrollerar kortens nyckelfiler."
-
-#: src/validator.cpp:471
-msgid "    Loading keyFile: "
-msgstr "    Laddar system-ID-fil: "
-
-#: src/validator.cpp:474
-msgid "    Error loading keyFile: "
-msgstr "    Kunde inte läsa system-ID-fil: "
-
-#: src/validator.cpp:499
-msgid "    Key not found for chart file: "
-msgstr "    System-ID-nyckel kunde inte hittas för: "
-
-#: src/validator.cpp:511
-msgid "    Keyfiles validate OK."
-msgstr "    System-ID kontrollerat. OK."
-
-#: src/validator.cpp:520
-msgid "  Starting chart test load."
-msgstr "  Testar sjökort."
-
-#: src/validator.cpp:523
-msgid "  Chart count: "
-msgstr "  Antal kort: "
-
-#: src/validator.cpp:542
-msgid "  Chart load error "
-msgstr "  Fel vid laddning av sjökort "
-
-#: src/validator.cpp:551
-msgid "  Chart test load OK."
-msgstr "  Sjökortstest är OK."
-
-#: src/validator.cpp:555
-msgid "Chartset installation validates OK."
-msgstr "Installationen av sjökortset kontrollerat - OK."
-
-#: src/fpr.cpp:369
-msgid "Administrator priveleges are required to copy fpr.\n"
-"  Please try again...."
-msgstr "Administratörsrättigheter krävs för att kopiera \"fingeravtryck\" fpr.   \n"
-" Vänligen försök igen...."
-
-#: src/piScreenLog.cpp:71
-msgid "Close"
-msgstr "Stäng"
-
-#: src/chart.cpp:4343
-msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
-msgstr "---<<< Varning:  Sjökortets positionsreferens kan vara bristfällig. >>>---"
-
-#: src/chart.cpp:4426 src/chart.cpp:4490
-msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
-msgstr "---<<< Varning:  Sjökortets positionsreferens är bristfällig. >>>---"
-
-#: src/ochartShop.cpp:1801
-msgid "Fully Assigned."
-msgstr "Fullt tilldelad."
-
-#: src/ochartShop.cpp:1805
-msgid "Available."
-msgstr "Tillgängligt."
-
-#: src/ochartShop.cpp:1809
-msgid "Installed, Up-to-date."
-msgstr "Senaste version Installerad."
-
-#: src/ochartShop.cpp:1813
-msgid "Installed, Update available."
-msgstr "Installerat. Uppdatering är tillgänglig."
-
-#: src/ochartShop.cpp:1818
-msgid "Expired."
-msgstr "Förfallen."
-
-#: src/ochartShop.cpp:1822
-msgid "Preparing your chartset."
-msgstr "Förbereder skjökorten."
-
-#: src/ochartShop.cpp:1826
-msgid "Ready for download."
-msgstr "Klart att hämta."
-
-#: src/ochartShop.cpp:1830
-msgid "Please update Chart List."
-msgstr "Uppdatera sjökortslistan."
-
-#: src/ochartShop.cpp:1834
-msgid "Ready for Download Request."
-msgstr "Klart för nedladdning."
-
-#: src/ochartShop.cpp:1858
-msgid "System Key"
-msgstr "Systemnyckel"
-
-#: src/ochartShop.cpp:2297
-msgid "o-charts API error code: "
-msgstr "o-charts API felkod: "
-
-#: src/ochartShop.cpp:2304
-msgid "Production server in maintenance mode."
-msgstr "Produktionsservern är avstängd för underhåll."
-
-#: src/ochartShop.cpp:2307
-msgid "User does not exist."
-msgstr "Användaren finns inte"
-
-#: src/ochartShop.cpp:2310
-msgid "This o-charts plugin version is obsolete."
-msgstr "Denna version av o-charts plugin är föråldrad."
-
-#: src/ochartShop.cpp:2312
-msgid "Please update your plugin."
-msgstr "Vänligen uppdatera din plugin."
-
-#: src/ochartShop.cpp:2314 src/ochartShop.cpp:2330 src/ochartShop.cpp:2350
-msgid "Operation cancelled"
-msgstr "Åtgärden avbruten"
-
-#: src/ochartShop.cpp:2317
-msgid "Invalid user/email name or password."
-msgstr "Ogiltigt användare/mejl eller lösenord."
-
-#: src/ochartShop.cpp:2320
-msgid "This System Name is disabled."
-msgstr "Detta systemnamn är inaktiverat."
-
-#: src/ochartShop.cpp:2323
-msgid "This chart has already been assigned to this machine."
-msgstr "Detta sjökort har redan tilldelats den här maskinen."
-
-#: src/ochartShop.cpp:2364
-msgid "void username"
-msgstr "Användarnamn saknas"
-
-#: src/ochartShop.cpp:2366
-msgid "invalid username"
-msgstr "Ogiltigt användarnamn"
-
-#: src/ochartShop.cpp:2368
-msgid "void password"
-msgstr "Lösenord saknas"
-
-#: src/ochartShop.cpp:2370
-msgid "wrong password"
-msgstr "Felaktigt lösenord"
-
-#: src/ochartShop.cpp:2372
-msgid "There is not a system name for this device yet."
-msgstr "Det finns inte ett systemnamn för den här enheten ännu."
-
-#: src/ochartShop.cpp:2374
-msgid "Something has changed in the device assigned to this system name."
-msgstr "Något har ändrats i enheten som tilldelats detta systemnamn."
-
-#: src/ochartShop.cpp:2376
-msgid "There is already a system name for this device."
-msgstr "Det finns redan ett systemnamn för den här enheten."
-
-#: src/ochartShop.cpp:2378
-msgid "o-Charts shop interface error"
-msgstr "Fel vid anslutning till O-Charts shop"
-
-#: src/ochartShop.cpp:2387
-msgid "internet communications error code: "
-msgstr "felkod från Internetkommunikation: "
-
-#: src/ochartShop.cpp:2391
-msgid "Check your connection and try again."
-msgstr "Kontrollera din anslutning och försök igen."
-
-#: src/ochartShop.cpp:2425
-msgid "Invalid password length"
-msgstr "Lösenordet har ogiltig längd"
-
-#: src/ochartShop.cpp:2427
-msgid "Password length must be:"
-msgstr "Lösenordet måste ha:"
-
-#: src/ochartShop.cpp:2429
-msgid "Greater than 4 characters, and"
-msgstr "Minst 5 tecken och"
-
-#: src/ochartShop.cpp:2431
-msgid "Less than 255 characters."
-msgstr "färre än 255 tecken."
-
-#: src/ochartShop.cpp:3040
-msgid "This chartset will be installed as a new subdirectory within the directory you select next.\n\n"
-msgstr "Detta set av sjökort kommer att installeras som en ny underkatalog till katalogen du väljer härnäst.\n\n"
-
-#: src/ochartShop.cpp:3041
-msgid "For example, if you select the directory \"Charts\", then a new directory will be created as:\n\n"
-msgstr "Till exempel, om du väljer katalogen \"Charts\", kommer en ny katalog att skapas där:\n\n"
-
-#: src/ochartShop.cpp:3048
-msgid "The charts will be installed in this newly created directory."
-msgstr "Sjökorten kommer att installeras i denna nyligen skapade katalog."
-
-#: src/ochartShop.cpp:3053
-msgid "Proceed"
-msgstr "Fortsätt"
-
-#: src/ochartShop.cpp:3053 src/ochartShop.cpp:7325 src/ochartShop.cpp:7508
-#: src/ochartShop.cpp:7806 src/ochartShop.cpp:7875
-msgid "Cancel"
-msgstr "Avbryt"
-
-#: src/ochartShop.cpp:3066
-msgid "This chartset will be re-installed in the following location.\n\n"
-msgstr "Dessa sjökort kommer att ominstalleras på följande plats.\n\n"
-
-#: src/ochartShop.cpp:3075 src/ochartShop.cpp:3103
-msgid "If you want to use that location, press \"Continue\" \n\n"
-msgstr "Om du vill använda den platsen, tryck på \"Fortsätt\" \n\n"
-
-#: src/ochartShop.cpp:3076 src/ochartShop.cpp:3104
-msgid "If you want to change the installation location now, press \"Change\" \n\n"
-msgstr "Om du vill ändra installationsplatsen nu, tryck på \"Ändra\" \n\n"
-
-#: src/ochartShop.cpp:3081 src/ochartShop.cpp:3109
-msgid "Continue"
-msgstr "Fortsätt"
-
-#: src/ochartShop.cpp:3081 src/ochartShop.cpp:3109
-msgid "Change"
-msgstr "Ändra"
-
-#: src/ochartShop.cpp:3094
-msgid "This chartset will be installed in the following location.\n\n"
-msgstr "Detta set av sjökort kommer att installeras på följande plats.\n\n"
-
-#: src/ochartShop.cpp:3119
-msgid "This action will PERMANENTLY assign the chart:"
-msgstr "Detta sjökortset kommer att permanent kopplas till din enhet:"
-
-#: src/ochartShop.cpp:3123
-msgid "to this systemName:"
-msgstr "till detta systemnamn:"
-
-#: src/ochartShop.cpp:3131
-msgid "Proceed?"
-msgstr "Fortsätta?"
-
-#: src/ochartShop.cpp:3316 src/ochartShop.cpp:5084
-msgid "  {USB Dongle not found.}"
-msgstr "  {Kan inte hitta rätt USB-dongle.}"
-
-#: src/ochartShop.cpp:3319 src/ochartShop.cpp:5087
-msgid "  {fpr file not found.}"
-msgstr "  {Kan inte hitta rätt system-ID fpr-fil.}"
-
-#: src/ochartShop.cpp:3322 src/ochartShop.cpp:5090
-msgid "  {fpr file not created.}"
-msgstr "  {System-ID-fil, fpr, är inte skapad.}"
-
-#: src/ochartShop.cpp:3326 src/ochartShop.cpp:3502 src/ochartShop.cpp:5094
-msgid "ERROR Creating Fingerprint file"
-msgstr "Fel när system-ID-fil skulle skapas"
-
-#: src/ochartShop.cpp:3327 src/ochartShop.cpp:3503 src/ochartShop.cpp:5095
-msgid "Check OpenCPN log file."
-msgstr "Kontrollera OpenCPN loggfil."
-
-#: src/ochartShop.cpp:3369
-msgid "[USB Key Dongle not found.]"
-msgstr "[Kan inte hitta rätt USB-dongle.]"
-
-#: src/ochartShop.cpp:3373
-msgid "[fpr file not found.]"
-msgstr "[Kan inte hitta rätt system-ID, fpr, fil.]"
-
-#: src/ochartShop.cpp:3377
-msgid "[fpr file not created.]"
-msgstr " [System-ID-fil, fpr, är inte skapad.]"
-
-#: src/ochartShop.cpp:3413
-msgid "[fpr not created.]"
-msgstr " [System-ID-fil, fpr, är inte skapad.]"
-
-#: src/ochartShop.cpp:3798 src/androidSupport.cpp:646
-msgid "Unzipping chart files..."
-msgstr "Packar upp sjökortsfiler..."
-
-#: src/ochartShop.cpp:3799
-msgid "Unpacking charts"
-msgstr "Packar upp sjökorten"
-
-#: src/ochartShop.cpp:4114 src/ochartShop.cpp:4170 src/ochartShop.cpp:4213
-msgid "Installed Chart Edition:"
-msgstr "Installerad utgåva:"
-
-#: src/ochartShop.cpp:4116 src/ochartShop.cpp:4176 src/ochartShop.cpp:4219
-msgid "Current Chart Edition:"
-msgstr "Aktuell utgåva:"
-
-#: src/ochartShop.cpp:4118 src/ochartShop.cpp:4183 src/ochartShop.cpp:4225
-msgid "Status:"
-msgstr "Status:"
-
-#: src/ochartShop.cpp:4120 src/ochartShop.cpp:4192 src/ochartShop.cpp:4240
-msgid "Order Reference:"
-msgstr "Orderreferens:"
-
-#: src/ochartShop.cpp:4122 src/ochartShop.cpp:4199 src/ochartShop.cpp:4247
-msgid "Updates available through:"
-msgstr "Uppdateringar tillgängliga till:"
-
-#: src/ochartShop.cpp:4259
-msgid "Assignments:"
-msgstr "Tilldelningar:"
-
-#: src/ochartShop.cpp:4267
-msgid "    None"
-msgstr "    Ingen"
-
-#: src/ochartShop.cpp:4278
+msgstr "Skapa System-ID fil..."
+
+#: src/s63_pi.cpp:728
+msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
+msgstr "Ange S63 rotkatalog (vanligtvis ENC_ROOT)"
+
+#: src/s63_pi.cpp:754
+msgid "Cannot find \"ENC_ROOT\" directory"
+msgstr "Kan inte hitta katalogen \"ENC_ROOT\""
+
+#: src/s63_pi.cpp:756 src/s63_pi.cpp:777 src/s63_pi.cpp:867 src/s63_pi.cpp:1104
+#: src/s63_pi.cpp:1228 src/s63_pi.cpp:1258 src/s63_pi.cpp:1429
+#: src/s63_pi.cpp:1454 src/s63_pi.cpp:1478 src/s63_pi.cpp:1561
+#: src/s63_pi.cpp:1622 src/s63_pi.cpp:1664 src/s63_pi.cpp:1694
+#: src/s63_pi.cpp:1743 src/s63_pi.cpp:1773 src/s63_pi.cpp:1930
+#: src/s63_pi.cpp:1951 src/s63_pi.cpp:1991 src/s63_pi.cpp:2003
+#: src/s63_pi.cpp:2020
+msgid "s63_pi Message"
+msgstr "s63_pi meddelande"
+
+#: src/s63_pi.cpp:775
+msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
+"Note:\n"
+"This process may take some time.\n"
+"eSENCS not processed here will be created as needed by OpenCPN.\n\n"
+"Create eSENCs on Import?\n"
+msgstr "OpenCPN kan skapa eSENC filer när cellerna importeras.\n\n"
+"Notera:\n"
+"Detta kan ta lite tid. \n"
+"eSENCS som inte behandlas här kommer istället att skapas av OpenCPN när de behövs.\n\n"
+"Skapa eSENCs vid Import? \n"
+
+#: src/s63_pi.cpp:805
+msgid "CATALOG.031 file not found in ENC_ROOT"
+msgstr "Catalog.031-filen hittades inte i ENC_ROOT"
+
+#: src/s63_pi.cpp:864
+msgid "Security Scheme Error\n\n"
+" SSE 10 - Permits not available for this data provider.\n"
+msgstr "Fel i tillståndshantering\n\n"
+" SSE 10 - Licensen från denna leverantör är inte tillgänglig. \n"
+
+#: src/s63_pi.cpp:885
+msgid "Creating eSenc"
+msgstr "Skapar eSenc"
+
+#: src/s63_pi.cpp:998
+msgid "cell: "
+msgstr "cell: "
+
+#: src/s63_pi.cpp:1000
+msgid " is not present in exchange set.\n"
+msgstr ""
+
+#: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246 src/s63_pi.cpp:1735
+msgid "Security Scheme Error\n\n"
+"SSE 15 - Subscription service has expired.\n"
+" Please contact your data supplier to renew the subscription licence.\n\n"
+msgstr "Fel i tillståndshantering\n\n"
+" SSE 15 - Licensen från denna leverantör har gått ut.\n"
+"Vänligen kontakta din leverantör för en uppdatering av abonnemanget.\n\n"
+
+#: src/s63_pi.cpp:1096 src/s63_pi.cpp:1247
+msgid "First expired base cell name: "
+msgstr ""
+
+#: src/s63_pi.cpp:1099
+msgid "Base cell edition update skipped\n"
+msgstr ""
+
+#: src/s63_pi.cpp:1100 src/s63_pi.cpp:1254 src/s63_pi.cpp:1739
+msgid "There may be other expired permits.  However, this message will be shown once only."
+msgstr "Det kan finnas andra utgångna licenser.  Men detta meddelande visas endast en gång."
+
+#: src/s63_pi.cpp:1216
+msgid "Security Scheme Error\n\n"
+" SSE 23 - Non sequential update, previous update(s) missing.\n"
+"Try reloading from the base media. \n"
+" If the problem persists contact your data supplier.\n\n"
+msgstr ""
+
+#: src/s63_pi.cpp:1218
+msgid "cell:"
+msgstr "cell:"
+
+#: src/s63_pi.cpp:1222
 #, c-format
-msgid "%d) "
-msgstr "%d) "
+msgid "Latest intalled update: %d\n"
+msgstr "Senast installerade uppdatering: %d\n"
 
-#: src/ochartShop.cpp:4502 src/ochartShop.cpp:4533
-msgid "Refresh Chart List"
-msgstr "Uppdatera listan"
+#: src/s63_pi.cpp:1224 src/s63_pi.cpp:1252
+#, c-format
+msgid "Attempted update: %d\n"
+msgstr "Försökt uppdatera: %d\n"
 
-#: src/ochartShop.cpp:4507 src/ochartShop.cpp:4537
-msgid "Show Expired Charts"
-msgstr "Visa utgångna sjökortlicenser"
+#: src/s63_pi.cpp:1250
+msgid "Cell update skipped\n"
+msgstr "Celluppdatering avbruten\n"
 
-#: src/ochartShop.cpp:4512 src/ochartShop.cpp:4526
-msgid "Show Chart Info"
-msgstr "Visa tillgängliga sjökort"
+#: src/s63_pi.cpp:1274
+msgid "Cell update NOT authenticated\n"
+msgstr ""
 
-#: src/ochartShop.cpp:4551
-msgid "My Chart Sets"
-msgstr "Mina sjökort"
+#: src/s63_pi.cpp:1275
+msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
+msgstr "Denna och följande uppdateringar till denna cell är inte installerad.\n\n"
 
-#: src/ochartShop.cpp:4580
-msgid "Actions"
-msgstr "Åtgärder"
+#: src/s63_pi.cpp:1409
+msgid "Select Public Key File"
+msgstr ""
 
-#: src/ochartShop.cpp:4591 src/ochartShop.cpp:6969
-msgid "Reinstall Selection"
-msgstr "Återinstallera markerat set"
+#: src/s63_pi.cpp:1411
+msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+msgstr ""
 
-#: src/ochartShop.cpp:4594
-msgid "Cancel Operation"
-msgstr "Avbryt åtgärden"
+#: src/s63_pi.cpp:1426 src/s63_pi.cpp:1948
+msgid "Security Scheme Error\n\n"
+"SSE 08 - SA Digital Certificate file incorrect format.\n"
+"A valid certificate can be obtained from the IHO website or your data supplier.\n"
+msgstr ""
 
-#: src/ochartShop.cpp:4598
-msgid "Validate Installed Chart Set"
-msgstr "Kontrollera installerade sjökort"
+#: src/s63_pi.cpp:1448
+msgid "Certificate Key imported successfully\n"
+msgstr ""
 
-#: src/ochartShop.cpp:4606
-msgid "Status: Chart List Refresh required."
-msgstr "Status: listan med sjökort behöver uppdateras."
+#: src/s63_pi.cpp:1450
+msgid "Certificate Key import FAILED\n"
+msgstr ""
 
-#: src/ochartShop.cpp:4614 src/ochartShop.cpp:4674
-msgid "Last Error Message: "
-msgstr "Senaste Felmeddelande"
+#: src/s63_pi.cpp:1475
+msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
+msgstr ""
 
-#: src/ochartShop.cpp:4683 src/ochartShop.cpp:4977 src/ochartShop.cpp:4988
-#: src/ochartShop.cpp:4996 src/ochartShop.cpp:6330 src/ochartShop.cpp:6339
-#: src/ochartShop.cpp:6357 src/ochartShop.cpp:6366 src/ochartShop.cpp:6396
-#: src/ochartShop.cpp:6414 src/ochartShop.cpp:6453
-msgid "Status: Ready"
-msgstr "Status: Klart"
+#: src/s63_pi.cpp:1488
+msgid "Select PERMIT.TXT File"
+msgstr ""
 
-#: src/ochartShop.cpp:4830
-msgid "Contacting o-charts server..."
-msgstr "Kontaktar o-charts server..."
+#: src/s63_pi.cpp:1490
+msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
+msgstr ""
 
-#: src/ochartShop.cpp:4841 src/ochartShop.cpp:4856
-msgid "Status: Login error."
-msgstr "Status: Inloggningsfel."
+#: src/s63_pi.cpp:1559
+msgid "Update all existing cell permits?"
+msgstr ""
 
-#: src/ochartShop.cpp:4860 src/ochartShop.cpp:4873
-msgid "Status: Communications error."
-msgstr "Status: Kommunikationsfel."
+#: src/s63_pi.cpp:1621
+msgid "Security Scheme Error\n\n"
+"SSE 11 - Cell permit not found"
+msgstr ""
 
-#: src/ochartShop.cpp:4944
-msgid "This System Name has been disabled\n"
-"Please create another System Name"
-msgstr "Detta systemnamn har inaktiverats\n"
-"Vänligen skapa ett annat systemnamn"
+#: src/s63_pi.cpp:1659
+msgid "Security Scheme Error\n\n"
+"SSE 12 - Cell permit format is incorrect\n\n"
+"Incorrect cell permit line starts with "
+msgstr ""
 
-#: src/ochartShop.cpp:5193
-msgid "The detected System Name has been disabled\n"
-"Please contact o-charts to enable it again."
-msgstr "Det upptäckta systemnamnet har inaktiverats\n"
-"Kontakta o-charts för att aktivera det igen."
+#: src/s63_pi.cpp:1689
+msgid "Security Scheme Error\n\n"
+"SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
+"or the Cell Permit is for a different system.\n\n"
+" Invalid cell permit starts with "
+msgstr ""
 
-#: src/ochartShop.cpp:5239
-msgid "Invalid System Name"
-msgstr "Ogiltigt systemnamn/ID"
+#: src/s63_pi.cpp:1736
+msgid "First expired cell name: "
+msgstr ""
 
-#: src/ochartShop.cpp:5245
-msgid "This System Name has been disabled\n"
-"Please choose another SystemName"
-msgstr "Detta systemnamn har inaktiverats\n"
-"Vänligen välj en annan Systemnamn"
+#: src/s63_pi.cpp:1768
+msgid "Permit\n"
+msgstr ""
 
-#: src/ochartShop.cpp:5428
-msgid "The o-charts cache directory contains the following unused charts:"
-msgstr "Cache-katalogen för o-charts innehåller följande oanvända mellanlagringsfiler:"
+#: src/s63_pi.cpp:1770
+msgid "\n"
+"already imported.\n"
+"Would you like to replace it?"
+msgstr ""
 
-#: src/ochartShop.cpp:5436
-msgid "Remove these unused charts now?"
-msgstr "Ta bort dessa oanvända filer nu?"
+#: src/s63_pi.cpp:1833
+msgid "   Error: Cannot create "
+msgstr ""
 
-#: src/ochartShop.cpp:5474
-msgid "WARNING:\n"
-msgstr "VARNING:\n"
+#: src/s63_pi.cpp:1926
+msgid "Security Scheme Error\n\n"
+"SSE 24 - ENC Signature format is incorrect.\n\n"
+" Cell name: "
+msgstr ""
 
-#: src/ochartShop.cpp:5475
-msgid "This chart set has been previously installed.\n"
-msgstr "Dessa sjökort har varit installerade förut.\n"
+#: src/s63_pi.cpp:1987
+msgid "Security Scheme Error\n\n"
+"SSE 06 - The SA Signed Data Server Certificate is invalid.\n"
+"The SA may have issued a new public key or the ENC may originate from another service.\n"
+"A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
+"Cell name: "
+msgstr ""
 
-#: src/ochartShop.cpp:5476
-msgid "However, the chart files cannot be located.\n\n"
-msgstr "Det går dock inte att hitta sjökortsfilerna.\n\n"
+#: src/s63_pi.cpp:1999
+msgid "Security Scheme Warning\n\n"
+"SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
+"Cell name: "
+msgstr ""
 
-#: src/ochartShop.cpp:5477
-msgid "The original installation directory is: "
-msgstr "Den ursprungliga installationskatalogen är: "
+#: src/s63_pi.cpp:2016
+msgid "Security Scheme Error\n\n"
+"SSE 09 - ENC Signature is invalid.\n"
+"Cell name: "
+msgstr ""
 
-#: src/ochartShop.cpp:5480
-msgid "Please select the directory where these chart files may now be found."
-msgstr "Välj den katalog där sjökortsfilerna kan hittas nu."
+#: src/s63_pi.cpp:2181
+msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
+msgstr ""
 
-#: src/ochartShop.cpp:5518
-msgid "Validation error on zip file"
-msgstr "Valideringsfel för zip-fil"
+#: src/s63_pi.cpp:2182
+msgid "This file is also known as a\"fingerprint\" file.\n"
+msgstr ""
 
-#: src/ochartShop.cpp:5525
-msgid "Validation error on key file"
-msgstr "Fel. Ogiltig system-ID-fil"
+#: src/s63_pi.cpp:2183
+msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
+msgstr ""
 
-#: src/ochartShop.cpp:5827
-msgid "Finalizing charts"
-msgstr "Slutför sjökort"
+#: src/s63_pi.cpp:2184
+msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
+msgstr ""
 
-#: src/ochartShop.cpp:5842 src/ochartShop.cpp:5972
-msgid "Relocating chart files..."
-msgstr "Flyttar sjökortsfiler..."
+#: src/s63_pi.cpp:2185
+msgid "Proceed to create Fingerprint file?"
+msgstr ""
 
-#: src/ochartShop.cpp:6037
-msgid "Status: Validating download file..."
-msgstr "Status: Kontrollerar nedladdad fil..."
+#: src/s63_pi.cpp:2187 src/s63_pi.cpp:2232 src/s63_pi.cpp:2240
+msgid "S63_PI Message"
+msgstr ""
 
-#: src/ochartShop.cpp:6038
-msgid "Verifying download"
-msgstr "Verifierar Nedladdningen…"
+#: src/s63_pi.cpp:2229
+msgid "Fingerprint file created.\n"
+msgstr ""
 
-#: src/ochartShop.cpp:6117
-msgid "Validate Log"
-msgstr "Valideringslog"
+#: src/s63_pi.cpp:2612
+msgid "S63_pi backchannel could not listen at the specified port !\n"
+msgstr ""
 
-#: src/ochartShop.cpp:6133
-msgid "No chartset selected."
-msgstr "Inget sjökort är valt."
+#: src/s63_pi.cpp:2616
+msgid "S63_pi backchannel server listening.\n\n"
+msgstr ""
 
-#: src/ochartShop.cpp:6155 src/ochartShop.cpp:6165
-msgid "Choose chart install location."
-msgstr "Välj var korten skall installeras."
+#: src/s63_pi.cpp:2705 src/s63_pi.cpp:2751
+msgid "Unexpected event !\n"
+msgstr ""
 
-#: src/ochartShop.cpp:6184
-msgid "Chart download cancelled."
-msgstr "Hämtningen är avbruten."
+#: src/s63_pi.cpp:2724
+msgid "Error: couldn't accept a new connection\n\n"
+msgstr ""
 
-#: src/ochartShop.cpp:6226 src/ochartShop.cpp:6774
-msgid "Downloading..."
-msgstr "Laddar ner..."
+#: src/s63_pi.cpp:3054
+msgid "S63_pi Userpermit Required"
+msgstr ""
 
-#: src/ochartShop.cpp:6384
-msgid "Proceed with chart installation."
-msgstr "Fortsätt med installationen"
+#: src/s63_pi.cpp:3101
+msgid "Enter Userpermit"
+msgstr ""
 
-#: src/ochartShop.cpp:6397
-msgid "Chart installation ERROR."
-msgstr "Fel. Installation är avbruten."
+#: src/s63_pi.cpp:3120
+msgid "Test Userpermit"
+msgstr ""
 
-#: src/ochartShop.cpp:6454
-msgid "Chart installation complete.\n"
-msgstr "Installationen är slutförd.\n"
+#: src/s63_pi.cpp:3125 src/s63_pi.cpp:3347
+msgid "Test Results"
+msgstr ""
 
-#: src/ochartShop.cpp:6457
-msgid "Don't forget to rebuild chart database\n"
-" (See manual)"
-msgstr "Glöm inte att bygga om sjökortsdatabasen\n"
-" (Sjökortsfiler->Läs in alla sjökort på nytt. Se manualen )"
+#: src/s63_pi.cpp:3140 src/s63_pi.cpp:3361
+msgid "Cancel"
+msgstr ""
 
-#: src/ochartShop.cpp:6493
-msgid "Installing..."
-msgstr "Installerar..."
-
-#: src/ochartShop.cpp:6495
-msgid "Preparing installation..."
-msgstr "Förbereder installation..."
-
-#: src/ochartShop.cpp:6567
-msgid "Status: Dongle FPR upload error"
-msgstr "Status: Fel vid uppladdning av system-ID-fil, FPR, för USB-dongeln"
-
-#: src/ochartShop.cpp:6579
-msgid "Status: System FPR upload error"
-msgstr "Status: Fel vid uppladdning av system-ID-fil, FPR"
-
-#: src/ochartShop.cpp:6737 src/ochartShop.cpp:6738
-msgid "Requesting License Keys"
-msgstr "Söker efter licensnycklar"
-
-#: src/ochartShop.cpp:6769
-msgid "Status: Downloading..."
-msgstr "Status: Nedladdning..."
-
-#: src/ochartShop.cpp:6812 src/ochartShop.cpp:7159 src/ochartShop.cpp:7618
-msgid "Status: OK"
-msgstr "Status: OK"
-
-#: src/ochartShop.cpp:6961 src/ochartShop.cpp:7000 src/ochartShop.cpp:7004
-msgid "Download Selected Chart"
-msgstr "Ladda ner valda sjökort"
-
-#: src/ochartShop.cpp:6962
-msgid "Install Selected Chart for "
-msgstr "Installera markerat sjökort för "
-
-#: src/ochartShop.cpp:6963
-msgid "Reinstall Selected Chart for "
-msgstr "Installera om markerat sjökort för "
-
-#: src/ochartShop.cpp:6964
-msgid "Update Selected Chart for "
-msgstr "Uppdatera markerade sjökort för "
-
-#: src/ochartShop.cpp:6967
-msgid "Download Selection"
-msgstr "Ladda ned markerat set"
-
-#: src/ochartShop.cpp:6968
-msgid "Install Selection"
-msgstr "Installera markerat set"
-
-#: src/ochartShop.cpp:6970
-msgid "Update Selection"
-msgstr "Uppdatera markerat set"
-
-#: src/ochartShop.cpp:7099 src/ochartShop.cpp:7311
-msgid "A valid System Name is 3 to 15 characters in length."
-msgstr "Ett giltigt enhetsnamn är 3-15 tecken långt."
-
-#: src/ochartShop.cpp:7109
-msgid "No symbols or spaces are allowed in System Name."
-msgstr "Inga symboler eller mellanslag är tillåtna i Systemnamnet."
-
-#: src/ochartShop.cpp:7208 src/ochartShop.cpp:7664
-msgid "Downloaded:  "
-msgstr "Hämtade:  "
-
-#: src/ochartShop.cpp:7283
-msgid "New OpenCPN o-charts System Name"
-msgstr "Nytt OpenCPN o-charts system/enhets-namn"
-
-#: src/ochartShop.cpp:7300
-msgid "Enter New System Name"
-msgstr "Ange ett nytt enhetsnamn"
-
-#: src/ochartShop.cpp:7317
-msgid "No symbols or spaces are allowed."
-msgstr "Inga symboler eller mellanslag är tillåtna."
-
-#: src/ochartShop.cpp:7330 src/ochartShop.cpp:7511 src/ochartShop.cpp:7809
-#: src/ochartShop.cpp:7878
+#: src/s63_pi.cpp:3145 src/s63_pi.cpp:3366
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
-#: src/ochartShop.cpp:7418 src/ochartShop.h:568 src/ochartShop.h:576
-msgid "Select OpenCPN/o-charts System Name"
-msgstr "Välj OpenCPN/o-charts Systemnamn"
+#: src/s63_pi.cpp:3179
+msgid "Userpermit invalid"
+msgstr ""
 
-#: src/ochartShop.cpp:7439
-msgid "Select your System Name from the following list, or "
-msgstr "Välj ditt systemnamn från följande lista, eller "
+#: src/s63_pi.cpp:3187
+msgid "Userpermit OK"
+msgstr ""
 
-#: src/ochartShop.cpp:7444
-msgid " create a new System Name for this computer."
-msgstr " skapa ett nytt enhetsnamn för den här datorn."
+#: src/s63_pi.cpp:3302
+msgid "S63_pi Install Permit Required"
+msgstr "Det krävs en S63_pi användarlicens"
 
-#: src/ochartShop.cpp:7475
-msgid "new..."
-msgstr "nytt..."
+#: src/s63_pi.cpp:3323
+msgid "Enter Installpermit"
+msgstr ""
 
-#: src/ochartShop.cpp:7497
-msgid "System Names"
-msgstr "Enhetsnamn"
+#: src/s63_pi.cpp:3342
+msgid "Test Installpermit"
+msgstr ""
 
-#: src/ochartShop.cpp:7772 src/ochartShop.cpp:7821
-msgid "Login to o-charts.org"
-msgstr "Logga in till o-charts.org"
+#: src/s63_pi.cpp:3404
+msgid "Install permit invalid"
+msgstr ""
 
-#: src/ochartShop.cpp:7789
-msgid "email address:"
-msgstr "mejladress:"
-
-#: src/ochartShop.cpp:7796
-msgid "Password:"
-msgstr "Lösenord:"
-
-#: src/ochartShop.cpp:7854
-msgid "email:"
-msgstr "mejl:"
-
-#: src/ochartShop.cpp:7860
-msgid "pass:"
-msgstr "passera:"
-
-#: src/ochartShop.h:531 src/ochartShop.h:539
-msgid "OpenCPN o-charts System Name"
-msgstr "OpenCPN o-charts Systemnamn"
-
-#: src/ochartShop.h:642 src/ochartShop.h:650
-msgid "OpenCPN Login"
-msgstr "OpenCPN Inloggning"
+#: src/s63_pi.cpp:3412
+msgid "Install permit OK"
+msgstr ""
 

@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-27 15:50-0300\n"
-"PO-Revision-Date: 2022-05-22 03:58\n"
+"PO-Revision-Date: 2022-05-22 04:03\n"
 "Last-Translator: \n"
-"Language-Team: French\n"
-"Language: fr_FR\n"
+"Language-Team: Finnish\n"
+"Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Project-ID: 49843\n"
-"X-Crowdin-Language: fr\n"
+"X-Crowdin-Language: fi\n"
 "X-Crowdin-File: /plugins/s63_pi/po/s63_pi.pot\n"
 "X-Crowdin-File-ID: 120\n"
 
@@ -23,107 +23,107 @@ msgstr "S63"
 
 #: src/s63_pi.cpp:310
 msgid "S63 PlugIn for OpenCPN"
-msgstr "\"S63\" : Affichage de cartes S 57, cryptées S 63"
+msgstr "S63 -karttojen lisäosa OpenCPN:ään"
 
 #: src/s63_pi.cpp:316
 msgid "S63 PlugIn for OpenCPN\n"
 "Provides support of S63 charts.\n\n"
-msgstr "S63 pour OpenCPN\n"
-"fournit un support d'affichage des cartes S63\n\n"
+msgstr "S63 -lisäosa OpenCPN:ään\n"
+"Lisäosa tarjoaa tuen S63 -kartoille.\n\n"
 
 #: src/s63_pi.cpp:338 src/s63_pi.cpp:367
 msgid "SSE 25..The ENC permit for this cell has expired.\n"
 " This cell may be out of date and MUST NOT be used for NAVIGATION."
-msgstr "SSE 25.. Le permis pour cette cellule a expiré.\n"
-" Cette cellule peut être périmée et NE DOIT PAS être utilisée en NAVIGATION."
+msgstr "SSE 25.. ENC hyväksyntä tälle solulle on päättynyt. \n"
+" Tämä solu voi olla vanhentunut eikä sitä pidä käyttää navigointiin."
 
 #: src/s63_pi.cpp:410
 msgid "S63 Charts"
-msgstr "S 63"
+msgstr "S63 -kartat"
 
 #: src/s63_pi.cpp:422
 msgid "Chart Cells"
-msgstr "Cellules"
+msgstr "Karttasolut"
 
 #: src/s63_pi.cpp:433
 msgid "Installed S63 Cell Permits"
-msgstr "Permis de cellules S63 installés"
+msgstr "Asennetut S63 -soluluvat"
 
 #: src/s63_pi.cpp:442
 msgid "Cell Name"
-msgstr "Cellule : Nom"
+msgstr "Solun nimi"
 
 #: src/s63_pi.cpp:447 src/s63_pi.cpp:522
 msgid "Data Server ID"
-msgstr "Serveur de données : ID"
+msgstr "Palvelimen tunnus"
 
 #: src/s63_pi.cpp:452 src/s63_pi.cpp:527
 msgid "Expiration Date"
-msgstr "Expire  le"
+msgstr "Viimeinen käyttöpäivä"
 
 #: src/s63_pi.cpp:463
 msgid "Import Cell Permits..."
-msgstr "Cellules : Permis d'importation"
+msgstr "Tuo soluluvat..."
 
 #: src/s63_pi.cpp:466
 msgid "Remove Permits"
-msgstr "Supprimer les Permis"
+msgstr "Poista soluluvat"
 
 #: src/s63_pi.cpp:470
 msgid "Import Charts/Updates..."
-msgstr "Importer Cartes/Mises à jour ...."
+msgstr "Tuo kartat/päivitykset..."
 
 #: src/s63_pi.cpp:487
 msgid "S63_pi Log"
-msgstr "Log : Surveillance du complément S63"
+msgstr "S63_pi -loki"
 
 #: src/s63_pi.cpp:502
 msgid "Keys/Permits"
-msgstr "Clés/Permis"
+msgstr "Avaimet/luvat"
 
 #: src/s63_pi.cpp:508
 msgid "Installed S63 Certificates/Keys"
-msgstr "Certificats/Clés S63 installés"
+msgstr "Asennetut S63 -varmenteet/-avaimet"
 
 #: src/s63_pi.cpp:516
 msgid "Certificate Name"
-msgstr "Nom du certificat"
+msgstr "Varmenteen nimi"
 
 #: src/s63_pi.cpp:539
 msgid "Import Certificate..."
-msgstr "Importer le certificat ...."
+msgstr "Tuo varmenne..."
 
 #: src/s63_pi.cpp:549
 msgid "UserPermit"
-msgstr "UserPermit"
+msgstr "Käyttäjälupa (User Permit)"
 
 #: src/s63_pi.cpp:556
 msgid "New Userpermit..."
-msgstr "Nouveau UserPermit ....."
+msgstr "Uusi käyttäjälupa..."
 
 #: src/s63_pi.cpp:563
 msgid "InstallPermit"
-msgstr "InstallPermit"
+msgstr "Asennuslupa (Install Permit)"
 
 #: src/s63_pi.cpp:570
 msgid "New Installpermit..."
-msgstr "Nouveau InstallPermit ...."
+msgstr "Uusi asennuslupa..."
 
 #: src/s63_pi.cpp:577
 msgid "System Identification"
-msgstr "Identification du système"
+msgstr "Järjestelmän tunnistetiedosto (Fingerprint file)"
 
 #: src/s63_pi.cpp:583
 msgid "Create System Identifier file..."
-msgstr "Créer le fichier d'identification du système ..."
+msgstr "Luo järjestelmän tunnistetiedosto..."
 
 #: src/s63_pi.cpp:728
 msgid "Select S63 exchange set root directory (usually ENC_ROOT)"
-msgstr "Selectionner le dossier contenant les S63 (usuellement ENC_ROOT)"
+msgstr "Valitse S63 vaihtosarjan juurihakemisto (yleensä ENC_ROOT)"
 
 #: src/s63_pi.cpp:754
 msgid "Cannot find \"ENC_ROOT\" directory"
-msgstr "Impossible de trouver le dossier \"ENC_ROOT\""
+msgstr "\"ENC_ROOT\" -kansiota ei löydy"
 
 #: src/s63_pi.cpp:756 src/s63_pi.cpp:777 src/s63_pi.cpp:867 src/s63_pi.cpp:1104
 #: src/s63_pi.cpp:1228 src/s63_pi.cpp:1258 src/s63_pi.cpp:1429
@@ -133,7 +133,7 @@ msgstr "Impossible de trouver le dossier \"ENC_ROOT\""
 #: src/s63_pi.cpp:1951 src/s63_pi.cpp:1991 src/s63_pi.cpp:2003
 #: src/s63_pi.cpp:2020
 msgid "s63_pi Message"
-msgstr "S63_pi : Message"
+msgstr "s63_pi -viesti"
 
 #: src/s63_pi.cpp:775
 msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
@@ -141,180 +141,181 @@ msgid "OpenCPN can create eSENC files as cells are imported.\n\n"
 "This process may take some time.\n"
 "eSENCS not processed here will be created as needed by OpenCPN.\n\n"
 "Create eSENCs on Import?\n"
-msgstr "OpenCPN peut créer des fichiers eSENC pour les cellules importées.\n\n"
-"Note: \n"
-"Ce processus peut prendre un certain temps.\n"
-"Les eSENCS qui ne sont pas traités ici seront créés selon les besoins par OpenCPN.\n\n"
-"Voulez vous créer les fichiers eSENC dés maintenant ?\n"
+msgstr "OpenCPN voi luoda eSENC tiedostot, kun solut ovat tuotu.\n\n"
+"Huomaa:\n"
+"This voi kestää jonkin aikaa. \n"
+"Ne eSENC:it, joita ei käsitellä tässä luodaan tarpeen mukaan OpenCPN:ssä.\n\n"
+"Luodaanko eSENC:it tuotaessa? \n"
 
 #: src/s63_pi.cpp:805
 msgid "CATALOG.031 file not found in ENC_ROOT"
-msgstr "Le fichier \"CATALOGUE.031\" n'est pas dans le dossier \"ENC_ROOT\""
+msgstr "Catalog.031 tiedostoa ei löydy ENC_ROOT:ssa"
 
 #: src/s63_pi.cpp:864
 msgid "Security Scheme Error\n\n"
 " SSE 10 - Permits not available for this data provider.\n"
-msgstr "Erreur système de sécurité \n\n"
-"  SSE 10 -. Permis non acceptable pour ce fournisseur de données \n"
+msgstr "Turvajärjestelmän virhe\n\n"
+" SSE 10 - luvat puuttuvat tältä palveluntarjoajalta.\n"
 
 #: src/s63_pi.cpp:885
 msgid "Creating eSenc"
-msgstr "eSenc en cours de création"
+msgstr "Luo eSenc"
 
 #: src/s63_pi.cpp:998
 msgid "cell: "
-msgstr "Cellule : "
+msgstr "solu: "
 
 #: src/s63_pi.cpp:1000
 msgid " is not present in exchange set.\n"
-msgstr " n'est pas présent dans l'ensemble du lot.\n"
+msgstr " ei ole vaihtosarjassa. \n"
 
 #: src/s63_pi.cpp:1095 src/s63_pi.cpp:1246 src/s63_pi.cpp:1735
 msgid "Security Scheme Error\n\n"
 "SSE 15 - Subscription service has expired.\n"
 " Please contact your data supplier to renew the subscription licence.\n\n"
-msgstr "Erreur système de sécurité\n\n"
-" SSE 15 - Le service d'abonnement a expiré.\\n S'il vous plait, contactez votre fournisseur de données pour renouveler votre licence.\n\n"
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 15 - tilauspalvelu vanhentunut. \n"
+"Pyydä jälleenmyyjääsi uudistamaan tilauslupasi.\n\n"
 
 #: src/s63_pi.cpp:1096 src/s63_pi.cpp:1247
 msgid "First expired base cell name: "
-msgstr "Nom du premier groupe de cellules expiré : "
+msgstr "Ensimmäisen erääntyneen perussolun nimi: "
 
 #: src/s63_pi.cpp:1099
 msgid "Base cell edition update skipped\n"
-msgstr "La mise à jour de ce groupe de cellules a été sautée\n"
+msgstr "Perussolun päivitysmuokkaus ohitettiin\n"
 
 #: src/s63_pi.cpp:1100 src/s63_pi.cpp:1254 src/s63_pi.cpp:1739
 msgid "There may be other expired permits.  However, this message will be shown once only."
-msgstr "Il y a peut être d'autres permis expirés. Dans tous les cas, ce message sera affiché une seule fois."
+msgstr "Voi olla muitakin vanhentuneita lupia.  Kuitenkin tämä viesti näytetään vain kerran."
 
 #: src/s63_pi.cpp:1216
 msgid "Security Scheme Error\n\n"
 " SSE 23 - Non sequential update, previous update(s) missing.\n"
 "Try reloading from the base media. \n"
 " If the problem persists contact your data supplier.\n\n"
-msgstr "Erreur système de sécurité\n\n"
-"SSE 23 -. Mise à jour non séquentielle. Absence de la ou des mise(s) à jour précédente(s).\n"
-"Essayez de recharger à partir du support de base. \n"
-"  Si le problème persiste, contactez votre fournisseur de données. \n\n"
+msgstr "Turvajärjestelmän virhe\n\n"
+" SSE 23 - Päivityksiä ei ole tehty järjestyksessä. Edelliset päivitykset puuttuvat. \n"
+"Yritä ladata kartat uudelleen perusmedialta sekä lataa kukin päivitys järjestyksessä.\n"
+" Jos ongelma jatkuu, ota yhteyttä karttojesi toimittajaan.\n\n"
 
 #: src/s63_pi.cpp:1218
 msgid "cell:"
-msgstr "Cellule :"
+msgstr "solu:"
 
 #: src/s63_pi.cpp:1222
 #, c-format
 msgid "Latest intalled update: %d\n"
-msgstr "Dernière mise à jour installée : %d\n"
+msgstr "Uusin asennettu päivitys: %d\n"
 
 #: src/s63_pi.cpp:1224 src/s63_pi.cpp:1252
 #, c-format
 msgid "Attempted update: %d\n"
-msgstr "Mise à jour tentée : %d\n"
+msgstr "Yritetty päivitystä: %d\n"
 
 #: src/s63_pi.cpp:1250
 msgid "Cell update skipped\n"
-msgstr "La mise à jour de cette cellule a été sautée\n"
+msgstr "Solun päivitys ohitettiin\n"
 
 #: src/s63_pi.cpp:1274
 msgid "Cell update NOT authenticated\n"
-msgstr "Mise à jour de la cellule non authentifiée\n"
+msgstr "Solun päivitystä ei ole todennettu\n"
 
 #: src/s63_pi.cpp:1275
 msgid "This update and all subsequent updates to this cell are NOT applied.\n\n"
-msgstr "Cette mise à jour de cette cellule, et toutes les suivantes,  ne sont pas appliquées.\n"
+msgstr "Tätä päivitystä eikä kaikkia myöhempiä päivityksiä ole lisätty tähän soluun.\n\n"
 
 #: src/s63_pi.cpp:1409
 msgid "Select Public Key File"
-msgstr "Sélectionnez une clé publique"
+msgstr "Valitse julkisen avaimen tiedosto"
 
 #: src/s63_pi.cpp:1411
 msgid "PUB files (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
-msgstr "Fichiers PUB (*.PUB)|*.PUB|txt files (*.txt)|*.txt|All files (*.*)|*.*"
+msgstr "PUB tiedostot (*.PUB) | *.Pub|txt tiedostot (*.txt) | *. txt|Kaikki tiedostot (*. *) | *. *"
 
 #: src/s63_pi.cpp:1426 src/s63_pi.cpp:1948
 msgid "Security Scheme Error\n\n"
 "SSE 08 - SA Digital Certificate file incorrect format.\n"
 "A valid certificate can be obtained from the IHO website or your data supplier.\n"
-msgstr "Erreur système de sécurité \n\n"
-" SSE 08 - Le format du fichier du certificat numérique SA est incorrect \n"
-".Un certificat valide peut être obtenue sur le site Web de l'OHI ou par votre fournisseur de données. \n"
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 08 - SA digitaalinen varmennetiedosto on virheellisessä muodossa.\n"
+"Voimassaolevan varmenteen voi saada IHO verkkosivuilta tai karttojesi toimittajalta. \n"
 
 #: src/s63_pi.cpp:1448
 msgid "Certificate Key imported successfully\n"
-msgstr "Succès de l'importation de la clé du certificat\n"
+msgstr "Varmenneavain tuotiin onnistuneesti\n"
 
 #: src/s63_pi.cpp:1450
 msgid "Certificate Key import FAILED\n"
-msgstr "Echec de l'importation de la clé du certificat.\n"
+msgstr "Varmenneavaimen tuonti EPÄONNISTUI\n"
 
 #: src/s63_pi.cpp:1475
 msgid "Please enter valid Userpermit and Installpermit on Keys/Permits tab"
-msgstr "S'il vous plait, entrer un UserPermit et un InstallPermit valides dans l'onglet Clés/Permis"
+msgstr "Anna kelvollinen käyttäjälupa ja asennuslupa avaimet/luvat-välilehdellä"
 
 #: src/s63_pi.cpp:1488
 msgid "Select PERMIT.TXT File"
-msgstr "Sélectionnez un fichier PERMIT.TXT"
+msgstr "Valitse PERMIT.TXT-tiedosto"
 
 #: src/s63_pi.cpp:1490
 msgid "TXT files (*.TXT)|*.TXT|All files (*.*)|*.*"
-msgstr "Fichier TXT (*.TXT)|*.TXT|Tous les fichiers (*.*)|*.*"
+msgstr "TXT-tiedostot (*.TXT) | *.TXT|Kaikki tiedostot (*. *) | *. *"
 
 #: src/s63_pi.cpp:1559
 msgid "Update all existing cell permits?"
-msgstr "Mise à jour de tous les permis de cellule existant ?"
+msgstr "Päivitä kaikki nykyiset soluluvat?"
 
 #: src/s63_pi.cpp:1621
 msgid "Security Scheme Error\n\n"
 "SSE 11 - Cell permit not found"
-msgstr "Erreur système de sécurité \n\n"
-" SSE11 - Le Permis de la cellule est absent"
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 11 - solulupaa ei löydy"
 
 #: src/s63_pi.cpp:1659
 msgid "Security Scheme Error\n\n"
 "SSE 12 - Cell permit format is incorrect\n\n"
 "Incorrect cell permit line starts with "
-msgstr "Erreur système de sécurité \n\n"
-" SSE 12 - Format invalide du permis de la cellule.n\n"
-"La ligne du permis de la cellule commence par "
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 12 - soluluvan muoto on väärä\n\n"
+"Väärän soluluvan rivi alkaa "
 
 #: src/s63_pi.cpp:1689
 msgid "Security Scheme Error\n\n"
 "SSE 13 - Cell Permit is invalid (checksum is incorrect)\n"
 "or the Cell Permit is for a different system.\n\n"
 " Invalid cell permit starts with "
-msgstr "Erreur système de sécurité \n\n"
-" SSE13 - Le Permis de la cellule est invalide (Erreur de checksum)\n"
-"ou le permis de la cellule est destiné à un autre système informatique.\n\n"
-"Le permis invalide de la cellule commence par "
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 13 - solulupa on virheellinen (tarkistussumma on virheellinen) \n"
+"tai solulupa on eri järjestelmään.\n\n"
+" virheellinen solulupa alkaa "
 
 #: src/s63_pi.cpp:1736
 msgid "First expired cell name: "
-msgstr "Nom de la première cellule expirée : "
+msgstr "Ensimmäisen erääntyneen solun nimi: "
 
 #: src/s63_pi.cpp:1768
 msgid "Permit\n"
-msgstr "Permis\n"
+msgstr "Lupa\n"
 
 #: src/s63_pi.cpp:1770
 msgid "\n"
 "already imported.\n"
 "Would you like to replace it?"
 msgstr "\n"
-"Déjà importé.\n"
-"Voulez vous le remplacer ?"
+"on jo tuotu.\n"
+"Haluatko korvata sen?"
 
 #: src/s63_pi.cpp:1833
 msgid "   Error: Cannot create "
-msgstr "   Erreur : Création impossible "
+msgstr "   Virhe: Ei voi luoda "
 
 #: src/s63_pi.cpp:1926
 msgid "Security Scheme Error\n\n"
 "SSE 24 - ENC Signature format is incorrect.\n\n"
 " Cell name: "
-msgstr "Erreur système de sécurité \n\n"
-" SSE 24 - Format invalide de la signature de l'ENC.\n\n"
-"Nom de la cellule : "
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 24 - ENC allekirjoitusmuoto on väärä.\n\n"
+" solun nimi: "
 
 #: src/s63_pi.cpp:1987
 msgid "Security Scheme Error\n\n"
@@ -322,123 +323,121 @@ msgid "Security Scheme Error\n\n"
 "The SA may have issued a new public key or the ENC may originate from another service.\n"
 "A new SA public key can be obtained from the IHO website or from your data supplier.\n\n"
 "Cell name: "
-msgstr "Erreur système de sécurité \n\n"
-" SSE 06 - Le certificat du serveur Data SA Signé n'est pas valide. \n"
-"La SA peut proposer une nouvelle clé publique ou l'ENC peut provenir d'un autre service. \n"
-"Une nouvelle clé publique SA peut être obtenue sur le site Web de l'OHI ou de votre fournisseur de données.\n\n"
-"Nom de la cellule :"
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 06 - SA:n allekirjoittama palvelimen varmenne on virheellinen. \n"
+"SA on saattanut luoda uuden julkisen avaimen tai ENC voi olla peräisin toisesta palvelusta. \n"
+"Uuden SA julkisen avaimen voi saada IHO verkkosivuilta tai karttojesi toimittajalta.\n\n"
+"Solu: "
 
 #: src/s63_pi.cpp:1999
 msgid "Security Scheme Warning\n\n"
 "SSE 26 - ENC is not authenticated by the IHO acting as the SA.\n\n"
 "Cell name: "
-msgstr "Erreur système de sécurité \n\n"
-" SSE 26-. L'ENC n'est pas authentifié par l'OHI agissant en tant que SA. \n\n"
-"Nom de la cellule : "
+msgstr "Turvajärjestelmän varoitus\n\n"
+"SSE 26 - ENC:tä ei ole todennettu IHO:n toimivalla SA:lla.\n\n"
+"Solun nimi: "
 
 #: src/s63_pi.cpp:2016
 msgid "Security Scheme Error\n\n"
 "SSE 09 - ENC Signature is invalid.\n"
 "Cell name: "
-msgstr "Erreur système de sécurité \n\n"
-" SSE 09 - La signature de l'ENC est invalide.\n\n"
-"Nom de la cellule : "
+msgstr "Turvajärjestelmän virhe\n\n"
+"SSE 09 - ENC allekirjoitus on virheellinen. \n"
+"Solun nimi: "
 
 #: src/s63_pi.cpp:2181
 msgid "To obtain an Install Permit, you must generate a unique System Identifier File.\n"
-msgstr "Pour obtenir un \"Install permit\", vous devez créer un unique fichier d'identification du système.\n"
+msgstr "Saadaksesi asennusluvan (Install Permit), sinun on luotava yksilöllinen järjestelmän tunnistetiedosto.\n"
 
 #: src/s63_pi.cpp:2182
 msgid "This file is also known as a\"fingerprint\" file.\n"
-msgstr "Ce fichier est aussi connu comme un fichier d'empreinte digitale.\n"
+msgstr "Tämä tiedosto tunnetaan myös \"sormenjälki\" tiedostona (Fingerprint file).\n"
 
 #: src/s63_pi.cpp:2183
 msgid "The fingerprint file contains information to uniquely identifiy this computer.\n\n"
-msgstr "Le fichier d'empreinte contient des informations permettant l'identification de cet ordinateur.\n\n"
+msgstr "Sormenjälkitiedosto sisältää tämän tietokoneen yksilöintitiedot.\n\n"
 
 #: src/s63_pi.cpp:2184
 msgid "After creating this file, you will need it to generate your InstallPermit at the o-charts.org shop.\n"
-msgstr "Après avoir créé ce fichier, vous en aurez besoin pour générer votre InstallPermit à la boutique o-charts.org.\n"
-"\n"
-""
+msgstr "Luotuasi tämän tiedoston, tarvitset sitä muodostaaksesi asennusluvan (Install Permit) o-charts.org kaupassa.\n"
 
 #: src/s63_pi.cpp:2185
 msgid "Proceed to create Fingerprint file?"
-msgstr "Procéder à la création d'un fichier d'empreinte ?"
+msgstr "Luodaanko sormenjälkitiedosto?"
 
 #: src/s63_pi.cpp:2187 src/s63_pi.cpp:2232 src/s63_pi.cpp:2240
 msgid "S63_PI Message"
-msgstr "S63_PI : Message"
+msgstr "S63_PI viesti"
 
 #: src/s63_pi.cpp:2229
 msgid "Fingerprint file created.\n"
-msgstr "Le fichier d'empreinte est créé.\n"
+msgstr "Sormenjälkitiedosto luotu.\n"
 
 #: src/s63_pi.cpp:2612
 msgid "S63_pi backchannel could not listen at the specified port !\n"
-msgstr "Le canal de retour de S63_pi ne peut écouter sur le port spécifié !\n"
+msgstr "S63_pi taustakanava ei voinut kuunnella määritettyä porttia!\n"
 
 #: src/s63_pi.cpp:2616
 msgid "S63_pi backchannel server listening.\n\n"
-msgstr "Le canal de retour de S63_pi est à l'écoute.\n\n"
+msgstr "S63_pi taustakanavapalvelin kuuntelee.\n\n"
 
 #: src/s63_pi.cpp:2705 src/s63_pi.cpp:2751
 msgid "Unexpected event !\n"
-msgstr "Evénement inattendu !\n"
+msgstr "Odottamaton tapahtuma! \n"
 
 #: src/s63_pi.cpp:2724
 msgid "Error: couldn't accept a new connection\n\n"
-msgstr "Erreur : Impossible d'accepter une nouvelle connexion\n\n"
+msgstr "Virhe: uutta liitosta ei voitu hyväksyä\n\n"
 
 #: src/s63_pi.cpp:3054
 msgid "S63_pi Userpermit Required"
-msgstr "Le UserPermit pour le complément S63 est requis"
+msgstr "Tarviaan S63_pi käyttäjälupa (User Permit)"
 
 #: src/s63_pi.cpp:3101
 msgid "Enter Userpermit"
-msgstr "Entrer le UserPermit"
+msgstr "Anna käyttäjälupa"
 
 #: src/s63_pi.cpp:3120
 msgid "Test Userpermit"
-msgstr "Tester le UserPermit"
+msgstr "Testaa käyttäjälupaa"
 
 #: src/s63_pi.cpp:3125 src/s63_pi.cpp:3347
 msgid "Test Results"
-msgstr "Résultats du test"
+msgstr "Testitulokset"
 
 #: src/s63_pi.cpp:3140 src/s63_pi.cpp:3361
 msgid "Cancel"
-msgstr "Annuler"
+msgstr "Peruuta"
 
 #: src/s63_pi.cpp:3145 src/s63_pi.cpp:3366
 msgid "OK"
-msgstr "Ok"
+msgstr "OK"
 
 #: src/s63_pi.cpp:3179
 msgid "Userpermit invalid"
-msgstr "UserPermit invalide"
+msgstr "Käyttäjälupa ei kelpaa"
 
 #: src/s63_pi.cpp:3187
 msgid "Userpermit OK"
-msgstr "UserPermit ok"
+msgstr "Käyttäjälupa OK"
 
 #: src/s63_pi.cpp:3302
 msgid "S63_pi Install Permit Required"
-msgstr "L'InstallPermit pour le complément S63 est requis"
+msgstr "Tarvitaan S63_pi asennuslupa (Install Permit)"
 
 #: src/s63_pi.cpp:3323
 msgid "Enter Installpermit"
-msgstr "Entrer l'InstallPermit"
+msgstr "Anna asennuslupa"
 
 #: src/s63_pi.cpp:3342
 msgid "Test Installpermit"
-msgstr "Tester l'InstallPermit"
+msgstr "Testaa asennuslupa"
 
 #: src/s63_pi.cpp:3404
 msgid "Install permit invalid"
-msgstr "InstallPermit invalide"
+msgstr "Asennuslupa on virheellinen"
 
 #: src/s63_pi.cpp:3412
 msgid "Install permit OK"
-msgstr "InstallPermit Ok"
+msgstr "Asennuslupa OK"
 
