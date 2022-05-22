@@ -70,7 +70,7 @@ jobs:
        - run: ci/circleci-upload-flatpak.sh
    build-macos:
      macos:
-       xcode: "11.0.0"
+       xcode: "12.5.1"
      environment:
        - OCPN_TARGET:  macos
      steps:
