@@ -33,7 +33,7 @@ IF(NOT MSVC)
   ADD_DEFINITIONS( "-Wall -g -fprofile-arcs -ftest-coverage -fexceptions" )
  ELSE(PROFILING)
 #  ADD_DEFINITIONS( "-Wall -g -fexceptions" )
- ADD_DEFINITIONS( "-Wall -Wno-unused-result -g -O2 -fexceptions" )
+ ADD_DEFINITIONS( "-Wall -Wno-unused-result -g -O2 -fexceptions -fPIC" )
  ENDIF(PROFILING)
 
  IF(NOT APPLE)
@@ -120,8 +120,8 @@ IF(QT_ANDROID)
 
     SET(OPENGLES_FOUND "YES")
     SET(OPENGL_FOUND "YES")
-    
-      
+
+
   SET(USE_GLES2 ON )
 
   IF(USE_GLES2)
@@ -150,7 +150,7 @@ IF (QT_ANDROID )
         # Presently, Android Plugins are built in the core tree, so the variables {wxQT_BASE}, etc.
         # flow to this module from above.  If we want to build Android plugins out-of-core, this will need improvement.
 
-  
+
     ${Qt_Base}/${Qt_Build}/lib/libQt5Core.so
     ${Qt_Base}/${Qt_Build}/lib/libQt5OpenGL.so
     ${Qt_Base}/${Qt_Build}/lib/libQt5Widgets.so
