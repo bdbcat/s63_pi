@@ -357,6 +357,20 @@ s63_pi::s63_pi(void *ppimgr)
       // Create the PlugIn icons
       m_pplugin_icon = new wxBitmap(default_pi);
 
+      wxString dataLocn = GetPluginDataDir("s63_pi") + wxFileName::GetPathSeparator()
+                          + _T("data") + wxFileName::GetPathSeparator();
+
+      wxImage panelIcon(  dataLocn + _T("s63_panel_icon.png"));
+      if(panelIcon.IsOk()){
+        m_panelBitmap = wxBitmap(panelIcon);
+        m_pplugin_icon = &m_panelBitmap;
+      }
+      else{
+        wxLogMessage(_T("    s63 panel icon NOT loaded"));
+        m_panelBitmap = wxBitmap(default_pi);
+        m_pplugin_icon = &m_panelBitmap;
+      }
+
       g_pi = this;              // Store a global handle to the PlugIn itself
 
       m_event_handler = new s63_pi_event_handler(this);

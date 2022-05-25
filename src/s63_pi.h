@@ -81,13 +81,13 @@ public:
     void OnImportPermitClick( wxCommandEvent &event );
     void OnRemovePermitClick( wxCommandEvent &event );
     void OnImportCellsClick( wxCommandEvent &event );
-    void OnSelectPermit( wxListEvent& event );    
-    void OnNewUserpermitClick( wxCommandEvent& event );    
-    void OnNewInstallpermitClick( wxCommandEvent& event );    
+    void OnSelectPermit( wxListEvent& event );
+    void OnNewUserpermitClick( wxCommandEvent& event );
+    void OnNewInstallpermitClick( wxCommandEvent& event );
     void OnImportCertClick( wxCommandEvent &event );
     void OnNewFPRClick( wxCommandEvent &event );
     void OncbLogClick( wxCommandEvent &event );
-    
+
     s63_pi  *m_parent;
 };
 
@@ -97,7 +97,7 @@ class Catalog_Entry31
 public:
     Catalog_Entry31(){};
     ~Catalog_Entry31(){};
-    
+
     wxString m_filename;
     wxString m_comt;
 };
@@ -129,7 +129,7 @@ public:
     wxString GetLongDescription();
     bool RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp);
     bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
-    
+
     wxArrayString GetDynamicChartClassNameArray();
 
     void OnSetupOptions();
@@ -141,42 +141,43 @@ public:
     int ImportCells( void );
     int ImportCert( void );
     void Set_FPR();
-    
+
     void EnablePermitRemoveButton(bool benable){ m_buttonRemovePermit->Enable(benable); }
     void GetNewUserpermit(void);
     void GetNewInstallpermit(void);
-    
+
     bool SaveConfig( void );
-  
+
     wxString GetCertificateDir();
-   
+
     wxStaticText        *m_up_text;
     wxStaticText        *m_ip_text;
     wxStaticText        *m_fpr_text;
-    
+
     wxScrolledWindow    *m_s63chartPanelWinTop;
     wxPanel             *m_s63chartPanelWin;
     wxPanel             *m_s63chartPanelKeys;
     wxNotebook          *m_s63NB;
-    
+
 private:
     wxString GetPermitDir();
-    
+
     void CreateCatalog31(const wxString &file31);
-    
+
     int ProcessCellPermit( wxString &permit, bool b_confirm_existing );
     int AuthenticateCell( const wxString & cell_file );
-    
+
     bool LoadConfig( void );
-    
+
     int pi_error( wxString msg );
-    
+
     wxArrayString     m_class_name_array;
 
     wxBitmap          *m_pplugin_icon;
+    wxBitmap           m_panelBitmap;
 
     s63_pi_event_handler *m_event_handler;
-    
+
     OCPNPermitList      *m_permit_list;
     wxButton            *m_buttonImportPermit;
     wxButton            *m_buttonRemovePermit;
@@ -185,23 +186,23 @@ private:
     wxButton            *m_buttonNewIP;
     wxButton            *m_buttonNewFPR;
     wxCheckBox          *m_cbLog;
-    
+
     wxFileConfig        *m_pconfig;
     wxString            m_SelectPermit_dir;
 
     wxString            m_userpermit;
-    
+
     std::vector<Catalog_Entry31 *> m_catalog;
     wxString            m_last_enc_root_dir;
-    
+
     OCPNCertificateList *m_cert_list;
     wxButton            *m_buttonImportCert;
-    
+
     bool                m_bSSE26_shown;
     TexFont             m_TexFontMessage;
-    
-    
-    
+
+
+
 };
 
 
@@ -211,24 +212,24 @@ class S63ScreenLog : public wxWindow
 public:
     S63ScreenLog(wxWindow *parent);
     ~S63ScreenLog();
-    
+
     void LogMessage(wxString &s);
     void ClearLog(void);
     void ClearLogSeq(void){ m_nseq = 0; }
-    
+
     void OnServerEvent(wxSocketEvent& event);
     void OnSocketEvent(wxSocketEvent& event);
     void OnSize( wxSizeEvent& event);
-    
-    
-private:    
+
+
+private:
     wxTextCtrl          *m_plogtc;
     unsigned int        m_nseq;
-    
+
     wxSocketServer      *m_server;
-    
+
     DECLARE_EVENT_TABLE()
-    
+
 };
 
 class S63ScreenLogContainer : public wxDialog
@@ -236,12 +237,12 @@ class S63ScreenLogContainer : public wxDialog
 public:
     S63ScreenLogContainer(wxWindow *parent);
     ~S63ScreenLogContainer();
- 
+
     void LogMessage(wxString &s);
     void ClearLog(void);
     S63ScreenLog        *m_slog;
-    
-private:    
+
+private:
 };
 
 
@@ -253,7 +254,7 @@ class OCPNPermitList : public wxListCtrl
 public:
     OCPNPermitList(wxWindow *parent);
     ~OCPNPermitList();
-    
+
     void BuildList( const wxString &permit_dir );
     wxArrayString       m_permit_file_array;
 };
@@ -263,7 +264,7 @@ class OCPNCertificateList : public wxListCtrl
 public:
     OCPNCertificateList(wxWindow *parent);
     ~OCPNCertificateList();
-    
+
     void BuildList( const wxString &cert_dir );
 //    wxArrayString       m_permit_file_array;
 };
@@ -295,7 +296,7 @@ class GetUserpermitDialog: public wxDialog
 {
     DECLARE_DYNAMIC_CLASS( GetUserpermitDialog )
     DECLARE_EVENT_TABLE()
-    
+
 public:
     /// Constructors
     GetUserpermitDialog( );
@@ -304,33 +305,33 @@ public:
                         const wxPoint& pos = SYMBOL_GETUP_POSITION,
                         const wxSize& size = SYMBOL_GETUP_SIZE,
                         long style = SYMBOL_GETUP_STYLE );
-    
+
     ~GetUserpermitDialog();
-    
+
     /// Creation
     bool Create( wxWindow* parent, wxWindowID id = SYMBOL_GETUP_IDNAME,
                  const wxString& caption = SYMBOL_GETUP_TITLE,
                  const wxPoint& pos = SYMBOL_GETUP_POSITION,
                  const wxSize& size = SYMBOL_GETUP_SIZE, long style = SYMBOL_GETUP_STYLE );
-    
-   
+
+
     void CreateControls();
-    
+
     void OnCancelClick( wxCommandEvent& event );
     void OnOkClick( wxCommandEvent& event );
     void OnUpdated( wxCommandEvent& event );
     void OnTestClick( wxCommandEvent& event );
-    
+
     /// Should we show tooltips?
     static bool ShowToolTips();
-    
+
     wxTextCtrl*   m_PermitCtl;
     wxButton*     m_CancelButton;
     wxButton*     m_OKButton;
     wxButton*     m_testBtn;
     wxStaticText* m_TestResult;
-    
-    
+
+
 };
 
 /*!
@@ -359,7 +360,7 @@ class GetInstallpermitDialog: public wxDialog
 {
     DECLARE_DYNAMIC_CLASS( GetInstallpermitDialog )
     DECLARE_EVENT_TABLE()
-    
+
 public:
     /// Constructors
     GetInstallpermitDialog( );
@@ -368,33 +369,33 @@ public:
                          const wxPoint& pos = SYMBOL_GETIP_POSITION,
                          const wxSize& size = SYMBOL_GETIP_SIZE,
                          long style = SYMBOL_GETIP_STYLE );
-    
+
     ~GetInstallpermitDialog();
-    
+
     /// Creation
     bool Create( wxWindow* parent, wxWindowID id = SYMBOL_GETIP_IDNAME,
                  const wxString& caption = SYMBOL_GETIP_TITLE,
                  const wxPoint& pos = SYMBOL_GETIP_POSITION,
                  const wxSize& size = SYMBOL_GETIP_SIZE, long style = SYMBOL_GETIP_STYLE );
-    
-    
+
+
     void CreateControls();
-    
+
     void OnCancelClick( wxCommandEvent& event );
     void OnOkClick( wxCommandEvent& event );
     void OnUpdated( wxCommandEvent& event );
     void OnTestClick( wxCommandEvent& event );
-    
+
     /// Should we show tooltips?
     static bool ShowToolTips();
-    
+
     wxTextCtrl*   m_PermitCtl;
     wxButton*     m_CancelButton;
     wxButton*     m_OKButton;
     wxButton*     m_testBtn;
     wxStaticText* m_TestResult;
-    
-    
+
+
 };
 
 class InfoWin: public wxWindow
@@ -402,10 +403,10 @@ class InfoWin: public wxWindow
 public:
     InfoWin( wxWindow *parent, const wxString&s = _T(""), bool show_gauge = true );
     ~InfoWin();
-    
+
     void SetString(const wxString &s);
     const wxString& GetString(void) { return m_string; }
-    
+
     void SetPosition( wxPoint pt ){ m_position = pt; }
     void SetWinSize( wxSize sz ){ m_size = sz; }
     void Realize( void );
@@ -413,18 +414,18 @@ public:
     void OnPaint( wxPaintEvent& event );
     void OnEraseBackground( wxEraseEvent& event );
     void OnTimer( wxTimerEvent& event );
-    
+
     wxStaticText *m_pInfoTextCtl;
     wxGauge   *m_pGauge;
     wxTimer     m_timer;
-    
+
 private:
-    
+
     wxString m_string;
     wxSize m_size;
     wxPoint m_position;
     bool m_bGauge;
-    
+
     DECLARE_EVENT_TABLE()
 };
 
@@ -433,10 +434,10 @@ class InfoWinDialog: public wxDialog
 public:
     InfoWinDialog( wxWindow *parent, const wxString&s = _T(""), bool show_gauge = true );
     ~InfoWinDialog();
-    
+
     void SetString(const wxString &s);
     const wxString& GetString(void) { return m_string; }
-    
+
     void SetPosition( wxPoint pt ){ m_position = pt; }
     void SetWinSize( wxSize sz ){ m_size = sz; }
     void Realize( void );
@@ -444,18 +445,18 @@ public:
     void OnPaint( wxPaintEvent& event );
     void OnEraseBackground( wxEraseEvent& event );
     void OnTimer( wxTimerEvent& event );
-    
+
     wxStaticText *m_pInfoTextCtl;
     wxGauge   *m_pGauge;
     wxTimer     m_timer;
-    
+
 private:
-    
+
     wxString m_string;
     wxSize m_size;
     wxPoint m_position;
     bool m_bGauge;
-    
+
     DECLARE_EVENT_TABLE()
 };
 
