@@ -447,7 +447,6 @@ s63_pi::s63_pi(void *ppimgr)
 
 s63_pi::~s63_pi()
 {
-      delete m_pplugin_icon;
       delete m_event_handler;
 
       if(g_pScreenLog) {
