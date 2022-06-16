@@ -107,7 +107,7 @@ jobs:
         - run: sh -c "python3 -m pip install --user --upgrade -q setuptools wheel pip"
         - run: sh -c "python3 -m pip install --user -q cloudsmith-cli cryptography"
         - run: sh -c "pip install --upgrade cloudsmith-cli"
-        - run: sh -c "pwd; ls; cd build; ls; /bin/bash < upload.sh"
+        - run: sh -c "pwd; ls; cd build; ls; cd ..; /bin/bash < ci/circleci-upload.sh"
 
 workflows:
   version: 2
