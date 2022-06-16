@@ -20,34 +20,34 @@ if [ -z "$CLOUDSMITH_API_KEY" ]; then
     exit 0
 fi
 
-if pyenv versions 2>&1 >/dev/null; then
-    pyenv global 3.7.0
-    python -m pip install cloudsmith-cli
-    pyenv rehash
-elif dnf --version 2>&1 >/dev/null; then
-    sudo dnf install python3-pip python3-setuptools
-    sudo python3 -m pip install -q cloudsmith-cli
+##if pyenv versions 2>&1 >/dev/null; then
+##    pyenv global 3.7.0
+##    python -m pip install cloudsmith-cli
+##    pyenv rehash
+##elif dnf --version 2>&1 >/dev/null; then
+##    sudo dnf install python3-pip python3-setuptools
+##    sudo python3 -m pip install -q cloudsmith-cli
 #elif apt-get --version 2>&1 >/dev/null; then
 #    sudo apt-get install python3-pip python3-setuptools
 #    sudo python3 -m pip install -q cloudsmith-cli
-else
+##else
     #sudo -H python3 -m ensurepip
     #sudo -H python3 -m pip install -q setuptools
     #sudo -H python3 -m pip install -q cloudsmith-cli
- 
-    
+
+
 #    sudo apt-get install python3-pip python3-setuptools
 #    sudo python3 -m pip install -q cloudsmith-cli
 
     sudo apt install -q \
     python3-pip python3-setuptools python3-dev python3-wheel \
-    build-essential libssl-dev libffi-dev 
+    build-essential libssl-dev libffi-dev
 
     python3 -m pip install  --upgrade  setuptools
     python3 -m pip install  --upgrade  wheel pip
-    python3 -m pip install   cloudsmith-cli 
+    python3 -m pip install   cloudsmith-cli
 
-fi
+##fi
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-1}
 commit=$(git rev-parse --short=7 HEAD) || commit="unknown"
