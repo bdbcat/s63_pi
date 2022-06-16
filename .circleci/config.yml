@@ -102,7 +102,7 @@ jobs:
         - checkout
         - run: chmod a+x ./ci/*.sh
         - run:
-            command: ci/circleci-build-raspbian-arm64.sh
+            command: ci/circleci-build-debian-arm64.sh
             no_output_timeout: 30m
         - run: sh -c "python3 -m pip install --user --upgrade -q setuptools wheel pip"
         - run: sh -c "python3 -m pip install --user -q cloudsmith-cli cryptography"
