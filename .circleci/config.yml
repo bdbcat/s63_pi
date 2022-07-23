@@ -33,6 +33,22 @@ jobs:
        - run: cat /etc/apt/sources.list
        - run: ci/circleci-build-debian.sh
        - run: ci/circleci-upload.sh
+   build-jammy:
+     docker:
+       - image: circleci/buildpack-deps:jammy-scm
+     environment:
+       - OCPN_TARGET:  jammy
+     steps:
+       - checkout
+       - run: >
+           echo "deb-src http://us.archive.ubuntu.com/ubuntu/ jammy main"
+           | sudo tee -a /etc/apt/sources.list
+       - run: >
+           echo "deb-src http://us.archive.ubuntu.com/ubuntu/ jammy-updates main"
+           | sudo tee -a /etc/apt/sources.list
+       - run: cat /etc/apt/sources.list
+       - run: ci/circleci-build-debian.sh
+       - run: ci/circleci-upload.sh
    build-bionic-gtk3:
      docker:
        - image: circleci/buildpack-deps:bionic-scm
