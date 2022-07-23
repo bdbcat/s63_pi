@@ -35,7 +35,7 @@ jobs:
        - run: ci/circleci-upload.sh
    build-jammy:
      docker:
-       - image: circleci/buildpack-deps:jammy-scm
+       - image: cimg/base:edge-22.04
      environment:
        - OCPN_TARGET:  jammy
      steps:
