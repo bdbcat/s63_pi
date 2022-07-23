@@ -141,6 +141,10 @@ workflows:
           filters:
             branches:
               only: master
+      - build-jammy:
+          filters:
+            branches:
+              only: master
       - build-buster:
           filters:
             branches:
