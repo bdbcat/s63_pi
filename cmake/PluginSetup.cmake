@@ -56,7 +56,10 @@ elseif (UNIX)
         message(FATAL_ERROR "PluginSetup: required wxWidgets_LIBRARIES missing")
     elseif ("${wxWidgets_LIBRARIES}" MATCHES "gtk3u" AND PKG_TARGET STREQUAL "ubuntu")
         message(STATUS "PluginSetup: gtk3 found")
-        set(PKG_TARGET "${PKG_TARGET}-gtk3")
+        if (${PKG_TARGET_VERSION} VERSION_LESS 22.04)
+            message(STATUS "PluginSetup: PKG_TARGET_VERSION less than 22.04")
+            set(PKG_TARGET "${PKG_TARGET}-gtk3")
+        endif ()
     endif ()
 
     # Generate architecturally uniques names for linux output packages
