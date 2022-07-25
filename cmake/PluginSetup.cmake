@@ -49,6 +49,9 @@ elseif (UNIX)
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 
+    string(STRIP "${PKG_TARGET_VERSION}" PKG_TARGET_VERSION)
+    string(TOLOWER "${PKG_TARGET_VERSION}" PKG_TARGET_VERSION)
+
     # Handle gtk3 build variant
     string(STRIP "${PKG_TARGET}" PKG_TARGET)
     string(TOLOWER "${PKG_TARGET}" PKG_TARGET)
@@ -57,7 +60,7 @@ elseif (UNIX)
     elseif ("${wxWidgets_LIBRARIES}" MATCHES "gtk3u" AND PKG_TARGET STREQUAL "ubuntu")
         message(STATUS "PluginSetup: gtk3 found")
         message(STATUS "PluginSetup: PKG_TARGET_VERSIONA: ${PKG_TARGET_VERSION}")
-        if (${PKG_TARGET_VERSION} VERSION_LESS 22.04)
+        if (${PKG_TARGET_VERSION} VERSION_LESS "22.04")
             message(STATUS "PluginSetup: PKG_TARGET_VERSION less than 22.04")
             set(PKG_TARGET "${PKG_TARGET}-gtk3")
         endif ()
