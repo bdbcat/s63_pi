@@ -34,18 +34,18 @@ fi
     #sudo -H python3 -m ensurepip
     #sudo -H python3 -m pip install -q setuptools
     #sudo -H python3 -m pip install -q cloudsmith-cli
- 
-    
+
+
 #    sudo apt-get install python3-pip python3-setuptools
 #    sudo python3 -m pip install -q cloudsmith-cli
 
 #    sudo apt install -q \
 #    python3-pip python3-setuptools python3-dev python3-wheel \
-#    build-essential libssl-dev libffi-dev 
+#    build-essential libssl-dev libffi-dev
 
-    python3 -m pip install  --upgrade  setuptools
-    python3 -m pip install  --upgrade  wheel pip
-    python3 -m pip install   cloudsmith-cli 
+    sudo python3 -m pip install  --upgrade  setuptools
+    sudo python3 -m pip install  --upgrade  wheel pip
+    sudo python3 -m pip install   cloudsmith-cli
 
 #fi
 
