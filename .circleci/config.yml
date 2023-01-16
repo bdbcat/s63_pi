@@ -156,7 +156,6 @@ workflows:
       - build-macos:
           filters:
             branches:
-              only: master
       - build-arm64-debian-bullseye:
           filters:
             branches:
