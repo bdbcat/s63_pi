@@ -48,7 +48,7 @@ before_build:
 #  - cmd: 7z x -y OpenCPN_buildwin-4.99a.7z -oc:\project\opencpn\buildwin
 #  - cmake -T v141 -DOCPN_CI_BUILD=ON ..
 
-   - cmake -A Win32 -G "Visual Studio 15 2017" ^
+  - cmake -A Win32 -G "Visual Studio 15 2017" ^
       -DwxWidgets_LIB_DIR=C:\wxWidgets-3.2.1\lib\vc_dll ^
       -DwxWidgets_ROOT_DIR=C:\wxWidgets-3.2.1 ^
       ..
