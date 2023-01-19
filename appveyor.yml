@@ -6,7 +6,6 @@ image:
 - Visual Studio 2022
 
 platform:
-# - x64
 - Win32
 
 configuration: RelWithDebInfo
@@ -26,9 +25,6 @@ install:
   - choco install poedit
 
   # Download and unzip wxwidgets
-  #- ps: Start-FileDownload https://download.opencpn.org/s/mKn7bczRPSJXBtF/download -FileName wxWidgets-3.2.1.7z
-  #- cmd: 7z x wxWidgets-3.2.1.7z -o%WXWIN% > null
-
   - ps: Start-FileDownload https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.1/wxMSW-3.2.1_vc14x_Dev.7z
   - cmd: 7z x -oC:\wxWidgets-3.2.1 wxMSW-3.2.1_vc14x_Dev.7z
   - ps: Start-FileDownload https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.1/wxWidgets-3.2.1-headers.7z
