@@ -35,7 +35,7 @@ docker run --privileged -d -ti -e "container=docker"  \
     -e "TOPDIR=$TOPDIR" \
     -v /sys/fs/cgroup:/sys/fs/cgroup \
     -v $(pwd):$TOPDIR:rw \
-    fedora:37   /usr/sbin/init
+    fedora:37
 DOCKER_CONTAINER_ID=$(docker ps | grep fedora | awk '{print $1}')
 docker logs $DOCKER_CONTAINER_ID
 docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
