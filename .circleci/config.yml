@@ -75,14 +75,14 @@ jobs:
        - checkout
        - run: ci/circleci-build-debian.sh
        - run: ci/circleci-upload.sh
-   build-flatpak-x86-64-2008:
+   build-flatpak-x86-64-2208:
      machine:
        image: circleci/classic:201808-01
      environment:
        - OCPN_TARGET:  flatpak
      steps:
        - checkout
-       - run: ci/circleci-build-flatpak-x86-64-2008.sh
+       - run: ci/circleci-build-flatpak-x86-64-2208.sh
        - run: ci/circleci-upload-flatpak.sh
    build-macos:
      macos:
@@ -149,7 +149,7 @@ workflows:
           filters:
             branches:
               only: master
-      - build-flatpak-x86-64-2008:
+      - build-flatpak-x86-64-2208:
           filters:
             branches:
               only: master

@@ -13,7 +13,7 @@ flatpak remote-add --user --if-not-exists flathub \
     https://flathub.org/repo/flathub.flatpakrepo
 flatpak install --user  -y \
         http://opencpn.duckdns.org/opencpn/opencpn.flatpakref  >/dev/null
-flatpak install --user -y  flathub org.freedesktop.Sdk//20.08  >/dev/null
+flatpak install --user -y  flathub org.freedesktop.Sdk//22.08  >/dev/null
 rm -rf build && mkdir build && cd build
 cmake -DOCPN_FLATPAK=ON ..
 make flatpak-build
