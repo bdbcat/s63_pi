@@ -15,9 +15,9 @@ sudo dnf install -y flatpak
 sudo dnf install -y make
 sudo dnf install -y tar
 
-sudo dnf install ntpsec
+sudo dnf install -y ntpsec
 sudo /usr/sbin/ntpdate se.pool.ntp.org
-sudo dnf update ca-certificates
+sudo dnf update -y ca-certificates
 flatpak remote-add --user  flathub \
     https://flathub.org/repo/flathub.flatpakrepo
 #flatpak install --user  -y \
