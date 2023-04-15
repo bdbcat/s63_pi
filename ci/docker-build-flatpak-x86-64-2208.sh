@@ -18,10 +18,10 @@ sudo dnf install -y tar
 sudo dnf install -y ntpsec
 sudo /usr/sbin/ntpdate se.pool.ntp.org
 sudo dnf update -y ca-certificates
-flatpak remote-add --user  flathub \
-    https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user  flathub https://flathub.org/repo/flathub.flatpakrepo
 #flatpak install --user  -y \
 #        http://opencpn.duckdns.org/opencpn/opencpn.flatpakref  >/dev/null
+flatpak install --user  https://flathub.org/repo/appstream/org.opencpn.OpenCPN.flatpakref >/dev/null
 flatpak install --user -y  flathub org.freedesktop.Sdk//22.08  >/dev/null
 rm -rf build && mkdir build && cd build
 git config --global --add safe.directory /root/project
