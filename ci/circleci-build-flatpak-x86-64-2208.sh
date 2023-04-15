@@ -29,7 +29,7 @@ echo "DOCKER_OPTS=\"-H tcp://127.0.0.1:2375 -H $DOCKER_SOCK -s devicemapper\"" \
     | sudo tee /etc/default/docker > /dev/null
 sudo service docker restart
 sleep 5
-sudo docker pull fedora:36;
+sudo docker pull fedora:37;
 sleep 2
 docker run --privileged -d -ti -e "container=docker"  \
     -e "TOPDIR=$TOPDIR" \
