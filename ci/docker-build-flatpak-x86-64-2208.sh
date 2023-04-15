@@ -9,6 +9,8 @@ set -xe
 cd $TOPDIR
 
 su -c "dnf install -y sudo cmake gcc-c++ flatpak-builder flatpak make tar"
+sudo dnf install ntpsec
+sudo /usr/sbin/ntpdate se.pool.ntp.org
 sudo dnf update ca-certificates
 flatpak remote-add --user  flathub \
     https://flathub.org/repo/flathub.flatpakrepo
