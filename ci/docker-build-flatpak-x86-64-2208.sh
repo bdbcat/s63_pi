@@ -9,6 +9,7 @@ set -xe
 cd $TOPDIR
 
 su -c "dnf install -y sudo cmake gcc-c++ flatpak-builder flatpak make tar"
+su dnf update ca-certificates
 flatpak remote-add --user --if-not-exists flathub \
     https://flathub.org/repo/flathub.flatpakrepo
 flatpak install --user  -y \
