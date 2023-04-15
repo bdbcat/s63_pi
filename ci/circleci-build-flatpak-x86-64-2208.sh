@@ -35,11 +35,11 @@ docker run --privileged -d -ti -e "container=docker"  \
     -e "TOPDIR=$TOPDIR" \
     -v /sys/fs/cgroup:/sys/fs/cgroup \
     -v $(pwd):$TOPDIR:rw \
-    fedora:28   /usr/sbin/init
+    fedora:37   /usr/sbin/init
 DOCKER_CONTAINER_ID=$(docker ps | grep fedora | awk '{print $1}')
 docker logs $DOCKER_CONTAINER_ID
 docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-    "bash -xe $TOPDIR/ci/docker-build-flatpak-x86-64-2208.sh 28;
+    "bash -xe $TOPDIR/ci/docker-build-flatpak-x86-64-2208.sh 37;
          echo -ne \"------\nEND OPENCPN-CI BUILD\n\";"
 docker ps -a
 docker stop $DOCKER_CONTAINER_ID
