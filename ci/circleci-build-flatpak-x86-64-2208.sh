@@ -3,10 +3,10 @@
 #
 # Build the flatpak artifacts. Uses docker to run Fedora on
 # in fuill-fledged VM; the actual build is done in the Fedora
-# container. 
+# container.
 #
 # flatpak-builder can be run in a docker image. However, this
-# must then be run in privileged mode, which means it we need 
+# must then be run in privileged mode, which means it we need
 # a full-fledged VM to run it.
 #
 
@@ -39,7 +39,7 @@ docker run --privileged -d -ti -e "container=docker"  \
 DOCKER_CONTAINER_ID=$(docker ps | grep fedora | awk '{print $1}')
 docker logs $DOCKER_CONTAINER_ID
 docker exec -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-    "bash -xe $TOPDIR/ci/docker-build-flatpak-x86-64-2008.sh 28;
+    "bash -xe $TOPDIR/ci/docker-build-flatpak-x86-64-2208.sh 28;
          echo -ne \"------\nEND OPENCPN-CI BUILD\n\";"
 docker ps -a
 docker stop $DOCKER_CONTAINER_ID

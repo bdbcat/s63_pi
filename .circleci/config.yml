@@ -77,7 +77,8 @@ jobs:
        - run: ci/circleci-upload.sh
    build-flatpak-x86-64-2208:
      machine:
-       image: circleci/classic:201808-01
+       image: ubuntu-2004:2022.04.1
+     resource_class: medium
      environment:
        - OCPN_TARGET:  flatpak
      steps:
