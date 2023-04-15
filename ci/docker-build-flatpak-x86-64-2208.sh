@@ -24,6 +24,7 @@ flatpak remote-add --user  flathub \
 #        http://opencpn.duckdns.org/opencpn/opencpn.flatpakref  >/dev/null
 flatpak install --user -y  flathub org.freedesktop.Sdk//22.08  >/dev/null
 rm -rf build && mkdir build && cd build
+git config --global --add safe.directory /root/project
 cmake -DOCPN_FLATPAK=ON ..
 make flatpak-build
 make package

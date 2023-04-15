@@ -1,7 +1,7 @@
 id: org.opencpn.OpenCPN.Plugin.s63
 runtime: org.opencpn.OpenCPN
 runtime-version: master
-sdk: org.freedesktop.Sdk//20.08
+sdk: org.freedesktop.Sdk//22.08
 build-extension: true
 separate-locales: false
 appstream-compose: false
