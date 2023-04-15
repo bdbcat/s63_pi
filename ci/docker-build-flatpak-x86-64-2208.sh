@@ -10,7 +10,7 @@ cd $TOPDIR
 
 su -c "dnf install -y sudo cmake gcc-c++ flatpak-builder flatpak make tar"
 sudo dnf update ca-certificates
-flatpak remote-add --user  \
+flatpak remote-add --user  flathub \
     https://flathub.org/repo/flathub.flatpakrepo
 #flatpak install --user  -y \
 #        http://opencpn.duckdns.org/opencpn/opencpn.flatpakref  >/dev/null
