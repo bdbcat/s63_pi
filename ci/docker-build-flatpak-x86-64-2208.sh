@@ -8,7 +8,13 @@ set -xe
 
 cd $TOPDIR
 
-su -c "dnf install -y sudo cmake gcc-c++ flatpak-builder flatpak make tar"
+sudo dnf install -y cmake
+sudo dnf install -y gcc-c++
+sudo dnf install -y flatpak-builder
+sudo dnf install -y flatpak
+sudo dnf install -y make
+sudo dnf install -y tar
+
 sudo dnf install ntpsec
 sudo /usr/sbin/ntpdate se.pool.ntp.org
 sudo dnf update ca-certificates
