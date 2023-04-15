@@ -21,6 +21,8 @@ if [ -z "$CLOUDSMITH_API_KEY" ]; then
     exit 0
 fi
 
+pyenv versions
+
 if pyenv versions 2>&1 >/dev/null; then
     pyenv global 3.7.0
     python -m pip install cloudsmith-cli
