@@ -144,7 +144,7 @@ macro(add_plugin_libraries)
   add_subdirectory("libs/dsa")
   target_link_libraries(${PACKAGE_NAME} ocpn::dsa)
 
-  add_subdirectory("libs/wxJSON")
+  add_subdirectory("opencpn-libs/wxJSON")
   target_link_libraries(${PACKAGE_NAME} ocpn::wxjson)
 
   add_subdirectory("libs/iso8211")
