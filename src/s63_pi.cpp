@@ -43,11 +43,11 @@
 
 #include "s63_pi.h"
 #include "s63chart.h"
-#include "src/myiso8211/iso8211.h"
+#include "iso8211.h"
 #include "dsa_utils.h"
-#include "json_defs.h"
-#include "jsonwriter.h"
-#include "jsonreader.h"
+#include "wx/json_defs.h"
+#include "wx/jsonwriter.h"
+#include "wx/jsonreader.h"
 #include "InstallDirs.h"
 
 #ifdef __WXOSX__
@@ -647,6 +647,7 @@ bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 
 bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
+#ifdef ocpnUSE_GL
     if(g_brendered_expired && !g_bnoShow_sse25){
         wxString msg = _("SSE 25..The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
 
@@ -680,6 +681,7 @@ bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
         g_brendered_expired = false;
 
     }
+#endif
     return false;
 }
 
@@ -1649,7 +1651,7 @@ int s63_pi::ImportCells( void )
                     //  Build the eSENC inline, if requested
                     if(bSENC){
                         wxString msg;
-                        msg.Printf(_T("Building eSENC %d/%d\n"), nproc, unique_cellname_array.Count());
+                        msg.Printf(_T("Building eSENC %d/%ld\n"), nproc, unique_cellname_array.Count());
                         ScreenLogMessage( msg );
 
                         // temporarily turn off infowin showing
