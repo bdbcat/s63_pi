@@ -840,6 +840,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 
 int ChartS63::Init( const wxString& name_os63, int init_flags )
 {
+    wxLogMessage("********************Init()");
     //    Use a static semaphore flag to prevent recursion
     if( s_PI_bInS57 ) {
       wxLogMessage("Return semaphore");
