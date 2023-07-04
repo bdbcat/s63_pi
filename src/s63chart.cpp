@@ -225,6 +225,9 @@ void validate_SENC_util(void)
 
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
+  std::string a = cmd.ToStdString();
+  printf("exec_SENCutil_sync:  %s\n", a.c_str());
+
     wxArrayString ret_array;
     ret_array.Alloc(1000);
 
