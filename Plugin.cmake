@@ -147,13 +147,13 @@ macro(add_plugin_libraries)
   add_subdirectory("opencpn-libs/wxJSON")
   target_link_libraries(${PACKAGE_NAME} ocpn::wxjson)
 
-  add_subdirectory("libs/iso8211")
+  add_subdirectory("opencpn-libs/iso8211")
   target_link_libraries(${PACKAGE_NAME} ocpn::iso8211)
 
-  add_subdirectory("libs/tinyxml")
+  add_subdirectory("opencpn-libs/tinyxml")
   target_link_libraries(${PACKAGE_NAME} ocpn::tinyxml)
 
-  add_subdirectory("libs/zlib")
+  add_subdirectory("opencpn-libs/zlib")
   target_link_libraries(${PACKAGE_NAME} ocpn::zlib)
 
   #add_subdirectory(libs/s52plib)
@@ -162,8 +162,8 @@ macro(add_plugin_libraries)
   #add_subdirectory(libs/geoprim)
   #target_link_libraries(${PACKAGE_NAME} ocpn::geoprim)
 
-  add_subdirectory(libs/pugixml)
-  target_link_libraries(${PACKAGE_NAME} ocpn::pugixml)
+  #add_subdirectory(libs/pugixml)
+  #target_link_libraries(${PACKAGE_NAME} ocpn::pugixml)
 
 
 #if (MSVC)
@@ -172,8 +172,8 @@ macro(add_plugin_libraries)
 #endif ()
 
 
-   add_subdirectory("libs/opencpn-glu")
-   target_link_libraries(${PACKAGE_NAME} opencpn::glu)
+#   add_subdirectory("libs/opencpn-glu")
+#   target_link_libraries(${PACKAGE_NAME} opencpn::glu)
 
 #  add_subdirectory("libs/wxcurl")
 #  target_link_libraries(${PACKAGE_NAME} ocpn::wxcurl)
