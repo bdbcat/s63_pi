@@ -842,12 +842,14 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 {
     //    Use a static semaphore flag to prevent recursion
     if( s_PI_bInS57 ) {
+      wxLogMessage("Return semaphore");
         return PI_INIT_FAIL_NOERROR;
     }
     s_PI_bInS57++;
 
     if(!GetUserpermit().Len()) {
         s_PI_bInS57--;
+      wxLogMessage("Return Userpermit");
         return PI_INIT_FAIL_REMOVE;
     }
 
@@ -927,6 +929,8 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 //        RemoveChartFromDBInPlace( fn );
 
         s_PI_bInS57--;
+       wxLogMessage("Return No-os63");
+
         return PI_INIT_FAIL_REMOVE;
     }
 
@@ -937,6 +941,8 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
     //  os63 file is a placeholder, cells have not been imported yet.
     if( !m_full_base_path.Len() ){
         s_PI_bInS57--;
+        wxLogMessage("Return fullbase");
+
         return PI_INIT_FAIL_REMOVE;
     }
 
@@ -944,10 +950,14 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
     wxFileName fn(m_full_base_path);
     if(fn.IsDir()){                             // must be a file, not a dir
         s_PI_bInS57--;
+        wxLogMessage("Return fullbase1");
+
         return PI_INIT_FAIL_REMOVE;
     }
     if(!fn.FileExists()){                       // and file must exist
         s_PI_bInS57--;
+        wxLogMessage("Return fullbase2");
+
         return PI_INIT_FAIL_REMOVE;
     }
 
@@ -980,6 +990,8 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
             wxString ebuild = Build_eHDR(name_os63);
             if( !ebuild.Len() ) {
                 s_PI_bInS57--;
+                     wxLogMessage("Return ebuild");
+
                 return PI_INIT_FAIL_REMOVE;
             }
         }
@@ -1017,8 +1029,10 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
             }
 
         }
-        else
+        else{
+            wxLogMessage("Return No ehdr");
             ret_val = PI_INIT_FAIL_REMOVE;
+        }
     }
 
     else if( PI_FULL_INIT == init_flags ){
