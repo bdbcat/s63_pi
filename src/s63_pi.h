@@ -42,7 +42,7 @@
 #include "TexFont.h"
 
 #define     PLUGIN_VERSION_MAJOR    1
-#define     PLUGIN_VERSION_MINOR    16
+#define     PLUGIN_VERSION_MINOR    18
 
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    16
