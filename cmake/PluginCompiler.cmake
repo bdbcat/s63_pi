@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
-set(_ocpn_cflags " -Wall -Wno-unused-result -fexceptions")
+set(_ocpn_cflags " -Wall -Wno-unused-result -fexceptions -O2")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(APPEND CMAKE_C_FLAGS " ${_ocpn_cflags}")
   string(APPEND CMAKE_CXX_FLAGS " ${_ocpn_cflags}")
