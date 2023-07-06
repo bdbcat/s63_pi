@@ -41,6 +41,7 @@
 #include <wx/statline.h>
 #include <wx/progdlg.h>
 
+#include "config.h"
 #include "s63_pi.h"
 #include "s63chart.h"
 #include "iso8211.h"
