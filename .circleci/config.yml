@@ -230,6 +230,20 @@ jobs:
       - run: ci/circleci-build-android.sh
       - run: ci/maybe-push-upload.sh
 
+  build-focal-armhf:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
+    environment:
+      - TARGET_TUPLE: ubuntu;20.04;armhf
+      - OCPN_TARGET: bullseye
+      - CMAKE_BUILD_PARALLEL_LEVEL: 2
+    steps:
+      - checkout
+      - run: ci/circleci-build-debian-armhf.sh
+      - run: cd build-debian; /bin/bash < upload.sh
+      - run: ci/git-push.sh build-debian
+
 std-filters: &std-filters
   filters:
     branches:
@@ -282,4 +296,7 @@ workflows:
           <<: *std-filters
 
       - build-buster-armhf:
+          <<: *std-filters
+
+      - build-focal-armhf:
           <<: *std-filters
