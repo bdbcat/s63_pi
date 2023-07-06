@@ -35,8 +35,8 @@ set(PKG_VERSION ${OCPN_VERSION})
 
 set(PKG_PRERELEASE "")  # Empty, or a tag like 'beta'
 
-set(DISPLAY_NAME s63)    # Dialogs, installer artifacts, ...
-set(PLUGIN_API_NAME s63) # As of GetCommonName() in plugin API
+set(DISPLAY_NAME S63)    # Dialogs, installer artifacts, ...
+set(PLUGIN_API_NAME S63) # As of GetCommonName() in plugin API
 set(CPACK_PACKAGE_CONTACT "Dave Register")
 set(PKG_SUMMARY
   "OpenCPN support for S63 Vector Charts"
