@@ -162,7 +162,7 @@ void validate_SENC_util(void)
     cmd.Replace(" ", "\\ ");
 #endif
     cmd += _T(" -a");                 // get version
-    long rv = wxExecute(cmd, ret_array, err_array );
+    long rv = wxExecute(cmd, ret_array, err_array, wxEXEC_NOEVENTS );
 
     if(0 != rv) {
         wxString msg = _("Cannot execute OCPNsenc utility at \n");
@@ -257,6 +257,7 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     g_bsuppress_log = !bshowlog;
 
     int flags = wxEXEC_SYNC;
+    flags += wxEXEC_NOEVENTS;
 #ifdef __WXMSW__
     //  If windows, we want to avoid disabling the currently active dialog.
     //  Reason:  the wxExecute call yields after disabling the dialog UI, and
