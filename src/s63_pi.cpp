@@ -121,6 +121,9 @@ bool                            pi_bopengl;
 bool                            g_GLOptionsSet;
 bool                            g_GLSetupOK;
 
+s63_pi_event_handler_timer       *g_pi_timer;
+bool                            g_expired_timeout;
+
 PFNGLGENBUFFERSPROC                 s_glGenBuffers;
 PFNGLBINDBUFFERPROC                 s_glBindBuffer;
 PFNGLBUFFERDATAPROC                 s_glBufferData;
@@ -345,6 +348,38 @@ void init_GLLibrary(void)
 #include "default_pi.xpm"
 
 
+// An Event handler class to catch timer events
+//      Implementation
+#define EXPIRED_EVENT_TIMER 8342
+
+BEGIN_EVENT_TABLE ( s63_pi_event_handler_timer, wxEvtHandler )
+EVT_TIMER ( EXPIRED_EVENT_TIMER, s63_pi_event_handler_timer::onTimerEvent )
+END_EVENT_TABLE()
+
+s63_pi_event_handler_timer::s63_pi_event_handler_timer(s63_pi *parent)
+{
+    m_parent = parent;
+    m_eventTimer.SetOwner( this, EXPIRED_EVENT_TIMER );
+    m_eventTimer.Start( 30000, wxTIMER_ONE_SHOT);
+
+}
+
+s63_pi_event_handler_timer::~s63_pi_event_handler_timer()
+{
+}
+
+void s63_pi_event_handler_timer::onTimerEvent(wxTimerEvent &event)
+{
+  g_expired_timeout = true;
+}
+
+void s63_pi_event_handler_timer::Reset()
+{
+    m_eventTimer.Start( 30000, wxTIMER_ONE_SHOT);
+    g_expired_timeout = false;
+}
+
+
 //---------------------------------------------------------------------------------------------------------
 //
 //          PlugIn initialization and de-init
@@ -503,6 +538,9 @@ int s63_pi::Init(void)
 
     g_benable_screenlog = g_buser_enable_screenlog;
 
+    g_pi_timer = new s63_pi_event_handler_timer(this);
+    g_expired_timeout = false;
+
     return (INSTALLS_PLUGIN_CHART_GL | INSTALLS_TOOLBOX_PAGE | WANTS_PLUGIN_MESSAGING
             | WANTS_OVERLAY_CALLBACK | WANTS_OPENGL_OVERLAY_CALLBACK  );
 
@@ -518,6 +556,8 @@ bool s63_pi::DeInit(void)
         g_pPanelScreenLog->Close();
 
     DeleteOptionsPage( m_s63chartPanelWinTop );
+
+    delete g_pi_timer;
 
     return true;
 }
@@ -618,7 +658,7 @@ void s63_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
 
 bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
-    if(g_brendered_expired && !g_bnoShow_sse25){
+    if(g_brendered_expired && !g_bnoShow_sse25 && !g_expired_timeout){
         wxString msg = _("SSE 25..The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
 
 
@@ -640,7 +680,7 @@ bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
         dc.DrawRectangle( 0, yp, wdraw, h );
         dc.DrawLabel( msg, wxRect( label_offset, yp, wdraw, h ),
                     wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
-        g_brendered_expired = false;
+        //g_brendered_expired = false;
     }
     return false;
 }
@@ -648,7 +688,7 @@ bool s63_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
 #ifdef ocpnUSE_GL
-    if(g_brendered_expired && !g_bnoShow_sse25){
+    if(g_brendered_expired && !g_bnoShow_sse25 && !g_expired_timeout){
         wxString msg = _("SSE 25..The ENC permit for this cell has expired.\n This cell may be out of date and MUST NOT be used for NAVIGATION.");
 
 
@@ -678,7 +718,7 @@ bool s63_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
         m_TexFontMessage.RenderString( msg, 5, yp);
         glDisable(GL_TEXTURE_2D);
 
-        g_brendered_expired = false;
+        //g_brendered_expired = false;
 
     }
 #endif

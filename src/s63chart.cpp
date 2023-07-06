@@ -82,6 +82,7 @@ int                     nseq;
 extern bool             pi_bopengl;
 extern bool             g_GLOptionsSet;
 extern bool             g_GLSetupOK;
+extern s63_pi_event_handler_timer *g_pi_timer;
 
 extern PFNGLGENBUFFERSPROC                 s_glGenBuffers;
 extern PFNGLBINDBUFFERPROC                 s_glBindBuffer;
@@ -225,8 +226,8 @@ void validate_SENC_util(void)
 
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
-  std::string a = cmd.ToStdString();
-  printf("exec_SENCutil_sync:  %s\n", a.c_str());
+  //std::string a = cmd.ToStdString();
+  //printf("exec_SENCutil_sync:  %s\n", a.c_str());
 
     wxArrayString ret_array;
     ret_array.Alloc(1000);
@@ -852,6 +853,9 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
     }
     s_PI_bInS57++;
 
+    g_brendered_expired = false;    // Reset the trip-wire
+    g_pi_timer->Reset();
+
     if(!GetUserpermit().Len()) {
         s_PI_bInS57--;
       wxLogMessage("Return Userpermit");
@@ -1427,7 +1431,7 @@ int ChartS63::RenderRegionViewOnGL( const wxGLContext &glc, const PlugIn_ViewPor
             upd++;
         }
     } else {
-        wxRect rect = Region.GetBox();
+        //wxRect rect = Region.GetBox();
 
         //  Build synthetic ViewPort on this rectangle
         //  Especially, we want the BBox to be accurate in order to

@@ -205,6 +205,24 @@ private:
 
 };
 
+// An Event handler class to catch events
+class s63_pi_event_handler_timer : public wxEvtHandler
+{
+public:
+
+    s63_pi_event_handler_timer(s63_pi *parent);
+    ~s63_pi_event_handler_timer();
+
+    void Reset();
+    void onTimerEvent(wxTimerEvent &event);
+
+    s63_pi  *m_parent;
+
+    wxTimer     m_eventTimer;
+
+    DECLARE_EVENT_TABLE()
+
+};
 
 
 class S63ScreenLog : public wxWindow
