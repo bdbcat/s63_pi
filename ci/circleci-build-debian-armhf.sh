@@ -103,7 +103,7 @@ fi
 cd /ci-source
 rm -rf build-debian; mkdir build-debian; cd build-debian
 git config --global --add safe.directory /ci-source
-cmake -DCMAKE_BUILD_TYPE=Release -DOCPN_TARGET_TUPLE="@TARGET_TUPLE@" ..
+cmake -DCMAKE_BUILD_TYPE=Release -DOCPN_TARGET_TUPLE="@TARGET_TUPLE@" -DARMHF ..
 make -j $(nproc) VERBOSE=1 tarball
 ldd  app/*/lib/opencpn/*.so
 chown --reference=.. .
