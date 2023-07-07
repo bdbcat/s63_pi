@@ -55,7 +55,7 @@ wx-config --list
 cd /ci-source
 rm -rf build-debian; mkdir build-debian; cd build-debian
 git config --global --add safe.directory /ci-source
-cmake -DCMAKE_BUILD_TYPE=Release -DOCPN_TARGET_TUPLE="debian-gtk3;10;armhf" -DFORCE_GTK3=ON -DARMHF ..
+cmake -DCMAKE_BUILD_TYPE=Release -DOCPN_TARGET_TUPLE="debian-gtk3;10;armhf" -DFORCE_GTK3=ON -DARMHF=ON ..
 make -j $(nproc) VERBOSE=1 tarball
 ldd  app/*/lib/opencpn/*.so
 chown --reference=.. .
