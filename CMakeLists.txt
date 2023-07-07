@@ -31,6 +31,11 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 #
 include(Plugin.cmake)
 
+if (ARMHF)
+  ADD_DEFINITIONS( -DARMHF )
+endif (ARMHF)
+
+
 # -------- Setup completed, build the plugin --------
 #
 #if ("${OCPN_TARGET_TUPLE}" MATCHES wx32)
