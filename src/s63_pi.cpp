@@ -887,7 +887,7 @@ void s63_pi::OnSetupOptions(){
     sbSizerUP->Add(m_up_text, wxEXPAND);
 
     m_buttonNewUP = new wxButton( m_s63chartPanelKeys, wxID_ANY, _("New Userpermit..."), wxDefaultPosition, wxDefaultSize, 0 );
-    sbSizerUP->Add( m_buttonNewUP, 0, wxALL | wxALIGN_RIGHT, 5 );
+    sbSizerUP->Add( m_buttonNewUP, 0, wxALL, 5 );
 
     chartPanelSizerKeys->AddSpacer( 5 );
     chartPanelSizerKeys->Add( sbSizerUP, 0, wxEXPAND, 5 );
@@ -901,7 +901,7 @@ void s63_pi::OnSetupOptions(){
     sbSizerIP->Add(m_ip_text, wxEXPAND);
 
     m_buttonNewIP = new wxButton( m_s63chartPanelKeys, wxID_ANY, _("New Installpermit..."), wxDefaultPosition, wxDefaultSize, 0 );
-    sbSizerIP->Add( m_buttonNewIP, 0, wxALL | wxALIGN_RIGHT, 5 );
+    sbSizerIP->Add( m_buttonNewIP, 0, wxALL, 5 );
 
     chartPanelSizerKeys->AddSpacer( 5 );
     chartPanelSizerKeys->Add( sbSizerIP, 0, wxEXPAND, 5 );
@@ -914,7 +914,7 @@ void s63_pi::OnSetupOptions(){
     sbSizerFPR->Add(m_fpr_text, wxEXPAND);
 
     m_buttonNewFPR = new wxButton( m_s63chartPanelKeys, wxID_ANY, _("Create System Identifier file..."), wxDefaultPosition, wxDefaultSize, 0 );
-    sbSizerFPR->Add( m_buttonNewFPR, 0, wxALL | wxALIGN_RIGHT, 5 );
+    sbSizerFPR->Add( m_buttonNewFPR, 0, wxALL, 5 );
 
     chartPanelSizerKeys->AddSpacer( 5 );
     chartPanelSizerKeys->Add( sbSizerFPR, 0, wxEXPAND, 5 );
