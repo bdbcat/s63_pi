@@ -185,13 +185,12 @@ macro(add_plugin_libraries)
   #  Some code has alignment problems on ARMHF
   #  mygeom63.cpp, s63chart.cpp
   #  Make sure to set the correct compile definition
-
-  message(STATUS "add_plugin_libraries: ${ARCH}")
-
-  if (${ARCH} MATCHES "ARMHF")
-    message(STATUS "Building for ARMHF")
-    ADD_DEFINITIONS( -DARMHF )
-  endif()
+  if(NOT APPLE)
+    if (${ARCH} MATCHES "armhf")
+      message(STATUS "Building for armhf")
+      ADD_DEFINITIONS( -DARMHF )
+    endif()
+  endif(NOT APPLE)
 
 endmacro ()
 
