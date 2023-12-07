@@ -25,25 +25,12 @@ else ()
   message(STATUS "Configuring")
 endif ()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
 # -------- Plugin setup ----------
 #
 include(Plugin.cmake)
 
-if (ARMHF)
-  ADD_DEFINITIONS( -DARMHF )
-endif (ARMHF)
-
-
 # -------- Setup completed, build the plugin --------
 #
-#if ("${OCPN_TARGET_TUPLE}" MATCHES wx32)
-  # Evil, dirty hack to force a different name for wx32 builds. We
-  # need a cleaner solution here. FIXME(leamas)
-#  set(PKG_NAME "${PKG_NAME}-wx32")
-#endif ()
-
 project(${PKG_NAME} VERSION ${PKG_VERSION})
 include(PluginCompiler)
 
@@ -51,15 +38,15 @@ add_library(${CMAKE_PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC})
 include_directories(BEFORE ${CMAKE_BINARY_DIR}/include)
 
 add_subdirectory("opencpn-libs/${PKG_API_LIB}")
-if (${PKG_NAME} MATCHES wx32)
-  target_link_libraries(${CMAKE_PROJECT_NAME} ocpn::api_wx32)
-else ()
-  target_link_libraries(${CMAKE_PROJECT_NAME} ocpn::api)
-endif ()
+target_link_libraries(${CMAKE_PROJECT_NAME} ocpn::api)
 
 set(VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(VERSION_PATCH ${PROJECT_VERSION_PATCH})
+if (PROJECT_VERSION_TWEAK STREQUAL "")
+  set(PROJECT_VERSION_TWEAK 0)
+endif ()
+
 
 set(PACKAGE_NAME ${CMAKE_PROJECT_NAME})
 
@@ -89,9 +76,13 @@ if ("${BUILD_TYPE}" STREQUAL "")
   return ()
 endif ()
 
+ 
 if (NOT ${BUILD_TYPE} STREQUAL "flatpak")
   # Build package as required (flatpak already dealt with).
   #
+  if (APPLE)
+    include(MacosWxwidgets)
+  endif ()
   include(PluginInstall)
   if (QT_ANDROID)
     include(AndroidLibs)
@@ -101,7 +92,7 @@ if (NOT ${BUILD_TYPE} STREQUAL "flatpak")
   include(PluginLocalization)
 
   include_directories(BEFORE ${CMAKE_BINARY_DIR}/include)
-
+ 
   if (COMMAND add_plugin_libraries)
     add_plugin_libraries()
   endif ()
@@ -109,7 +100,7 @@ if (NOT ${BUILD_TYPE} STREQUAL "flatpak")
 endif ()
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/include//config.h
+  ${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/include/config.h
   @ONLY
 )
 
@@ -123,8 +114,6 @@ configure_file(
   ${CMAKE_SOURCE_DIR}/ci/upload.bat.in ${CMAKE_BINARY_DIR}/upload.bat
   @ONLY
 )
-
-message(STATUS "At configure_file, pkg_target_arch: ${pkg_target_arch}.")
 
 set(checksum "@checksum@")
 configure_file(

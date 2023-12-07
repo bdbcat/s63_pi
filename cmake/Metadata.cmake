@@ -52,10 +52,10 @@ elseif (NOT "$ENV{APPVEYOR_BUILD_NUMBER}" STREQUAL "")
     "/$ENV{APPVEYOR_ACCOUNT_NAME}/$ENV{APPVEYOR_PROJECT_SLUG}"
     "/builds/$ENV{APPVEYOR_BUILD_ID}"
   )
-elseif (NOT "$ENV{DRONE_BUILD_NUMBER}" STREQUAL "")
-  set(_build_id "$ENV{DRONE_BUILD_NUMBER}")
+elseif (NOT "$ENV{GITHUB_RUN_NUMBER}" STREQUAL "")
+  set(_build_id "$ENV{GITHUB_RUN_NUMBER}")
   set(_pkg_build_info
-    "https://cloud.drone.io/$ENV{DRONE_REPO}/$ENV{DRONE_BUILD_NUMBER}"
+    "https://github.com/OpenCPN/OpenCPN/actions/runs/$ENV{GITHUB_RUN_ID}"
   )
 else ()
   string(TIMESTAMP _build_id "%y%m%d%H%M" UTC)
@@ -72,7 +72,13 @@ endif ()
 if (WIN32)
   set(_pkg_arch "win32")
 else ()
-  set(_pkg_arch "${ARCH}")
+  if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+    string(REPLACE ";" "-" _pkg_arch "${CMAKE_OSX_ARCHITECTURES}")
+    set(target_arch "${CMAKE_OSX_ARCHITECTURES}")
+  else()
+    set(_pkg_arch "${ARCH}")
+    set(target_arch "${ARCH}")
+  endif()
 endif ()
 
 # pkg_build_info: Info about build host (link to log if available).
@@ -110,38 +116,30 @@ if (NOT "${_pre_rel}" STREQUAL "" AND _pre_rel MATCHES "^[^-]")
   string(PREPEND _pre_rel "-")
 endif ()
 if ("${_git_tag}" STREQUAL "")
-  #set(pkg_semver "${PROJECT_VERSION}${_pre_rel}+${_build_id}.${_gitversion}")
-  set(pkg_semver "${PROJECT_VERSION}")
+  set(pkg_semver "${PROJECT_VERSION}${_pre_rel}+${_build_id}.${_gitversion}")
 else ()
-  set(pkg_semver "${PROJECT_VERSION}")
+  set(pkg_semver "${_git_tag}")
 endif ()
 
 # pkg_displayname: GUI name
-if (ARCH MATCHES "arm64|aarch64")
-  set(_display_arch "-A64")
+if(CMAKE_OSX_ARCHITECTURES MATCHES "arm64" AND CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+    set(_display_arch "-universal")
+elseif(ARCH MATCHES "arm64|aarch64")
+  if(NOT CMAKE_OSX_ARCHITECTURES)
+    set(_display_arch "-A64")
+  endif()
 elseif ("${_pkg_arch}" MATCHES "armhf")
   set(_display_arch "-A32")
 endif()
 
-if (NOT "${OCPN_WX_ABI}" STREQUAL "")
-  set(_wx_abi ".${OCPN_WX_ABI}")
-endif ()
-
 if ("${_git_tag}" STREQUAL "")
-  message(STATUS "TAG test 0")
   set(pkg_displayname "${PLUGIN_API_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}")
 else ()
-  message(STATUS "TAG test 1")
-  set(pkg_displayname "${PLUGIN_API_NAME}-${VERSION_MAJOR}.${VERSION_MINOR}")
+  set(pkg_displayname "${PLUGIN_API_NAME}-${_git_tag}")
 endif ()
-
-message(STATUS "pkg_displayname0: ${pkg_displayname}.")
-
 string(APPEND pkg_displayname
   "-${plugin_target}${_display_arch}-${plugin_target_version}"
 )
-
-message(STATUS "pkg_displayname1: ${pkg_displayname}.")
 
 # pkg_xmlname: XML metadata basename
 set(pkg_xmlname ${pkg_displayname})
@@ -149,7 +147,7 @@ set(pkg_xmlname ${pkg_displayname})
 # pkg_tarname: Tarball basename
 string(CONCAT pkg_tarname
   "${PLUGIN_API_NAME}-${pkg_semver}"
-  "_${plugin_target}${_wx_abi}-${plugin_target_version}-${_pkg_arch}"
+  "_${plugin_target}-${plugin_target_version}-${_pkg_arch}"
 )
 
 # pkg_tarball_url: Tarball location at cloudsmith
@@ -170,19 +168,9 @@ else ()
   set(pkg_python python)
 endif ()
 
-# pkg_target_arch: os + optional -arch suffix. See: Opencpn bug #2003
-if ("${BUILD_TYPE}" STREQUAL "flatpak")
-  set(pkg_target_arch "flatpak-${ARCH}")
-  if (NOT "${OCPN_WX_ABI}" STREQUAL "")
-    set(pkg_target_arch "${pkg_target_arch}")
-  endif ()
-elseif ("${plugin_target}" MATCHES "ubuntu|raspbian|debian|mingw")
-  set(pkg_target_arch "${plugin_target}-${ARCH}")
-else ()
-  set(pkg_target_arch "${plugin_target}")
-endif ()
+# pkg_vers_build_info: Semantic version build info part.
+set(pkg_vers_build_info "${_build_id}.${_gitversion}")
 
-message(STATUS "OCPN_WX_ABI: ${OCPN_WX_ABI}.")
-message(STATUS "pkg_target_arch: ${pkg_target_arch}.")
+message(STATUS "Metadata: pkg_target_arch: ${pkg_target_arch}.")
 
 #cmake-format: on

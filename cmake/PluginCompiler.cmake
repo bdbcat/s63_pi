@@ -12,14 +12,14 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
-set(_ocpn_cflags " -Wall -Wno-unused-result -fexceptions -O2")
+set(_ocpn_cflags " -Wall -Wno-unused-result -fexceptions")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(APPEND CMAKE_C_FLAGS " ${_ocpn_cflags}")
   string(APPEND CMAKE_CXX_FLAGS " ${_ocpn_cflags}")

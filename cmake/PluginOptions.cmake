@@ -1,5 +1,5 @@
 # ~~~
-# Summary:     Set up default plugin build options
+# Summary:     Set up default plugin build options 
 # License:     GPLv3+
 # Copyright (c) 2020-2021 Alec Leamas
 # ~~~
@@ -20,7 +20,7 @@ set(_default_build_type "Release")
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   set(_default_build_type "Debug")
 endif()
-
+ 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS
     "Setting build type to '${_default_build_type}' as none was specified."
@@ -61,10 +61,6 @@ else ()
     )
   endif ()
 endif ()
-
-# Override nproc, use one processor always to avoid trouble with CCI
-set(_nproc 1)
-
 set(OCPN_NPROC ${_nproc}
   CACHE STRING "Number of processors used to compile [${_nproc}]"
 )
