@@ -137,6 +137,16 @@ endmacro ()
 
 add_definitions(-DocpnUSE_GL)
 
+#  Some code has alignment problems on ARMHF
+#  mygeom63.cpp, s63chart.cpp
+#  Make sure to set the correct compile definition
+
+if (${ARCH} MATCHES "ARMHF")
+  message(STATUS "Building for ARMHF")
+  ADD_DEFINITIONS( -DARMHF )
+endif()
+
+
 macro(add_plugin_libraries)
   add_subdirectory("libs/cpl")
   target_link_libraries(${PACKAGE_NAME} ocpn::cpl)
@@ -181,14 +191,4 @@ macro(add_plugin_libraries)
   add_subdirectory("libs/OCPNsenc")
 
 endmacro ()
-
-#  Some code has alignment problems on ARMHF
-#  mygeom63.cpp, s63chart.cpp
-#  Make sure to set the correct compile definition
-
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm*")
-  if (CMAKE_SIZEOF_VOID_P MATCHES "4")
-    ADD_DEFINITIONS( -DARMHF )
-  endif()
-endif()
 
