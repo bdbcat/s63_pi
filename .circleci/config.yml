@@ -12,11 +12,12 @@ flatpak-steps: &flatpak-steps
   steps:
     - checkout
     - restore_cache:
-        keys:
-          - <<parameters.cache-key>>-{{ checksum "ci/circleci-build-flatpak.sh" }}
+        key: "<<parameters.cache-key>>
+          -{{ checksum \"ci/circleci-build-flatpak.sh\" }}"
     - run: ci/circleci-build-flatpak.sh
     - save_cache:
-        key: <<parameters.cache-key>>-{{ checksum "ci/circleci-build-flatpak.sh" }}
+        key: "<<parameters.cache-key>>
+          -{{ checksum \"ci/circleci-build-flatpak.sh\" }}"
         paths:
           - /home/circleci/.local/share/flatpak/repo
     - run: cd /build-flatpak; /bin/bash < upload.sh
@@ -43,13 +44,14 @@ jobs:
     steps:
       - checkout
       - run: ci/circleci-build-buster-armhf.sh
-      - run: cd build-debian; /bin/bash < upload.sh
+      - run: ci/maybe-push-upload.sh
 
   build-bullseye:
     docker:
       - image: circleci/buildpack-deps:bullseye-scm
     environment:
       - OCPN_TARGET: bullseye
+      - TARGET_TUPLE: debian-x86_64;11;x86_64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     <<: *debian-steps
 
@@ -59,8 +61,7 @@ jobs:
     environment:
       - OCPN_TARGET: bullseye
       - BUILD_WX32: true
-      - TARGET_TUPLE: debian-wx32;11;x86_64
-      - NO_LINK_GLEW: true
+      - TARGET_TUPLE: debian-wx32-x86_64;11;x86_64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     <<: *debian-steps
 
@@ -69,7 +70,7 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - TARGET_TUPLE: debian;11;armhf
+      - TARGET_TUPLE: debian-armhf;11;armhf
       - OCPN_TARGET: bullseye
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
@@ -83,7 +84,7 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - TARGET_TUPLE: debian-wx32;11;armhf
+      - TARGET_TUPLE: debian-wx32-armhf;11;armhf
       - OCPN_TARGET: bullseye
       - BUILD_WX32: true
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
@@ -100,7 +101,7 @@ jobs:
     resource_class: arm.medium
     environment:
       - OCPN_TARGET: bullseye
-      - TARGET_TUPLE: debian;11;arm64
+      - TARGET_TUPLE: debian-arm64;11;arm64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
@@ -115,7 +116,7 @@ jobs:
     environment:
       - OCPN_TARGET: bullseye
       - BUILD_WX32: true
-      - TARGET_TUPLE: debian-wx32;11;arm64
+      - TARGET_TUPLE: debian-wx32-arm64;11;arm64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
@@ -130,7 +131,7 @@ jobs:
     resource_class: medium
     environment:
       - OCPN_TARGET: bookworm
-      - TARGET_TUPLE: debian;12;x86_64
+      - TARGET_TUPLE: debian-x86_64;12;x86_64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
@@ -144,7 +145,7 @@ jobs:
     resource_class: arm.medium
     environment:
       - OCPN_TARGET: bookworm
-      - TARGET_TUPLE: debian;12;arm64
+      - TARGET_TUPLE: debian-arm64;12;arm64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
@@ -157,7 +158,7 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
     environment:
-      - TARGET_TUPLE: debian;12;armhf
+      - TARGET_TUPLE: debian-armhf;12;armhf
       - OCPN_TARGET: bookworm
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
@@ -172,7 +173,7 @@ jobs:
     resource_class: arm.medium
     environment:
       - OCPN_TARGET: flatpak-arm64
-      - CMAKE_BUILD_PARALLEL_LEVEL: 1
+      - CMAKE_BUILD_PARALLEL_LEVEL: 2
     parameters:
       cache-key:
         type: string
@@ -185,7 +186,7 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       - OCPN_TARGET: flatpak
-      - CMAKE_BUILD_PARALLEL_LEVEL: 1
+      - CMAKE_BUILD_PARALLEL_LEVEL: 2
     parameters:
       cache-key:
         type: string
@@ -201,7 +202,19 @@ jobs:
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
+      - run: sudo chmod go+w /usr/local
+      - restore_cache:
+          key: "{{checksum \"build-deps/macos-cache-stamp\"}}\
+            -{{checksum \"cmake/MacosWxwidgets.cmake\"}}\
+            -{{checksum \"ci/circleci-build-macos.sh\"}}"
       - run: ci/circleci-build-macos.sh
+      - save_cache:
+          key: "{{checksum \"build-deps/macos-cache-stamp\"}}\
+            -{{checksum \"cmake/MacosWxwidgets.cmake\"}}\
+            -{{checksum \"ci/circleci-build-macos.sh\"}}"
+          paths:
+            - /tmp/local.cache.tar
+            - /Users/distiller/project/cache
       - run: >
           sh -c "otool -L build-osx/app/*/OpenCPN.app/Contents/PlugIns/*.dylib"
       - run: cd build-osx; /bin/bash < upload.sh
@@ -210,7 +223,7 @@ jobs:
 
   build-android-arm64:
     docker:
-      - image: circleci/android:api-28-ndk
+      - image: cimg/android:2023.08-ndk
     environment:
       - OCPN_TARGET: android-aarch64
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
@@ -221,7 +234,7 @@ jobs:
 
   build-android-armhf:
     docker:
-      - image: circleci/android:api-28-ndk
+      - image: cimg/android:2023.08-ndk
     environment:
       - OCPN_TARGET: android-armhf
       - CMAKE_BUILD_PARALLEL_LEVEL: 2
@@ -229,20 +242,6 @@ jobs:
       - checkout
       - run: ci/circleci-build-android.sh
       - run: ci/maybe-push-upload.sh
-
-  build-focal-armhf:
-    machine:
-      image: ubuntu-2004:202101-01
-    resource_class: arm.medium
-    environment:
-      - TARGET_TUPLE: ubuntu;20.04;armhf
-      - OCPN_TARGET: bullseye
-      - CMAKE_BUILD_PARALLEL_LEVEL: 2
-    steps:
-      - checkout
-      - run: ci/circleci-build-debian-armhf.sh
-      - run: cd build-debian; /bin/bash < upload.sh
-      - run: ci/git-push.sh build-debian
 
 std-filters: &std-filters
   filters:
@@ -263,6 +262,12 @@ workflows:
           <<: *std-filters
 
       - build-macos:
+          <<: *std-filters
+
+      - build-android-arm64:
+          <<: *std-filters
+
+      - build-android-armhf:
           <<: *std-filters
 
       - build-bullseye-wx32:
@@ -296,7 +301,4 @@ workflows:
           <<: *std-filters
 
       - build-buster-armhf:
-          <<: *std-filters
-
-      - build-focal-armhf:
           <<: *std-filters

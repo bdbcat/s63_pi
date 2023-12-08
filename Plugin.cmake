@@ -22,9 +22,9 @@ set(OCPN_RELEASE_REPO
     "Default repository for tagged builds not matching 'beta'"
 )
 
-set(OCPN_TARGET_TUPLE "" CACHE STRING
-  "Target spec: \"platform;version;arch\""
-)
+#set(OCPN_TARGET_TUPLE "" CACHE STRING
+#  "Target spec: \"platform;version;arch\""
+#)
 
 # -------  Plugin setup --------
 #
@@ -114,6 +114,8 @@ endif(QT_ANDROID)
 
 set(PKG_API_LIB api-16)  #  A directory in libs/ e. g., api-17 or api-16
 
+add_definitions(-DocpnUSE_GL)
+
 macro(late_init)
   # Perform initialization after the PACKAGE_NAME library, compilers
   # and ocpn::api is available.
@@ -126,7 +128,7 @@ macro(late_init)
   #   plugin API for network access.
   # And, Android always uses plugin API for network access
   string(TOLOWER "${OCPN_TARGET_TUPLE}" _lc_target)
-  message(STATUS "late_init: ${OCPN_TARGET_TUPLE}.")
+  message(STATUS "late_init: $ENV{TARGET_TUPLE}")
 
   if ( (NOT "${_lc_target}" MATCHES "debian;10;x86_64") AND
        (NOT "${_lc_target}" MATCHES "android*") )
@@ -135,7 +137,7 @@ macro(late_init)
 
 endmacro ()
 
-add_definitions(-DocpnUSE_GL)
+
 
 macro(add_plugin_libraries)
   add_subdirectory("libs/cpl")
@@ -180,4 +182,15 @@ macro(add_plugin_libraries)
 
   add_subdirectory("libs/OCPNsenc")
 
+  #  Some code has alignment problems on ARMHF
+  #  mygeom63.cpp, s63chart.cpp
+  #  Make sure to set the correct compile definition
+  if(NOT APPLE)
+    if (${ARCH} MATCHES "armhf")
+      message(STATUS "Building for armhf")
+      ADD_DEFINITIONS( -DARMHF )
+    endif()
+  endif(NOT APPLE)
+
 endmacro ()
+
