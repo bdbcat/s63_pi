@@ -2760,7 +2760,7 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
                 bool bcopy = false;
                 wxString sdesktop_path;
 
-                #ifdef __WXMSW__
+                #if 0 //#ifdef __WXMSW__
                 TCHAR desktop_path[MAX_PATH*2] = { 0 };
                 bool bpathGood = false;
                 HRESULT  hr;
