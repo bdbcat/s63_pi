@@ -163,7 +163,7 @@ void validate_SENC_util(void)
     cmd.Replace(" ", "\\ ");
 #endif
     cmd += _T(" -a");                 // get version
-    long rv = wxExecute(cmd, ret_array, err_array, wxEXEC_NOEVENTS );
+    long rv = wxExecute(cmd, ret_array, err_array, wxEXEC_SYNC + wxEXEC_NOEVENTS );
 
     if(0 != rv) {
         wxString msg = _("Cannot execute OCPNsenc utility at \n");
