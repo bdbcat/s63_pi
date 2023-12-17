@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin version="1">
+  <name> S63 </name>
+  <version> 1.17.15 </version>
+  <release> 0 </release>
+  <summary> OpenCPN support for S63 Vector Charts </summary>
+
+  <api-version> 1.16 </api-version>
+  <open-source> no </open-source>
+  <author> David S Register </author>
+  <source> https://github.com/bdbcat/s63_pi </source>
+  <info-url> https://opencpn.org/OpenCPN/plugins/s63.html </info-url>
+
+  <description>
+  OpenCPN support for S63 Vector Charts
+  </description>
+
+  <target>ubuntu-x86_64</target>
+  <target-version>18.04</target-version>
+  <target-arch>x86_64</target-arch>
+  <tarball-url> https://dl.cloudsmith.io/public/@pkg_repo@/raw/names/@name@/versions/@version@/@filename@ </tarball-url>
+</plugin>
+
