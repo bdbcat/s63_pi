@@ -253,8 +253,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         return ret_array;
     }
     wxString exec = g_sencutil_bin;
-    cmd.Prepend("\"");
-    cmd.Append("\"");
+    exec.Prepend("\"");
+    exec.Append("\"");
 
 #ifndef __WXMSW__
     exec.Replace(" ", "\\ ");
