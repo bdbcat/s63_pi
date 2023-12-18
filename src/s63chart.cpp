@@ -164,8 +164,8 @@ void validate_SENC_util(void)
 #ifndef __WXMSW__
     cmd.Replace(" ", "\\ ");
 #endif
-    cmd += " -a";                 // get version
     cmd.Append("\"");
+    cmd += " -a";                 // get version
 
     wxString msgc;
     msgc += _T("{");
@@ -253,12 +253,13 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         return ret_array;
     }
     wxString exec = g_sencutil_bin;
+    cmd.Prepend("\"");
+    cmd.Append("\"");
+
 #ifndef __WXMSW__
     exec.Replace(" ", "\\ ");
 #endif
     cmd.Prepend(exec + _T(" "));
-    cmd.Prepend("\"");
-    cmd.Append("\"");
 
     wxLogMessage( cmd );
 
