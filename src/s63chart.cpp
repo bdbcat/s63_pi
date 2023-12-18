@@ -160,16 +160,16 @@ void validate_SENC_util(void)
     err_array.Alloc(1000);
     wxString cmd = g_sencutil_bin;
     cmd.Prepend("\"");
-    cmd.Append("\"");
 
 #ifndef __WXMSW__
     cmd.Replace(" ", "\\ ");
 #endif
     cmd += " -a";                 // get version
+    cmd.Append("\"");
 
-    wxString msgc = cmd;
+    wxString msgc;
     msgc += _T("{");
-    msgc += bin_test;
+    msgc += cmd;
     msgc += _T("}");
     wxLogMessage(_T("s63_pi: Validate cmd: ") + msgc);
 
@@ -257,6 +257,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     exec.Replace(" ", "\\ ");
 #endif
     cmd.Prepend(exec + _T(" "));
+    cmd.Prepend("\"");
+    cmd.Append("\"");
 
     wxLogMessage( cmd );
 
