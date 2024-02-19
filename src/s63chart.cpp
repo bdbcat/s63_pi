@@ -311,48 +311,6 @@ bool exec_results_check( wxArrayString &array )
     return true;
 }
 
-
-class UtilProcess: public wxProcess
-{
-public:
-    UtilProcess();
-    ~UtilProcess();
-
-    void OnTerminate(int pid, int status);
-    wxString    m_outstring;
-    bool        term_happened;
-
-};
-
-UtilProcess::UtilProcess()
-{
-    term_happened = false;
-}
-
-UtilProcess::~UtilProcess()
-{
-}
-
-
-void UtilProcess::OnTerminate(int pid, int status)
-{
-    wxInputStream *pis = GetInputStream();
-    if(pis){
-        while(pis->CanRead())
-        {
-            char c = pis->GetC();
-            m_outstring += c;
-        }
-    }
-
-    term_happened = true;
-
-    wxPrintf(_T("%s"), m_outstring.c_str());
-    if( s_plogtc )
-        ScreenLogMessage(m_outstring);
-}
-
-
 unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t* bufsize )
 {
 

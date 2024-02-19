@@ -6,7 +6,7 @@
 
 
 #ifndef _S63CH_H_
-#define _S53CH_H_
+#define _S63CH_H_
 
 #include "wx/wxprec.h"
 #include <wx/wfstream.h>

@@ -146,6 +146,7 @@ public:
     bool SaveConfig( void );
 
     wxString GetCertificateDir();
+    void SetColorScheme(PI_ColorScheme cs) { s63_pi::global_color_scheme = cs; }
 
     wxStaticText        *m_up_text;
     wxStaticText        *m_ip_text;
@@ -155,6 +156,8 @@ public:
     wxPanel             *m_s63chartPanelWin;
     wxPanel             *m_s63chartPanelKeys;
     wxNotebook          *m_s63NB;
+
+    static PI_ColorScheme global_color_scheme;
 
 private:
     wxString GetPermitDir();
@@ -197,9 +200,6 @@ private:
 
     bool                m_bSSE26_shown;
     TexFont             m_TexFontMessage;
-
-
-
 };
 
 // An Event handler class to catch events

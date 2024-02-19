@@ -141,6 +141,30 @@ wxString i5(_T("6784 71B2 7A9C F44E E91A 49C5 147D B1A9 AAF2 44F0 5A43 4D64 8693
 wxString i6(_T("// BIG y"));
 wxString i7(_T("963F 14E3 2BA5 3729 28F2 4F15 B073 0C49 D31B 28E5 C764 1002 564D B959 95B1 5CF8 800E D54E 3548 67B8 2BB9 597B 1582 69E0 79F0 C4F4 926B 1776 1CC8 9EB7 7C9B 7EF8."));
 
+PI_ColorScheme s63_pi::global_color_scheme = PI_ColorScheme::PI_GLOBAL_COLOR_SCHEME_DAY;
+
+
+#define LUMIMOSITY_NIGHT (-0.8)
+#define LUMIMOSITY_DUSK (-0.5)
+
+wxColor GetDimedColor(const wxColor& c)
+{
+    switch (s63_pi::global_color_scheme) {
+    case PI_ColorScheme::PI_GLOBAL_COLOR_SCHEME_NIGHT:
+        return (
+            wxColor(wxMax(0, wxMin(c.Red() + c.Red() * LUMIMOSITY_NIGHT, 255)),
+                wxMax(0, wxMin(c.Green() + c.Green() * LUMIMOSITY_NIGHT, 255)),
+                wxMax(0, wxMin(c.Blue() + c.Blue() * LUMIMOSITY_NIGHT, 255))));
+    case PI_ColorScheme::PI_GLOBAL_COLOR_SCHEME_DUSK:
+        return (
+            wxColor(wxMax(0, wxMin(c.Red() + c.Red() * LUMIMOSITY_DUSK, 255)),
+                wxMax(0, wxMin(c.Green() + c.Green() * LUMIMOSITY_DUSK, 255)),
+                wxMax(0, wxMin(c.Blue() + c.Blue() * LUMIMOSITY_DUSK, 255))));
+    default:
+        return c;
+    }
+}
+
 // the class factories, used to create and destroy instances of the PlugIn
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
@@ -2911,9 +2935,11 @@ void ScreenLogMessage(wxString s)
 
     if( g_pScreenLog ) {
         g_pScreenLog->LogMessage(s);
+        wxYield();
     }
     else if( g_pPanelScreenLog ){
         g_pPanelScreenLog->LogMessage(s);
+        wxYield();
     }
 }
 void HideScreenLog(void)
@@ -3007,29 +3033,20 @@ void InfoWinDialog::OnPaint( wxPaintEvent& event )
     GetClientSize( &width, &height );
     wxPaintDC dc( this );
 
-    wxColour c;
+    dc.SetBrush( wxBrush( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)) ) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    dc.SetBrush( wxBrush( c ) );
-
-    GetGlobalColor( _T ( "UITX1" ), &c );
-    dc.SetPen( wxPen( c ) );
+    dc.SetPen( wxPen( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)) ) );
 
     dc.DrawRectangle( 0, 0, width, height );
 }
 
 void InfoWinDialog::Realize()
 {
-    wxColour c;
+    SetBackgroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    SetBackgroundColour( c );
+    m_pInfoTextCtl->SetBackgroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    m_pInfoTextCtl->SetBackgroundColour( c );
-
-    GetGlobalColor( _T ( "UITX1" ), &c );
-    m_pInfoTextCtl->SetForegroundColour( c );
+    m_pInfoTextCtl->SetForegroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)) );
 
     int x;
     GetTextExtent(m_string, &x, NULL);
@@ -3119,29 +3136,20 @@ void InfoWin::OnPaint( wxPaintEvent& event )
     GetClientSize( &width, &height );
     wxPaintDC dc( this );
 
-    wxColour c;
+    dc.SetBrush( wxBrush( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)) ) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    dc.SetBrush( wxBrush( c ) );
-
-    GetGlobalColor( _T ( "UITX1" ), &c );
-    dc.SetPen( wxPen( c ) );
+    dc.SetPen( wxPen( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)) ) );
 
     dc.DrawRectangle( 0, 0, width-1, height-1 );
 }
 
 void InfoWin::Realize()
 {
-    wxColour c;
+    SetBackgroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    SetBackgroundColour( c );
+    m_pInfoTextCtl->SetBackgroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)) );
 
-    GetGlobalColor( _T ( "UIBCK" ), &c );
-    m_pInfoTextCtl->SetBackgroundColour( c );
-
-    GetGlobalColor( _T ( "UITX1" ), &c );
-    m_pInfoTextCtl->SetForegroundColour( c );
+    m_pInfoTextCtl->SetForegroundColour( GetDimedColor(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)) );
 
     int x;
     GetTextExtent(m_string, &x, NULL);
