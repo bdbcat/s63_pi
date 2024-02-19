@@ -408,7 +408,7 @@ CryptInputStream::~CryptInputStream ( )
     if (m_owns)
         delete m_parent_stream;
 
-    delete m_outbuf;
+    free(m_outbuf);
 }
 
 void CryptInputStream::SetCryptBuffer( unsigned char *buffer, size_t cbsize )
