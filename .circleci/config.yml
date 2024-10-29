@@ -264,12 +264,6 @@ workflows:
       - build-macos:
           <<: *std-filters
 
-      - build-android-arm64:
-          <<: *std-filters
-
-      - build-android-armhf:
-          <<: *std-filters
-
       - build-bullseye-wx32:
           <<: *std-filters
 
