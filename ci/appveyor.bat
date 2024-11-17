@@ -15,6 +15,8 @@ call %SCRIPTDIR%..\cache\wx-config.bat
 echo USING wxWidgets_LIB_DIR: !wxWidgets_LIB_DIR!
 echo USING wxWidgets_ROOT_DIR: !wxWidgets_ROOT_DIR!
 
+set "PATH=%PATH%;C:\Program Files (x86)\Poedit\Gettexttools\bin"
+
 if not defined VCINSTALLDIR (
   for /f "tokens=* USEBACKQ" %%p in (
     `"%programfiles(x86)%\Microsoft Visual Studio\Installer\vswhere" ^
