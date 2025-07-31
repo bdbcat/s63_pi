@@ -67,7 +67,7 @@ flatpak remote-add --user --if-not-exists \
 
     # FIXME (leamas) revert to stable when 058 is published there
 flatpak install --user -y --noninteractive \
-    flathub org.freedesktop.Sdk//22.08
+    flathub org.freedesktop.Sdk//24.08
 
 set -x
 cd $builddir
