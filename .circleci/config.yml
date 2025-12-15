@@ -245,12 +245,6 @@ workflows:
       - build-macos-intel-legacy:
           <<: *std-filters
 
-      - build-android-arm64:
-          <<: *std-filters
-
-      - build-android-armhf:
-          <<: *std-filters
-
       - build-bookworm-arm64:
           <<: *std-filters
 
