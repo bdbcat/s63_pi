@@ -46,6 +46,9 @@
 
 #include "ocpn_plugin.h"
 
+#ifdef __MSVC__
+#include <windows.h>
+#endif
 
 enum {
     ID_BUTTONCELLIMPORT,
@@ -473,6 +476,352 @@ private:
     bool m_bGauge;
 
     DECLARE_EVENT_TABLE()
+};
+
+#include <fcntl.h>
+#include <atomic>
+#include <sys/wait.h>
+#include <sys/poll.h>
+
+struct ProcessOptions
+{
+    std::vector<std::string> argv;   // argv[0] = executable
+    std::string workingDir;
+    bool captureStdout = true;
+    bool captureStderr = false;
+    int timeoutMs = -1;              // -1 = infinite
+};
+
+struct ProcessResult
+{
+    int exitCode = -1;
+    std::string stdoutText;
+    std::string stderrText;
+    bool timedOut = false;
+};
+void SetNonBlocking(int fd);
+std::vector<char*> BuildArgv(const std::vector<std::string>& args);
+
+class IProcessBackend
+{
+public:
+    virtual ~IProcessBackend() = default;
+
+    virtual ProcessResult Run(const ProcessOptions& opts,
+                              std::atomic<bool>& cancelFlag) = 0;
+};
+
+std::unique_ptr<IProcessBackend> CreateBackend();
+
+
+#ifndef __MSVC__
+class PosixProcessBackend : public IProcessBackend
+{
+public:
+    ProcessResult Run(const ProcessOptions& opts,
+                      std::atomic<bool>& cancelFlag) override
+    {
+        ProcessResult result;
+        auto argvt = BuildArgv(opts.argv);
+
+        int stdoutPipe[2] = {-1, -1};
+        int stderrPipe[2] = {-1, -1};
+
+        if (opts.captureStdout && pipe(stdoutPipe) != 0)
+            return result;
+
+        if (opts.captureStderr && pipe(stderrPipe) != 0)
+            return result;
+
+        pid_t pid = fork();
+        if (pid == 0)
+        {
+            // ---------- Child ----------
+            if (!opts.workingDir.empty())
+                chdir(opts.workingDir.c_str());
+
+            if (opts.captureStdout)
+            {
+                dup2(stdoutPipe[1], STDOUT_FILENO);
+            }
+            if (opts.captureStderr)
+            {
+                dup2(stderrPipe[1], STDERR_FILENO);
+            }
+
+            // Close all pipe FDs
+            if (stdoutPipe[0] != -1) close(stdoutPipe[0]);
+            if (stdoutPipe[1] != -1) close(stdoutPipe[1]);
+            if (stderrPipe[0] != -1) close(stderrPipe[0]);
+            if (stderrPipe[1] != -1) close(stderrPipe[1]);
+
+            auto argv = BuildArgv(opts.argv);
+            execvp(argv[0], argv.data());
+
+            _exit(127); // exec failed
+        }
+
+        // ---------- Parent (worker thread) ----------
+        if (opts.captureStdout)
+        {
+            close(stdoutPipe[1]);
+            SetNonBlocking(stdoutPipe[0]);
+        }
+        if (opts.captureStderr)
+        {
+            close(stderrPipe[1]);
+            SetNonBlocking(stderrPipe[0]);
+        }
+
+        const int startTimeMs = NowMs();
+        bool stdoutOpen = opts.captureStdout;
+        bool stderrOpen = opts.captureStderr;
+
+        while (stdoutOpen || stderrOpen)
+        {
+            if (cancelFlag.load())
+            {
+                kill(pid, SIGTERM);
+                result.timedOut = true;
+                break;
+            }
+
+            if (opts.timeoutMs >= 0 &&
+                (NowMs() - startTimeMs) > opts.timeoutMs)
+            {
+                kill(pid, SIGKILL);
+                result.timedOut = true;
+                break;
+            }
+
+            struct pollfd fds[2];
+            int nfds = 0;
+
+            if (stdoutOpen)
+            {
+                fds[nfds++] = { stdoutPipe[0], POLLIN, 0 };
+            }
+            if (stderrOpen)
+            {
+                fds[nfds++] = { stderrPipe[0], POLLIN, 0 };
+            }
+
+            int rc = poll(fds, nfds, 100);
+            if (rc <= 0)
+                continue;
+
+            for (int i = 0; i < nfds; ++i)
+            {
+                if (fds[i].revents & (POLLIN | POLLHUP | POLLERR))
+                {
+                  char buf[4096];
+                  ssize_t n = read(fds[i].fd, buf, sizeof(buf));
+
+                  if (n > 0)
+                  {
+                    if (fds[i].fd == stdoutPipe[0])
+                      result.stdoutText.append(buf, n);
+                    else
+                      result.stderrText.append(buf, n);
+                  }
+                  else
+                  {
+                    // EOF or error → close FD
+                    if (fds[i].fd == stdoutPipe[0])
+                    {
+                      close(stdoutPipe[0]);
+                      stdoutOpen = false;
+                    }
+                    else
+                    {
+                      close(stderrPipe[0]);
+                      stderrOpen = false;
+                    }
+                  }
+                }
+            }
+        }
+
+        int status = 0;
+        waitpid(pid, &status, 0);
+
+        if (WIFEXITED(status))
+            result.exitCode = WEXITSTATUS(status);
+
+        return result;
+    }
+
+private:
+    static int NowMs()
+    {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+    }
+};
+
+#else
+
+class Win32ProcessBackend : public IProcessBackend
+{
+public:
+    ProcessResult Run(const ProcessOptions& opts,
+                      std::atomic<bool>& cancelFlag) override
+    {
+        ProcessResult result;
+
+        SECURITY_ATTRIBUTES sa{};
+        sa.nLength = sizeof(sa);
+        sa.bInheritHandle = TRUE;
+
+        HANDLE hStdOutRd = nullptr, hStdOutWr = nullptr;
+        HANDLE hStdErrRd = nullptr, hStdErrWr = nullptr;
+
+        if (opts.captureStdout)
+        {
+            CreatePipe(&hStdOutRd, &hStdOutWr, &sa, 0);
+            SetHandleInformation(hStdOutRd, HANDLE_FLAG_INHERIT, 0);
+        }
+
+        if (opts.captureStderr)
+        {
+            CreatePipe(&hStdErrRd, &hStdErrWr, &sa, 0);
+            SetHandleInformation(hStdErrRd, HANDLE_FLAG_INHERIT, 0);
+        }
+
+        STARTUPINFOW si{};
+        si.cb = sizeof(si);
+        si.dwFlags |= STARTF_USESTDHANDLES;
+        si.hStdOutput = opts.captureStdout ? hStdOutWr : GetStdHandle(STD_OUTPUT_HANDLE);
+        si.hStdError  = opts.captureStderr ? hStdErrWr : GetStdHandle(STD_ERROR_HANDLE);
+        si.hStdInput  = GetStdHandle(STD_INPUT_HANDLE);
+
+        PROCESS_INFORMATION pi{};
+
+        std::wstring cmdLine = BuildCommandLine(opts.argv);
+        std::wstring cwd = Utf8ToWide(opts.workingDir);
+
+        BOOL ok = CreateProcessW(
+                nullptr,
+                cmdLine.data(),
+                nullptr,
+                nullptr,
+                TRUE,
+                CREATE_NO_WINDOW,
+                nullptr,
+                cwd.empty() ? nullptr : cwd.c_str(),
+                &si,
+                &pi);
+
+        if (!ok)
+            return result;
+
+        // Parent: close write ends
+        if (hStdOutWr) CloseHandle(hStdOutWr);
+        if (hStdErrWr) CloseHandle(hStdErrWr);
+
+        const DWORD startTick = GetTickCount();
+        bool stdoutOpen = opts.captureStdout;
+        bool stderrOpen = opts.captureStderr;
+
+        while (stdoutOpen || stderrOpen)
+        {
+            if (cancelFlag.load())
+            {
+                TerminateProcess(pi.hProcess, 1);
+                result.timedOut = true;
+                break;
+            }
+
+            if (opts.timeoutMs >= 0 &&
+                (GetTickCount() - startTick) > (DWORD)opts.timeoutMs)
+            {
+                TerminateProcess(pi.hProcess, 1);
+                result.timedOut = true;
+                break;
+            }
+
+            DWORD avail = 0;
+            char buffer[4096];
+
+            if (stdoutOpen &&
+                PeekNamedPipe(hStdOutRd, nullptr, 0, nullptr, &avail, nullptr))
+            {
+                if (avail == 0)
+                {
+                    DWORD rc = WaitForSingleObject(pi.hProcess, 0);
+                    if (rc == WAIT_OBJECT_0)
+                    {
+                        CloseHandle(hStdOutRd);
+                        stdoutOpen = false;
+                    }
+                }
+                else
+                {
+                    DWORD read = 0;
+                    if (ReadFile(hStdOutRd, buffer, sizeof(buffer), &read, nullptr) && read > 0)
+                        result.stdoutText.append(buffer, read);
+                }
+            }
+
+            if (stderrOpen &&
+                PeekNamedPipe(hStdErrRd, nullptr, 0, nullptr, &avail, nullptr))
+            {
+                if (avail == 0)
+                {
+                    DWORD rc = WaitForSingleObject(pi.hProcess, 0);
+                    if (rc == WAIT_OBJECT_0)
+                    {
+                        CloseHandle(hStdErrRd);
+                        stderrOpen = false;
+                    }
+                }
+                else
+                {
+                    DWORD read = 0;
+                    if (ReadFile(hStdErrRd, buffer, sizeof(buffer), &read, nullptr) && read > 0)
+                        result.stderrText.append(buffer, read);
+                }
+            }
+
+            Sleep(10);
+        }
+
+        WaitForSingleObject(pi.hProcess, INFINITE);
+
+        DWORD exitCode = 0;
+        GetExitCodeProcess(pi.hProcess, &exitCode);
+        result.exitCode = (int)exitCode;
+
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+
+        return result;
+    }
+};
+#endif
+
+
+class ProcessRunner
+{
+public:
+    ProcessRunner()
+            : m_backend(CreateBackend()) {}
+
+    ProcessResult Run(const ProcessOptions& opts)
+    {
+        m_cancel.store(false);
+        return m_backend->Run(opts, m_cancel);
+    }
+
+    void Cancel()
+    {
+        m_cancel.store(true);
+    }
+
+private:
+    std::atomic<bool> m_cancel{false};
+    std::unique_ptr<IProcessBackend> m_backend;
 };
 
 #endif

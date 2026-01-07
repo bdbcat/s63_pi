@@ -124,6 +124,7 @@ bool                            g_GLSetupOK;
 
 s63_pi_event_handler_timer       *g_pi_timer;
 bool                            g_expired_timeout;
+wxCriticalSection               EHDR_CriticalSection;
 
 PFNGLGENBUFFERSPROC                 s_glGenBuffers;
 PFNGLBINDBUFFERPROC                 s_glBindBuffer;
@@ -143,6 +144,33 @@ wxString i7(_T("963F 14E3 2BA5 3729 28F2 4F15 B073 0C49 D31B 28E5 C764 1002 564D
 
 PI_ColorScheme s63_pi::global_color_scheme = PI_ColorScheme::PI_GLOBAL_COLOR_SCHEME_DAY;
 
+// Helper function for SENC utility access
+void SetNonBlocking(int fd)
+{
+    int flags = fcntl(fd, F_GETFL, 0);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
+std::vector<char*> BuildArgv(const std::vector<std::string>& args)
+{
+    std::vector<char*> argv;
+    argv.reserve(args.size() + 1);
+
+    for (const auto& s : args)
+        argv.push_back(const_cast<char*>(s.c_str()));
+
+    argv.push_back(nullptr);
+    return argv;
+}
+
+std::unique_ptr<IProcessBackend> CreateBackend()
+{
+#ifdef __MSVC__
+    return std::make_unique<Win32ProcessBackend>();
+#else
+    return std::make_unique<PosixProcessBackend>();
+#endif
+}
 
 #define LUMIMOSITY_NIGHT (-0.8)
 #define LUMIMOSITY_DUSK (-0.5)
@@ -525,7 +553,6 @@ s63_pi::~s63_pi()
 int s63_pi::Init(void)
 {
 //    ScreenLogMessage( _T("s63_pi Init()\n") );
-
     //  Get the path of the PlugIn itself
     g_pi_filename = GetPlugInPath(this);
 
@@ -2918,6 +2945,9 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 //      Private logging functions
 void ScreenLogMessage(wxString s)
 {
+    if(!wxThread::IsMain())
+        return;
+
     if(s.IsEmpty())
         return;
 

@@ -69,6 +69,7 @@ extern bool             g_b_validated;
 extern bool             g_bSENCutil_valid;
 extern bool             g_bLogActivity;
 extern bool             g_bdisable_infowin;
+extern wxCriticalSection EHDR_CriticalSection;
 
 int              s_PI_bInS57;         // Exclusion flag to prvent recursion in this class init call.
 
@@ -239,9 +240,32 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
   //std::string a = cmd.ToStdString();
   //printf("exec_SENCutil_sync:  %s\n", a.c_str());
 
-    wxArrayString ret_array;
-    ret_array.Alloc(1000);
+  // Token parse the "cmd" to build a vector
+    std::vector<std::string> args;
+    wxString exec = g_sencutil_bin;
+    args.push_back(exec.ToStdString());
 
+    wxStringTokenizer tokenizer(cmd, " ");
+    while (tokenizer.HasMoreTokens()) {
+        wxString token = tokenizer.GetNextToken();
+        args.push_back(token.ToStdString());
+    }
+
+    ProcessRunner runner;
+    ProcessOptions opts;
+    opts.argv = args;
+    opts.captureStdout = true;
+
+    auto result = runner.Run(opts);
+
+    wxArrayString lines;
+    wxString wxOut = wxString::FromUTF8(result.stdoutText);
+    wxStringTokenizer tok(wxOut, "\n", wxTOKEN_RET_EMPTY);
+
+    while (tok.HasMoreTokens())
+        lines.Add(tok.GetNextToken());
+
+#if 0
     if(!g_b_validated && !g_bSENCutil_valid){
         validate_SENC_util();
         g_b_validated = true;
@@ -272,13 +296,13 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 
     int flags = wxEXEC_SYNC;
     flags += wxEXEC_NOEVENTS;
-#ifdef __WXMSW__
+//#ifdef __WXMSW__
     //  If windows, we want to avoid disabling the currently active dialog.
     //  Reason:  the wxExecute call yields after disabling the dialog UI, and
     //  each yield seems to be recursive, so consuming GUI resources greatly
     //  until the next full yield() and the event queue drains.
     flags += wxEXEC_NODISABLE;
-#endif
+//#endif
 
     long rv = wxExecute(cmd, ret_array, ret_array, flags );
 
@@ -294,8 +318,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         for(unsigned int i = 0 ; i < ret_array.GetCount() ; i++)
             wxLogMessage(ret_array[i]);
     }
-
-    return ret_array;
+#endif
+    return lines;
 }
 
 bool exec_results_check( wxArrayString &array )
@@ -327,14 +351,14 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -n ");
 
     cmd += _T(" -i ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += FullPath;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -o ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += tmp_file;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -u ");
     cmd += GetUserpermit();
@@ -342,7 +366,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) ) {
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()) {
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -353,9 +377,9 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += m_cell_permit;
 
     cmd += _T(" -z ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += g_pi_filename;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
@@ -736,14 +760,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -l ");                  // create secure header
 
     cmd += _T(" -i ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += m_full_base_path;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -o ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += ehdr_file_name;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -p ");
     cmd += m_cell_permit;
@@ -754,7 +778,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog /*&& (g_pPanelScreenLog || g_pScreenLog) */){
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()){
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -762,9 +786,9 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     }
 
     cmd += _T(" -r ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += g_s57data_dir;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 #if 0
     if( m_up_file_array.GetCount() ){
@@ -776,17 +800,17 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 #endif
 
     cmd += _T(" -g ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += m_FullPath;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -z ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += g_pi_filename;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 
-    wxArrayString ehdr_result = exec_SENCutil_sync( cmd, true);
+    wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
 
 //    ::wxRemoveFile( tmp_up_file );
 
@@ -818,10 +842,10 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 {
     wxLogMessage("********************Init()");
     //    Use a static semaphore flag to prevent recursion
-    if( s_PI_bInS57 ) {
-      wxLogMessage("Return semaphore");
-        return PI_INIT_FAIL_NOERROR;
-    }
+//    if( s_PI_bInS57 ) {
+//      wxLogMessage("Return semaphore");
+//        return PI_INIT_FAIL_NOERROR;
+//    }
     s_PI_bInS57++;
 
     g_brendered_expired = false;    // Reset the trip-wire
@@ -959,8 +983,9 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
     }
 
     if( PI_HEADER_ONLY == init_flags ){
+       //wxCriticalSectionLocker lock(EHDR_CriticalSection);
 
-       //      else if the ehdr file exists, we init from there (normal path for adding cell to dB)
+        //      else if the ehdr file exists, we init from there (normal path for adding cell to dB)
        wxString efn = Get_eHDR_Name(name_os63);
 
         if( wxFileName::FileExists(efn) ) {
@@ -2700,14 +2725,14 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T(" -c ");                  // create secure SENC
 
     cmd += _T(" -i ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += m_full_base_path;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -o ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += outfile;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
     cmd += _T(" -p ");
     cmd += m_cell_permit;
@@ -2726,9 +2751,9 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     }
 
     cmd += _T(" -r ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += g_s57data_dir;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 #if 0
     if( m_up_file_array.GetCount() ){
@@ -2740,15 +2765,15 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
 #endif
 
     cmd += _T(" -g ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += m_FullPath;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 
     cmd += _T(" -z ");
-    cmd += _T("\"");
+    //cmd += _T("\"");
     cmd += g_pi_filename;
-    cmd += _T("\"");
+    //cmd += _T("\"");
 
 
     ClearScreenLog();
