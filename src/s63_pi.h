@@ -45,8 +45,8 @@
 #define     MY_API_VERSION_MINOR    18
 
 #include "ocpn_plugin.h"
-#include "../opencpn-libs/api-18/ocpn_plugin.h"
-#include "../opencpn-libs.save/api-18/ocpn_plugin.h"
+//#include "../opencpn-libs/api-18/ocpn_plugin.h"
+//#include "../opencpn-libs.save/api-18/ocpn_plugin.h"
 
 #ifdef __MSVC__
 #include <windows.h>
