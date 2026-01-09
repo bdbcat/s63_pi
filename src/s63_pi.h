@@ -45,11 +45,14 @@
 #define     MY_API_VERSION_MINOR    18
 
 #include "ocpn_plugin.h"
-//#include "../opencpn-libs/api-18/ocpn_plugin.h"
-//#include "../opencpn-libs.save/api-18/ocpn_plugin.h"
 
 #ifdef __MSVC__
 #include <windows.h>
+#else
+#include <fcntl.h>
+#include <atomic>
+#include <sys/wait.h>
+#include <sys/poll.h>
 #endif
 
 enum {
@@ -480,10 +483,6 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-#include <fcntl.h>
-#include <atomic>
-#include <sys/wait.h>
-#include <sys/poll.h>
 
 struct ProcessOptions
 {
