@@ -440,7 +440,7 @@ void s63_pi_event_handler_timer::Reset()
 //---------------------------------------------------------------------------------------------------------
 
 s63_pi::s63_pi(void *ppimgr)
-      :opencpn_plugin_116(ppimgr)
+      :opencpn_plugin_118(ppimgr)
 {
       // Create the PlugIn icons
       m_pplugin_icon = new wxBitmap(default_pi);

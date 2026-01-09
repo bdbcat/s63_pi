@@ -42,9 +42,11 @@
 #include "TexFont.h"
 
 #define     MY_API_VERSION_MAJOR    1
-#define     MY_API_VERSION_MINOR    16
+#define     MY_API_VERSION_MINOR    18
 
 #include "ocpn_plugin.h"
+#include "../opencpn-libs/api-18/ocpn_plugin.h"
+#include "../opencpn-libs.save/api-18/ocpn_plugin.h"
 
 #ifdef __MSVC__
 #include <windows.h>
@@ -109,7 +111,7 @@ public:
 //    The PlugIn Class Definition
 //----------------------------------------------------------------------------------------------------------
 
-class s63_pi : public opencpn_plugin_116
+class s63_pi : public opencpn_plugin_118
 {
 public:
       s63_pi(void *ppimgr);
@@ -515,6 +517,8 @@ std::unique_ptr<IProcessBackend> CreateBackend();
 
 
 #ifndef __MSVC__
+
+#if 0  // first cut, works on linux
 class PosixProcessBackend : public IProcessBackend
 {
 public:
@@ -657,6 +661,225 @@ private:
         struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
         return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+    }
+};
+#endif      // first cut
+
+// Second cut, for MacOS also
+class PosixProcessBackend : public IProcessBackend
+{
+public:
+    ProcessResult Run(const ProcessOptions& opts,
+                      std::atomic<bool>& cancelFlag) override
+    {
+        ProcessResult result;
+
+        int stdoutPipe[2] = { -1, -1 };
+        int stderrPipe[2] = { -1, -1 };
+
+        if (opts.captureStdout && pipe(stdoutPipe) != 0)
+            return result;
+
+        if (opts.captureStderr && pipe(stderrPipe) != 0)
+            return result;
+
+        SetCloExec(stdoutPipe);
+        SetCloExec(stderrPipe);
+
+        pid_t pid = fork();
+        if (pid == 0)
+        {
+            // -------- Child --------
+            setsid(); // new process group (macOS + Linux)
+
+            if (!opts.workingDir.empty())
+                chdir(opts.workingDir.c_str());
+
+            if (opts.captureStdout)
+                dup2(stdoutPipe[1], STDOUT_FILENO);
+
+            if (opts.captureStderr)
+                dup2(stderrPipe[1], STDERR_FILENO);
+
+            ClosePipe(stdoutPipe);
+            ClosePipe(stderrPipe);
+
+            auto argv = BuildArgv(opts.argv);
+            execvp(argv[0], argv.data());
+
+            _exit(127);
+        }
+
+        // -------- Parent --------
+        if (opts.captureStdout)
+        {
+            close(stdoutPipe[1]);
+            SetNonBlocking(stdoutPipe[0]);
+        }
+
+        if (opts.captureStderr)
+        {
+            close(stderrPipe[1]);
+            SetNonBlocking(stderrPipe[0]);
+        }
+
+        const int startMs = NowMs();
+        bool stdoutOpen = opts.captureStdout;
+        bool stderrOpen = opts.captureStderr;
+
+        bool terminating = false;
+        int terminateMs = 0;
+
+        while (stdoutOpen || stderrOpen)
+        {
+            if (!terminating)
+            {
+                if (cancelFlag.load())
+                {
+                    KillProcessGroup(pid, SIGTERM);
+                    terminating = true;
+                    terminateMs = NowMs();
+                    result.timedOut = true;
+                }
+                else if (opts.timeoutMs >= 0 &&
+                         (NowMs() - startMs) > opts.timeoutMs)
+                {
+                    KillProcessGroup(pid, SIGTERM);
+                    terminating = true;
+                    terminateMs = NowMs();
+                    result.timedOut = true;
+                }
+            }
+            else if (NowMs() - terminateMs > 1000)
+            {
+                KillProcessGroup(pid, SIGKILL);
+            }
+
+            struct pollfd fds[2];
+            int nfds = 0;
+
+            if (stdoutOpen)
+                fds[nfds++] = { stdoutPipe[0], POLLIN | POLLHUP, 0 };
+
+            if (stderrOpen)
+                fds[nfds++] = { stderrPipe[0], POLLIN | POLLHUP, 0 };
+
+            int rc = poll(fds, nfds, 100);
+            if (rc < 0 && errno == EINTR)
+                continue;
+
+            if (rc > 0)
+            {
+                for (int i = 0; i < nfds; ++i)
+                {
+                    DrainPipe(fds[i].fd,
+                              fds[i].fd == stdoutPipe[0]
+                              ? result.stdoutText
+                              : result.stderrText,
+                              fds[i].fd == stdoutPipe[0]
+                              ? stdoutOpen
+                              : stderrOpen);
+                }
+            }
+
+            int status = 0;
+            if (waitpid(pid, &status, WNOHANG) == pid)
+            {
+                if (WIFEXITED(status))
+                    result.exitCode = WEXITSTATUS(status);
+                else if (WIFSIGNALED(status))
+                    result.exitCode = 128 + WTERMSIG(status);
+
+                break;
+            }
+        }
+
+        // Final drain (important!)
+        if (stdoutOpen)
+            DrainUntilEof(stdoutPipe[0], result.stdoutText);
+
+        if (stderrOpen)
+            DrainUntilEof(stderrPipe[0], result.stderrText);
+
+        ClosePipe(stdoutPipe);
+        ClosePipe(stderrPipe);
+
+        // Reap child if not already
+        int status = 0;
+        waitpid(pid, &status, 0);
+
+        return result;
+    }
+
+private:
+    static void DrainPipe(int fd, std::string& out, bool& open)
+    {
+        char buf[4096];
+        while (true)
+        {
+            ssize_t n = read(fd, buf, sizeof(buf));
+            if (n > 0)
+            {
+                out.append(buf, n);
+            }
+            else if (n == 0)
+            {
+                close(fd);
+                open = false;
+                return;
+            }
+            else if (errno == EAGAIN || errno == EINTR)
+            {
+                return;
+            }
+            else
+            {
+                close(fd);
+                open = false;
+                return;
+            }
+        }
+    }
+
+    static void DrainUntilEof(int fd, std::string& out)
+    {
+        char buf[4096];
+        while (true)
+        {
+            ssize_t n = read(fd, buf, sizeof(buf));
+            if (n > 0)
+                out.append(buf, n);
+            else
+                break;
+        }
+    }
+
+    static void ClosePipe(int pipefd[2])
+    {
+        if (pipefd[0] != -1) close(pipefd[0]);
+        if (pipefd[1] != -1) close(pipefd[1]);
+        pipefd[0] = pipefd[1] = -1;
+    }
+
+    static void SetCloExec(int pipefd[2])
+    {
+        if (pipefd[0] != -1)
+            fcntl(pipefd[0], F_SETFD, FD_CLOEXEC);
+        if (pipefd[1] != -1)
+            fcntl(pipefd[1], F_SETFD, FD_CLOEXEC);
+    }
+
+    static void KillProcessGroup(pid_t pid, int sig)
+    {
+        // Negative pid => process group
+        kill(-pid, sig);
+    }
+
+    static int NowMs()
+    {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return int(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
     }
 };
 

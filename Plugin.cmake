@@ -112,7 +112,7 @@ if(QT_ANDROID)
   set(SRC ${SRC} src/androidSupport.cpp)
 endif(QT_ANDROID)
 
-set(PKG_API_LIB api-16)  #  A directory in libs/ e. g., api-17 or api-16
+set(PKG_API_LIB api-18)  #  A directory in libs/ e. g., api-17 or api-16
 
 add_definitions(-DocpnUSE_GL)
 
