@@ -237,6 +237,9 @@ void validate_SENC_util(void)
 std::vector<std::string> TokenizeCommand(const wxString& cmd)
 {
     std::vector<std::string> args;
+    wxString exec = g_sencutil_bin;
+    args.push_back(exec.ToStdString());
+
     wxString token;
     bool inQuotes = false;
 
