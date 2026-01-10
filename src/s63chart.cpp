@@ -260,6 +260,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 
     wxArrayString lines;
     wxString wxOut = wxString::FromUTF8(result.stdoutText);
+    wxLogMessage(wxOut);
+
     wxStringTokenizer tok(wxOut, "\n", wxTOKEN_RET_EMPTY);
 
     while (tok.HasMoreTokens())
@@ -383,6 +385,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
 
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
+    wxLogMessage(cmd);
 
     //  Read the key
     wxFileInputStream *ifs = new wxFileInputStream(tmp_file);
