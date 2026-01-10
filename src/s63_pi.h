@@ -852,6 +852,8 @@ public:
                     int(result.timedOut),
                     result.stdoutText.size(),
                     result.stderrText.size());
+        wxLogMessage(wxString(result.stdoutText));
+        wxLogMessage(wxString(result.stderrText));
 
         return result;
     }
