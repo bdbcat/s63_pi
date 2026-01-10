@@ -540,8 +540,13 @@ public:
         if (pid == 0)
         {
             // ---------- Child ----------
-            if (!opts.workingDir.empty())
-                chdir(opts.workingDir.c_str());
+            if (!opts.workingDir.empty()) {
+                if (chdir(opts.workingDir.c_str()) != 0) {
+                    perror("chdir failed");
+                    _exit(errno);
+                }
+            }
+
 
             if (opts.captureStdout)
             {
@@ -706,9 +711,10 @@ public:
             ClosePipe(stderrPipe);
 
             auto argv = BuildArgv(opts.argv);
+            wxLogMessage("child: calling execvp('%s')", argv[0]);
             execvp(argv[0], argv.data());
-            wxLogMessage("child: execvp('%s')", argv[0]);
-            _exit(127);
+            perror("execvp failed");
+            _exit(errno);
         }
 
         // -------- Parent --------
