@@ -2778,14 +2778,14 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     cmd += _T(" -c ");                  // create secure SENC
 
     cmd += _T(" -i ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += m_full_base_path;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -o ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += outfile;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -p ");
     cmd += m_cell_permit;
@@ -2804,9 +2804,9 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
     }
 
     cmd += _T(" -r ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += g_s57data_dir;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
 #if 0
     if( m_up_file_array.GetCount() ){
@@ -2818,15 +2818,15 @@ int ChartS63::BuildSENCFile( const wxString& FullPath_os63, const wxString& SENC
 #endif
 
     cmd += _T(" -g ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += m_FullPath;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
 
     cmd += _T(" -z ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += g_pi_filename;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
 
     ClearScreenLog();
