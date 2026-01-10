@@ -256,7 +256,9 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     opts.argv = args;
     opts.captureStdout = true;
 
+    wxLogMessage("Calling Process Run");
     auto result = runner.Run(opts);
+    wxLogMessage("Returned from Process Run");
 
     wxArrayString lines;
     wxString wxOut = wxString::FromUTF8(result.stdoutText);

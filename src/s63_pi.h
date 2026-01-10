@@ -672,7 +672,7 @@ public:
                       std::atomic<bool>& cancelFlag) override
     {
         ProcessResult result;
-
+        wxLogMessage("in Run()");
         int stdoutPipe[2] = { -1, -1 };
         int stderrPipe[2] = { -1, -1 };
 
