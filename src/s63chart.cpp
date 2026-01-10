@@ -234,12 +234,48 @@ void validate_SENC_util(void)
 
 }
 
+std::vector<std::string> TokenizeCommand(const wxString& cmd)
+{
+    std::vector<std::string> args;
+    wxString token;
+    bool inQuotes = false;
+
+    for (size_t i = 0; i < cmd.Length(); ++i)
+    {
+        wxChar c = cmd[i];
+
+        if (c == '"')
+        {
+            inQuotes = !inQuotes; // toggle quote state
+        }
+        else if (c == ' ' && !inQuotes)
+        {
+            if (!token.IsEmpty())
+            {
+                args.push_back(token.ToStdString());
+                token.Clear();
+            }
+        }
+        else
+        {
+            token += c;
+        }
+    }
+
+    // Add the last token
+    if (!token.IsEmpty())
+        args.push_back(token.ToStdString());
+
+    return args;
+}
+
 
 wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 {
   //std::string a = cmd.ToStdString();
   //printf("exec_SENCutil_sync:  %s\n", a.c_str());
 
+#if 0
   // Token parse the "cmd" to build a vector
     std::vector<std::string> args;
     wxString exec = g_sencutil_bin;
@@ -250,6 +286,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
         wxString token = tokenizer.GetNextToken();
         args.push_back(token.ToStdString());
     }
+#endif
+    std::vector<std::string> args = TokenizeCommand(cmd);
 
     ProcessRunner runner;
     ProcessOptions opts;
@@ -356,14 +394,14 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -n ");
 
     cmd += _T(" -i ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += FullPath;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -o ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += tmp_file;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -u ");
     cmd += GetUserpermit();
@@ -382,9 +420,9 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += m_cell_permit;
 
     cmd += _T(" -z ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += g_pi_filename;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
@@ -768,14 +806,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -l ");                  // create secure header
 
     cmd += _T(" -i ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += m_full_base_path;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -o ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += ehdr_file_name;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -p ");
     cmd += m_cell_permit;
@@ -794,9 +832,9 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     }
 
     cmd += _T(" -r ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += g_s57data_dir;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
 #if 0
     if( m_up_file_array.GetCount() ){
@@ -808,14 +846,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 #endif
 
     cmd += _T(" -g ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += m_FullPath;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     cmd += _T(" -z ");
-    //cmd += _T("\"");
+    cmd += _T("\"");
     cmd += g_pi_filename;
-    //cmd += _T("\"");
+    cmd += _T("\"");
 
     wxLogMessage(cmd);
 
