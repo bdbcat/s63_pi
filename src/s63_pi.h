@@ -686,6 +686,8 @@ public:
         SetCloExec(stderrPipe);
 
         pid_t pid = fork();
+        wxLogMessage("fork() returned pid=%d", pid);
+
         if (pid == 0)
         {
             // -------- Child --------
@@ -705,7 +707,7 @@ public:
 
             auto argv = BuildArgv(opts.argv);
             execvp(argv[0], argv.data());
-
+            wxLogMessage("child: execvp('%s')", argv[0]);
             _exit(127);
         }
 
@@ -722,6 +724,12 @@ public:
             SetNonBlocking(stderrPipe[0]);
         }
 
+        if (opts.captureStdout)
+            wxLogMessage("parent: stdout pipe fd=%d (non-blocking)", stdoutPipe[0]);
+
+        if (opts.captureStderr)
+            wxLogMessage("parent: stderr pipe fd=%d (non-blocking)", stderrPipe[0]);
+
         const int startMs = NowMs();
         bool stdoutOpen = opts.captureStdout;
         bool stderrOpen = opts.captureStderr;
@@ -731,6 +739,15 @@ public:
 
         while (stdoutOpen || stderrOpen)
         {
+            static int loopCount = 0;
+            if ((loopCount++ % 20) == 0)
+            {
+                wxLogMessage(
+                            "loop: stdoutOpen=%d stderrOpen=%d cancel=%d terminating=%d",
+                            stdoutOpen, stderrOpen,
+                            int(cancelFlag.load()), int(terminating));
+            }
+
             if (!terminating)
             {
                 if (cancelFlag.load())
@@ -764,8 +781,17 @@ public:
                 fds[nfds++] = { stderrPipe[0], POLLIN | POLLHUP, 0 };
 
             int rc = poll(fds, nfds, 100);
+            wxLogMessage("poll() rc=%d errno=%d", rc, errno);
+
             if (rc < 0 && errno == EINTR)
                 continue;
+
+            // IMPORTANT: Always attempt to drain
+            if (stdoutOpen)
+                DrainPipe(stdoutPipe[0], result.stdoutText, stdoutOpen);
+
+            if (stderrOpen)
+                DrainPipe(stderrPipe[0], result.stderrText, stderrOpen);
 
             if (rc > 0)
             {
@@ -794,7 +820,7 @@ public:
         }
 
         // Final drain (important!)
-        if (stdoutOpen)
+        if (stdoutOpen && stdoutPipe[0] != -1)
             DrainUntilEof(stdoutPipe[0], result.stdoutText);
 
         if (stderrOpen)
@@ -805,12 +831,27 @@ public:
 
         // Reap child if not already
         int status = 0;
-        waitpid(pid, &status, 0);
+        //waitpid(pid, &status, 0);
+        pid_t w = waitpid(pid, &status, WNOHANG);
+        wxLogMessage("waitpid(): child exit detected");
+
+        if (w == pid)
+        {
+            wxLogMessage("child exited: status=0x%x", status);
+        }
+
+        wxLogMessage(
+                    "process done: exitCode=%d timedOut=%d stdout=%zu bytes stderr=%zu bytes",
+                    result.exitCode,
+                    int(result.timedOut),
+                    result.stdoutText.size(),
+                    result.stderrText.size());
 
         return result;
     }
 
 private:
+#if 0
     static void DrainPipe(int fd, std::string& out, bool& open)
     {
         char buf[4096];
@@ -833,6 +874,38 @@ private:
             }
             else
             {
+                close(fd);
+                open = false;
+                return;
+            }
+        }
+    }
+#endif
+    static void DrainPipe(int fd, std::string& out, bool& open)
+    {
+        char buf[4096];
+        while (true)
+        {
+            ssize_t n = read(fd, buf, sizeof(buf));
+            if (n > 0)
+            {
+                wxLogMessage("DrainPipe(fd=%d): read %zd bytes", fd, n);
+                out.append(buf, n);
+            }
+            else if (n == 0)
+            {
+                wxLogMessage("DrainPipe(fd=%d): EOF", fd);
+                close(fd);
+                open = false;
+                return;
+            }
+            else if (errno == EAGAIN || errno == EINTR)
+            {
+                return;
+            }
+            else
+            {
+                wxLogMessage("DrainPipe(fd=%d): read error errno=%d", fd, errno);
                 close(fd);
                 open = false;
                 return;
