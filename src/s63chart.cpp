@@ -368,7 +368,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()) {
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) /*&& wxThread::IsMain()*/) {
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -727,6 +727,7 @@ wxString ChartS63::Get_eHDR_Name( const wxString& name000 )
 
 wxString ChartS63::Build_eHDR( const wxString& name000 )
 {
+    wxLogMessage("Build_eHDR");
     wxString ehdr_file_name = Get_eHDR_Name( name000 );
 
 #if 0
@@ -752,6 +753,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     if( true != wxFileName::DirExists( ehdrfile.GetPath() ) ) {
         if( !wxFileName::Mkdir( ehdrfile.GetPath() ) ) {
             ScreenLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
+            wxLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
             return _T("");
         }
     }
@@ -781,7 +783,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()){
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) /*&& wxThread::IsMain()*/){
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -812,12 +814,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += g_pi_filename;
     //cmd += _T("\"");
 
+    wxLogMessage(cmd);
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
 
 //    ::wxRemoveFile( tmp_up_file );
 
     //  Check results
+    wxLogMessage("Checking results");
     if( !exec_results_check( ehdr_result ) ) {
         m_extended_error = _T("Error executing cmd: ");
         m_extended_error += cmd;
@@ -826,9 +830,11 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 
         ScreenLogMessage( _T("\n") );
         ScreenLogMessage( m_extended_error + _T("\n"));
+        wxLogMessage(m_extended_error);
 
         for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
             ScreenLogMessage( ehdr_result[i] );
+            wxLogMessage(ehdr_result[i]);
             if(!ehdr_result[i].EndsWith(_T("\n")))
                 ScreenLogMessage( _T("\n") );
         }
