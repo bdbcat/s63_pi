@@ -255,6 +255,7 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     ProcessOptions opts;
     opts.argv = args;
     opts.captureStdout = true;
+    opts.captureStderr = true;
 
     wxLogMessage("Calling Process Run");
     auto result = runner.Run(opts);
