@@ -292,6 +292,9 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 #endif
     std::vector<std::string> args = TokenizeCommand(cmd);
 
+    wxLogMessage("exec argv:");
+    for (auto p : args) wxLogMessage("  [%s]", p);
+
     ProcessRunner runner;
     ProcessOptions opts;
     opts.argv = args;
