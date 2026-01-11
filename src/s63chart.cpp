@@ -904,6 +904,9 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 //    }
     s_PI_bInS57++;
 
+    if(!g_pi_timer)
+        return PI_INIT_FAIL_NOERROR;
+
     g_brendered_expired = false;    // Reset the trip-wire
     g_pi_timer->Reset();
 

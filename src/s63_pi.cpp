@@ -610,6 +610,7 @@ bool s63_pi::DeInit(void)
     DeleteOptionsPage( m_s63chartPanelWinTop );
 
     delete g_pi_timer;
+    g_pi_timer = nullptr;
 
     return true;
 }
