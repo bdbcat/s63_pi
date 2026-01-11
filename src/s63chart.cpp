@@ -415,7 +415,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) /*&& wxThread::IsMain()*/) {
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()) {
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );
@@ -830,7 +830,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += _T(" -e ");
     cmd += GetInstallpermit();
 
-    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) /*&& wxThread::IsMain()*/){
+    if(g_benable_screenlog && (g_pPanelScreenLog || g_pScreenLog) && wxThread::IsMain()){
         cmd += _T(" -b ");
         wxString port;
         port.Printf( _T("%d"), g_backchannel_port );

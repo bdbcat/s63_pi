@@ -2945,8 +2945,8 @@ void s63_pi_event_handler::OnNewFPRClick( wxCommandEvent &event )
 //      Private logging functions
 void ScreenLogMessage(wxString s)
 {
-//    if(!wxThread::IsMain())
-//        return;
+    if(!wxThread::IsMain())
+        return;
 
     if(s.IsEmpty())
         return;
