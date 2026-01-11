@@ -677,7 +677,6 @@ public:
                       std::atomic<bool>& cancelFlag) override
     {
         ProcessResult result;
-        wxLogMessage("in Run()");
         int stdoutPipe[2] = { -1, -1 };
         int stderrPipe[2] = { -1, -1 };
 
@@ -691,7 +690,7 @@ public:
         SetCloExec(stderrPipe);
 
         pid_t pid = fork();
-        wxLogMessage("fork() returned pid=%d", pid);
+        //wxLogMessage("fork() returned pid=%d", pid);
 
         if (pid == 0)
         {
@@ -711,7 +710,7 @@ public:
             ClosePipe(stderrPipe);
 
             auto argv = BuildArgv(opts.argv);
-            wxLogMessage("child: calling execvp('%s')", argv[0]);
+            //wxLogMessage("child: calling execvp('%s')", argv[0]);
             execvp(argv[0], argv.data());
             perror("execvp failed");
             _exit(errno);
@@ -730,11 +729,11 @@ public:
             SetNonBlocking(stderrPipe[0]);
         }
 
-        if (opts.captureStdout)
-            wxLogMessage("parent: stdout pipe fd=%d (non-blocking)", stdoutPipe[0]);
+        //if (opts.captureStdout)
+            //wxLogMessage("parent: stdout pipe fd=%d (non-blocking)", stdoutPipe[0]);
 
-        if (opts.captureStderr)
-            wxLogMessage("parent: stderr pipe fd=%d (non-blocking)", stderrPipe[0]);
+        //if (opts.captureStderr)
+            //wxLogMessage("parent: stderr pipe fd=%d (non-blocking)", stderrPipe[0]);
 
         const int startMs = NowMs();
         bool stdoutOpen = opts.captureStdout;
@@ -745,15 +744,6 @@ public:
 
         while (stdoutOpen || stderrOpen)
         {
-            static int loopCount = 0;
-            if ((loopCount++ % 20) == 0)
-            {
-                wxLogMessage(
-                            "loop: stdoutOpen=%d stderrOpen=%d cancel=%d terminating=%d",
-                            stdoutOpen, stderrOpen,
-                            int(cancelFlag.load()), int(terminating));
-            }
-
             if (!terminating)
             {
                 if (cancelFlag.load())
@@ -787,12 +777,11 @@ public:
                 fds[nfds++] = { stderrPipe[0], POLLIN | POLLHUP, 0 };
 
             int rc = poll(fds, nfds, 100);
-            wxLogMessage("poll() rc=%d errno=%d", rc, errno);
+            //wxLogMessage("poll() rc=%d errno=%d", rc, errno);
 
             if (rc < 0 && errno == EINTR)
                 continue;
 
-            // IMPORTANT: Always attempt to drain
             if (stdoutOpen)
                 DrainPipe(stdoutPipe[0], result.stdoutText, stdoutOpen);
 
@@ -839,6 +828,7 @@ public:
         int status = 0;
         //waitpid(pid, &status, 0);
         pid_t w = waitpid(pid, &status, WNOHANG);
+#if 0
         wxLogMessage("waitpid(): child exit detected");
 
         if (w == pid)
@@ -854,7 +844,7 @@ public:
                     result.stderrText.size());
         wxLogMessage(wxString(result.stdoutText));
         wxLogMessage(wxString(result.stderrText));
-
+#endif
         return result;
     }
 
@@ -897,12 +887,12 @@ private:
             ssize_t n = read(fd, buf, sizeof(buf));
             if (n > 0)
             {
-                wxLogMessage("DrainPipe(fd=%d): read %zd bytes", fd, n);
+                //wxLogMessage("DrainPipe(fd=%d): read %zd bytes", fd, n);
                 out.append(buf, n);
             }
             else if (n == 0)
             {
-                wxLogMessage("DrainPipe(fd=%d): EOF", fd);
+                //wxLogMessage("DrainPipe(fd=%d): EOF", fd);
                 close(fd);
                 open = false;
                 return;
@@ -913,7 +903,7 @@ private:
             }
             else
             {
-                wxLogMessage("DrainPipe(fd=%d): read error errno=%d", fd, errno);
+                //wxLogMessage("DrainPipe(fd=%d): read error errno=%d", fd, errno);
                 close(fd);
                 open = false;
                 return;

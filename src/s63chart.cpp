@@ -292,8 +292,8 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
 #endif
     std::vector<std::string> args = TokenizeCommand(cmd);
 
-    wxLogMessage("exec argv:");
-    for (auto p : args) wxLogMessage("  [%s]", p);
+    //wxLogMessage("exec argv:");
+    //for (auto p : args) wxLogMessage("  [%s]", p);
 
     ProcessRunner runner;
     ProcessOptions opts;
@@ -301,13 +301,13 @@ wxArrayString exec_SENCutil_sync( wxString cmd, bool bshowlog )
     opts.captureStdout = true;
     opts.captureStderr = true;
 
-    wxLogMessage("Calling Process Run");
+    //wxLogMessage("Calling Process Run");
     auto result = runner.Run(opts);
-    wxLogMessage("Returned from Process Run");
+    //wxLogMessage("Returned from Process Run");
 
     wxArrayString lines;
     wxString wxOut = wxString::FromUTF8(result.stdoutText);
-    wxLogMessage(wxOut);
+    //wxLogMessage(wxOut);
 
     wxStringTokenizer tok(wxOut, "\n", wxTOKEN_RET_EMPTY);
 
@@ -432,7 +432,7 @@ unsigned char *ChartS63::GetSENCCryptKeyBuffer( const wxString& FullPath, size_t
 
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
-    wxLogMessage(cmd);
+    //wxLogMessage(cmd);
 
     //  Read the key
     wxFileInputStream *ifs = new wxFileInputStream(tmp_file);
@@ -774,7 +774,7 @@ wxString ChartS63::Get_eHDR_Name( const wxString& name000 )
 
 wxString ChartS63::Build_eHDR( const wxString& name000 )
 {
-    wxLogMessage("Build_eHDR");
+    //wxLogMessage("Build_eHDR");
     wxString ehdr_file_name = Get_eHDR_Name( name000 );
 
 #if 0
@@ -800,7 +800,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     if( true != wxFileName::DirExists( ehdrfile.GetPath() ) ) {
         if( !wxFileName::Mkdir( ehdrfile.GetPath() ) ) {
             ScreenLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
-            wxLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
+            //wxLogMessage(_T("   Cannot create S63SENC file directory for ") + ehdrfile.GetFullPath() );
             return _T("");
         }
     }
@@ -861,14 +861,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += g_pi_filename;
     cmd += _T("\"");
 
-    wxLogMessage(cmd);
+    //wxLogMessage(cmd);
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
 
 //    ::wxRemoveFile( tmp_up_file );
 
     //  Check results
-    wxLogMessage("Checking results");
+    //wxLogMessage("Checking results");
     if( !exec_results_check( ehdr_result ) ) {
         m_extended_error = _T("Error executing cmd: ");
         m_extended_error += cmd;
@@ -877,11 +877,11 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 
         ScreenLogMessage( _T("\n") );
         ScreenLogMessage( m_extended_error + _T("\n"));
-        wxLogMessage(m_extended_error);
+        //wxLogMessage(m_extended_error);
 
         for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
             ScreenLogMessage( ehdr_result[i] );
-            wxLogMessage(ehdr_result[i]);
+            //wxLogMessage(ehdr_result[i]);
             if(!ehdr_result[i].EndsWith(_T("\n")))
                 ScreenLogMessage( _T("\n") );
         }
@@ -896,7 +896,7 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 
 int ChartS63::Init( const wxString& name_os63, int init_flags )
 {
-    wxLogMessage("********************Init()");
+    //wxLogMessage("********************Init()");
     //    Use a static semaphore flag to prevent recursion
 //    if( s_PI_bInS57 ) {
 //      wxLogMessage("Return semaphore");
@@ -909,7 +909,6 @@ int ChartS63::Init( const wxString& name_os63, int init_flags )
 
     if(!GetUserpermit().Len()) {
         s_PI_bInS57--;
-      wxLogMessage("Return Userpermit");
         return PI_INIT_FAIL_REMOVE;
     }
 
@@ -6034,7 +6033,7 @@ void SENCclient::Attach(const wxString &senc_file_name)
         port.Printf( _T("%d"), g_frontchannel_port );
         cmd += port;
 
-        wxLogMessage(cmd);
+        //wxLogMessage(cmd);
 
         wxPrintf(_T(" Starting SENC server...\n") );
         m_server_pid = wxExecute(cmd, wxEXEC_ASYNC, m_sproc);
