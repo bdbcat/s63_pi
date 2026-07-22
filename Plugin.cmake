@@ -50,6 +50,10 @@ set(PKG_INFO_URL https://opencpn.org/)
 
 set(PKG_AUTHOR "Dave register")
 
+if (CMAKE_HOST_WIN32)
+  add_definitions(-D__MSVC__)
+endif (CMAKE_HOST_WIN32)
+
 
 SET(SRC_S63
             src/s63_pi.h
