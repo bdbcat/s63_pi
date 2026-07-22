@@ -861,14 +861,14 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
     cmd += g_pi_filename;
     cmd += _T("\"");
 
-    //wxLogMessage(cmd);
+    wxLogMessage(cmd);
 
     wxArrayString ehdr_result = exec_SENCutil_sync( cmd, false);
 
 //    ::wxRemoveFile( tmp_up_file );
 
     //  Check results
-    //wxLogMessage("Checking results");
+    wxLogMessage("Checking results");
     if( !exec_results_check( ehdr_result ) ) {
         m_extended_error = _T("Error executing cmd: ");
         m_extended_error += cmd;
@@ -877,11 +877,11 @@ wxString ChartS63::Build_eHDR( const wxString& name000 )
 
         ScreenLogMessage( _T("\n") );
         ScreenLogMessage( m_extended_error + _T("\n"));
-        //wxLogMessage(m_extended_error);
+        wxLogMessage(m_extended_error);
 
         for(unsigned int i=0 ; i < ehdr_result.GetCount() ; i++){
             ScreenLogMessage( ehdr_result[i] );
-            //wxLogMessage(ehdr_result[i]);
+            wxLogMessage(ehdr_result[i]);
             if(!ehdr_result[i].EndsWith(_T("\n")))
                 ScreenLogMessage( _T("\n") );
         }
