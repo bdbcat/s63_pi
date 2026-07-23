@@ -147,8 +147,10 @@ PI_ColorScheme s63_pi::global_color_scheme = PI_ColorScheme::PI_GLOBAL_COLOR_SCH
 // Helper function for SENC utility access
 void SetNonBlocking(int fd)
 {
+#ifndef __MSVC__
     int flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#endif
 }
 
 std::vector<char*> BuildArgv(const std::vector<std::string>& args)
@@ -171,6 +173,103 @@ std::unique_ptr<IProcessBackend> CreateBackend()
     return std::make_unique<PosixProcessBackend>();
 #endif
 }
+
+#ifdef __MSVC__
+static std::wstring QuoteArgument(const std::string& utf8Arg)
+{
+    std::wstring arg = Utf8ToWide(utf8Arg);
+
+    // No quoting required?
+    if (!arg.empty() &&
+        arg.find_first_of(L" \t\n\v\"") == std::wstring::npos)
+    {
+        return arg;
+    }
+
+    std::wstring out;
+    out.push_back(L'"');
+
+    size_t backslashes = 0;
+
+    for (wchar_t ch : arg)
+    {
+        if (ch == L'\\')
+        {
+            ++backslashes;
+        }
+        else if (ch == L'"')
+        {
+            // Double preceding backslashes, then escape the quote.
+            out.append(backslashes * 2 + 1, L'\\');
+            out.push_back(L'"');
+            backslashes = 0;
+        }
+        else
+        {
+            // Emit accumulated backslashes normally.
+            out.append(backslashes, L'\\');
+            backslashes = 0;
+            out.push_back(ch);
+        }
+    }
+
+    // Escape trailing backslashes before the closing quote.
+    out.append(backslashes * 2, L'\\');
+
+    out.push_back(L'"');
+
+    return out;
+}
+
+std::wstring BuildCommandLine(const std::vector<std::string>& argv)
+{
+    std::wstring cmd;
+
+    bool first = true;
+    for (const auto& arg : argv)
+    {
+        if (!first)
+            cmd.push_back(L' ');
+
+        cmd += QuoteArgument(arg);
+        first = false;
+    }
+
+    return cmd;
+}
+
+static std::wstring Utf8ToWide(const std::string& utf8)
+{
+    if (utf8.empty())
+        return std::wstring();
+
+    int len = MultiByteToWideChar(
+        CP_UTF8,
+        MB_ERR_INVALID_CHARS,
+        utf8.data(),
+        static_cast<int>(utf8.size()),
+        nullptr,
+        0);
+
+    if (len <= 0)
+        return std::wstring();
+
+    std::wstring wide(len, L'\0');
+
+    len = MultiByteToWideChar(
+        CP_UTF8,
+        MB_ERR_INVALID_CHARS,
+        utf8.data(),
+        static_cast<int>(utf8.size()),
+        wide.empty() ? nullptr : &wide[0],
+        len);
+
+    if (len <= 0)
+        return std::wstring();
+
+    return wide;
+}
+#endif
 
 #define LUMIMOSITY_NIGHT (-0.8)
 #define LUMIMOSITY_DUSK (-0.5)

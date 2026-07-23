@@ -34,6 +34,7 @@
 #endif //precompiled headers
 
 #include<vector>
+#include <atomic>
 
 #include "wx/socket.h"
 #include <wx/fileconf.h>
@@ -50,7 +51,6 @@
 #include <windows.h>
 #else
 #include <fcntl.h>
-#include <atomic>
 #include <sys/wait.h>
 #include <sys/poll.h>
 #endif
@@ -484,6 +484,10 @@ private:
 };
 
 
+extern std::wstring BuildCommandLine(const std::vector<std::string>& argv);
+extern std::wstring Utf8ToWide(const std::string& utf8);
+extern std::string WideToUtf8(const std::wstring& wide);
+
 struct ProcessOptions
 {
     std::vector<std::string> argv;   // argv[0] = executable
@@ -499,6 +503,7 @@ struct ProcessResult
     std::string stdoutText;
     std::string stderrText;
     bool timedOut = false;
+    int systemError = 0;
 };
 void SetNonBlocking(int fd);
 std::vector<char*> BuildArgv(const std::vector<std::string>& args);
@@ -955,6 +960,7 @@ private:
 
 #else
 
+#if 0
 class Win32ProcessBackend : public IProcessBackend
 {
 public:
@@ -994,10 +1000,14 @@ public:
         std::wstring cmdLine = BuildCommandLine(opts.argv);
         std::wstring cwd = Utf8ToWide(opts.workingDir);
 
+//        CreateProcessW(
+//    Utf8ToWide(opts.argv[0]).c_str(),   // lpApplicationName
+//    cmdLine.data(),                     // lpCommandLine
+    ...
+//);
         BOOL ok = CreateProcessW(
-                nullptr,
-                cmdLine.data(),
-                nullptr,
+                Utf8ToWide(opts.argv[0]).c_str(),   // lpApplicationName
+                cmdLine.empty() ? nullptr : &cmdLine[0],                nullptr,
                 nullptr,
                 TRUE,
                 CREATE_NO_WINDOW,
@@ -1091,7 +1101,232 @@ public:
 
         return result;
     }
+
 };
+
+#else   //chat
+
+class AutoHandle
+{
+public:
+    AutoHandle() = default;
+    explicit AutoHandle(HANDLE h) : m_handle(h) {}
+    ~AutoHandle() { reset(); }
+
+    AutoHandle(const AutoHandle&) = delete;
+    AutoHandle& operator=(const AutoHandle&) = delete;
+
+    AutoHandle(AutoHandle&& other) noexcept
+        : m_handle(other.m_handle)
+    {
+        other.m_handle = nullptr;
+    }
+
+    AutoHandle& operator=(AutoHandle&& other) noexcept
+    {
+        if (this != &other)
+        {
+            reset();
+            m_handle = other.m_handle;
+            other.m_handle = nullptr;
+        }
+        return *this;
+    }
+
+    HANDLE get() const { return m_handle; }
+
+    HANDLE* put()
+    {
+        reset();
+        return &m_handle;
+    }
+
+    HANDLE release()
+    {
+        HANDLE h = m_handle;
+        m_handle = nullptr;
+        return h;
+    }
+
+    void reset(HANDLE h = nullptr)
+    {
+        if (m_handle && m_handle != INVALID_HANDLE_VALUE)
+            CloseHandle(m_handle);
+        m_handle = h;
+    }
+
+    operator HANDLE() const { return m_handle; }
+
+private:
+    HANDLE m_handle = nullptr;
+};
+
+
+class Win32ProcessBackend : public IProcessBackend {
+public:
+    ProcessResult Run(const ProcessOptions& opts,
+                  std::atomic<bool>& cancelFlag) override {
+        ProcessResult result;
+
+    SECURITY_ATTRIBUTES sa{};
+    sa.nLength = sizeof(sa);
+    sa.bInheritHandle = TRUE;
+
+    AutoHandle stdoutRd, stdoutWr;
+    AutoHandle stderrRd, stderrWr;
+
+    if (opts.captureStdout)
+    {
+        if (!CreatePipe(stdoutRd.put(), stdoutWr.put(), &sa, 0))
+        {
+            result.systemError = GetLastError();
+            return result;
+        }
+
+        if (!SetHandleInformation(stdoutRd.get(), HANDLE_FLAG_INHERIT, 0))
+        {
+            result.systemError = GetLastError();
+            return result;
+        }
+    }
+
+    if (opts.captureStderr)
+    {
+        if (!CreatePipe(stderrRd.put(), stderrWr.put(), &sa, 0))
+        {
+            result.systemError = GetLastError();
+            return result;
+        }
+
+        if (!SetHandleInformation(stderrRd.get(), HANDLE_FLAG_INHERIT, 0))
+        {
+            result.systemError = GetLastError();
+            return result;
+        }
+    }
+
+    STARTUPINFOW si{};
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESTDHANDLES;
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    si.hStdOutput = opts.captureStdout ?
+        stdoutWr.get() : GetStdHandle(STD_OUTPUT_HANDLE);
+    si.hStdError = opts.captureStderr ?
+        stderrWr.get() : GetStdHandle(STD_ERROR_HANDLE);
+
+    PROCESS_INFORMATION pi{};
+
+    std::wstring cmdLine = BuildCommandLine(opts.argv);
+    std::wstring cwd = Utf8ToWide(opts.workingDir);
+
+    if (!CreateProcessW(
+            Utf8ToWide(opts.argv[0]).c_str(),   // lpApplicationName,
+            cmdLine.empty() ? nullptr : &cmdLine[0],
+            nullptr,
+            nullptr,
+            TRUE,
+            CREATE_NO_WINDOW,
+            nullptr,
+            cwd.empty() ? nullptr : cwd.c_str(),
+            &si,
+            &pi))
+    {
+        result.systemError = GetLastError();
+        return result;
+    }
+
+    AutoHandle process(pi.hProcess);
+    AutoHandle thread(pi.hThread);
+
+    // Parent never writes.
+    stdoutWr.reset();
+    stderrWr.reset();
+
+    const DWORD startTick = GetTickCount();
+
+    bool stdoutDone = !opts.captureStdout;
+    bool stderrDone = !opts.captureStderr;
+
+    char buffer[4096];
+
+    while (!stdoutDone || !stderrDone)
+    {
+        if (cancelFlag.load())
+        {
+            TerminateProcess(process.get(), 1);
+            result.timedOut = true;
+        }
+
+        if (!result.timedOut &&
+            opts.timeoutMs >= 0 &&
+            (GetTickCount() - startTick) > (DWORD)opts.timeoutMs)
+        {
+            TerminateProcess(process.get(), 1);
+            result.timedOut = true;
+        }
+
+        DWORD avail = 0;
+        DWORD read = 0;
+
+        if (!stdoutDone)
+        {
+            if (!PeekNamedPipe(stdoutRd.get(), nullptr, 0, nullptr,
+                               &avail, nullptr))
+            {
+                if (GetLastError() == ERROR_BROKEN_PIPE)
+                {
+                    stdoutDone = true;
+                }
+            }
+            else if (avail)
+            {
+                if (ReadFile(stdoutRd.get(), buffer,
+                             sizeof(buffer), &read, nullptr) && read)
+                {
+                    result.stdoutText.append(buffer, read);
+                }
+            }
+        }
+
+        if (!stderrDone)
+        {
+            if (!PeekNamedPipe(stderrRd.get(), nullptr, 0, nullptr,
+                               &avail, nullptr))
+            {
+                if (GetLastError() == ERROR_BROKEN_PIPE)
+                {
+                    stderrDone = true;
+                }
+            }
+            else if (avail)
+            {
+                if (ReadFile(stderrRd.get(), buffer,
+                             sizeof(buffer), &read, nullptr) && read)
+                {
+                    result.stderrText.append(buffer, read);
+                }
+            }
+        }
+
+        if (stdoutDone && stderrDone)
+            break;
+
+        WaitForSingleObject(process.get(), 10);
+    }
+
+    WaitForSingleObject(process.get(), INFINITE);
+
+    DWORD exitCode = 0;
+    if (GetExitCodeProcess(process.get(), &exitCode))
+        result.exitCode = static_cast<int>(exitCode);
+    else
+        result.systemError = GetLastError();
+
+    return result;
+}
+};
+
+#endif
 #endif
 
 
