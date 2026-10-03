@@ -47,8 +47,7 @@ python -m pip install --upgrade pip
 python -m pip install -q setuptools wheel
 python -m pip install cryptography==48.0.1
 
-
-python -m pip install cloudsmith-cli
+python -m pip install -q cloudsmith-cli==1.19.0
 
 echo === Python ===
 where python
