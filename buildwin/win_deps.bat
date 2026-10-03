@@ -46,7 +46,24 @@ python -m ensurepip
 python -m pip install --upgrade pip
 python -m pip install -q setuptools wheel
 python -m pip install cryptography==48.0.1
-python -m pip install -q cloudsmith-cli
+
+
+python -m pip install cloudsmith-cli
+
+echo === Python ===
+where python
+python --version
+
+echo === Cloudsmith installation ===
+python -m pip show cloudsmith-cli
+
+echo === PATH ===
+echo %PATH%
+
+echo === Cloudsmith executable ===
+where cloudsmith
+
+dir C:\Python312\Scripts\cloudsmith*
 
 :: Install pre-compiled wxWidgets and other DLL; add required paths.
 ::
