@@ -570,9 +570,9 @@ s63_pi::s63_pi(void *ppimgr)
 
 
 #ifdef __WXMSW__
-      //g_sencutil_bin = _T("\"") + fn_exe.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) +  _T("plugins\\s63_pi\\OCPNsenc.exe\"");
-      g_sencutil_bin = GetPluginDataDir("s63_pi") + _T("\\OCPNsenc.exe");
-
+      wxFileName fnt(GetPluginDataDir("s63_pi") + "\\");
+      fnt.RemoveLastDir();
+      g_sencutil_bin = fnt.GetFullPath() + "OCPNsenc.exe";
 #endif
 
 #ifdef __WXOSX__
