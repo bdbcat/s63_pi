@@ -166,33 +166,6 @@ jobs:
       - run: cd build-osx; /bin/bash < upload.sh
       - run: ci/git-push.sh  build-osx
 
-  build-macos-intel-legacy:
-    macos:
-      xcode: "14.3.1"
-    environment:
-      - OCPN_TARGET: macos
-      - CMAKE_BUILD_PARALLEL_LEVEL: 2
-      - OSX_ARCHITECTURES: x86_64
-    steps:
-      - checkout
-      - run: sudo chmod go+w /usr/local
-      - restore_cache:
-          key: "{{checksum \"build-deps/macos-cache-stamp\"}}\
-            -{{checksum \"cmake/MacosWxwidgets.cmake\"}}\
-            -{{checksum \"ci/circleci-build-macos.sh\"}}"
-      - run: ci/circleci-build-macos.sh
-      - save_cache:
-          key: "{{checksum \"build-deps/macos-cache-stamp\"}}\
-            -{{checksum \"cmake/MacosWxwidgets.cmake\"}}\
-            -{{checksum \"ci/circleci-build-macos.sh\"}}"
-          paths:
-            - /tmp/local.cache.tar
-            - /Users/distiller/project/cache
-      - run: >
-          sh -c "otool -L build-osx/app/*/OpenCPN.app/Contents/PlugIns/*.dylib"
-      - run: cd build-osx; /bin/bash < upload.sh
-      - run: ci/git-push.sh  build-osx
-
   build-android-arm64:
     docker:
       - image: cimg/android:2023.08-ndk
@@ -240,9 +213,6 @@ workflows:
           <<: *std-filters
 
       - build-macos-universal:
-          <<: *std-filters
-
-      - build-macos-intel-legacy:
           <<: *std-filters
 
       - build-bookworm-arm64:
